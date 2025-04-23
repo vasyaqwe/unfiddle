@@ -1,0 +1,42 @@
+{
+  "name": "@unfiddle/web",
+  "type": "module",
+  "scripts": {
+    "dev": "bun vite",
+    "build": "vite build",
+    "typecheck": "tsc -p tsconfig.prod.json --noEmit",
+    "preview": "vite preview",
+    "generate-pwa-assets": "pwa-assets-generator --preset minimal-2023 public/icon.svg"
+  },
+  "dependencies": {
+    "@base-ui-components/react": "^1.0.0-alpha.4",
+    "@heroicons/react": "^2.2.0",
+    "@oslojs/encoding": "^1.1.0",
+    "@tanstack/react-query": "^5.74.3",
+    "@tanstack/react-router": "^1.116.0",
+    "@tanstack/router-plugin": "^1.116.1",
+    "@trpc/client": "^11.1.0",
+    "@trpc/tanstack-react-query": "^11.1.0",
+    "@unfiddle/core": "workspace:*",
+    "@unfiddle/infra": "workspace:*",
+    "@unfiddle/ui": "workspace:*",
+    "@vitejs/plugin-react": "^4.3.4",
+    "@zod/mini": "^4.0.0-beta.20250415T232143",
+    "babel-plugin-react-compiler": "^19.1.0-rc.1",
+    "hono": "^4.7.4",
+    "jotai": "^2.11.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-hotkeys-hook": "^4.6.1",
+    "remeda": "^2.6.0",
+    "sonner": "^1.7.1",
+    "vite-tsconfig-paths": "^5.1.4"
+  },
+  "devDependencies": {
+    "@unfiddle/tsconfig": "workspace:*",
+    "@types/node": "^20.17.16",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "vite": "^6.0.1"
+  }
+}

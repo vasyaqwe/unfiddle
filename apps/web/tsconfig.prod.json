@@ -1,0 +1,4 @@
+{
+   "extends": ["@unfiddle/tsconfig/base.json", "./tsconfig.json"],
+   "include": ["src"]
+}

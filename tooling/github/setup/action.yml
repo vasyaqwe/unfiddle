@@ -1,0 +1,14 @@
+name: "Setup and install"
+description: "Common setup steps for Actions"
+
+runs:
+  using: composite
+  steps:
+    - uses: oven-sh/setup-bun@v1
+      with:
+        version: 1.2.8
+    - shell: bash
+      run: bun add -g turbo
+
+    - shell: bash
+      run: bun install

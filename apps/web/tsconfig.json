@@ -1,0 +1,16 @@
+{
+   "extends": "@unfiddle/tsconfig/base.json",
+   "compilerOptions": {
+      "types": ["@cloudflare/workers-types", "node"],
+      "lib": ["ESNext", "DOM", "DOM.iterable"],
+      "baseUrl": ".",
+      "paths": {
+         "@unfiddle/core/*": ["../../packages/core/src/*"],
+         "@unfiddle/ui/*": ["../../packages/ui/src/*"],
+         "@/*": ["./src/*"]
+      },
+      "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json"
+   },
+   //including packages makes autoimports work, but breaks build - so dev only
+   "include": ["src", "../../packages"]
+}

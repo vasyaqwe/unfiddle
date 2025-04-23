@@ -1,0 +1,11 @@
+{
+   "extends": "@unfiddle/tsconfig/internal-package.json",
+   "compilerOptions": {
+      "lib": ["ESNext", "DOM", "DOM.iterable"],
+      "paths": {
+         "@unfiddle/ui/*": ["./src/*"]
+      },
+      "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json"
+   },
+   "include": ["src"]
+}

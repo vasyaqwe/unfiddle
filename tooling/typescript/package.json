@@ -1,0 +1,4 @@
+{
+   "name": "@unfiddle/tsconfig",
+   "files": ["*.json"]
+}

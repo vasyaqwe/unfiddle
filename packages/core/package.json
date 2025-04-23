@@ -1,0 +1,35 @@
+{
+  "name": "@unfiddle/core",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf .turbo node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "db:drop": "bun run drizzle-kit drop",
+    "db:generate": "bun run drizzle-kit generate",
+    "db:migrate": "bun run drizzle-kit migrate",
+    "db:studio": "bun run drizzle-kit studio"
+  },
+  "dependencies": {
+    "@hono/trpc-server": "^0.3.4",
+    "@libsql/client": "^0.14.0",
+    "@oslojs/crypto": "^1.0.1",
+    "@oslojs/encoding": "^1.1.0",
+    "@oslojs/webauthn": "^1.0.0",
+    "@trpc/server": "^11.1.0",
+    "@unfiddle/infra": "workspace:*",
+    "arctic": "^2.3.3",
+    "base-x": "^5.0.0",
+    "drizzle-orm": "^0.38.3",
+    "drizzle-zod": "^0.6.1",
+    "hono": "^4.7.4",
+    "ky": "^1.8.1",
+    "remeda": "^2.17.4",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250311.0",
+    "@unfiddle/tsconfig": "workspace:*",
+    "drizzle-kit": "^0.30.1"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "@unfiddle/ui",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf .turbo node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.1.4",
+    "class-variance-authority": "^0.7.1",
+    "tailwind-merge": "^2.6.0",
+    "tailwindcss": "^4.1.4"
+  },
+  "devDependencies": {
+    "@unfiddle/tsconfig": "workspace:*"
+  }
+}

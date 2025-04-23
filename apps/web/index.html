@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en" class="font-primary antialiased [--bottom-navigation-height:55px]">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/favicon.ico">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="theme-color" content="#fefffc" />
+  <meta name="viewport"
+    content="viewport-fit=cover, width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+  <title>Unfiddle</title>
+  <meta name="description" content="">
+  <style>
+    @font-face {
+      font-family: "dm_sans";
+      src: url("/font/dm_sans.ttf") format("truetype");
+      font-display: swap;
+      font-style: normal;
+      font-weight: 400 700;
+    }
+  </style>
+  <link rel="preload" href="/font/dm_sans.ttf" as="font" type="font/ttf" crossorigin="anonymous" />
+</head>
+
+<body class="text-base font-normal bg-background text-foreground selection:bg-primary-10 selection:text-primary-1">
+  <div id="app" class="Root isolate flex min-h-svh">
+  </div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>

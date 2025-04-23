@@ -1,0 +1,33 @@
+{
+  "name": "unfiddle",
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "concurrently": "^9.1.2",
+    "turbo": "^2.3.3",
+    "typescript": "^5.8.2"
+  },
+  "packageManager": "bun@1.2.8",
+  "scripts": {
+    "build": "turbo build",
+    "build:web": "turbo build --filter=@unfiddle/web",
+    "build:www": "turbo build --filter=@unfiddle/www",
+    "start": "turbo start",
+    "clean": "git clean -xdf node_modules",
+    "clean:workspaces": "turbo clean",
+    "db:generate": "bun --filter @unfiddle/core db:generate",
+    "db:migrate": "bun --filter @unfiddle/core db:migrate",
+    "db:push": "bun --filter @unfiddle/core db:push",
+    "db:drop": "bun --filter @unfiddle/core db:drop",
+    "db:studio": "bun --filter @unfiddle/core db:studio",
+    "dev": "turbo dev --parallel",
+    "dev:db": "turso dev --db-file tmp/sqlite.db",
+    "dev:api": "turbo dev --filter=@unfiddle/api",
+    "dev:web": "turbo dev --filter=@unfiddle/web --filter=@unfiddle/ui --filter=@unfiddle/api",
+    "dev:www": "turbo dev --filter=@unfiddle/www --filter=@unfiddle/ui",
+    "format-lint": "biome check",
+    "format-lint:fix": "biome check --write",
+    "typecheck": "turbo typecheck"
+  },
+  "trustedDependencies": ["@biomejs/biome", "core-js", "esbuild", "workerd"],
+  "workspaces": ["apps/*", "packages/*", "tooling/*"]
+}
