@@ -4,9 +4,8 @@ import crypto from "node:crypto"
 
 export const ID_PREFIXES = {
    user: "usr",
-   verification_request: "vr",
-   oauth_account: "oa",
    file: "file",
+   workspace: "wrk",
 } as const
 
 export const createId = (prefix: keyof typeof ID_PREFIXES) => {
@@ -27,4 +26,12 @@ export const createId = (prefix: keyof typeof ID_PREFIXES) => {
    buf[3] = t & 255
 
    return `${ID_PREFIXES[prefix]}_${b58.encode(buf)}` as const
+}
+
+export const createCode = () => {
+   const buf = crypto.getRandomValues(new Uint8Array(9))
+
+   const encoded = b58.encode(buf)
+
+   return encoded.slice(0, 12)
 }

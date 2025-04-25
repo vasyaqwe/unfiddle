@@ -52,7 +52,7 @@ function RouteComponent() {
    })
 
    return (
-      <div className="grid h-svh w-full place-items-center">
+      <main className="grid h-svh w-full place-items-center bg-background">
          <div className="w-full max-w-[21rem] px-5">
             <form
                onSubmit={async (e) => {
@@ -123,6 +123,6 @@ function RouteComponent() {
                </p>
             </form>
          </div>
-      </div>
+      </main>
    )
 }

@@ -1,13 +1,17 @@
 import { Icons } from "@ledgerblocks/ui/components/icons"
-import { Link } from "@tanstack/react-router"
+import { Link, useParams } from "@tanstack/react-router"
 
 export function BottomNavigation() {
+   const params = useParams({ from: "/_authed/$workspaceId" })
+
    return (
       <nav className="fixed bottom-0 z-[2] flex h-(--bottom-navigation-height) w-full items-center border-neutral border-t bg-background px-1.5 shadow md:hidden">
          <ul className="flex grow items-center justify-around gap-2">
             <li>
                <Link
-                  to={"/"}
+                  to={"/$workspaceId"}
+                  params={params}
+                  activeOptions={{ exact: true }}
                   className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-foreground/60 text-xs aria-[current=page]:text-foreground"
                >
                   <Icons.home className="size-6 shrink-0 group-aria-[current=page]:hidden" />
@@ -17,7 +21,8 @@ export function BottomNavigation() {
             </li>
             <li>
                <Link
-                  to={"/team"}
+                  to={"/$workspaceId/team"}
+                  params={params}
                   className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-foreground/60 text-xs aria-[current=page]:text-foreground"
                >
                   <Icons.users className="size-6 shrink-0 group-aria-[current=page]:hidden" />

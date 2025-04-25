@@ -10,10 +10,11 @@ import {
    MenuTrigger,
 } from "@ledgerblocks/ui/components/menu"
 import { ScrollArea } from "@ledgerblocks/ui/components/scroll-area"
-import { Link } from "@tanstack/react-router"
+import { Link, useParams } from "@tanstack/react-router"
 
 export function SidebarContent() {
    const auth = useAuth()
+   const params = useParams({ from: "/_authed/$workspaceId" })
 
    return (
       <Sidebar>
@@ -21,7 +22,9 @@ export function SidebarContent() {
             <ul className="space-y-1">
                <li>
                   <Link
-                     to={"/"}
+                     to={"/$workspaceId"}
+                     params={params}
+                     activeOptions={{ exact: true }}
                      className={
                         "group flex h-[1.9rem] items-center justify-start gap-2 rounded-md border border-transparent px-2 text-base text-foreground/80 leading-none transition-all duration-100 hover:text-foreground aria-[current=page]:border-primary-2 aria-[current=page]:bg-white aria-[current=page]:text-foreground aria-[current=page]:shadow-[inset_0_-1px_0_rgb(0_0_0_/_0.15)]"
                      }
@@ -32,7 +35,8 @@ export function SidebarContent() {
                </li>
                <li>
                   <Link
-                     to={"/team"}
+                     to={"/$workspaceId/team"}
+                     params={params}
                      className={
                         "group flex h-[1.9rem] items-center justify-start gap-2 rounded-md border border-transparent px-2 text-base text-foreground/80 leading-none transition-all duration-100 hover:text-foreground aria-[current=page]:border-primary-2 aria-[current=page]:bg-white aria-[current=page]:text-foreground aria-[current=page]:shadow-[inset_0_-1px_0_rgb(0_0_0_/_0.15)]"
                      }

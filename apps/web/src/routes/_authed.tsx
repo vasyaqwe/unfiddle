@@ -1,9 +1,6 @@
 import { CACHE_FOREVER } from "@/api"
 import { Main } from "@/layout/components/main"
-import { PendingComponent } from "@/layout/components/pending-component"
 import { Sidebar } from "@/layout/components/sidebar"
-import { BottomNavigation } from "@/routes/-components/bottom-navigation"
-import { SidebarContent } from "@/routes/-components/sidebar"
 import { trpc } from "@/trpc"
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
 
@@ -26,23 +23,11 @@ export const Route = createFileRoute("/_authed")({
    pendingComponent: () => (
       <>
          <Sidebar />
-         <Main className="h-screen">
-            <PendingComponent />
-         </Main>
+         <Main className="h-screen" />
       </>
    ),
 })
 
 function RouteComponent() {
-   return (
-      <>
-         <Sidebar className="motion-preset-fade">
-            <SidebarContent />
-         </Sidebar>
-         <Main innerClassName="motion-preset-fade">
-            <Outlet />
-         </Main>
-         <BottomNavigation />
-      </>
-   )
+   return <Outlet />
 }

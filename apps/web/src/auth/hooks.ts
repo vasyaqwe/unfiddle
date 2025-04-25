@@ -1,14 +1,18 @@
 import { CACHE_FOREVER } from "@/api"
 import { authClient } from "@/auth"
 import { trpc } from "@/trpc"
+import invariant from "@ledgerblocks/core/invariant"
 import {
    useMutation,
    useQueryClient,
    useSuspenseQuery,
 } from "@tanstack/react-query"
-import { useNavigate } from "@tanstack/react-router"
+import { getRouteApi, useNavigate } from "@tanstack/react-router"
+
+const Layout = getRouteApi("/_authed/$workspaceId/_layout")
 
 export function useAuth() {
+   const params = Layout.useParams()
    const queryClient = useQueryClient()
    const navigate = useNavigate()
 
@@ -18,6 +22,12 @@ export function useAuth() {
          retry: false,
       }),
    )
+
+   const workspace = useSuspenseQuery(
+      trpc.workspace.one.queryOptions({ id: params.workspaceId }),
+   )
+
+   invariant(workspace.data, "workspace not found")
 
    const signout = useMutation({
       mutationFn: async () => {
@@ -36,6 +46,7 @@ export function useAuth() {
 
    return {
       user: user.data,
+      workspace: workspace.data,
       signout,
    }
 }
