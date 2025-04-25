@@ -1,3 +1,3 @@
-import { routes } from "@unfiddle/core/api"
+import { routes } from "@ledgerblocks/core/api"
 
 export default routes

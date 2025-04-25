@@ -1,5 +1,5 @@
-import type { User } from "@unfiddle/core/auth/types"
-import { cn } from "@unfiddle/ui/utils"
+import type { User } from "@ledgerblocks/core/auth/types"
+import { cn } from "@ledgerblocks/ui/utils"
 import Avatar from "boring-avatars"
 
 interface Props extends React.ComponentProps<"div"> {

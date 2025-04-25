@@ -1,5 +1,5 @@
 {
-  "name": "@unfiddle/ui",
+  "name": "@ledgerblocks/ui",
   "type": "module",
   "scripts": {
     "build": "tsc",
@@ -13,6 +13,6 @@
     "tailwindcss": "^4.1.4"
   },
   "devDependencies": {
-    "@unfiddle/tsconfig": "workspace:*"
+    "@ledgerblocks/tsconfig": "workspace:*"
   }
 }

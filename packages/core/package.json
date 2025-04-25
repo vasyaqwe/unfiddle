@@ -1,5 +1,5 @@
 {
-  "name": "@unfiddle/core",
+  "name": "@ledgerblocks/core",
   "type": "module",
   "scripts": {
     "build": "tsc",
@@ -13,7 +13,7 @@
   "dependencies": {
     "@hono/trpc-server": "^0.3.4",
     "@trpc/server": "^11.1.0",
-    "@unfiddle/infra": "workspace:*",
+    "@ledgerblocks/infra": "workspace:*",
     "base-x": "^5.0.0",
     "better-auth": "^1.2.7",
     "drizzle-orm": "^0.43.0",
@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250311.0",
-    "@unfiddle/tsconfig": "workspace:*",
+    "@ledgerblocks/tsconfig": "workspace:*",
     "drizzle-kit": "^0.31.0"
   }
 }

@@ -1,12 +1,12 @@
 import { CACHE_AWHILE } from "@/api"
 import { env } from "@/env"
+import type { AppRouter } from "@ledgerblocks/core/trpc"
 import { MutationCache, QueryClient } from "@tanstack/react-query"
 import { createTRPCClient, httpBatchStreamLink } from "@trpc/client"
 import {
    createTRPCContext,
    createTRPCOptionsProxy,
 } from "@trpc/tanstack-react-query"
-import type { AppRouter } from "@unfiddle/core/trpc"
 import { toast } from "sonner"
 
 export const { TRPCProvider, useTRPC, useTRPCClient } =

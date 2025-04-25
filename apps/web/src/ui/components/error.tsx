@@ -1,5 +1,7 @@
 import type { ApiClientError } from "@/api"
 import { env } from "@/env"
+import { Button } from "@ledgerblocks/ui/components/button"
+import { cn } from "@ledgerblocks/ui/utils"
 import {
    type ErrorComponentProps,
    ErrorComponent as RouterErrorComponent,
@@ -7,8 +9,6 @@ import {
    useMatch,
    useRouter,
 } from "@tanstack/react-router"
-import { Button } from "@unfiddle/ui/components/button"
-import { cn } from "@unfiddle/ui/utils"
 
 interface Props
    extends Omit<ErrorComponentProps, "reset" | "error">,

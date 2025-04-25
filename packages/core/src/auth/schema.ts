@@ -1,4 +1,4 @@
-import { d } from "@unfiddle/core/database"
+import { d } from "@ledgerblocks/core/database"
 
 export const user = d.table(
    "user",

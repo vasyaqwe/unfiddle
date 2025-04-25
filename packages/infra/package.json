@@ -1,5 +1,5 @@
 {
-   "name": "@unfiddle/infra",
+   "name": "@ledgerblocks/infra",
    "type": "module",
    "exports": {
       "./env": {
@@ -21,6 +21,6 @@
    },
    "devDependencies": {
       "@cloudflare/workers-types": "^4.20250311.0",
-      "@unfiddle/tsconfig": "workspace:*"
+      "@ledgerblocks/tsconfig": "workspace:*"
    }
 }

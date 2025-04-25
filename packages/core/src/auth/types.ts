@@ -1,4 +1,4 @@
-import type { authClient } from "@unfiddle/core/auth"
+import type { authClient } from "@ledgerblocks/core/auth"
 
 export type Session = ReturnType<
    typeof authClient

@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "unfiddle",
+      "name": "ledgerblocks",
       "devDependencies": {
         "@biomejs/biome": "^1.9.4",
         "concurrently": "^9.1.2",
@@ -11,31 +11,31 @@
       },
     },
     "apps/api": {
-      "name": "@unfiddle/api",
+      "name": "@ledgerblocks/api",
       "dependencies": {
-        "@unfiddle/core": "workspace:*",
-        "@unfiddle/infra": "workspace:*",
+        "@ledgerblocks/core": "workspace:*",
+        "@ledgerblocks/infra": "workspace:*",
       },
       "devDependencies": {
+        "@ledgerblocks/tsconfig": "workspace:*",
         "@types/bun": "latest",
-        "@unfiddle/tsconfig": "workspace:*",
         "wrangler": "^4.12.0",
       },
     },
     "apps/web": {
-      "name": "@unfiddle/web",
+      "name": "@ledgerblocks/web",
       "dependencies": {
         "@base-ui-components/react": "^1.0.0-alpha.4",
         "@heroicons/react": "^2.2.0",
+        "@ledgerblocks/core": "workspace:*",
+        "@ledgerblocks/infra": "workspace:*",
+        "@ledgerblocks/ui": "workspace:*",
         "@oslojs/encoding": "^1.1.0",
         "@tanstack/react-query": "^5.74.3",
         "@tanstack/react-router": "^1.116.0",
         "@tanstack/router-plugin": "^1.116.1",
         "@trpc/client": "^11.1.0",
         "@trpc/tanstack-react-query": "^11.1.0",
-        "@unfiddle/core": "workspace:*",
-        "@unfiddle/infra": "workspace:*",
-        "@unfiddle/ui": "workspace:*",
         "@vitejs/plugin-react": "^4.3.4",
         "@zod/mini": "^4.0.0-beta.20250415T232143",
         "babel-plugin-react-compiler": "^19.1.0-rc.1",
@@ -52,19 +52,19 @@
         "vite-tsconfig-paths": "^5.1.4",
       },
       "devDependencies": {
+        "@ledgerblocks/tsconfig": "workspace:*",
         "@types/node": "^20.17.16",
         "@types/react": "^19.0.2",
         "@types/react-dom": "^19.0.2",
-        "@unfiddle/tsconfig": "workspace:*",
         "vite": "^6.0.1",
       },
     },
     "packages/core": {
-      "name": "@unfiddle/core",
+      "name": "@ledgerblocks/core",
       "dependencies": {
         "@hono/trpc-server": "^0.3.4",
+        "@ledgerblocks/infra": "workspace:*",
         "@trpc/server": "^11.1.0",
-        "@unfiddle/infra": "workspace:*",
         "base-x": "^5.0.0",
         "better-auth": "^1.2.7",
         "drizzle-orm": "^0.43.0",
@@ -76,22 +76,22 @@
       },
       "devDependencies": {
         "@cloudflare/workers-types": "^4.20250311.0",
-        "@unfiddle/tsconfig": "workspace:*",
+        "@ledgerblocks/tsconfig": "workspace:*",
         "drizzle-kit": "^0.31.0",
       },
     },
     "packages/infra": {
-      "name": "@unfiddle/infra",
+      "name": "@ledgerblocks/infra",
       "dependencies": {
         "ansi-colors": "^4.1.3",
       },
       "devDependencies": {
         "@cloudflare/workers-types": "^4.20250311.0",
-        "@unfiddle/tsconfig": "workspace:*",
+        "@ledgerblocks/tsconfig": "workspace:*",
       },
     },
     "packages/ui": {
-      "name": "@unfiddle/ui",
+      "name": "@ledgerblocks/ui",
       "dependencies": {
         "@tailwindcss/postcss": "^4.1.4",
         "class-variance-authority": "^0.7.1",
@@ -99,14 +99,14 @@
         "tailwindcss": "^4.1.4",
       },
       "devDependencies": {
-        "@unfiddle/tsconfig": "workspace:*",
+        "@ledgerblocks/tsconfig": "workspace:*",
       },
     },
     "tooling/github": {
-      "name": "@unfiddle/github",
+      "name": "@ledgerblocks/github",
     },
     "tooling/typescript": {
-      "name": "@unfiddle/tsconfig",
+      "name": "@ledgerblocks/tsconfig",
     },
   },
   "trustedDependencies": [
@@ -345,6 +345,20 @@
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.9", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.0.3", "@jridgewell/sourcemap-codec": "^1.4.10" } }, "sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ=="],
 
+    "@ledgerblocks/api": ["@ledgerblocks/api@workspace:apps/api"],
+
+    "@ledgerblocks/core": ["@ledgerblocks/core@workspace:packages/core"],
+
+    "@ledgerblocks/github": ["@ledgerblocks/github@workspace:tooling/github"],
+
+    "@ledgerblocks/infra": ["@ledgerblocks/infra@workspace:packages/infra"],
+
+    "@ledgerblocks/tsconfig": ["@ledgerblocks/tsconfig@workspace:tooling/typescript"],
+
+    "@ledgerblocks/ui": ["@ledgerblocks/ui@workspace:packages/ui"],
+
+    "@ledgerblocks/web": ["@ledgerblocks/web@workspace:apps/web"],
+
     "@levischuck/tiny-cbor": ["@levischuck/tiny-cbor@0.2.11", "", {}, "sha512-llBRm4dT4Z89aRsm6u2oEZ8tfwL/2l6BwpZ7JcyieouniDECM5AqNgr/y08zalEIvW3RSK4upYyybDcmjXqAow=="],
 
     "@libsql/client": ["@libsql/client@0.14.0", "", { "dependencies": { "@libsql/core": "^0.14.0", "@libsql/hrana-client": "^0.7.0", "js-base64": "^3.7.5", "libsql": "^0.4.4", "promise-limit": "^2.7.0" } }, "sha512-/9HEKfn6fwXB5aTEEoMeFh4CtG0ZzbncBb1e++OCdVpgKZ/xyMsIVYXm0w7Pv4RUel803vE6LwniB3PqD72R0Q=="],
@@ -538,20 +552,6 @@
     "@types/react-dom": ["@types/react-dom@19.1.2", "", { "peerDependencies": { "@types/react": "^19.0.0" } }, "sha512-XGJkWF41Qq305SKWEILa1O8vzhb3aOo3ogBlSmiqNko/WmRb6QIaweuZCXjKygVDXpzXb5wyxKTSOsmkuqj+Qw=="],
 
     "@types/ws": ["@types/ws@8.18.1", "", { "dependencies": { "@types/node": "*" } }, "sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg=="],
-
-    "@unfiddle/api": ["@unfiddle/api@workspace:apps/api"],
-
-    "@unfiddle/core": ["@unfiddle/core@workspace:packages/core"],
-
-    "@unfiddle/github": ["@unfiddle/github@workspace:tooling/github"],
-
-    "@unfiddle/infra": ["@unfiddle/infra@workspace:packages/infra"],
-
-    "@unfiddle/tsconfig": ["@unfiddle/tsconfig@workspace:tooling/typescript"],
-
-    "@unfiddle/ui": ["@unfiddle/ui@workspace:packages/ui"],
-
-    "@unfiddle/web": ["@unfiddle/web@workspace:apps/web"],
 
     "@vitejs/plugin-react": ["@vitejs/plugin-react@4.4.1", "", { "dependencies": { "@babel/core": "^7.26.10", "@babel/plugin-transform-react-jsx-self": "^7.25.9", "@babel/plugin-transform-react-jsx-source": "^7.25.9", "@types/babel__core": "^7.20.5", "react-refresh": "^0.17.0" }, "peerDependencies": { "vite": "^4.2.0 || ^5.0.0 || ^6.0.0" } }, "sha512-IpEm5ZmeXAP/osiBXVVP5KjFMzbWOonMs0NaQQl+xYnUAcq4oHUBsF2+p4MgKWG4YMmFYJU8A6sxRPuowllm6w=="],
 

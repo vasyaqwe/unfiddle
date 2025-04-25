@@ -1,15 +1,15 @@
 import { useAuth } from "@/auth/hooks"
 import { UserAvatar } from "@/user/components/user-avatar"
 import { HomeIcon } from "@heroicons/react/24/solid"
-import { Link } from "@tanstack/react-router"
-import { Button } from "@unfiddle/ui/components/button"
+import { Button } from "@ledgerblocks/ui/components/button"
 import {
    Menu,
    MenuItem,
    MenuPopup,
    MenuTrigger,
-} from "@unfiddle/ui/components/menu"
-import { ScrollArea } from "@unfiddle/ui/components/scroll-area"
+} from "@ledgerblocks/ui/components/menu"
+import { ScrollArea } from "@ledgerblocks/ui/components/scroll-area"
+import { Link } from "@tanstack/react-router"
 
 export function Sidebar() {
    const auth = useAuth()

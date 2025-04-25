@@ -1,5 +1,5 @@
-import type { HonoEnv } from "@unfiddle/core/api/types"
-import { logger } from "@unfiddle/infra/logger"
+import type { HonoEnv } from "@ledgerblocks/core/api/types"
+import { logger } from "@ledgerblocks/infra/logger"
 import type { Context } from "hono"
 import { HTTPException } from "hono/http-exception"
 import { ZodError, type ZodIssue, z } from "zod"

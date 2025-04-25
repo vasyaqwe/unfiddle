@@ -1,6 +1,6 @@
 import { Menu as MenuPrimitive } from "@base-ui-components/react/menu"
 import { CheckIcon } from "@heroicons/react/24/outline"
-import { POPUP_STYLES } from "@unfiddle/ui/constants"
+import { POPUP_STYLES } from "@ledgerblocks/ui/constants"
 import { cn } from "../utils"
 
 export const Menu = MenuPrimitive.Root

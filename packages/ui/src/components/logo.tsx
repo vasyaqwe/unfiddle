@@ -1,4 +1,4 @@
-import { cn } from "@unfiddle/ui/utils"
+import { cn } from "@ledgerblocks/ui/utils"
 
 export function Logo({ className, ...props }: React.ComponentProps<"svg">) {
    return (

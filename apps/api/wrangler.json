@@ -1,5 +1,5 @@
 {
-   "name": "unfiddle-api",
+   "name": "ledgerblocks-api",
    "main": "src/index.ts",
    "compatibility_flags": ["nodejs_compat"],
    "compatibility_date": "2025-04-01",
@@ -28,15 +28,15 @@
    },
    "kv_namespaces": [
       {
-         "binding": "UNFIDDLE_KV",
-         "id": "4c70a981bfa94dbd95496d146f93e94e"
+         "binding": "LB_KV",
+         "id": "b4b822b872e7439f8ba8e5d74ba7c162"
       }
    ],
    "d1_databases": [
       {
          "binding": "DATABASE",
-         "database_name": "unfiddle",
-         "database_id": "84c23660-f3ee-410d-b7eb-5b5bf25978ea",
+         "database_name": "ledgerblocks",
+         "database_id": "0c2d4aab-cf2f-4c14-aa7e-89f11ef8daee",
          "migrations_dir": "../../packages/core/src/database/migrations"
       }
    ],
@@ -45,7 +45,7 @@
    },
    "env": {
       "production": {
-         "name": "unfiddle-api",
+         "name": "ledgerblocks-api",
          "ai": {
             "binding": "AI"
          },
@@ -64,15 +64,15 @@
          },
          "kv_namespaces": [
             {
-               "binding": "UNFIDDLE_KV",
-               "id": "4c70a981bfa94dbd95496d146f93e94e"
+               "binding": "LB_KV",
+               "id": "b4b822b872e7439f8ba8e5d74ba7c162"
             }
          ],
          "d1_databases": [
             {
                "binding": "DATABASE",
-               "database_name": "unfiddle",
-               "database_id": "84c23660-f3ee-410d-b7eb-5b5bf25978ea",
+               "database_name": "ledgerblocks",
+               "database_id": "0c2d4aab-cf2f-4c14-aa7e-89f11ef8daee",
                "migrations_dir": "../../packages/core/src/database/migrations"
             }
          ],

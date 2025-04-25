@@ -1,6 +1,6 @@
 import { env } from "@/env"
-import type { ApiErrorCode } from "@unfiddle/core/api/error"
-import type { ApiRoutes } from "@unfiddle/core/api/types"
+import type { ApiErrorCode } from "@ledgerblocks/core/api/error"
+import type { ApiRoutes } from "@ledgerblocks/core/api/types"
 import { type ClientResponse, hc } from "hono/client"
 import type { StatusCode } from "hono/utils/http-status"
 

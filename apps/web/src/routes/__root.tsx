@@ -1,3 +1,7 @@
+import type { AppRouter } from "@ledgerblocks/core/trpc"
+import { Toaster } from "@ledgerblocks/ui/components/toast"
+import { MOBILE_BREAKPOINT } from "@ledgerblocks/ui/constants"
+import { isMobileAtom } from "@ledgerblocks/ui/store"
 import type { QueryClient } from "@tanstack/react-query"
 import {
    Outlet,
@@ -5,10 +9,6 @@ import {
    useMatches,
 } from "@tanstack/react-router"
 import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query"
-import type { AppRouter } from "@unfiddle/core/trpc"
-import { Toaster } from "@unfiddle/ui/components/toast"
-import { MOBILE_BREAKPOINT } from "@unfiddle/ui/constants"
-import { isMobileAtom } from "@unfiddle/ui/store"
 import { useSetAtom } from "jotai"
 import * as React from "react"
 
@@ -48,7 +48,9 @@ function Meta({ children }: { children: React.ReactNode }) {
    const meta = matches.at(-1)?.meta?.find((meta) => meta?.title)
 
    React.useEffect(() => {
-      document.title = [meta?.title ?? "Unfiddle"].filter(Boolean).join(" · ")
+      document.title = [meta?.title ?? "ledgerblocks"]
+         .filter(Boolean)
+         .join(" · ")
    }, [meta])
 
    return children

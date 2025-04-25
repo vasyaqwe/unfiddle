@@ -1,4 +1,4 @@
 {
-   "name": "@unfiddle/tsconfig",
+   "name": "@ledgerblocks/tsconfig",
    "files": ["*.json"]
 }

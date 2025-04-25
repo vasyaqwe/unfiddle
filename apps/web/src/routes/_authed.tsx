@@ -2,9 +2,9 @@ import { CACHE_FOREVER } from "@/api"
 import { BottomNavigation } from "@/routes/-components/bottom-navigation"
 import { Sidebar } from "@/routes/-components/sidebar"
 import { trpc } from "@/trpc"
+import { Logo } from "@ledgerblocks/ui/components/logo"
+import { Shimmer } from "@ledgerblocks/ui/components/shimmer"
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
-import { Logo } from "@unfiddle/ui/components/logo"
-import { Shimmer } from "@unfiddle/ui/components/shimmer"
 
 export const Route = createFileRoute("/_authed")({
    component: RouteComponent,
