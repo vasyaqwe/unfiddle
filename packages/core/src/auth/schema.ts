@@ -1,61 +1,60 @@
-import { OAUTH_PROVIDERS } from "@unfiddle/core/auth/constants"
 import { d } from "@unfiddle/core/database"
-import { user } from "@unfiddle/core/user/schema"
-import { relations } from "drizzle-orm"
 
-export const oauthAccount = d.table(
-   "oauth_account",
+export const user = d.table(
+   "user",
    {
-      userId: d
-         .text()
-         .notNull()
-         .references(() => user.id, { onDelete: "cascade" }),
-      providerId: d
-         .text({
-            enum: OAUTH_PROVIDERS,
-         })
-         .notNull(),
-      providerUserId: d.text().notNull().unique(),
-      ...d.timestamps,
+      id: d.id("user"),
+      name: d.text().notNull(),
+      email: d.text().notNull(),
+      emailVerified: d.integer({ mode: "boolean" }).notNull(),
+      image: d.text(),
+      createdAt: d.integer({ mode: "timestamp" }).notNull(),
+      updatedAt: d.integer({ mode: "timestamp" }).notNull(),
    },
-   (table) => [
-      d.primaryKey({ columns: [table.providerId, table.providerUserId] }),
-   ],
+   (table) => [d.uniqueIndex("user_email_idx").on(table.email)],
 )
 
-export const oauthAccountRelations = relations(oauthAccount, ({ one }) => ({
-   user: one(user, {
-      fields: [oauthAccount.userId],
-      references: [user.id],
+const userId = d
+   .text()
+   .notNull()
+   .references(() => user.id, { onDelete: "cascade" })
+
+export const session = d.table("session", {
+   id: d.text().primaryKey(),
+   expiresAt: d.integer({ mode: "timestamp" }).notNull(),
+   token: d.text().notNull().unique(),
+   createdAt: d.integer({ mode: "timestamp" }).notNull(),
+   updatedAt: d.integer({ mode: "timestamp" }).notNull(),
+   ipAddress: d.text(),
+   userAgent: d.text(),
+   userId,
+})
+
+export const account = d.table("account", {
+   id: d.text().primaryKey(),
+   accountId: d.text().notNull(),
+   providerId: d.text().notNull(),
+   userId,
+   accessToken: d.text(),
+   refreshToken: d.text(),
+   idToken: d.text(),
+   accessTokenExpiresAt: d.integer({
+      mode: "timestamp",
    }),
-}))
+   refreshTokenExpiresAt: d.integer({
+      mode: "timestamp",
+   }),
+   scope: d.text(),
+   password: d.text(),
+   createdAt: d.integer({ mode: "timestamp" }).notNull(),
+   updatedAt: d.integer({ mode: "timestamp" }).notNull(),
+})
 
-export const emailVerificationRequest = d.table(
-   "email_verification_request",
-   {
-      id: d.id("verification_request"),
-      userId: d
-         .text()
-         .notNull()
-         .references(() => user.id, { onDelete: "cascade" }),
-      email: d.text().notNull().unique(),
-      code: d.text().notNull(),
-      expiresAt: d.integer({ mode: "timestamp" }).notNull(),
-   },
-   (table) => [
-      d.index("email_verification_request_user_id_idx").on(table.userId),
-   ],
-)
-
-export const session = d.table(
-   "session",
-   {
-      id: d.text().primaryKey(),
-      expiresAt: d.integer({ mode: "timestamp" }).notNull(),
-      userId: d
-         .text()
-         .notNull()
-         .references(() => user.id, { onDelete: "cascade" }),
-   },
-   (table) => [d.index("session_user_id_idx").on(table.userId)],
-)
+export const verification = d.table("verification", {
+   id: d.text().primaryKey(),
+   identifier: d.text().notNull(),
+   value: d.text().notNull(),
+   expiresAt: d.integer({ mode: "timestamp" }).notNull(),
+   createdAt: d.integer({ mode: "timestamp" }),
+   updatedAt: d.integer({ mode: "timestamp" }),
+})

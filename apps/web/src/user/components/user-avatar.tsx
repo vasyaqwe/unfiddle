@@ -1,4 +1,4 @@
-import type { User } from "@unfiddle/core/user/types"
+import type { User } from "@unfiddle/core/auth/types"
 import { cn } from "@unfiddle/ui/utils"
 
 interface Props extends React.ComponentProps<"div"> {

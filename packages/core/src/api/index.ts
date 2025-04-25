@@ -1,6 +1,7 @@
 import { trpcServer } from "@hono/trpc-server"
 import { handleApiError } from "@unfiddle/core/api/error"
 import { createRouter } from "@unfiddle/core/api/utils"
+import { authClient } from "@unfiddle/core/auth"
 import { authRouter } from "@unfiddle/core/auth/api"
 import { authMiddleware } from "@unfiddle/core/auth/middleware"
 import { d } from "@unfiddle/core/database"
@@ -9,7 +10,6 @@ import type { TRPCContext } from "@unfiddle/core/trpc/context"
 import { clientEnv } from "@unfiddle/infra/env"
 import { logger } from "@unfiddle/infra/logger"
 import { cors } from "hono/cors"
-import { csrf } from "hono/csrf"
 import { logger as honoLogger } from "hono/logger"
 
 const app = createRouter()
@@ -17,8 +17,10 @@ const app = createRouter()
    .use(async (c, next) => {
       c.set("env", { ...c.env, ...clientEnv[c.env.ENVIRONMENT] })
       c.set("db", d.client(c))
+      c.set("auth", authClient(c))
       await next()
    })
+
    .onError(handleApiError)
 
 const base = createRouter()
@@ -38,10 +40,18 @@ const base = createRouter()
 
 const auth = createRouter()
    .use((c, next) => {
-      const handler = csrf({
+      const handler = cors({
+         credentials: true,
+         maxAge: 600,
          origin: [c.var.env.WEB_URL],
+         allowHeaders: ["Content-Type", "Authorization"],
+         allowMethods: ["POST", "GET", "OPTIONS"],
+         exposeHeaders: ["Content-Length"],
       })
       return handler(c, next)
+   })
+   .on(["POST", "GET"], "/auth/*", (c) => {
+      return c.var.auth.handler(c.req.raw)
    })
    .route("/", authRouter)
 
@@ -70,6 +80,7 @@ export const routes = app
             return {
                vars: c.var.env,
                db: c.var.db,
+               auth: c.var.auth,
                user: c.var.user,
                session: c.var.session,
                hono: c,

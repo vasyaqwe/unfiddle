@@ -84,7 +84,7 @@ export function HeaderUserMenu() {
             />
             <MenuItem
                destructive
-               onClick={() => auth.logout.mutate({})}
+               onClick={() => auth.signout.mutate({})}
             >
                <ArrowLeftStartOnRectangleIcon strokeWidth={2} />
                Log out

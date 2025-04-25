@@ -1,6 +1,7 @@
 const API_URL = {
    development: "http://localhost:8787",
-   production: "https://api.unfiddle.com",
+   production: "https://unfiddle-api.vasylpolishchuk22.workers.dev",
+   // production: "https://api.unfiddle.com",
 }
 
 export const clientEnv = {
@@ -29,6 +30,7 @@ export type ApiEnv = {
    RATE_LIMITER: RateLimit
    UNFIDDLE_KV: KVNamespace
    DATABASE: D1Database
+   BETTER_AUTH_SECRET: string
 }
 
 export type ClientEnv = (typeof clientEnv)[Environment]

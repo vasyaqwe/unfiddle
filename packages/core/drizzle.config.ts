@@ -11,6 +11,7 @@ export default process.env.CLOUDFLARE_API_TOKEN
         driver: "d1-http",
         schema: "./src/database/schema.ts",
         out: "./src/database/migrations",
+        casing: "snake_case",
         dbCredentials: {
            accountId: clientEnv[env].CLOUDFLARE_ACCOUNT_ID,
            databaseId: clientEnv[env].CLOUDFLARE_DATABASE_ID,
@@ -21,6 +22,7 @@ export default process.env.CLOUDFLARE_API_TOKEN
         dialect: "sqlite",
         schema: "./src/database/schema.ts",
         out: "./src/database/migrations",
+        casing: "snake_case",
         dbCredentials: {
            url: "../../apps/api/.wrangler/state/v3/d1/miniflare-D1DatabaseObject/38267c7b00d3f0baf34e62248a1bf8269eecbec2be4a8dbb0f990e9ed3ca7ffd.sqlite",
         },

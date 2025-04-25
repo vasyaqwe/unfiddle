@@ -68,6 +68,14 @@
                "id": "4c70a981bfa94dbd95496d146f93e94e"
             }
          ],
+         "d1_databases": [
+            {
+               "binding": "DATABASE",
+               "database_name": "unfiddle",
+               "database_id": "84c23660-f3ee-410d-b7eb-5b5bf25978ea",
+               "migrations_dir": "../../packages/core/src/database/migrations"
+            }
+         ],
          "vars": {
             "ENVIRONMENT": "production"
          }

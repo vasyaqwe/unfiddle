@@ -2,6 +2,7 @@
    "name": "@unfiddle/api",
    "scripts": {
       "dev": "wrangler dev --local src/index.ts --port 8787",
+      "migrate": "wrangler d1 migrations apply unfiddle --local",
       "deploy": "wrangler deploy --minify src/index.ts --env production",
       "typecheck": "tsc --noEmit"
    },

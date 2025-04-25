@@ -18,8 +18,8 @@ export function useAuth() {
       }),
    )
 
-   const logout = useMutation({
-      mutationFn: api.auth.logout.$post,
+   const signout = useMutation({
+      mutationFn: api.auth.signout.$post,
       onError: () => {
          queryClient.clear()
          navigate({ to: "/login" })
@@ -32,6 +32,6 @@ export function useAuth() {
 
    return {
       user: user.data,
-      logout,
+      signout,
    }
 }
