@@ -26,12 +26,48 @@
          }
       ]
    },
+   "kv_namespaces": [
+      {
+         "binding": "UNFIDDLE_KV",
+         "id": "4c70a981bfa94dbd95496d146f93e94e"
+      }
+   ],
+   "d1_databases": [
+      {
+         "binding": "DATABASE",
+         "database_name": "unfiddle",
+         "database_id": "84c23660-f3ee-410d-b7eb-5b5bf25978ea",
+         "migrations_dir": "../../packages/core/src/database/migrations"
+      }
+   ],
    "vars": {
       "ENVIRONMENT": "development"
    },
    "env": {
       "production": {
          "name": "unfiddle-api",
+         "ai": {
+            "binding": "AI"
+         },
+         "unsafe": {
+            "bindings": [
+               {
+                  "name": "RATE_LIMITER",
+                  "type": "ratelimit",
+                  "namespace_id": "1001",
+                  "simple": {
+                     "limit": 10,
+                     "period": 60
+                  }
+               }
+            ]
+         },
+         "kv_namespaces": [
+            {
+               "binding": "UNFIDDLE_KV",
+               "id": "4c70a981bfa94dbd95496d146f93e94e"
+            }
+         ],
          "vars": {
             "ENVIRONMENT": "production"
          }

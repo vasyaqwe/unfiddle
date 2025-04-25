@@ -48,24 +48,14 @@ const auth = createRouter()
 export const routes = app
    .use(
       "/trpc/*",
-      authMiddleware,
       (c, next) => {
          c.header("Content-Encoding", "Identity") //worker streaming fix
          const handler = cors({
-            credentials: true,
-            maxAge: 600,
-            origin: (origin) => {
-               const ALLOWED_ORIGINS = [c.var.env.WEB_URL]
-               if (!origin || origin === "") return null
-               return ALLOWED_ORIGINS.some((allowed) =>
-                  origin.endsWith(allowed),
-               )
-                  ? origin
-                  : null
-            },
+            origin: [c.var.env.WEB_URL],
          })
          return handler(c, next)
       },
+      authMiddleware,
       trpcServer({
          router: appRouter,
          onError: (opts) => {
