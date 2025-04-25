@@ -25,8 +25,8 @@ export const Route = createFileRoute("/_authed")({
    pendingComponent: () => (
       <main>
          <div className="absolute inset-0 m-auto flex size-fit items-center gap-2.5">
-            <Logo className="size-7" />
-            <Shimmer className="font-medium">Now unfiddleing..</Shimmer>
+            <Logo className="size-6" />
+            <Shimmer className="font-[450]">Завантаження...</Shimmer>
          </div>
       </main>
    ),

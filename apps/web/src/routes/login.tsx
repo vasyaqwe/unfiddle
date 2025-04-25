@@ -4,6 +4,7 @@ import { Link, createFileRoute, useNavigate } from "@tanstack/react-router"
 import { MIN_PASSWORD_LENGTH } from "@unfiddle/core/auth/constants"
 import { Button } from "@unfiddle/ui/components/button"
 import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
+import { Logo } from "@unfiddle/ui/components/logo"
 import { formData } from "@unfiddle/ui/utils"
 import { toast } from "sonner"
 
@@ -59,12 +60,14 @@ function RouteComponent() {
                   signin.mutate({ email: form.email, password: form.password })
                }}
             >
-               <h1 className="font-semibold text-foreground/75 text-lg">
+               <Logo />
+               <h1 className="mt-3 font-semibold text-foreground/75 text-lg">
                   Увійдіть в аккаунт
                </h1>
                <Field>
                   <FieldLabel className={"mt-4"}>Пошта</FieldLabel>
                   <FieldControl
+                     autoFocus
                      name="email"
                      type="email"
                      required

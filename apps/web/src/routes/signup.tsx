@@ -72,6 +72,7 @@ function RouteComponent() {
                <Field>
                   <FieldLabel className={"mt-4"}>Ім'я</FieldLabel>
                   <FieldControl
+                     autoFocus
                      name="name"
                      required
                      placeholder="Як вас звати?"

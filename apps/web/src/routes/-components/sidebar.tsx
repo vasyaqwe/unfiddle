@@ -2,7 +2,7 @@ import { useAuth } from "@/auth/hooks"
 import { UserAvatar } from "@/user/components/user-avatar"
 import { HomeIcon } from "@heroicons/react/24/solid"
 import { Link } from "@tanstack/react-router"
-import { Button, button } from "@unfiddle/ui/components/button"
+import { Button } from "@unfiddle/ui/components/button"
 import {
    Menu,
    MenuItem,
@@ -10,26 +10,35 @@ import {
    MenuTrigger,
 } from "@unfiddle/ui/components/menu"
 import { ScrollArea } from "@unfiddle/ui/components/scroll-area"
-import { cn } from "@unfiddle/ui/utils"
 
 export function Sidebar() {
    const auth = useAuth()
 
    return (
       <aside className="z-[10] h-svh w-[15rem] max-md:hidden">
-         <div className="fixed flex h-full w-[15rem] flex-col border-neutral border-r shadow-xs">
+         <div className="fixed flex h-full w-[15rem] flex-col border-neutral border-r bg-primary-2/50 shadow-xs">
             <ScrollArea render={<nav className="p-4" />}>
                <ul className="space-y-1">
                   <li>
                      <Link
                         to={"/"}
-                        className={cn(
-                           button({ variant: "ghost" }),
-                           "group flex justify-start gap-2 px-2 font-medium text-base text-foreground/70 leading-none hover:text-foreground aria-[current=page]:text-foreground",
-                        )}
+                        className={
+                           "group flex h-[1.9rem] items-center justify-start gap-2 rounded-md border border-transparent px-2 text-base text-foreground/80 leading-none transition-all duration-100 hover:text-foreground aria-[current=page]:border-primary-3 aria-[current=page]:bg-primary-1 aria-[current=page]:text-foreground aria-[current=page]:shadow-xs"
+                        }
                      >
                         <HomeIcon className="size-5" />
-                        Home
+                        Головна
+                     </Link>
+                  </li>
+                  <li>
+                     <Link
+                        to={"/settings"}
+                        className={
+                           "group flex h-[1.9rem] items-center justify-start gap-2 rounded-md border border-transparent px-2 text-base text-foreground/80 leading-none transition-all duration-100 hover:text-foreground aria-[current=page]:border-primary-3 aria-[current=page]:bg-primary-1 aria-[current=page]:text-foreground aria-[current=page]:shadow-xs"
+                        }
+                     >
+                        <HomeIcon className="size-5" />
+                        Налаштування
                      </Link>
                   </li>
                </ul>
@@ -39,7 +48,7 @@ export function Sidebar() {
                   <MenuTrigger
                      render={
                         <Button
-                           className="w-full justify-start pl-1.5"
+                           className="w-full justify-start pl-1.5 [--active-color:var(--color-primary-1)]"
                            variant={"ghost"}
                         >
                            <UserAvatar user={auth.user} />

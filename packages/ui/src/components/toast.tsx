@@ -92,7 +92,7 @@ export function Toaster(props: React.ComponentProps<typeof Sonner>) {
                icon: "!absolute top-[0.75rem] left-4",
             },
             className:
-               "font-primary px-3 py-3 items-center gap-2 w-full shadow-md/7 flex select-none border border-primary-3 bg-primary-1 pointer-events-auto rounded-2xl",
+               "font-primary px-3 py-3 items-center gap-2 w-full shadow-md/7 flex select-none border border-primary-4 bg-primary-1 pointer-events-auto rounded-2xl",
          }}
          position="bottom-right"
          {...props}
