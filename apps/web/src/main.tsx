@@ -5,6 +5,7 @@ import { ErrorComponent } from "@/ui/components/error"
 import { QueryClientProvider } from "@tanstack/react-query"
 import { Link, RouterProvider, createRouter } from "@tanstack/react-router"
 import { button } from "@unfiddle/ui/components/button"
+import { Logo } from "@unfiddle/ui/components/logo"
 import { TooltipProvider } from "@unfiddle/ui/components/tooltip"
 import * as React from "react"
 import ReactDOM from "react-dom/client"
@@ -29,9 +30,10 @@ const router = createRouter({
 
 function NotFound() {
    return (
-      <div className="flex grow flex-col items-center justify-center pt-20 text-center md:pt-40">
-         <h1 className="mb-2 text-xl">Not found</h1>
-         <p className="mb-5 text-lg opacity-70">
+      <div className="flex grow flex-col items-center pt-20 text-center md:pt-40">
+         <Logo className="size-10" />
+         <h1 className="mt-4 mb-2 text-xl">Not found</h1>
+         <p className="mb-5 text-foreground/75">
             This page does not exist — <br /> it may have been moved or deleted.
          </p>
          <Link

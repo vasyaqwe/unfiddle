@@ -7,19 +7,23 @@ import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
 import { formData } from "@unfiddle/ui/utils"
 import { toast } from "sonner"
 
-export const Route = createFileRoute("/login")({
+export const Route = createFileRoute("/signup")({
    component: RouteComponent,
 })
 
 function RouteComponent() {
    const navigate = useNavigate()
 
-   const signin = useMutation({
-      mutationFn: async (json: { email: string; password: string }) => {
-         const res = await authClient.signIn.email({
+   const signup = useMutation({
+      mutationFn: async (json: {
+         email: string
+         password: string
+         name: string
+      }) => {
+         const res = await authClient.signUp.email({
+            name: json.name,
             email: json.email,
             password: json.password,
-            rememberMe: true,
          })
          if (res.error) throw res.error
       },
@@ -33,10 +37,8 @@ function RouteComponent() {
          statusText: string
       }) => {
          if (error.code === "INVALID_EMAIL")
-            return toast.error("Ой-ой!", { description: "Неправильна пошта" })
-         if (error.code === "INVALID_EMAIL_OR_PASSWORD")
             return toast.error("Ой-ой!", {
-               description: "Неправильна пошта або пароль",
+               description: "Уведіть правильну пошту",
             })
 
          toast.error("Ой-ой!", {
@@ -52,16 +54,29 @@ function RouteComponent() {
                onSubmit={async (e) => {
                   e.preventDefault()
                   const form = formData<{
+                     name: string
                      email: string
                      password: string
                   }>(e.target)
 
-                  signin.mutate({ email: form.email, password: form.password })
+                  signup.mutate({
+                     name: form.name,
+                     email: form.email,
+                     password: form.password,
+                  })
                }}
             >
                <h1 className="font-semibold text-foreground/75 text-lg">
-                  Увійдіть в аккаунт
+                  Створіть аккаунт
                </h1>
+               <Field>
+                  <FieldLabel className={"mt-4"}>Ім'я</FieldLabel>
+                  <FieldControl
+                     name="name"
+                     required
+                     placeholder="Як вас звати?"
+                  />
+               </Field>
                <Field>
                   <FieldLabel className={"mt-4"}>Пошта</FieldLabel>
                   <FieldControl
@@ -85,20 +100,20 @@ function RouteComponent() {
                   />
                </Field>
                <Button
-                  disabled={signin.isPending || signin.isSuccess}
-                  pending={signin.isPending || signin.isSuccess}
+                  disabled={signup.isPending || signup.isSuccess}
+                  pending={signup.isPending || signup.isSuccess}
                   size={"lg"}
                   className="mt-5 w-full"
                >
                   Увійти
                </Button>
                <p className="mt-5 text-foreground/60 text-sm">
-                  Не маєте аккаунта?{" "}
+                  Вже зареєстровані?{" "}
                   <Link
-                     to={"/signup"}
+                     to={"/login"}
                      className="transition-colors duration-75 hover:text-foreground/80"
                   >
-                     <u>Зареєструватись</u>
+                     <u>Увійти</u>
                   </Link>
                </p>
             </form>

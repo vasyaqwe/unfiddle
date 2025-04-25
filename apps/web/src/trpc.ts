@@ -20,7 +20,7 @@ export const queryClient = new QueryClient({
       },
       mutations: {
          onError: (error) =>
-            toast.error("Uh-oh!", {
+            toast.error("Ой-ой!", {
                description: error.message,
             }),
       },

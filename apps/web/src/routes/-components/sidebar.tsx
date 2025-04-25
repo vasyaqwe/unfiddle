@@ -1,7 +1,14 @@
 import { useAuth } from "@/auth/hooks"
+import { UserAvatar } from "@/user/components/user-avatar"
 import { HomeIcon } from "@heroicons/react/24/solid"
 import { Link } from "@tanstack/react-router"
-import { button } from "@unfiddle/ui/components/button"
+import { Button, button } from "@unfiddle/ui/components/button"
+import {
+   Menu,
+   MenuItem,
+   MenuPopup,
+   MenuTrigger,
+} from "@unfiddle/ui/components/menu"
 import { ScrollArea } from "@unfiddle/ui/components/scroll-area"
 import { cn } from "@unfiddle/ui/utils"
 
@@ -27,7 +34,28 @@ export function Sidebar() {
                   </li>
                </ul>
             </ScrollArea>
-            <div className="mt-auto p-4 pt-1">{auth.user.name}</div>
+            <div className="mt-auto p-4 pt-1">
+               <Menu>
+                  <MenuTrigger
+                     render={
+                        <Button
+                           className="w-full justify-start pl-1.5"
+                           variant={"ghost"}
+                        >
+                           <UserAvatar user={auth.user} />
+                           <span className="line-clamp-1 pb-px text-sm">
+                              {auth.user.email}
+                           </span>
+                        </Button>
+                     }
+                  />
+                  <MenuPopup className={"!min-w-(--anchor-width)"}>
+                     <MenuItem onClick={() => auth.signout.mutate()}>
+                        Вийти з аккаунту
+                     </MenuItem>
+                  </MenuPopup>
+               </Menu>
+            </div>
          </div>
       </aside>
    )

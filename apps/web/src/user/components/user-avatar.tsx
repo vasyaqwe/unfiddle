@@ -1,5 +1,6 @@
 import type { User } from "@unfiddle/core/auth/types"
 import { cn } from "@unfiddle/ui/utils"
+import Avatar from "boring-avatars"
 
 interface Props extends React.ComponentProps<"div"> {
    user: Omit<User, "createdAt" | "updatedAt">
@@ -10,13 +11,9 @@ export function UserAvatar({
    user,
    className,
    children,
-   size = 24,
+   size = 20,
    ...props
 }: Props) {
-   const name = user.name
-      ? user.name[0]?.toUpperCase()
-      : (user.email?.[0]?.toUpperCase() ?? "?")
-
    return (
       <span
          style={
@@ -25,7 +22,7 @@ export function UserAvatar({
             } as never
          }
          className={cn(
-            "relative block size-(--avatar-size) shrink-0",
+            "relative block size-(--avatar-size) shrink-0 rounded-full shadow-xs",
             className,
          )}
          {...props}
@@ -33,22 +30,17 @@ export function UserAvatar({
          {user.image ? (
             <img
                src={user.image}
-               alt={name}
+               alt={""}
                referrerPolicy="no-referrer"
                className={
                   "grid h-[inherit] w-full place-content-center rounded-full object-cover object-top"
                }
             />
          ) : (
-            <span
-               style={{ fontSize: "calc(var(--avatar-size) * 0.55)" }}
-               className={cn(
-                  "grid size-full place-items-center rounded-full bg-[#c06d25] font-medium text-white leading-[0] shadow-xs",
-                  className,
-               )}
-            >
-               {name}
-            </span>
+            <Avatar
+               name={user.id}
+               size={size}
+            />
          )}
          {children}
       </span>

@@ -46,25 +46,21 @@
    --color-foreground: var(--color-primary-12);
    --color-neutral: var(--color-primary-3);
 
-   --font-primary: "manrope", -apple-system, BlinkMacSystemFont, "Segoe UI",
+   --font-primary: "inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
       Roboto, Helvetica, Arial, sans-serif;
-
-   --font-weight-normal: 475;
-   --font-weight-medium: 550;
 
    --text-xs: 0.7825rem;
    --text-base: 0.94rem;
    --text-base--line-height: 1.4rem;
 
-   --radius-scale: 0.1rem;
-   --radius-xs: calc(1.25 * var(--radius-scale));
-   --radius-sm: calc(2.75 * var(--radius-scale));
-   --radius-md: calc(3.75 * var(--radius-scale));
-   --radius-lg: calc(4.5 * var(--radius-scale));
-   --radius-xl: calc(5 * var(--radius-scale));
-   --radius-2xl: calc(6 * var(--radius-scale));
+   --radius-xs: 0.2125rem;
+   --radius-sm: 0.3625rem;
+   --radius-md: 0.425rem;
+   --radius-lg: 0.5rem;
+   --radius-xl: 0.625rem;
+   --radius-2xl: 0.75rem;
+   --radius-3xl: 0.825rem;
 
-   --popup-radius: 0.5rem;
    --popup-padding: 0.25rem;
 
    --container-max-width: 700px;
@@ -158,17 +154,12 @@
    display: none !important;
 }
 
-body {
-   letter-spacing: -0.75%;
-}
-
 h1,
 h2,
 h3,
 h4 {
    text-wrap: balance;
-   letter-spacing: -2%;
-   font-weight: 600;
+   font-weight: 550;
 }
 
 p:not(.prose) {

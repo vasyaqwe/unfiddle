@@ -87,12 +87,12 @@ export function Toaster(props: React.ComponentProps<typeof Sonner>) {
          toastOptions={{
             unstyled: true,
             classNames: {
-               title: "!text-base !font-semibold ml-5.5 -mt-[3px]",
+               title: "!text-base !font-[550] ml-5.5 -mt-[3px]",
                description: "!text-sm line-clamp-2 mt-0.5 !font-normal",
                icon: "!absolute top-[0.75rem] left-4",
             },
             className:
-               "font-primary px-3 py-3 items-center gap-2 w-full shadow-md/7 flex select-none border border-primary-3 bg-primary-1 pointer-events-auto rounded-xl",
+               "font-primary px-3 py-3 items-center gap-2 w-full shadow-md/7 flex select-none border border-primary-3 bg-primary-1 pointer-events-auto rounded-2xl",
          }}
          position="bottom-right"
          {...props}

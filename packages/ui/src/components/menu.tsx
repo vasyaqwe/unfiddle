@@ -14,7 +14,7 @@ export const MenuPositioner = MenuPrimitive.Positioner
 export const MenuArrow = MenuPrimitive.Arrow
 
 export const MENU_ITEM_STYLES = {
-   base: "cursor-pointer text-base md:text-sm h-10 md:h-8 flex items-center select-none gap-2 rounded-[calc(var(--popup-radius)-var(--popup-padding))] px-2 py-[5px] focus-visible:border-transparent [&>svg]:size-[22px] md:[&>svg]:size-5 [&>svg]:text-primary-8 hover:[&>svg]:text-white focus:[&>svg]:text-white dark:[&>svg]:text-primary-11 hover:bg-primary-11 hover:shadow-sm focus-visible:outline-none focus-visible:outline-hidden focus-visible:bg-primary-11 shadow-black/20 focus-visible:shadow-sm dark:hover:bg-primary-6 dark:focus-visible:bg-primary-6",
+   base: "cursor-pointer text-base h-9 md:h-[1.9rem] flex items-center select-none gap-2 rounded-[calc(var(--popup-radius)-var(--popup-padding))] px-2.5 focus-visible:border-transparent [&>svg]:size-[22px] md:[&>svg]:size-5 [&>svg]:text-primary-8 hover:[&>svg]:text-white focus:[&>svg]:text-white hover:bg-primary-10 hover:shadow-sm focus-visible:outline-none focus-visible:outline-hidden focus-visible:bg-primary-10 shadow-black/20 focus-visible:shadow-sm md:text-sm",
    destructive:
       "hover:bg-red-9 focus-visible:bg-red-9 dark:focus-visible:bg-red-9 dark:hover:bg-red-9",
 }
