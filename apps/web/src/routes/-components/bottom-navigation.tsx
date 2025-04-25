@@ -1,7 +1,4 @@
-import { HomeIcon } from "@heroicons/react/24/outline"
-import { Cog6ToothIcon } from "@heroicons/react/24/outline"
-import { HomeIcon as HomeIconSolid } from "@heroicons/react/24/solid"
-import { Cog6ToothIcon as Cog6ToothIconSolid } from "@heroicons/react/24/solid"
+import { Icons } from "@ledgerblocks/ui/components/icons"
 import { Link } from "@tanstack/react-router"
 
 export function BottomNavigation() {
@@ -13,19 +10,19 @@ export function BottomNavigation() {
                   to={"/"}
                   className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-foreground/60 text-xs aria-[current=page]:text-foreground"
                >
-                  <HomeIcon className="size-6 shrink-0 group-aria-[current=page]:hidden" />
-                  <HomeIconSolid className="hidden size-6 shrink-0 group-aria-[current=page]:block" />
-                  Home
+                  <Icons.home className="size-6 shrink-0 group-aria-[current=page]:hidden" />
+                  <Icons.homeSolid className="hidden size-6 shrink-0 group-aria-[current=page]:block" />
+                  Головна
                </Link>
             </li>
             <li>
                <Link
-                  to={"/settings"}
+                  to={"/team"}
                   className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-foreground/60 text-xs aria-[current=page]:text-foreground"
                >
-                  <Cog6ToothIcon className="size-6 shrink-0 group-aria-[current=page]:hidden" />
-                  <Cog6ToothIconSolid className="hidden size-6 shrink-0 group-aria-[current=page]:block" />
-                  Settings
+                  <Icons.users className="size-6 shrink-0 group-aria-[current=page]:hidden" />
+                  <Icons.usersSolid className="hidden size-6 shrink-0 group-aria-[current=page]:block" />
+                  Команда
                </Link>
             </li>
          </ul>

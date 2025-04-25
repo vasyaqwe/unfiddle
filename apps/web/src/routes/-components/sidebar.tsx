@@ -1,7 +1,7 @@
 import { useAuth } from "@/auth/hooks"
 import { UserAvatar } from "@/user/components/user-avatar"
-import { HomeIcon } from "@heroicons/react/24/solid"
 import { Button } from "@ledgerblocks/ui/components/button"
+import { Icons } from "@ledgerblocks/ui/components/icons"
 import {
    Menu,
    MenuItem,
@@ -16,29 +16,29 @@ export function Sidebar() {
 
    return (
       <aside className="z-[10] h-svh w-[15rem] max-md:hidden">
-         <div className="fixed flex h-full w-[15rem] flex-col border-neutral border-r bg-primary-2/50 shadow-xs">
+         <div className="fixed flex h-full w-[15rem] flex-col border-neutral border-r bg-primary-1 shadow-xs">
             <ScrollArea render={<nav className="p-4" />}>
                <ul className="space-y-1">
                   <li>
                      <Link
                         to={"/"}
                         className={
-                           "group flex h-[1.9rem] items-center justify-start gap-2 rounded-md border border-transparent px-2 text-base text-foreground/80 leading-none transition-all duration-100 hover:text-foreground aria-[current=page]:border-primary-3 aria-[current=page]:bg-primary-1 aria-[current=page]:text-foreground aria-[current=page]:shadow-xs"
+                           "group flex h-[1.9rem] items-center justify-start gap-2 rounded-md border border-transparent px-2 text-base text-foreground/80 leading-none transition-all duration-100 hover:text-foreground aria-[current=page]:border-primary-2 aria-[current=page]:bg-white aria-[current=page]:text-foreground aria-[current=page]:shadow-xs"
                         }
                      >
-                        <HomeIcon className="size-5" />
-                        Головна
+                        <Icons.home className="size-5" />
+                        <span className="pt-px"> Головна</span>
                      </Link>
                   </li>
                   <li>
                      <Link
-                        to={"/settings"}
+                        to={"/team"}
                         className={
-                           "group flex h-[1.9rem] items-center justify-start gap-2 rounded-md border border-transparent px-2 text-base text-foreground/80 leading-none transition-all duration-100 hover:text-foreground aria-[current=page]:border-primary-3 aria-[current=page]:bg-primary-1 aria-[current=page]:text-foreground aria-[current=page]:shadow-xs"
+                           "group flex h-[1.9rem] items-center justify-start gap-2 rounded-md border border-transparent px-2 text-base text-foreground/80 leading-none transition-all duration-100 hover:text-foreground aria-[current=page]:border-primary-2 aria-[current=page]:bg-white aria-[current=page]:text-foreground aria-[current=page]:shadow-xs"
                         }
                      >
-                        <HomeIcon className="size-5" />
-                        Налаштування
+                        <Icons.users className="size-5" />
+                        <span className="pt-px"> Команда</span>
                      </Link>
                   </li>
                </ul>
@@ -48,7 +48,7 @@ export function Sidebar() {
                   <MenuTrigger
                      render={
                         <Button
-                           className="w-full justify-start pl-1.5 [--active-color:var(--color-primary-3)]"
+                           className="w-full justify-start pl-1.5 [--active-color:var(--color-primary-2)]"
                            variant={"ghost"}
                         >
                            <UserAvatar user={auth.user} />

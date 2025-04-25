@@ -1,12 +1,8 @@
 import { useAuth } from "@/auth/hooks"
 import { BackButton } from "@/ui/components/back-button"
 import { UserAvatar } from "@/user/components/user-avatar"
-import {
-   ArrowLeftIcon,
-   ArrowLeftStartOnRectangleIcon,
-   Cog6ToothIcon,
-} from "@heroicons/react/24/outline"
 import { Button } from "@ledgerblocks/ui/components/button"
+import { Icons } from "@ledgerblocks/ui/components/icons"
 import {
    Menu,
    MenuItem,
@@ -14,7 +10,6 @@ import {
    MenuTrigger,
 } from "@ledgerblocks/ui/components/menu"
 import { cn } from "@ledgerblocks/ui/utils"
-import { Link } from "@tanstack/react-router"
 
 export function Header({
    className,
@@ -46,7 +41,7 @@ export function HeaderBackButton({
          aria-label="Go back"
          {...props}
       >
-         <ArrowLeftIcon
+         <Icons.arrowLeft
             className="size-6"
             strokeWidth={2}
          />
@@ -75,18 +70,10 @@ export function HeaderUserMenu() {
          />
          <MenuPopup align="end">
             <MenuItem
-               render={
-                  <Link to="/settings">
-                     <Cog6ToothIcon />
-                     Settings
-                  </Link>
-               }
-            />
-            <MenuItem
                destructive
                onClick={() => auth.signout.mutate()}
             >
-               <ArrowLeftStartOnRectangleIcon strokeWidth={2} />
+               <Icons.exit />
                Log out
             </MenuItem>
          </MenuPopup>

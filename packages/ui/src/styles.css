@@ -4,30 +4,19 @@
 @theme default {
    --sab: env(safe-area-inset-bottom);
 
-   /* --color-primary-1: #fafafa;
-   --color-primary-2: hsl(220, 5%, 94%);C
-   --color-primary-3: hsl(220, 5%, 86%);
-   --color-primary-4: #c2c3c6;
-   --color-primary-5: #adafb3;
-   --color-primary-6: #999ca0;
-   --color-primary-7: #85888d;
-   --color-primary-8: #717478;
-   --color-primary-9: #5d6064;
-   --color-primary-10: #484b4f;
-   --color-primary-11: #343639;
-   --color-primary-12: #212224; */
-   --color-primary-1: #fefffc;
-   --color-primary-2: #f1f3f0;
-   --color-primary-3: hsl(90, 8%, 89%);
-   --color-primary-4: #d9dbd7;
-   --color-primary-5: #ccceca;
-   --color-primary-6: #bfc1bd;
-   --color-primary-7: #b1b3af;
-   --color-primary-8: #a4a6a2;
-   --color-primary-9: #82837f;
-   --color-primary-10: #61625f;
-   --color-primary-11: #414240;
-   --color-primary-12: hsl(90, 2%, 8%);
+   --color-primary: hsl(240, 5%, 100%);
+   --color-primary-1: hsl(240, 5%, 97%);
+   --color-primary-2: hsl(240, 5%, 90%);
+   --color-primary-3: hsl(240, 5%, 83%);
+   --color-primary-4: hsl(240, 5%, 78%);
+   --color-primary-5: hsl(240, 5%, 69%);
+   --color-primary-6: hsl(240, 5%, 60%);
+   --color-primary-7: hsl(240, 5%, 50%);
+   --color-primary-8: hsl(240, 5%, 42%);
+   --color-primary-9: hsl(240, 5%, 34%);
+   --color-primary-10: hsl(240, 5%, 26%);
+   --color-primary-11: hsl(240, 5%, 12%);
+   --color-primary-12: hsl(240, 5%, 9%);
 
    --color-accent-1: hsl(217, 91%, 90%);
    --color-accent-2: hsl(217, 91%, 80%);
@@ -42,9 +31,9 @@
    --color-accent-11: hsl(217, 91%, 30%);
    --color-accent-12: hsl(217, 91%, 20%);
 
-   --color-background: var(--color-primary-1);
+   --color-background: #ffffff;
    --color-foreground: var(--color-primary-12);
-   --color-neutral: var(--color-primary-3);
+   --color-neutral: var(--color-primary-2);
 
    --font-primary: "inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
       Roboto, Helvetica, Arial, sans-serif;

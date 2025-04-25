@@ -15,6 +15,7 @@ import { Route as SignupImport } from './routes/signup'
 import { Route as LoginImport } from './routes/login'
 import { Route as AuthedImport } from './routes/_authed'
 import { Route as AuthedIndexImport } from './routes/_authed/index'
+import { Route as AuthedTeamImport } from './routes/_authed/team'
 import { Route as AuthedSettingsImport } from './routes/_authed/settings'
 
 // Create/Update Routes
@@ -39,6 +40,12 @@ const AuthedRoute = AuthedImport.update({
 const AuthedIndexRoute = AuthedIndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AuthedRoute,
+} as any)
+
+const AuthedTeamRoute = AuthedTeamImport.update({
+  id: '/team',
+  path: '/team',
   getParentRoute: () => AuthedRoute,
 } as any)
 
@@ -80,6 +87,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedSettingsImport
       parentRoute: typeof AuthedImport
     }
+    '/_authed/team': {
+      id: '/_authed/team'
+      path: '/team'
+      fullPath: '/team'
+      preLoaderRoute: typeof AuthedTeamImport
+      parentRoute: typeof AuthedImport
+    }
     '/_authed/': {
       id: '/_authed/'
       path: '/'
@@ -94,11 +108,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthedRouteChildren {
   AuthedSettingsRoute: typeof AuthedSettingsRoute
+  AuthedTeamRoute: typeof AuthedTeamRoute
   AuthedIndexRoute: typeof AuthedIndexRoute
 }
 
 const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedSettingsRoute: AuthedSettingsRoute,
+  AuthedTeamRoute: AuthedTeamRoute,
   AuthedIndexRoute: AuthedIndexRoute,
 }
 
@@ -110,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/settings': typeof AuthedSettingsRoute
+  '/team': typeof AuthedTeamRoute
   '/': typeof AuthedIndexRoute
 }
 
@@ -117,6 +134,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/settings': typeof AuthedSettingsRoute
+  '/team': typeof AuthedTeamRoute
   '/': typeof AuthedIndexRoute
 }
 
@@ -126,20 +144,22 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/_authed/settings': typeof AuthedSettingsRoute
+  '/_authed/team': typeof AuthedTeamRoute
   '/_authed/': typeof AuthedIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/login' | '/signup' | '/settings' | '/'
+  fullPaths: '' | '/login' | '/signup' | '/settings' | '/team' | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/signup' | '/settings' | '/'
+  to: '/login' | '/signup' | '/settings' | '/team' | '/'
   id:
     | '__root__'
     | '/_authed'
     | '/login'
     | '/signup'
     | '/_authed/settings'
+    | '/_authed/team'
     | '/_authed/'
   fileRoutesById: FileRoutesById
 }
@@ -175,6 +195,7 @@ export const routeTree = rootRoute
       "filePath": "_authed.tsx",
       "children": [
         "/_authed/settings",
+        "/_authed/team",
         "/_authed/"
       ]
     },
@@ -186,6 +207,10 @@ export const routeTree = rootRoute
     },
     "/_authed/settings": {
       "filePath": "_authed/settings.tsx",
+      "parent": "/_authed"
+    },
+    "/_authed/team": {
+      "filePath": "_authed/team.tsx",
       "parent": "/_authed"
     },
     "/_authed/": {
