@@ -86,7 +86,7 @@ export function MenuCheckboxItem({
 export function MenuPopup({
    className,
    children,
-   sideOffset = 7,
+   sideOffset = 4,
    ...props
 }: React.ComponentProps<typeof MenuPrimitive.Positioner>) {
    return (

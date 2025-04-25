@@ -48,7 +48,7 @@ export function Sidebar() {
                   <MenuTrigger
                      render={
                         <Button
-                           className="w-full justify-start pl-1.5 [--active-color:var(--color-primary-1)]"
+                           className="w-full justify-start pl-1.5 [--active-color:var(--color-primary-3)]"
                            variant={"ghost"}
                         >
                            <UserAvatar user={auth.user} />

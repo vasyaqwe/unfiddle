@@ -1,7 +1,11 @@
 import { authClient } from "@/auth"
 import { MIN_PASSWORD_LENGTH } from "@ledgerblocks/core/auth/constants"
 import { Button } from "@ledgerblocks/ui/components/button"
-import { Field, FieldControl, FieldLabel } from "@ledgerblocks/ui/components/field"
+import {
+   Field,
+   FieldControl,
+   FieldLabel,
+} from "@ledgerblocks/ui/components/field"
 import { Logo } from "@ledgerblocks/ui/components/logo"
 import { formData } from "@ledgerblocks/ui/utils"
 import { useMutation } from "@tanstack/react-query"
@@ -95,11 +99,11 @@ function RouteComponent() {
                >
                   Увійти
                </Button>
-               <p className="mt-5 text-foreground/60 text-sm">
+               <p className="mt-5 text-foreground/75 text-sm">
                   Не маєте аккаунта?{" "}
                   <Link
                      to={"/signup"}
-                     className="transition-colors duration-75 hover:text-foreground/80"
+                     className="transition-colors duration-75 hover:text-foreground"
                   >
                      <u>Зареєструватись</u>
                   </Link>
