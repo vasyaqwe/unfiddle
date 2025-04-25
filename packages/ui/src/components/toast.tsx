@@ -10,7 +10,7 @@ export function Toaster(props: React.ComponentProps<typeof Sonner>) {
                <svg
                   viewBox="0 0 14 14"
                   fill="none"
-                  className="text-accent-6"
+                  className="!size-4 text-green-600"
                >
                   <circle
                      cx="7"
@@ -42,12 +42,10 @@ export function Toaster(props: React.ComponentProps<typeof Sonner>) {
             ),
             error: (
                <svg
-                  width="20"
-                  height="20"
                   viewBox="0 0 20 20"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
-                  className="text-red-700"
+                  className="!size-4 text-red-700"
                >
                   <circle
                      cx="10"
@@ -88,8 +86,13 @@ export function Toaster(props: React.ComponentProps<typeof Sonner>) {
          }}
          toastOptions={{
             unstyled: true,
+            classNames: {
+               title: "!text-base !font-semibold ml-5.5 -mt-[3px]",
+               description: "!text-sm line-clamp-2 mt-0.5 !font-normal",
+               icon: "!absolute top-[0.75rem] left-4",
+            },
             className:
-               "font-primary px-4 py-3 items-center gap-2 w-full shadow-lg flex select-none border border-primary-3 bg-primary-1 text-base pointer-events-auto rounded-xl",
+               "font-primary px-3 py-3 items-center gap-2 w-full shadow-md/7 flex select-none border border-primary-3 bg-primary-1 pointer-events-auto rounded-xl",
          }}
          position="bottom-right"
          {...props}

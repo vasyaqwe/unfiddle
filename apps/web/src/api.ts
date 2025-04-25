@@ -5,9 +5,12 @@ import { type ClientResponse, hc } from "hono/client"
 import type { StatusCode } from "hono/utils/http-status"
 
 export const api = hc<ApiRoutes>(env.API_URL, {
-   init: {
-      credentials: "include",
-   },
+   fetch: ((input, init) => {
+      return fetch(input, {
+         ...init,
+         credentials: "include",
+      })
+   }) satisfies typeof fetch,
 })
 
 type HonoResponse<T> = Promise<ClientResponse<T, StatusCode, "json">>

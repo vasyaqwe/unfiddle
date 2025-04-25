@@ -20,7 +20,6 @@ const app = createRouter()
       c.set("auth", authClient(c))
       await next()
    })
-
    .onError(handleApiError)
 
 const base = createRouter()
@@ -50,7 +49,7 @@ const auth = createRouter()
       })
       return handler(c, next)
    })
-   .on(["POST", "GET"], "/auth/*", (c) => {
+   .on(["POST", "GET"], "*", (c) => {
       return c.var.auth.handler(c.req.raw)
    })
    .route("/", authRouter)

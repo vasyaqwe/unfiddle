@@ -1,4 +1,5 @@
-import { CACHE_FOREVER, api } from "@/api"
+import { CACHE_FOREVER } from "@/api"
+import { authClient } from "@/auth"
 import { trpc } from "@/trpc"
 import {
    useMutation,
@@ -19,7 +20,10 @@ export function useAuth() {
    )
 
    const signout = useMutation({
-      mutationFn: api.auth.signout.$post,
+      mutationFn: async () => {
+         const res = await authClient.signOut()
+         if (res.error) throw res.error
+      },
       onError: () => {
          queryClient.clear()
          navigate({ to: "/login" })

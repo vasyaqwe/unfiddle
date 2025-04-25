@@ -36,6 +36,7 @@ function RootComponent() {
 
    return (
       <Meta>
+         {/* <Toolbar /> */}
          <Toaster />
          <Outlet />
       </Meta>

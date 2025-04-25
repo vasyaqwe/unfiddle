@@ -34,7 +34,7 @@ export function Field({
 }: React.ComponentProps<typeof FieldPrimitive.Root>) {
    return (
       <FieldPrimitive.Root
-         className={cn("flex w-full flex-col items-start gap-1", className)}
+         className={cn("flex w-full flex-col items-start", className)}
          {...props}
       />
    )

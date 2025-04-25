@@ -1,4 +1,6 @@
 import { CACHE_FOREVER } from "@/api"
+import { BottomNavigation } from "@/routes/-components/bottom-navigation"
+import { Sidebar } from "@/routes/-components/sidebar"
 import { trpc } from "@/trpc"
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
 import { Logo } from "@unfiddle/ui/components/logo"
@@ -32,14 +34,18 @@ export const Route = createFileRoute("/_authed")({
 
 function RouteComponent() {
    return (
-      <div className="flex grow flex-col pt-4 pb-14 md:pb-18 lg:pt-6">
-         <p className="flex items-center gap-2.5 px-4 font-semibold text-lg lg:px-6">
-            <Logo className="size-9 drop-shadow-md/8" />
-            Unfiddle
-         </p>
-         <main className="flex grow flex-col">
-            <Outlet />
+      <>
+         <Sidebar />
+         <main
+            className={
+               "flex h-[calc(100svh-var(--bottom-navigation-height))] md:h-svh md:grow"
+            }
+         >
+            <div className={"relative flex grow flex-col"}>
+               <Outlet />
+            </div>
          </main>
-      </div>
+         <BottomNavigation />
+      </>
    )
 }

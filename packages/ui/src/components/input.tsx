@@ -3,15 +3,14 @@ import { type VariantProps, cva } from "class-variance-authority"
 import { cn } from "../utils"
 
 export const input = cva(
-   "w-full outline-hidden transition-[box-shadow] duration-75 placeholder:text-foreground/50",
+   "w-full outline-hidden transition-colors duration-100 placeholder:text-foreground/50",
    {
       variants: {
          variant: {
-            default:
-               "border border-transparent bg-primary-2 focus-visible:shadow-[inset_0_0_0_1px_var(--color-primary-4)]",
+            default: "border-primary-5 border-b focus:border-primary-7",
          },
          size: {
-            md: "h-10 rounded-xl px-3 text-base md:h-9",
+            md: "h-12 text-base md:h-10",
          },
       },
       defaultVariants: {

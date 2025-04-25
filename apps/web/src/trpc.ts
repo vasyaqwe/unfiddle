@@ -9,11 +9,6 @@ import {
 import type { AppRouter } from "@unfiddle/core/trpc"
 import { toast } from "sonner"
 
-const truncate = (str: string, maxLength: number) => {
-   if (str.length <= maxLength) return str
-   return `${str.slice(0, maxLength)}...`
-}
-
 export const { TRPCProvider, useTRPC, useTRPCClient } =
    createTRPCContext<AppRouter>()
 
@@ -25,7 +20,9 @@ export const queryClient = new QueryClient({
       },
       mutations: {
          onError: (error) =>
-            toast.error(env.DEV ? error.message : truncate(error.message, 70)),
+            toast.error("Uh-oh!", {
+               description: error.message,
+            }),
       },
    },
    // handle hono RPC errors

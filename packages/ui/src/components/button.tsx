@@ -6,20 +6,21 @@ import { Loading } from "./loading"
 export const button = cva(
    [
       "inline-flex items-center justify-center whitespace-nowrap text-[0.95rem] leading-none",
-      "relative cursor-pointer rounded-full border border-transparent transition-all duration-75 disabled:opacity-75",
+      "relative cursor-pointer border border-transparent transition-all duration-100 disabled:opacity-75",
    ],
    {
       variants: {
          variant: {
             primary:
-               "bg-gradient-to-t from-accent-9 to-accent-7 font-[400] text-shadow-md/7 shadow-xs hover:from-accent-10 hover:to-accent-8",
-            secondary: "bg-primary-2 hover:bg-primary-3",
-            ghost: "bg-transparent hover:bg-primary-1 aria-[current=page]:bg-primary-1",
+               "bg-accent-6 font-[400] text-shadow-md shadow-[inset_0_-2.5px_1px_0_var(--tw-shadow-color,rgb(0_0_0_/_0.2)),0_1px_3px_0_var(--tw-shadow-color,_rgb(0_0_0_/_0.1)),_0_1px_2px_-1px_var(--tw-shadow-color,_rgb(0_0_0_/_0.1))] hover:bg-accent-5 active:bg-accent-6",
+            secondary:
+               "border border-primary-5 bg-primary-3 text-shadow-xs shadow-[inset_0_-1.5px_1px_0_var(--tw-shadow-color,rgb(0_0_0_/_0.1)),0_1px_2px_0_var(--tw-shadow-color,_rgb(0_0_0_/_0.04)),_0_1px_2px_-1px_var(--tw-shadow-color,_rgb(0_0_0_/_0.04))] hover:border-primary-4 hover:bg-primary-2 active:bg-primary-3 has-[+dialog[open]]:border-primary-4 has-[+dialog[open]]:bg-primary-2",
+            ghost: "bg-transparent hover:bg-primary-2 aria-[current=page]:bg-primary-2",
          },
          size: {
-            sm: "h-8 px-3 md:h-7",
-            md: "h-9 px-3.5 md:h-8",
-            lg: "h-11 px-4 md:h-10",
+            sm: "h-9 rounded-md px-2 md:h-7",
+            md: "h-9 rounded-lg px-2.5 md:h-[1.9rem]",
+            lg: "h-10 rounded-xl px-3 md:h-[2.1rem]",
          },
          kind: {
             default: "gap-1.5",
