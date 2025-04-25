@@ -1,5 +1,6 @@
 import { useAuth } from "@/auth/hooks"
 import { useEventListener } from "@/interactions/use-event-listener"
+import { MainScrollArea } from "@/layout/components/main"
 import { createFileRoute } from "@tanstack/react-router"
 import * as React from "react"
 
@@ -29,8 +30,10 @@ function RouteComponent() {
    )
 
    return (
-      <div>
-         {greeting}, {auth.user.name}
-      </div>
+      <MainScrollArea>
+         <p className="font-semibold text-2xl">
+            {greeting}, {auth.user.name}
+         </p>
+      </MainScrollArea>
    )
 }

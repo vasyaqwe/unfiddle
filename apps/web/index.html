@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en" class="font-primary antialiased [--bottom-navigation-height:55px]">
+<html lang="en"
+  class="font-primary antialiased [--header-height:52px] md:[--header-height:46px] [--bottom-navigation-height:calc(54px+var(--sab))] overflow-hidden">
 
 <head>
   <meta charset="UTF-8" />
@@ -23,7 +24,8 @@
   <link rel="preload" href="/font/inter.ttf" as="font" type="font/ttf" crossorigin="anonymous" />
 </head>
 
-<body class="text-base font-normal bg-background text-foreground selection:bg-primary-10 selection:text-primary-1">
+<body
+  class="text-base font-normal bg-background md:bg-primary-1 text-foreground selection:bg-primary-10 selection:text-primary-1">
   <div id="app" class="Root isolate flex min-h-svh">
   </div>
   <script type="module" src="/src/main.tsx"></script>
