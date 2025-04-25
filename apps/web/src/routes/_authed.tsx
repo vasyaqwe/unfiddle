@@ -3,7 +3,6 @@ import { BottomNavigation } from "@/routes/-components/bottom-navigation"
 import { Sidebar } from "@/routes/-components/sidebar"
 import { trpc } from "@/trpc"
 import { Logo } from "@ledgerblocks/ui/components/logo"
-import { Shimmer } from "@ledgerblocks/ui/components/shimmer"
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/_authed")({
@@ -26,7 +25,12 @@ export const Route = createFileRoute("/_authed")({
       <main>
          <div className="absolute inset-0 m-auto flex size-fit items-center gap-2.5">
             <Logo className="size-6" />
-            <Shimmer className="font-[450]">Завантаження...</Shimmer>
+            <p
+               className="font-medium text-foreground/75 text-lg"
+               data-loading-ellipsis
+            >
+               ledgerblocks
+            </p>
          </div>
       </main>
    ),
