@@ -1,48 +1,48 @@
-import type { User } from "@ledgerblocks/core/auth/types"
+import type { Workspace } from "@ledgerblocks/core/workspace/types"
 import { cn } from "@ledgerblocks/ui/utils"
 import Avatar from "boring-avatars"
 
 interface Props extends React.ComponentProps<"div"> {
-   user: Omit<User, "createdAt" | "updatedAt">
+   workspace: Partial<Omit<Workspace, "createdAt" | "updatedAt">>
    size?: number
 }
 
-export function UserAvatar({
-   user,
+export function WorkspaceLogo({
+   workspace,
    className,
    children,
    size = 20,
    ...props
 }: Props) {
    return (
-      <span
+      <div
          style={
             {
                "--size": `${size}px`,
             } as never
          }
          className={cn(
-            "relative block size-(--size) shrink-0 rounded-full shadow-xs",
+            "relative size-(--size) shrink-0 overflow-hidden",
             className,
          )}
          {...props}
       >
-         {user.image ? (
+         {workspace.image ? (
             <img
-               src={user.image}
+               src={workspace.image}
                alt={""}
                referrerPolicy="no-referrer"
                className={
-                  "grid h-[inherit] w-full place-content-center rounded-full object-cover object-top"
+                  "grid h-[inherit] w-full place-content-center object-cover object-top"
                }
             />
          ) : (
             <Avatar
-               name={user.id}
+               name={workspace.id}
                size={size}
             />
          )}
          {children}
-      </span>
+      </div>
    )
 }

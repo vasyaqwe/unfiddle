@@ -4,6 +4,8 @@ import { MainScrollArea } from "@/layout/components/main"
 import {
    Header,
    HeaderTitle,
+   HeaderUserMenu,
+   HeaderWorkspaceMenu,
 } from "@/routes/_authed/$workspaceId/-components/header"
 import { createFileRoute } from "@tanstack/react-router"
 import * as React from "react"
@@ -36,7 +38,9 @@ function RouteComponent() {
    return (
       <>
          <Header>
+            <HeaderWorkspaceMenu />
             <HeaderTitle>{auth.workspace.name}</HeaderTitle>
+            <HeaderUserMenu />
          </Header>
          <MainScrollArea>
             <p className="font-semibold text-2xl">

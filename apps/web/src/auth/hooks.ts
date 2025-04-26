@@ -24,7 +24,10 @@ export function useAuth() {
    )
 
    const workspace = useSuspenseQuery(
-      trpc.workspace.one.queryOptions({ id: params.workspaceId }),
+      trpc.workspace.one.queryOptions(
+         { id: params.workspaceId },
+         { staleTime: CACHE_FOREVER },
+      ),
    )
 
    invariant(workspace.data, "workspace not found")

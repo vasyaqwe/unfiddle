@@ -63,8 +63,11 @@ export function SidebarContent() {
                   }
                />
                <MenuPopup className={"!min-w-(--anchor-width)"}>
-                  <MenuItem onClick={() => auth.signout.mutate()}>
-                     Вийти з аккаунту
+                  <MenuItem
+                     destructive
+                     onClick={() => auth.signout.mutate()}
+                  >
+                     <Icons.exit /> Вийти з аккаунту
                   </MenuItem>
                </MenuPopup>
             </Menu>

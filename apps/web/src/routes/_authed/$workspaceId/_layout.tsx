@@ -1,3 +1,4 @@
+import { CACHE_FOREVER } from "@/api"
 import { Main } from "@/layout/components/main"
 import { PendingComponent } from "@/layout/components/pending-component"
 import { Sidebar } from "@/layout/components/sidebar"
@@ -16,7 +17,10 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout")({
    beforeLoad: async ({ context, params }) => {
       const workspace = await context.queryClient
          .ensureQueryData(
-            trpc.workspace.one.queryOptions({ id: params.workspaceId }),
+            trpc.workspace.one.queryOptions(
+               { id: params.workspaceId },
+               { staleTime: CACHE_FOREVER },
+            ),
          )
          .catch(() => {
             throw redirect({ to: "/login" })

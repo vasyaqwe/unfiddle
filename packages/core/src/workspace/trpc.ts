@@ -2,7 +2,7 @@ import { t } from "@ledgerblocks/core/trpc/context"
 import { tryCatch } from "@ledgerblocks/core/try-catch"
 import { workspace, workspaceMember } from "@ledgerblocks/core/workspace/schema"
 import { TRPCError } from "@trpc/server"
-import { eq } from "drizzle-orm"
+import { and, eq } from "drizzle-orm"
 import { z } from "zod"
 
 export const workspaceRouter = t.router({
@@ -11,14 +11,14 @@ export const workspaceRouter = t.router({
       .query(async ({ ctx, input }) => {
          return (
             (await ctx.db.query.workspace.findFirst({
-               where: eq(workspace.id, input.id),
+               where: and(eq(workspace.id, input.id)),
             })) ?? null
          )
       }),
    memberships: t.procedure.query(async ({ ctx }) => {
       return await ctx.db.query.workspaceMember.findMany({
          where: eq(workspaceMember.userId, ctx.user.id),
-         with: { workspace: { columns: { id: true } } },
+         with: { workspace: { columns: { id: true, name: true } } },
       })
    }),
    byCode: t.procedure
