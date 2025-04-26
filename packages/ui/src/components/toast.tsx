@@ -45,7 +45,7 @@ export function Toaster(props: React.ComponentProps<typeof Sonner>) {
                   viewBox="0 0 20 20"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
-                  className="!size-4 text-rose-600"
+                  className="!size-4 text-red-9"
                >
                   <circle
                      cx="10"
@@ -92,7 +92,7 @@ export function Toaster(props: React.ComponentProps<typeof Sonner>) {
                icon: "!absolute top-[0.75rem] left-4",
             },
             className:
-               "font-primary px-3 py-3 items-center gap-2 w-full shadow-md/7 flex select-none border border-neutral bg-primary pointer-events-auto rounded-2xl",
+               "font-primary px-3 py-3 items-center gap-2 w-full shadow-[inset_0_-1px_2px_0_rgb(0_0_0_/_0.12)] flex select-none border border-neutral bg-background pointer-events-auto rounded-2xl",
          }}
          position="bottom-right"
          {...props}

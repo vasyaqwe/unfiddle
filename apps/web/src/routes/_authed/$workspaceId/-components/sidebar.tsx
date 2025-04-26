@@ -26,7 +26,7 @@ export function SidebarContent() {
                      params={params}
                      activeOptions={{ exact: true }}
                      className={
-                        "group flex h-[1.9rem] items-center justify-start gap-2 rounded-md border border-transparent px-2 text-base text-foreground/80 leading-none transition-all duration-100 hover:text-foreground aria-[current=page]:border-primary-2 aria-[current=page]:bg-white aria-[current=page]:text-foreground aria-[current=page]:shadow-[inset_0_-1px_0_rgb(0_0_0_/_0.15)]"
+                        "group flex h-8 items-center justify-start gap-2 rounded-md border border-transparent px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:text-foreground aria-[current=page]:border-primary-3 aria-[current=page]:bg-white aria-[current=page]:text-foreground aria-[current=page]:shadow-[inset_0_-1px_0.5px_rgb(0_0_0_/_0.15)]"
                      }
                   >
                      <Icons.home className="size-5" />
@@ -38,7 +38,7 @@ export function SidebarContent() {
                      to={"/$workspaceId/team"}
                      params={params}
                      className={
-                        "group flex h-[1.9rem] items-center justify-start gap-2 rounded-md border border-transparent px-2 text-base text-foreground/80 leading-none transition-all duration-100 hover:text-foreground aria-[current=page]:border-primary-2 aria-[current=page]:bg-white aria-[current=page]:text-foreground aria-[current=page]:shadow-[inset_0_-1px_0_rgb(0_0_0_/_0.15)]"
+                        "group flex h-8 items-center justify-start gap-2 rounded-md border border-transparent px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:text-foreground aria-[current=page]:border-primary-3 aria-[current=page]:bg-white aria-[current=page]:text-foreground aria-[current=page]:shadow-[inset_0_-1px_0.5px_rgb(0_0_0_/_0.15)]"
                      }
                   >
                      <Icons.users className="size-5" />
@@ -52,7 +52,7 @@ export function SidebarContent() {
                <MenuTrigger
                   render={
                      <Button
-                        className="w-full justify-start pl-1.5 [--active-color:var(--color-primary-2)]"
+                        className="w-full justify-start pl-1.5 [--active-color:var(--color-primary-3)]"
                         variant={"ghost"}
                      >
                         <UserAvatar user={auth.user} />

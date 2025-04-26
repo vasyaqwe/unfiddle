@@ -24,7 +24,7 @@ export function Header({
    return (
       <header
          className={cn(
-            "z-[5] grid h-(--header-height) shrink-0 grid-cols-[minmax(0,_0.5fr)_minmax(0,1fr)_minmax(0,_1fr)_minmax(0,_1fr)_minmax(0,_0.5fr)] items-center border-neutral border-b bg-background-main px-2 max-md:shadow-xs md:hidden md:pr-1.5 md:pl-3",
+            "z-[5] grid h-(--header-height) shrink-0 grid-cols-[minmax(0,_0.5fr)_minmax(0,1fr)_minmax(0,_1fr)_minmax(0,_1fr)_minmax(0,_0.5fr)] items-center border-neutral border-b bg-background-main px-2 max-md:shadow-[0_1px_1px_0_rgb(0_0_0_/_0.05)] md:hidden md:pr-1.5 md:pl-3",
             className,
          )}
          {...props}
@@ -104,7 +104,7 @@ export function HeaderUserMenu() {
             className={"w-full max-w-60"}
          >
             <MenuGroup>
-               <MenuGroupLabel className={"line-clamp-1 normal-case"}>
+               <MenuGroupLabel className={"mb-1.5 line-clamp-1 normal-case"}>
                   {auth.user.email}
                </MenuGroupLabel>
                <MenuSeparator />

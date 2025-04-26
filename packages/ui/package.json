@@ -11,7 +11,8 @@
     "class-variance-authority": "^0.7.1",
     "tailwind-merge": "^2.6.0",
     "tailwindcss": "^4.1.4",
-    "tailwindcss-motion": "^1.1.0"
+    "tailwindcss-motion": "^1.1.0",
+    "tailwix": "^4.0.0"
   },
   "devDependencies": {
     "@ledgerblocks/tsconfig": "workspace:*"

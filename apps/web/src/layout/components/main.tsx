@@ -13,7 +13,7 @@ export function Main({
    return (
       <main
          className={cx(
-            "flex h-[calc(100svh-var(--bottom-navigation-height))] grow overflow-hidden bg-primary shadow-xs md:mt-[0.5rem] md:mr-[0.5rem] md:h-[calc(100svh-16px)] md:grow md:rounded-lg md:border md:border-neutral",
+            "flex h-[calc(100svh-var(--bottom-navigation-height))] grow overflow-hidden bg-background md:mt-[0.5rem] md:mr-[0.5rem] md:h-[calc(100svh-16px)] md:grow md:rounded-lg md:border md:border-neutral md:shadow-xs",
             className,
          )}
       >

@@ -6,6 +6,7 @@ import {
    FieldControl,
    FieldLabel,
 } from "@ledgerblocks/ui/components/field"
+import { Logo } from "@ledgerblocks/ui/components/logo"
 import { formData } from "@ledgerblocks/ui/utils"
 import { useMutation } from "@tanstack/react-query"
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router"
@@ -70,7 +71,8 @@ function RouteComponent() {
                   })
                }}
             >
-               <h1 className="font-semibold text-foreground/75 text-lg">
+               <Logo />
+               <h1 className="mt-3 font-semibold text-foreground/75 text-lg">
                   Створіть аккаунт
                </h1>
                <Field>

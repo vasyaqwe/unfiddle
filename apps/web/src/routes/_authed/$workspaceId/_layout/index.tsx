@@ -39,7 +39,9 @@ function RouteComponent() {
       <>
          <Header>
             <HeaderWorkspaceMenu />
-            <HeaderTitle>{auth.workspace.name}</HeaderTitle>
+            <HeaderTitle className="line-clamp-1">
+               {auth.workspace.name}
+            </HeaderTitle>
             <HeaderUserMenu />
          </Header>
          <MainScrollArea>
