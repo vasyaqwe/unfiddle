@@ -16,8 +16,8 @@
    --color-primary-8: var(--color-gray-8);
    --color-primary-9: var(--color-gray-9);
    --color-primary-10: var(--color-gray-10);
-   --color-primary-11: var(--color-gray-11);    
-   --color-primary-12: var(--color-gray-12);    
+   --color-primary-11: var(--color-gray-11);
+   --color-primary-12: var(--color-gray-12);
 
    --color-accent-1: hsl(217, 91%, 90%);
    --color-accent-2: hsl(217, 91%, 80%);
@@ -92,7 +92,7 @@
       30% {
          content: "..";
       }
-      60ch0% {
+      60% {
          content: "...";
       }
       100% {
