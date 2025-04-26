@@ -8,7 +8,7 @@ import {
 } from "@ledgerblocks/ui/components/field"
 import { Icons } from "@ledgerblocks/ui/components/icons"
 import { formData } from "@ledgerblocks/ui/utils"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/_authed/new")({
@@ -16,15 +16,20 @@ export const Route = createFileRoute("/_authed/new")({
 })
 
 function RouteComponent() {
+   const queryClient = useQueryClient()
    const navigate = useNavigate()
 
    const create = useMutation(
       trpc.workspace.create.mutationOptions({
-         onSuccess: (workspaceId) =>
+         onSuccess: (workspaceId) => {
             navigate({
                to: "/$workspaceId",
                params: { workspaceId },
-            }),
+            })
+            queryClient.invalidateQueries(
+               trpc.workspace.memberships.queryOptions(),
+            )
+         },
       }),
    )
 

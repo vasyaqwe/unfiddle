@@ -14,7 +14,7 @@ export const MenuPositioner = MenuPrimitive.Positioner
 export const MenuArrow = MenuPrimitive.Arrow
 
 export const MENU_ITEM_STYLES = {
-   base: "cursor-pointer text-base h-9 md:h-8 flex items-center select-none gap-2 rounded-[calc(var(--popup-radius)-var(--popup-padding))] px-2.5 md:px-2 focus-visible:border-transparent [&>svg]:size-[22px] md:[&>svg]:size-5 [&>svg]:text-primary-9 hover:[&>svg]:text-white focus:[&>svg]:text-white hover:bg-primary-11/50 hover:shadow-sm focus-visible:outline-none focus-visible:outline-hidden focus-visible:bg-primary-11/50 shadow-black/20 focus-visible:shadow-sm md:text-sm",
+   base: "cursor-pointer text-base h-9 md:h-8 flex items-center select-none gap-2 rounded-[calc(var(--popup-radius)-var(--popup-padding))] px-[0.525rem] md:px-[0.46rem] focus-visible:border-transparent [&>svg]:size-[22px] md:[&>svg]:size-5 [&>svg]:text-primary-9 hover:[&>svg]:text-white focus-visible:[&>svg]:text-white data-[popup-open]:[&>svg]:text-white hover:bg-primary-11/50 hover:shadow-sm focus-visible:outline-none focus-visible:outline-hidden focus-visible:bg-primary-11/50 data-[popup-open]:bg-primary-11/50 shadow-black/20 focus-visible:shadow-sm md:text-sm",
    destructive: "hover:bg-red-9 focus-visible:bg-red-9",
 }
 
@@ -64,13 +64,17 @@ export function MenuCheckboxItem({
 }: React.ComponentProps<typeof MenuPrimitive.CheckboxItem>) {
    return (
       <MenuPrimitive.CheckboxItem
-         className={cn(MENU_ITEM_STYLES.base, className)}
+         className={cn(
+            MENU_ITEM_STYLES.base,
+            "grid min-w-[calc(var(--anchor-width)+1.45rem)] grid-cols-[1.4rem_1fr] items-center md:grid-cols-[22px_1fr]",
+            className,
+         )}
          {...props}
       >
          <MenuPrimitive.CheckboxItemIndicator className="col-start-1">
             <Icons.check
                strokeWidth={2.5}
-               className={"size-[22px] text-white/90"}
+               className={"size-[23px] text-white/90 md:size-[22px]"}
             />
          </MenuPrimitive.CheckboxItemIndicator>
          <span className={"col-start-2"}>{children}</span>

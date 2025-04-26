@@ -41,10 +41,10 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout")({
 function RouteComponent() {
    return (
       <>
-         <Sidebar className="motion-preset-fade">
+         <Sidebar className="md:motion-preset-fade">
             <SidebarContent />
          </Sidebar>
-         <Main innerClassName="motion-preset-fade">
+         <Main innerClassName="md:motion-preset-fade">
             <Outlet />
          </Main>
          <BottomNavigation />

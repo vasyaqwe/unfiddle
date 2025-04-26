@@ -43,11 +43,12 @@ export function WorkspaceMenuPopup() {
                {query.data?.map((membership) => (
                   <MenuCheckboxItem
                      key={membership.workspaceId}
+                     closeOnClick
                      checked={membership.workspaceId === params.workspaceId}
                      onClick={() =>
                         navigate({
                            to: "/$workspaceId",
-                           params,
+                           params: { workspaceId: membership.workspaceId },
                         })
                      }
                   >

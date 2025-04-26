@@ -14,7 +14,7 @@ export const authMiddleware = createMiddleware<AuthedHonoEnv>(
          })
 
       c.set("user", session.user)
-      c.set("session", session.session)
+      c.set("session", session.session as never)
 
       await next()
    },

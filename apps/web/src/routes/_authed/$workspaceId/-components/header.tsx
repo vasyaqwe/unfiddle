@@ -1,5 +1,5 @@
 import { useAuth } from "@/auth/hooks"
-import { WorkspaceMenuPopup } from "@/routes/_authed/$workspaceId/-components/organization-menu"
+import { WorkspaceMenuPopup } from "@/routes/_authed/$workspaceId/-components/workspace-menu"
 import { BackButton } from "@/ui/components/back-button"
 import { UserAvatar } from "@/user/components/user-avatar"
 import { WorkspaceLogo } from "@/workspace/components/workspace-logo"

@@ -15,6 +15,13 @@
       "when": 1745607631099,
       "tag": "0001_rich_warstar",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1745698447260,
+      "tag": "0002_flawless_proteus",
+      "breakpoints": true
     }
   ]
 }

@@ -1,4 +1,5 @@
 import { d } from "@ledgerblocks/core/database"
+import { z } from "zod"
 
 export const user = d.table(
    "user",
@@ -19,6 +20,10 @@ const userId = d
    .notNull()
    .references(() => user.id, { onDelete: "cascade" })
 
+const workspaceMembershipsSchema = z.array(
+   z.object({ workspaceId: z.string() }),
+)
+
 export const session = d.table("session", {
    id: d.text().primaryKey(),
    expiresAt: d.integer({ mode: "timestamp" }).notNull(),
@@ -28,6 +33,13 @@ export const session = d.table("session", {
    ipAddress: d.text(),
    userAgent: d.text(),
    userId,
+   workspaceMemberships: d
+      .text({
+         mode: "json",
+      })
+      .$type<z.infer<typeof workspaceMembershipsSchema>>()
+      .notNull()
+      .default([]),
 })
 
 export const account = d.table("account", {

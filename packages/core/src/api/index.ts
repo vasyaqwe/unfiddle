@@ -2,11 +2,11 @@ import { trpcServer } from "@hono/trpc-server"
 import { handleApiError } from "@ledgerblocks/core/api/error"
 import { createRouter } from "@ledgerblocks/core/api/utils"
 import { authClient } from "@ledgerblocks/core/auth"
-import { authRouter } from "@ledgerblocks/core/auth/api"
 import { authMiddleware } from "@ledgerblocks/core/auth/middleware"
 import { d } from "@ledgerblocks/core/database"
 import { appRouter } from "@ledgerblocks/core/trpc"
 import type { TRPCContext } from "@ledgerblocks/core/trpc/context"
+import { workspaceRouter } from "@ledgerblocks/core/workspace/api"
 import { clientEnv } from "@ledgerblocks/infra/env"
 import { logger } from "@ledgerblocks/infra/logger"
 import { cors } from "hono/cors"
@@ -31,6 +31,7 @@ const base = createRouter()
       })
       return handler(c, next)
    })
+   .route("/workspace", workspaceRouter)
    .get("/health", (c) =>
       c.json({
          message: "Healthy",
@@ -52,7 +53,6 @@ const auth = createRouter()
    .on(["POST", "GET"], "*", (c) => {
       return c.var.auth.handler(c.req.raw)
    })
-   .route("/", authRouter)
 
 export const routes = app
    .use(
