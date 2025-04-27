@@ -1,0 +1,113 @@
+import { CACHE_FOREVER, api } from "@/api"
+import { trpc } from "@/trpc"
+import { WorkspaceLogo } from "@/workspace/components/workspace-logo"
+import { Button } from "@ledgerblocks/ui/components/button"
+import { Loading } from "@ledgerblocks/ui/components/loading"
+import { Logo } from "@ledgerblocks/ui/components/logo"
+import { useMutation } from "@tanstack/react-query"
+import {
+   Link,
+   createFileRoute,
+   redirect,
+   useNavigate,
+} from "@tanstack/react-router"
+
+export const Route = createFileRoute("/join/$code")({
+   component: RouteComponent,
+   beforeLoad: async ({ params, context }) => {
+      const user = await context.queryClient
+         .ensureQueryData(
+            trpc.user.me.queryOptions(undefined, {
+               staleTime: CACHE_FOREVER,
+               retry: false,
+            }),
+         )
+         .catch(() => {
+            throw redirect({
+               to: "/login",
+               search: { invite_code: params.code },
+            })
+         })
+
+      if (!user)
+         throw redirect({ to: "/login", search: { invite_code: params.code } })
+   },
+   loader: async ({ params }) => {
+      const res = await api.workspace[":code"].$get({
+         param: params,
+      })
+      return await res.json()
+   },
+   pendingComponent: () => {
+      return (
+         <main>
+            <Loading
+               size={"lg"}
+               className="-translate-y-8 absolute inset-0 m-auto"
+            />
+         </main>
+      )
+   },
+})
+
+function RouteComponent() {
+   const params = Route.useParams()
+   const navigate = useNavigate()
+   const workspace = Route.useLoaderData()
+   const mutate = useMutation(
+      trpc.workspace.join.mutationOptions({
+         onSuccess: (params) =>
+            navigate({
+               to: "/$workspaceId",
+               params: { workspaceId: params.id },
+            }),
+      }),
+   )
+
+   if (!workspace)
+      return (
+         <main className="grid h-svh w-full place-items-center text-center">
+            <Link
+               to="/"
+               className="absolute top-3 left-3 p-2"
+            >
+               <Logo className="w-[100px] text-xl" />
+            </Link>
+            <div className="-mt-16 relative w-full text-lg">
+               <h1>Запрошення не знайдено</h1>
+            </div>
+         </main>
+      )
+
+   return (
+      <main className="grid h-svh w-full place-items-center text-center">
+         <Link
+            to="/"
+            className="absolute top-3 left-3 p-2"
+         >
+            <Logo className="w-[100px] text-xl" />
+         </Link>
+         <div className="-mt-16 relative w-full max-w-md">
+            <WorkspaceLogo
+               workspace={workspace}
+               className="mx-auto size-14 rounded-xl text-xl"
+            />
+            <h1 className="mt-4 mb-3 text-2xl">
+               Приєднайтеся до {workspace.name}
+            </h1>
+            <p className="mb-7 text-foreground/90 text-lg">
+               Вас запросили приєднатися до проєкту <b>{workspace.name}</b>.
+            </p>
+            <Button
+               size={"lg"}
+               className="min-w-[130px]"
+               onClick={() => mutate.mutate(params)}
+               pending={mutate.isPending || mutate.isSuccess}
+               disabled={mutate.isPending || mutate.isSuccess}
+            >
+               Join
+            </Button>
+         </div>
+      </main>
+   )
+}

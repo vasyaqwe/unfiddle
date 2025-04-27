@@ -1,4 +1,6 @@
 import { Dialog as DialogPrimitive } from "@base-ui-components/react/dialog"
+import { Button } from "@ledgerblocks/ui/components/button"
+import { Icons } from "@ledgerblocks/ui/components/icons"
 import { cn } from "../../utils"
 import { DIALOG_STYLES } from "./constants"
 
@@ -27,6 +29,26 @@ export function DialogPopup({
             {children}
          </DialogPrimitive.Popup>
       </DialogPortal>
+   )
+}
+
+export function DialogXClose({
+   className,
+   ...props
+}: React.ComponentProps<typeof DialogPrimitive.Close>) {
+   return (
+      <DialogClose
+         render={
+            <Button
+               className={cn("-mr-1.5 -mt-0.5 float-right", className)}
+               variant={"ghost"}
+               kind={"icon"}
+            >
+               <Icons.xMark />
+            </Button>
+         }
+         {...props}
+      />
    )
 }
 

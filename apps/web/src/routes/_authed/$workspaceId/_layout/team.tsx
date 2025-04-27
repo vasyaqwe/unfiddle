@@ -1,4 +1,6 @@
+import { useAuth } from "@/auth/hooks"
 import { formatDate } from "@/date"
+import { env } from "@/env"
 import { MainScrollArea } from "@/layout/components/main"
 import {
    Header,
@@ -9,12 +11,16 @@ import { trpc } from "@/trpc"
 import { ErrorComponent } from "@/ui/components/error"
 import { UserAvatar } from "@/user/components/user-avatar"
 import { Button } from "@ledgerblocks/ui/components/button"
+import { CopyButton } from "@ledgerblocks/ui/components/copy-button"
 import {
    Dialog,
    DialogPopup,
+   DialogTitle,
    DialogTrigger,
+   DialogXClose,
 } from "@ledgerblocks/ui/components/dialog"
 import { Icons } from "@ledgerblocks/ui/components/icons"
+import { Input } from "@ledgerblocks/ui/components/input"
 import { Loading } from "@ledgerblocks/ui/components/loading"
 import {
    Table,
@@ -26,6 +32,7 @@ import {
 } from "@ledgerblocks/ui/components/table"
 import { useQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
+import * as React from "react"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/team")({
    component: RouteComponent,
@@ -40,9 +47,14 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/team")({
 
 function RouteComponent() {
    const params = Route.useParams()
+   const auth = useAuth()
    const query = useQuery(
       trpc.workspace.members.queryOptions({ workspaceId: params.workspaceId }),
    )
+
+   const inputRef = React.useRef<HTMLInputElement>(null)
+
+   const joinLink = `${env.WEB_URL}/join/${auth.workspace?.inviteCode}`
 
    return (
       <Dialog>
@@ -109,7 +121,32 @@ function RouteComponent() {
                </Table>
             )}
          </MainScrollArea>
-         <DialogPopup>tee</DialogPopup>
+         <DialogPopup>
+            <DialogTitle>
+               Invite people
+               <DialogXClose />
+            </DialogTitle>
+            <p className="text-foreground/75">
+               Будь-хто може приєднатися до проєкту за цим посиланням.
+            </p>
+            <div className="relative mt-4 flex items-center gap-1.5">
+               <Input
+                  readOnly
+                  ref={inputRef}
+                  value={joinLink}
+                  className={"truncate"}
+               />
+               <CopyButton
+                  value={joinLink}
+                  size={"lg"}
+                  onClick={() => {
+                     setTimeout(() => {
+                        inputRef.current?.focus()
+                     }, 1)
+                  }}
+               />
+            </div>
+         </DialogPopup>
       </Dialog>
    )
 }

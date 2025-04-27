@@ -17,6 +17,7 @@ import { Route as SignupImport } from './routes/signup'
 import { Route as LoginImport } from './routes/login'
 import { Route as AuthedImport } from './routes/_authed'
 import { Route as AuthedIndexImport } from './routes/_authed/index'
+import { Route as JoinCodeImport } from './routes/join.$code'
 import { Route as AuthedNewImport } from './routes/_authed/new'
 import { Route as AuthedWorkspaceIdLayoutImport } from './routes/_authed/$workspaceId/_layout'
 import { Route as AuthedWorkspaceIdLayoutIndexImport } from './routes/_authed/$workspaceId/_layout/index'
@@ -55,6 +56,12 @@ const AuthedIndexRoute = AuthedIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthedRoute,
+} as any)
+
+const JoinCodeRoute = JoinCodeImport.update({
+  id: '/join/$code',
+  path: '/join/$code',
+  getParentRoute: () => rootRoute,
 } as any)
 
 const AuthedNewRoute = AuthedNewImport.update({
@@ -113,6 +120,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/new'
       preLoaderRoute: typeof AuthedNewImport
       parentRoute: typeof AuthedImport
+    }
+    '/join/$code': {
+      id: '/join/$code'
+      path: '/join/$code'
+      fullPath: '/join/$code'
+      preLoaderRoute: typeof JoinCodeImport
+      parentRoute: typeof rootRoute
     }
     '/_authed/': {
       id: '/_authed/'
@@ -201,6 +215,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/new': typeof AuthedNewRoute
+  '/join/$code': typeof JoinCodeRoute
   '/': typeof AuthedIndexRoute
   '/$workspaceId': typeof AuthedWorkspaceIdLayoutRouteWithChildren
   '/$workspaceId/team': typeof AuthedWorkspaceIdLayoutTeamRoute
@@ -211,6 +226,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/new': typeof AuthedNewRoute
+  '/join/$code': typeof JoinCodeRoute
   '/': typeof AuthedIndexRoute
   '/$workspaceId': typeof AuthedWorkspaceIdLayoutIndexRoute
   '/$workspaceId/team': typeof AuthedWorkspaceIdLayoutTeamRoute
@@ -222,6 +238,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/_authed/new': typeof AuthedNewRoute
+  '/join/$code': typeof JoinCodeRoute
   '/_authed/': typeof AuthedIndexRoute
   '/_authed/$workspaceId': typeof AuthedWorkspaceIdRouteWithChildren
   '/_authed/$workspaceId/_layout': typeof AuthedWorkspaceIdLayoutRouteWithChildren
@@ -236,6 +253,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/new'
+    | '/join/$code'
     | '/'
     | '/$workspaceId'
     | '/$workspaceId/team'
@@ -245,6 +263,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/new'
+    | '/join/$code'
     | '/'
     | '/$workspaceId'
     | '/$workspaceId/team'
@@ -254,6 +273,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/_authed/new'
+    | '/join/$code'
     | '/_authed/'
     | '/_authed/$workspaceId'
     | '/_authed/$workspaceId/_layout'
@@ -266,12 +286,14 @@ export interface RootRouteChildren {
   AuthedRoute: typeof AuthedRouteWithChildren
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
+  JoinCodeRoute: typeof JoinCodeRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   AuthedRoute: AuthedRouteWithChildren,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
+  JoinCodeRoute: JoinCodeRoute,
 }
 
 export const routeTree = rootRoute
@@ -286,7 +308,8 @@ export const routeTree = rootRoute
       "children": [
         "/_authed",
         "/login",
-        "/signup"
+        "/signup",
+        "/join/$code"
       ]
     },
     "/_authed": {
@@ -306,6 +329,9 @@ export const routeTree = rootRoute
     "/_authed/new": {
       "filePath": "_authed/new.tsx",
       "parent": "/_authed"
+    },
+    "/join/$code": {
+      "filePath": "join.$code.tsx"
     },
     "/_authed/": {
       "filePath": "_authed/index.tsx",
