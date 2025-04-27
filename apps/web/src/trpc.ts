@@ -2,7 +2,11 @@ import { CACHE_AWHILE } from "@/api"
 import { env } from "@/env"
 import type { AppRouter } from "@ledgerblocks/core/trpc"
 import { MutationCache, QueryClient } from "@tanstack/react-query"
-import { createTRPCClient, httpBatchStreamLink } from "@trpc/client"
+import {
+   type TRPCClientErrorLike,
+   createTRPCClient,
+   httpBatchStreamLink,
+} from "@trpc/client"
 import {
    createTRPCContext,
    createTRPCOptionsProxy,
@@ -53,3 +57,5 @@ export const trpc = createTRPCOptionsProxy<AppRouter>({
    client,
    queryClient,
 })
+
+export type TRPCError = TRPCClientErrorLike<AppRouter>

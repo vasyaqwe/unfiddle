@@ -1,5 +1,5 @@
-import type { ApiClientError } from "@/api"
 import { env } from "@/env"
+import type { TRPCError } from "@/trpc"
 import { Button } from "@ledgerblocks/ui/components/button"
 import { cn } from "@ledgerblocks/ui/utils"
 import {
@@ -14,7 +14,7 @@ interface Props
    extends Omit<ErrorComponentProps, "reset" | "error">,
       React.ComponentProps<"div"> {
    reset?: () => void
-   error?: ApiClientError
+   error?: TRPCError
 }
 
 export function ErrorComponent({ error, reset, className, ...props }: Props) {

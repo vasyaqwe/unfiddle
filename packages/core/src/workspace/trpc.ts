@@ -24,6 +24,23 @@ export const workspaceRouter = t.router({
          with: { workspace: { columns: { id: true, name: true } } },
       })
    }),
+   members: t.procedure
+      .use(workspaceMemberMiddleware)
+      .input(z.object({ workspaceId: z.string() }))
+      .query(async ({ ctx, input }) => {
+         return await ctx.db.query.workspaceMember.findMany({
+            where: eq(workspaceMember.workspaceId, input.workspaceId),
+            with: {
+               user: {
+                  columns: { id: true, name: true, email: true, image: true },
+               },
+            },
+            columns: {
+               createdAt: true,
+               role: true,
+            },
+         })
+      }),
    create: t.procedure
       .input(z.object({ name: z.string() }))
       .mutation(async ({ ctx, input }) => {

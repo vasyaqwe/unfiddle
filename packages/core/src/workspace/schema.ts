@@ -4,7 +4,10 @@ import { createCode } from "@ledgerblocks/core/id"
 import { WORKSPACE_ROLES } from "@ledgerblocks/core/workspace/constants"
 import { relations } from "drizzle-orm"
 
-const userId = d.text().references(() => user.id, { onDelete: "cascade" })
+const userId = d
+   .text()
+   .references(() => user.id, { onDelete: "cascade" })
+   .notNull()
 
 export const workspace = d.table(
    "workspace",

@@ -50,7 +50,7 @@ export const formatDateRelative = (
    if (!divisor || !unit) return ""
 
    // Intl.RelativeTimeFormat do its magic
-   const rtf = new Intl.RelativeTimeFormat("en-US", { numeric: "auto", style })
+   const rtf = new Intl.RelativeTimeFormat("uk-UA", { numeric: "auto", style })
    return rtf.format(-Math.floor(deltaSeconds / divisor), unit) // Added negative sign here
 }
 
@@ -62,7 +62,7 @@ export const formatDate = (
       weekday: "long",
    },
 ) =>
-   new Intl.DateTimeFormat("en-US", {
+   new Intl.DateTimeFormat("uk-UA", {
       ...options,
    }).format(new Date(date))
 
