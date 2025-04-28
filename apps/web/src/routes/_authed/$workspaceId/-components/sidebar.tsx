@@ -25,7 +25,7 @@ export function SidebarContent() {
                <MenuTrigger
                   render={
                      <Button
-                        className="w-full justify-start gap-2"
+                        className="justify-start gap-2"
                         variant={"ghost"}
                      >
                         <WorkspaceLogo

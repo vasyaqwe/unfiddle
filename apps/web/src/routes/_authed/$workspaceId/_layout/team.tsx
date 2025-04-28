@@ -76,7 +76,7 @@ function RouteComponent() {
          </Header>
          <MainScrollArea container={false}>
             <div className="container mb-8 flex items-center justify-between max-md:hidden">
-               <p className="font-semibold text-2xl">Команда</p>
+               <p className="font-semibold text-xl">Команда</p>
                <DialogTrigger render={<Button>Запросити</Button>} />
             </div>
             {query.isPending ? (

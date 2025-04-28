@@ -7,6 +7,13 @@ import {
    HeaderUserMenu,
    HeaderWorkspaceMenu,
 } from "@/routes/_authed/$workspaceId/-components/header"
+import {
+   Card,
+   CardContent,
+   CardFooter,
+   CardHeader,
+   CardTitle,
+} from "@ledgerblocks/ui/components/card"
 import { createFileRoute } from "@tanstack/react-router"
 import * as React from "react"
 
@@ -45,9 +52,44 @@ function RouteComponent() {
             <HeaderUserMenu />
          </Header>
          <MainScrollArea>
-            <p className="font-semibold text-2xl">
+            <p className="mb-8 font-semibold text-xl max-md:hidden">
                {greeting}, {auth.user.name}
             </p>
+            <div className="grid gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
+               <Card>
+                  <CardHeader>
+                     <CardTitle>Зароблено</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                     <p className="font-mono font-semibold text-3xl tracking-tight">
+                        $49,482
+                     </p>
+                     <CardFooter>За сьогодні</CardFooter>
+                  </CardContent>
+               </Card>
+               <Card>
+                  <CardHeader>
+                     <CardTitle>Зароблено</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                     <p className="font-mono font-semibold text-3xl tracking-tight">
+                        $49,482
+                     </p>
+                     <CardFooter>За сьогодні</CardFooter>
+                  </CardContent>
+               </Card>
+               <Card>
+                  <CardHeader>
+                     <CardTitle>Зароблено</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                     <p className="font-mono font-semibold text-3xl tracking-tight">
+                        $49,482
+                     </p>
+                     <CardFooter>За сьогодні</CardFooter>
+                  </CardContent>
+               </Card>
+            </div>
          </MainScrollArea>
       </>
    )
