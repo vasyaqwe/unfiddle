@@ -7,6 +7,7 @@ const loading = cva("!relative sonner-loading-wrapper", {
          sm: "![--size:20px] md:![--size:16px]",
          md: "![--size:20px] md:![--size:18px]",
          lg: "![--size:21px] md:![--size:19px]",
+         xl: "![--size:24px] md:![--size:26px]",
       },
    },
    defaultVariants: {

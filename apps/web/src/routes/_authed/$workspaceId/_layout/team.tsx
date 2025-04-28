@@ -80,7 +80,10 @@ function RouteComponent() {
                <DialogTrigger render={<Button>Запросити</Button>} />
             </div>
             {query.isPending ? (
-               <Loading />
+               <Loading
+                  size={"xl"}
+                  className="-translate-y-12 md:-translate-y-20 m-auto"
+               />
             ) : query.isError ? (
                <ErrorComponent error={query.error} />
             ) : (

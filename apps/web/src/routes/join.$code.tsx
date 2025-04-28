@@ -46,7 +46,7 @@ export const Route = createFileRoute("/join/$code")({
       return (
          <main className="grid h-svh w-full place-items-center bg-background text-center">
             <Loading
-               size={"lg"}
+               size={"xl"}
                className="-translate-y-8 absolute inset-0 m-auto"
             />
          </main>
@@ -90,7 +90,7 @@ function RouteComponent() {
             </p>
             <Button
                size={"lg"}
-               className="min-w-[130px]"
+               className="min-w-[150px]"
                onClick={() => mutate.mutate(params)}
                pending={mutate.isPending || mutate.isSuccess}
                disabled={mutate.isPending || mutate.isSuccess}
