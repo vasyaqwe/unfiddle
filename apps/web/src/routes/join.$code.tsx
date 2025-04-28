@@ -8,6 +8,7 @@ import { useMutation } from "@tanstack/react-query"
 import {
    Link,
    createFileRoute,
+   notFound,
    redirect,
    useNavigate,
 } from "@tanstack/react-router"
@@ -36,7 +37,10 @@ export const Route = createFileRoute("/join/$code")({
       const res = await api.workspace[":code"].$get({
          param: params,
       })
-      return await res.json()
+      const found = await res.json()
+      if (!found) throw notFound()
+
+      return found
    },
    pendingComponent: () => {
       return (
@@ -64,35 +68,21 @@ function RouteComponent() {
       }),
    )
 
-   if (!workspace)
-      return (
-         <main className="grid h-svh w-full place-items-center text-center">
-            <Link
-               to="/"
-               className="absolute top-3 left-3 p-2"
-            >
-               <Logo className="w-[100px] text-xl" />
-            </Link>
-            <div className="-mt-16 relative w-full text-lg">
-               <h1>Запрошення не знайдено</h1>
-            </div>
-         </main>
-      )
-
    return (
       <main className="grid h-svh w-full place-items-center text-center">
          <Link
             to="/"
             className="absolute top-3 left-3 p-2"
          >
-            <Logo className="w-[100px] text-xl" />
+            <Logo />
          </Link>
          <div className="-mt-16 relative w-full max-w-md">
             <WorkspaceLogo
                workspace={workspace}
-               className="mx-auto size-14 rounded-xl text-xl"
+               size={40}
+               className="mx-auto"
             />
-            <h1 className="mt-4 mb-3 text-2xl">
+            <h1 className="mt-5 mb-3 text-2xl">
                Приєднайтеся до {workspace.name}
             </h1>
             <p className="mb-7 text-foreground/90 text-lg">
@@ -105,7 +95,7 @@ function RouteComponent() {
                pending={mutate.isPending || mutate.isSuccess}
                disabled={mutate.isPending || mutate.isSuccess}
             >
-               Join
+               Приєднатися
             </Button>
          </div>
       </main>

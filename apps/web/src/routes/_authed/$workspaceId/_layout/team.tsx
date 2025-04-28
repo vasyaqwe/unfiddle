@@ -123,7 +123,7 @@ function RouteComponent() {
          </MainScrollArea>
          <DialogPopup>
             <DialogTitle>
-               Invite people
+               Запросіть людей
                <DialogXClose />
             </DialogTitle>
             <p className="text-foreground/75">
@@ -139,11 +139,6 @@ function RouteComponent() {
                <CopyButton
                   value={joinLink}
                   size={"lg"}
-                  onClick={() => {
-                     setTimeout(() => {
-                        inputRef.current?.focus()
-                     }, 1)
-                  }}
                />
             </div>
          </DialogPopup>

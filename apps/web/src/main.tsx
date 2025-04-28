@@ -38,17 +38,17 @@ const router = createRouter({
 
 function NotFound() {
    return (
-      <div className="flex grow flex-col items-center pt-20 text-center md:pt-40">
+      <div className="flex grow flex-col items-center bg-background pt-20 text-center md:pt-40">
          <Logo className="size-10" />
-         <h1 className="mt-4 mb-2 text-xl">Not found</h1>
+         <h1 className="mt-4 mb-2 text-xl">Сторінку не знайдено</h1>
          <p className="mb-5 text-foreground/75">
-            This page does not exist — <br /> it may have been moved or deleted.
+            Сторінку не знайдено — <br /> може вона переїхала..
          </p>
          <Link
             to={"/"}
             className={button()}
          >
-            Back home
+            Додому
          </Link>
       </div>
    )

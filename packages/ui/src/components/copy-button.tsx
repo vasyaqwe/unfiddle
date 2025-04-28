@@ -11,6 +11,7 @@ export function CopyButton({
    value,
    className,
    variant = "ghost",
+   onClick,
    ...props
 }: CopyButtonProps) {
    const [hasCopied, setHasCopied] = React.useState(false)
@@ -26,9 +27,10 @@ export function CopyButton({
          kind="icon"
          variant={variant}
          className={cn("shrink-0", className)}
-         onClick={() => {
+         onClick={(e) => {
             navigator.clipboard.writeText(value)
             setHasCopied(true)
+            onClick?.(e)
          }}
          aria-label="Copy"
          {...props}

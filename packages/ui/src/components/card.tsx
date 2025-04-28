@@ -1,7 +1,7 @@
 import { cn } from "../utils"
 
 export const CARD_STYLES = {
-   base: "rounded-2xl border border-neutral bg-primary-1 p-4 shadow-xs has-[[data-card-header]]:p-0 dark:bg-[#1f1f1f] dark:shadow-lg",
+   base: "rounded-2xl border border-neutral bg-primary-1 p-4 shadow-xs has-[[data-card-header]]:p-0",
    title: "font-medium text-lg leading-none",
    description: "mt-2 text-primary-11 text-sm",
    header: "border-b p-4",

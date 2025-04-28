@@ -8,7 +8,7 @@ export function Table({
    return (
       <div
          className={cn(
-            "scrollbar-hidden relative size-full overflow-x-auto",
+            "scrollbar-hidden relative w-full grow overflow-x-auto",
             className,
          )}
          {...props}

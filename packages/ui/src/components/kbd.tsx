@@ -14,7 +14,7 @@ export function Kbd({
       <kbd
          data-kbd
          className={cn(
-            `ml-0.5 inline-flex h-[24px] min-w-[24px] shrink-0 items-center justify-center gap-[3px] rounded-sm bg-primary-11/75 px-1.5 text-sm shadow-black/35 shadow-sm dark:bg-primary-6`,
+            `ml-0.5 inline-flex h-[24px] min-w-[24px] shrink-0 items-center justify-center gap-[3px] rounded-sm bg-primary-11/75 px-1.5 text-sm shadow-black/35 shadow-sm`,
             className,
          )}
          {...props}

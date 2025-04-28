@@ -52,7 +52,7 @@ export function MainScrollArea({
          ) : (
             <div
                className={cn(
-                  "grow",
+                  "flex grow flex-col",
                   container ? "container" : "",
                   containerClassName,
                )}

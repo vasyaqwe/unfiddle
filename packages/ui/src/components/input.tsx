@@ -10,7 +10,7 @@ export const input = cva(
             default: "border-primary-4 border-b focus:border-primary-6",
          },
          size: {
-            md: "h-12 text-base md:h-10",
+            md: "h-11 text-base md:h-10",
          },
       },
       defaultVariants: {

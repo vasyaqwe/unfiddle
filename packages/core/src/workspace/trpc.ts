@@ -140,7 +140,9 @@ export const workspaceRouter = t.router({
                .update(session)
                .set({
                   workspaceMemberships: [
-                     ...ctx.session.workspaceMemberships,
+                     ...ctx.session.workspaceMemberships.filter(
+                        (m) => m.workspaceId !== foundWorkspace.id,
+                     ),
                      {
                         workspaceId: foundWorkspace.id,
                      },

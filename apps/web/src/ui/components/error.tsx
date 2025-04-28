@@ -33,11 +33,11 @@ export function ErrorComponent({ error, reset, className, ...props }: Props) {
          {...props}
       >
          <div>
-            <h1 className="mb-2 text-xl">An error occurred</h1>
+            <h1 className="mb-2 text-xl">Виникла помилка</h1>
             <p className="mb-5 text-foreground/70 text-lg">
                {reset && error?.message
                   ? error.message
-                  : "We are having technical difficulties. Please, try again."}
+                  : "У нас технічні несправності — спробуйте ще раз пізніше."}
             </p>
             <div className="flex items-center justify-center gap-2.5">
                <Button
