@@ -26,21 +26,40 @@ export const authClient = (c: Context<HonoEnv>) => {
          password: {
             hash: async (password) => {
                const salt = randomBytes(16).toString("hex")
-               const hash = scryptSync(password, salt, 64).toString("hex")
+               // Lower cost parameters for Workers environment
+               const hash = scryptSync(password, salt, 64, {
+                  N: 4096,
+                  r: 8,
+                  p: 1,
+               }).toString("hex")
                return `${salt}:${hash}`
             },
             verify: async ({ hash, password }) => {
                const [salt, key] = hash.split(":")
                invariant(salt && key, "Invalid hash")
                const keyBuffer = Buffer.from(key, "hex")
-               const hashBuffer = scryptSync(password, salt, 64)
-               return keyBuffer.equals(hashBuffer)
+               const hashBuffer = scryptSync(password, salt, 64, {
+                  N: 4096,
+                  r: 8,
+                  p: 1,
+               })
+
+               // Constant-time comparison
+               return crypto.subtle
+                  ? crypto.subtle.timingSafeEqual(keyBuffer, hashBuffer)
+                  : keyBuffer.equals(hashBuffer)
             },
          },
       },
       advanced: {
          crossSubDomainCookies: {
             enabled: true,
+         },
+         defaultCookieAttributes: {
+            secure: true,
+            httpOnly: true,
+            sameSite: "none", // Allows CORS-based cookie sharing across subdomains
+            partitioned: true, // New browser standards will mandate this for foreign cookies
          },
       },
       session: {
