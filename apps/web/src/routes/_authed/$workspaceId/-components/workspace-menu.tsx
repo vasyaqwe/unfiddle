@@ -22,7 +22,7 @@ export function WorkspaceMenuPopup() {
    )
 
    return (
-      <MenuPopup align="end">
+      <MenuPopup align={"start"}>
          {/* <MenuItem
             onClick={() =>
                navigate({

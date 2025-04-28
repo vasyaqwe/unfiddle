@@ -34,7 +34,7 @@
 
    --color-background: #ffffff;
    --color-foreground: var(--color-primary-12);
-   --color-neutral: var(--color-primary-3);
+   --color-neutral: var(--color-primary-4);
 
    --font-primary: "inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
       Roboto, Helvetica, Arial, sans-serif;

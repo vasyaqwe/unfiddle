@@ -48,7 +48,7 @@ export function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
    return (
       <tr
          className={cn(
-            "border-neutral border-t has-[th]:border-none",
+            "border-primary-3 border-t has-[th]:border-none",
             className,
          )}
          {...props}

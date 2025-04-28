@@ -34,7 +34,11 @@ function RouteComponent() {
    )
 
    return (
-      <main className={"flex h-svh grow flex-col items-center justify-center"}>
+      <main
+         className={
+            "flex h-svh grow flex-col items-center justify-center bg-background"
+         }
+      >
          <BackButton
             size={"lg"}
             kind={"icon"}
