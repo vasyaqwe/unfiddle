@@ -1,7 +1,9 @@
+import { randomBytes, scryptSync } from "node:crypto"
 import type { HonoEnv } from "@ledgerblocks/core/api/types"
 import { MIN_PASSWORD_LENGTH } from "@ledgerblocks/core/auth/constants"
 import { session } from "@ledgerblocks/core/auth/schema"
 import { d } from "@ledgerblocks/core/database"
+import invariant from "@ledgerblocks/core/invariant"
 import { workspaceMember } from "@ledgerblocks/core/workspace/schema"
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
@@ -21,6 +23,20 @@ export const authClient = (c: Context<HonoEnv>) => {
       emailAndPassword: {
          enabled: true,
          minPasswordLength: MIN_PASSWORD_LENGTH,
+         password: {
+            hash: async (password) => {
+               const salt = randomBytes(16).toString("hex")
+               const hash = scryptSync(password, salt, 64).toString("hex")
+               return `${salt}:${hash}`
+            },
+            verify: async ({ hash, password }) => {
+               const [salt, key] = hash.split(":")
+               invariant(salt && key, "Invalid hash")
+               const keyBuffer = Buffer.from(key, "hex")
+               const hashBuffer = scryptSync(password, salt, 64)
+               return keyBuffer.equals(hashBuffer)
+            },
+         },
       },
       advanced: {
          crossSubDomainCookies: {
