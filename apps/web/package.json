@@ -20,7 +20,6 @@
     "@trpc/client": "^11.1.0",
     "@trpc/tanstack-react-query": "^11.1.0",
     "@vitejs/plugin-react": "^4.3.4",
-    "@zod/mini": "^4.0.0-beta.20250415T232143",
     "babel-plugin-react-compiler": "^19.1.0-rc.1",
     "better-auth": "^1.2.7",
     "boring-avatars": "^1.11.2",
@@ -32,7 +31,8 @@
     "remeda": "^2.6.0",
     "sonner": "^1.7.1",
     "update": "^0.7.4",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite-tsconfig-paths": "^5.1.4",
+    "zod": "^3.24.3"
   },
   "devDependencies": {
     "@ledgerblocks/tsconfig": "workspace:*",

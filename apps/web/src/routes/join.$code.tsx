@@ -44,7 +44,7 @@ export const Route = createFileRoute("/join/$code")({
    },
    pendingComponent: () => {
       return (
-         <main>
+         <main className="grid h-svh w-full place-items-center bg-background text-center">
             <Loading
                size={"lg"}
                className="-translate-y-8 absolute inset-0 m-auto"
@@ -69,7 +69,7 @@ function RouteComponent() {
    )
 
    return (
-      <main className="grid h-svh w-full place-items-center text-center">
+      <main className="grid h-svh w-full place-items-center bg-background text-center">
          <Link
             to="/"
             className="absolute top-3 left-3 p-2"

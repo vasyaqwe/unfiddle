@@ -1,4 +1,5 @@
 import { authClient } from "@/auth"
+import { validator } from "@/validator"
 import { MIN_PASSWORD_LENGTH } from "@ledgerblocks/core/auth/constants"
 import { Button } from "@ledgerblocks/ui/components/button"
 import {
@@ -11,12 +12,15 @@ import { formData } from "@ledgerblocks/ui/utils"
 import { useMutation } from "@tanstack/react-query"
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router"
 import { toast } from "sonner"
+import { z } from "zod"
 
 export const Route = createFileRoute("/signup")({
    component: RouteComponent,
+   validateSearch: validator(z.object({ invite_code: z.string().optional() })),
 })
 
 function RouteComponent() {
+   const search = Route.useSearch()
    const navigate = useNavigate()
 
    const signup = useMutation({
@@ -33,6 +37,11 @@ function RouteComponent() {
          if (res.error) throw res.error
       },
       onSuccess: () => {
+         if (search.invite_code)
+            return navigate({
+               to: "/join/$code",
+               params: { code: search.invite_code },
+            })
          navigate({ to: "/" })
       },
       onError: (error: {
@@ -118,6 +127,7 @@ function RouteComponent() {
                   Вже зареєстровані?{" "}
                   <Link
                      to={"/login"}
+                     search={search}
                      className="transition-colors duration-75 hover:text-foreground"
                   >
                      <u>Увійти</u>
