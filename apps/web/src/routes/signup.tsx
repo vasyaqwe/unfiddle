@@ -121,7 +121,7 @@ function RouteComponent() {
                   size={"lg"}
                   className="mt-5 w-full"
                >
-                  Увійти
+                  Зареєструватись
                </Button>
                <p className="mt-5 text-foreground/75 text-sm">
                   Вже зареєстровані?{" "}

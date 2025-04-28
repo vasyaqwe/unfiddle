@@ -60,6 +60,8 @@ export const routes = app
       (c, next) => {
          c.header("Content-Encoding", "Identity") //worker streaming fix
          const handler = cors({
+            credentials: true,
+            maxAge: 600,
             origin: [c.var.env.WEB_URL],
          })
          return handler(c, next)
