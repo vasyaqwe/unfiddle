@@ -107,7 +107,9 @@ function RouteComponent() {
                                  </div>
                               </TableCell>
                               <TableCell>{member.user.email}</TableCell>
-                              <TableCell>{member.role}</TableCell>
+                              <TableCell>
+                                 {member.role === "admin" ? "Адмін" : "Член"}
+                              </TableCell>
                               <TableCell>
                                  {formatDate(member.createdAt, {
                                     month: "long",

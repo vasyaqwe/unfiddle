@@ -16,9 +16,9 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/")({
 
 const currentGreeting = () => {
    const hour = new Date().getHours()
-   if (hour < 12) return "Morning"
-   if (hour < 18) return "Afternoon"
-   return "Evening"
+   if (hour < 12) return "Добрий ранок"
+   if (hour < 18) return "Добрий день"
+   return "Добрий вечір"
 }
 
 function RouteComponent() {

@@ -14,7 +14,8 @@ export const clientEnv = {
    },
    production: {
       API_URL: API_URL.production,
-      WEB_URL: "https://app.ledgerblocks.com",
+      // WEB_URL: "https://app.ledgerblocks.com",
+      WEB_URL: "https://ledgerblocks-web.pages.dev",
       STORAGE_URL: "",
       CLOUDFLARE_ACCOUNT_ID: "bfef1e994f1aac7e7a42dc4ba75197a0",
       CLOUDFLARE_DATABASE_ID: "0c2d4aab-cf2f-4c14-aa7e-89f11ef8daee",
