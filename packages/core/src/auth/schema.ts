@@ -9,8 +9,7 @@ export const user = d.table(
       email: d.text().notNull(),
       emailVerified: d.integer({ mode: "boolean" }).notNull(),
       image: d.text(),
-      createdAt: d.integer({ mode: "timestamp" }).notNull(),
-      updatedAt: d.integer({ mode: "timestamp" }).notNull(),
+      ...d.timestamps,
    },
    (table) => [d.uniqueIndex("user_email_idx").on(table.email)],
 )
@@ -28,8 +27,6 @@ export const session = d.table("session", {
    id: d.text().primaryKey(),
    expiresAt: d.integer({ mode: "timestamp" }).notNull(),
    token: d.text().notNull().unique(),
-   createdAt: d.integer({ mode: "timestamp" }).notNull(),
-   updatedAt: d.integer({ mode: "timestamp" }).notNull(),
    ipAddress: d.text(),
    userAgent: d.text(),
    userId,
@@ -40,6 +37,7 @@ export const session = d.table("session", {
       .$type<z.infer<typeof workspaceMembershipsSchema>>()
       .notNull()
       .default([]),
+   ...d.timestamps,
 })
 
 export const account = d.table("account", {
@@ -58,8 +56,7 @@ export const account = d.table("account", {
    }),
    scope: d.text(),
    password: d.text(),
-   createdAt: d.integer({ mode: "timestamp" }).notNull(),
-   updatedAt: d.integer({ mode: "timestamp" }).notNull(),
+   ...d.timestamps,
 })
 
 export const verification = d.table("verification", {
@@ -67,6 +64,5 @@ export const verification = d.table("verification", {
    identifier: d.text().notNull(),
    value: d.text().notNull(),
    expiresAt: d.integer({ mode: "timestamp" }).notNull(),
-   createdAt: d.integer({ mode: "timestamp" }),
-   updatedAt: d.integer({ mode: "timestamp" }),
+   ...d.timestamps,
 })

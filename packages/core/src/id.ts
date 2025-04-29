@@ -6,6 +6,8 @@ export const ID_PREFIXES = {
    user: "usr",
    file: "file",
    workspace: "wrk",
+   order: "ord",
+   procurement: "pro",
 } as const
 
 export const createId = (prefix: keyof typeof ID_PREFIXES) => {
