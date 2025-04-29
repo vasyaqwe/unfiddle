@@ -1,4 +1,5 @@
 export const PROCUREMENT_STATUSES = [
+   "pending", // Купили, куплено
    "purchased", // Купили, куплено
    "reserved", // В броні
    "canceled", // Скасовано, скасовано

@@ -20,6 +20,7 @@ export function AlertDialogPopup({
             className={cn(
                DIALOG_STYLES.transition,
                DIALOG_STYLES.popup,
+               DIALOG_STYLES.center,
                className,
             )}
             {...props}

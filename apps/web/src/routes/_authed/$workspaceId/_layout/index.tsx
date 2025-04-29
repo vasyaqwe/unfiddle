@@ -7,6 +7,8 @@ import {
    HeaderUserMenu,
    HeaderWorkspaceMenu,
 } from "@/routes/_authed/$workspaceId/-components/header"
+import { trpc } from "@/trpc"
+import { Button } from "@ledgerblocks/ui/components/button"
 import {
    Card,
    CardContent,
@@ -14,11 +16,36 @@ import {
    CardHeader,
    CardTitle,
 } from "@ledgerblocks/ui/components/card"
+import {
+   Drawer,
+   DrawerPopup,
+   DrawerTitle,
+   DrawerTrigger,
+} from "@ledgerblocks/ui/components/drawer"
+import {
+   Field,
+   FieldControl,
+   FieldLabel,
+} from "@ledgerblocks/ui/components/field"
+import { Icons } from "@ledgerblocks/ui/components/icons"
+import {
+   NumberField,
+   NumberFieldInput,
+} from "@ledgerblocks/ui/components/number-field"
+import { formData } from "@ledgerblocks/ui/utils"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import * as React from "react"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/")({
    component: RouteComponent,
+   loader: async ({ context, params }) => {
+      context.queryClient.prefetchQuery(
+         trpc.order.list.queryOptions({
+            workspaceId: params.workspaceId,
+         }),
+      )
+   },
 })
 
 const currentGreeting = () => {
@@ -29,6 +56,7 @@ const currentGreeting = () => {
 }
 
 function RouteComponent() {
+   const params = Route.useParams()
    const auth = useAuth()
    const documentRef = React.useRef<Document>(document)
 
@@ -40,6 +68,10 @@ function RouteComponent() {
             setGreeting(currentGreeting())
       },
       documentRef,
+   )
+
+   const query = useQuery(
+      trpc.order.list.queryOptions({ workspaceId: params.workspaceId }),
    )
 
    return (
@@ -61,7 +93,7 @@ function RouteComponent() {
                      <CardTitle>Зароблено</CardTitle>
                   </CardHeader>
                   <CardContent>
-                     <p className="font-mono font-semibold text-3xl tracking-tight">
+                     <p className="font-mono font-semibold text-2xl tracking-tight md:text-3xl">
                         $49,482
                      </p>
                      <CardFooter>За сьогодні</CardFooter>
@@ -72,7 +104,7 @@ function RouteComponent() {
                      <CardTitle>Зароблено</CardTitle>
                   </CardHeader>
                   <CardContent>
-                     <p className="font-mono font-semibold text-3xl tracking-tight">
+                     <p className="font-mono font-semibold text-2xl tracking-tight md:text-3xl">
                         $49,482
                      </p>
                      <CardFooter>За сьогодні</CardFooter>
@@ -83,14 +115,116 @@ function RouteComponent() {
                      <CardTitle>Зароблено</CardTitle>
                   </CardHeader>
                   <CardContent>
-                     <p className="font-mono font-semibold text-3xl tracking-tight">
+                     <p className="font-mono font-semibold text-2xl tracking-tight md:text-3xl">
                         $49,482
                      </p>
                      <CardFooter>За сьогодні</CardFooter>
                   </CardContent>
                </Card>
             </div>
+            <div className="mt-8 flex items-center justify-end gap-4">
+               <NewOrder />
+            </div>
+            <div className="mt-8">{query.data?.map((item) => item.name)}</div>
          </MainScrollArea>
       </>
+   )
+}
+
+function NewOrder() {
+   const queryClient = useQueryClient()
+   const params = Route.useParams()
+   const [open, setOpen] = React.useState(false)
+   const mutation = useMutation(
+      trpc.order.create.mutationOptions({
+         onSuccess: () => {
+            queryClient.invalidateQueries(
+               trpc.order.list.queryOptions({
+                  workspaceId: params.workspaceId,
+               }),
+            )
+            setOpen(false)
+         },
+      }),
+   )
+
+   return (
+      <Drawer
+         open={open}
+         onOpenChange={setOpen}
+      >
+         <DrawerTrigger
+            render={
+               <Button>
+                  <Icons.plus /> Замовлення
+               </Button>
+            }
+         />
+         <DrawerPopup>
+            <DrawerTitle>Нове замовлення</DrawerTitle>
+            <form
+               className="mt-4 flex grow flex-col space-y-7"
+               onSubmit={(e) => {
+                  e.preventDefault()
+                  const form = formData<{
+                     name: string
+                     quantity: string
+                     sellingPrice: string
+                     note: string
+                  }>(e.target)
+                  console.log(form)
+                  mutation.mutate({
+                     workspaceId: params.workspaceId,
+                     name: form.name,
+                     quantity: +form.quantity,
+                     sellingPrice: +form.sellingPrice,
+                     note: form.note,
+                  })
+               }}
+            >
+               <Field>
+                  <FieldLabel>Назва</FieldLabel>
+                  <FieldControl
+                     placeholder="Уведіть назву товару"
+                     name="name"
+                  />
+               </Field>
+               <div className="grid grid-cols-2 gap-3">
+                  <Field>
+                     <FieldLabel>Кількість</FieldLabel>
+                     <NumberField
+                        name="quantity"
+                        min={1}
+                     >
+                        <NumberFieldInput placeholder="шт." />
+                     </NumberField>
+                  </Field>
+                  <Field>
+                     <FieldLabel>Ціна продажу</FieldLabel>
+                     <NumberField
+                        name="sellingPrice"
+                        min={1}
+                     >
+                        <NumberFieldInput placeholder="₴" />
+                     </NumberField>
+                  </Field>
+               </div>
+               <Field>
+                  <FieldLabel>Комент</FieldLabel>
+                  <FieldControl
+                     name="note"
+                     placeholder="Додайте комент"
+                  />
+               </Field>
+               <Button
+                  pending={mutation.isPending || mutation.isSuccess}
+                  disabled={mutation.isPending || mutation.isSuccess}
+                  className="mt-auto md:mr-auto"
+               >
+                  Додати
+               </Button>
+            </form>
+         </DrawerPopup>
+      </Drawer>
    )
 }

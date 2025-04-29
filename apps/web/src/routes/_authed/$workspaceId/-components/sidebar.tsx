@@ -25,14 +25,14 @@ export function SidebarContent() {
                <MenuTrigger
                   render={
                      <Button
-                        className="justify-start gap-2"
+                        className="!gap-2 justify-start"
                         variant={"ghost"}
                      >
                         <WorkspaceLogo
                            size={18}
                            workspace={auth.workspace}
                         />
-                        <span className="line-clamp-1">
+                        <span className="line-clamp-1 pb-px">
                            {auth.workspace.name}
                         </span>
                         <Icons.chevronUpDown className="-mr-1 ml-auto size-4 shrink-0 text-foreground/75" />

@@ -386,7 +386,7 @@ export const Icons = {
    ),
    plus: ({ className, ...props }: IconProps) => (
       <svg
-         className={cn("size-6", className)}
+         className={cn("size-6 md:size-5", className)}
          viewBox="0 0 24 24"
          fill="none"
          xmlns="http://www.w3.org/2000/svg"

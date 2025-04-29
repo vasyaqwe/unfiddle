@@ -6,7 +6,7 @@ import { Loading } from "./loading"
 export const button = cva(
    [
       "inline-flex items-center justify-center whitespace-nowrap text-base leading-none",
-      "relative cursor-pointer transition-all duration-100 disabled:opacity-80",
+      "md:[&>svg]:-ml-[0.3rem] [&>svg]:-ml-[0.2rem] relative cursor-pointer transition-all duration-100 disabled:opacity-80",
    ],
    {
       variants: {
@@ -19,11 +19,11 @@ export const button = cva(
          },
          size: {
             sm: "h-9 rounded-sm px-2 md:h-7",
-            md: "h-9 rounded-md px-2.5 md:h-[1.9rem]",
+            md: "h-9 rounded-md px-3 md:h-[1.9rem] md:px-2.5",
             lg: "h-10 rounded-lg px-3 md:h-[2.1rem]",
          },
          kind: {
-            default: "gap-1.5",
+            default: "gap-1.5 has-[svg]:gap-1",
             icon: "aspect-square w-auto justify-center px-0 md:px-0",
          },
       },
@@ -64,7 +64,32 @@ export function Button({
          )}
          {...props}
       >
-         {!pending ? children : <Loading size={size} />}
+         {pending === undefined ? (
+            children
+         ) : (
+            <>
+               <span
+                  className={cn(
+                     "data-[inactive]:-translate-y-8 md:data-[inactive]:-translate-y-6 invisible flex items-center justify-center gap-2 data-[active]:visible data-[active]:translate-y-0 data-[inactive]:scale-90 data-[active]:opacity-100 data-[inactive]:opacity-0",
+                  )}
+                  data-active={!pending ? "" : undefined}
+                  data-inactive={pending ? "" : undefined}
+               >
+                  {children}
+               </span>
+               <span
+                  data-active={pending ? "" : undefined}
+                  className={cn(
+                     "invisible absolute inset-0 m-auto block h-fit translate-y-8 opacity-0 data-[active]:visible data-[active]:translate-y-0 data-[active]:opacity-100 md:translate-y-6",
+                  )}
+               >
+                  <Loading
+                     size={size}
+                     className="mx-auto"
+                  />
+               </span>
+            </>
+         )}
       </button>
    )
 }
