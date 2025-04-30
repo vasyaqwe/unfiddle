@@ -221,6 +221,7 @@ function RouteComponent() {
                                     </TableCell>
                                  </TableRow>
                                  <CollapsiblePanel
+                                    className={"[--table-padding:0.5rem]"}
                                     keepMounted
                                     render={
                                        <TableRow className="border-primary-2">
@@ -234,12 +235,15 @@ function RouteComponent() {
                                                 </p>
                                              ) : (
                                                 <Table className="z-[2]">
-                                                   <TableBody className="isolate before:absolute before:inset-2 before:z-[-1] before:rounded-xl before:border before:border-neutral before:bg-background before:shadow-md/4">
+                                                   <TableBody className="isolate before:absolute before:inset-(--table-padding) before:z-[-1] before:rounded-xl before:border before:border-neutral before:bg-background before:shadow-md/4">
                                                       {item.procurements.map(
-                                                         (item) => (
+                                                         (p) => (
                                                             <ProcurementRow
-                                                               key={item.id}
-                                                               item={item}
+                                                               key={p.id}
+                                                               item={p}
+                                                               sellingPrice={
+                                                                  item.sellingPrice
+                                                               }
                                                             />
                                                          ),
                                                       )}
@@ -411,7 +415,7 @@ function NewProcurement({
                      <Icons.plus /> Нова закупівля
                   </Button>
                ) : (
-                  <button className="-translate-y-2 -mt-2 mx-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-b-xl bg-primary-3/60 py-2.5 pt-4 transition-colors duration-75 hover:bg-primary-3">
+                  <button className="-translate-y-(--table-padding) -mt-(--table-padding) mx-(--table-padding) flex w-[calc(100%-calc(var(--table-padding)*2))] cursor-pointer items-center justify-center gap-2 rounded-b-xl bg-primary-3/60 py-2.5 pt-4 transition-colors duration-75 hover:bg-primary-3">
                      <Icons.plus /> Додати
                   </button>
                )
@@ -490,11 +494,15 @@ function NewProcurement({
 
 function ProcurementRow({
    item,
-}: { item: RouterOutput["order"]["list"][number]["procurements"][number] }) {
+   sellingPrice,
+}: {
+   item: RouterOutput["order"]["list"][number]["procurements"][number]
+   sellingPrice: number
+}) {
    const [from, to] = procurementStatusGradient(item.status)
 
    return (
-      <TableRow className="relative overflow-hidden border-none after:absolute after:inset-x-[0.3rem] after:bottom-0 after:z-[2] after:h-px after:w-[calc(100%-0.6rem)] after:border-neutral after:border-b last:after:hidden first:[&>td]:pt-5 last:[&>td]:pb-5 md:last:[&>td]:pb-4 md:first:[&>td]:pt-4">
+      <TableRow className="relative overflow-hidden border-none after:absolute after:inset-x-(--table-padding) after:bottom-0 after:z-[2] after:h-px after:w-[calc(100%-calc(var(--table-padding)*2))] after:border-neutral after:border-b last:after:hidden first:[&>td]:pt-5 last:[&>td]:pb-5">
          <TableCell className="max-md:!pl-6 w-[100px]">
             <UserAvatar
                size={16}
@@ -511,6 +519,7 @@ function ProcurementRow({
          </TableCell>
          <TableCell className="w-[100px]">
             <Badge
+               size={"sm"}
                style={{
                   background: `linear-gradient(140deg, ${from}, ${to})`,
                }}
@@ -519,6 +528,11 @@ function ProcurementRow({
             </Badge>
          </TableCell>
          <TableCell>{item.note}</TableCell>
+         <TableCell className="text-right font-medium font-mono text-base">
+            {formatCurrency(
+               (sellingPrice - item.purchasePrice) * item.quantity,
+            )}
+         </TableCell>
       </TableRow>
    )
 }

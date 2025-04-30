@@ -9,14 +9,14 @@ export const badge = cva(
             primary: "border-neutral bg-background text-foreground/80",
          },
          size: {
-            sm: "h-7 rounded-sm px-2",
-            md: "h-8 rounded-md px-2.5",
-            lg: "h-9 rounded-lg px-3",
+            sm: "h-[1.5rem] rounded-[0.3rem] px-1.5 text-xs",
+            md: "h-7 rounded-sm px-2",
+            lg: "h-8 rounded-lg px-3",
          },
       },
       defaultVariants: {
          variant: "primary",
-         size: "sm",
+         size: "md",
       },
    },
 )

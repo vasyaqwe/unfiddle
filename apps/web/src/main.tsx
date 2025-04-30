@@ -14,6 +14,7 @@ import { routeTree } from "./routeTree.gen"
 const router = createRouter({
    routeTree,
    scrollRestoration: true,
+   getScrollRestorationKey: (location) => location.pathname,
    context: { queryClient, trpc },
    defaultPreload: "intent",
    defaultPendingMs: 150,
