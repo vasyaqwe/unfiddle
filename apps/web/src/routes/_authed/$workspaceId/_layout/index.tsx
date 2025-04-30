@@ -9,6 +9,7 @@ import {
    HeaderWorkspaceMenu,
 } from "@/routes/_authed/$workspaceId/-components/header"
 import { trpc } from "@/trpc"
+import { UserAvatar } from "@/user/components/user-avatar"
 import { Button } from "@ledgerblocks/ui/components/button"
 import {
    Card,
@@ -17,6 +18,11 @@ import {
    CardHeader,
    CardTitle,
 } from "@ledgerblocks/ui/components/card"
+import {
+   Collapsible,
+   CollapsiblePanel,
+   CollapsibleTrigger,
+} from "@ledgerblocks/ui/components/collapsible"
 import {
    Drawer,
    DrawerPopup,
@@ -33,6 +39,14 @@ import {
    NumberField,
    NumberFieldInput,
 } from "@ledgerblocks/ui/components/number-field"
+import {
+   Table,
+   TableBody,
+   TableCell,
+   TableHead,
+   TableHeader,
+   TableRow,
+} from "@ledgerblocks/ui/components/table"
 import { formData, number } from "@ledgerblocks/ui/utils"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
@@ -84,51 +98,100 @@ function RouteComponent() {
             </HeaderTitle>
             <HeaderUserMenu />
          </Header>
-         <MainScrollArea>
-            <p className="mb-8 font-semibold text-xl max-md:hidden">
-               {greeting}, {auth.user.name}
-            </p>
-            <div className="grid gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
-               <Card>
-                  <CardHeader>
-                     <CardTitle>Зароблено</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                     <p className="font-mono font-semibold text-2xl tracking-tight md:text-3xl">
-                        $49,482
-                     </p>
-                     <CardFooter>За сьогодні</CardFooter>
-                  </CardContent>
-               </Card>
-               <Card>
-                  <CardHeader>
-                     <CardTitle>Зароблено</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                     <p className="font-mono font-semibold text-2xl tracking-tight md:text-3xl">
-                        $49,482
-                     </p>
-                     <CardFooter>За сьогодні</CardFooter>
-                  </CardContent>
-               </Card>
-               <Card>
-                  <CardHeader>
-                     <CardTitle>Зароблено</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                     <p className="font-mono font-semibold text-2xl tracking-tight md:text-3xl">
-                        $49,482
-                     </p>
-                     <CardFooter>За сьогодні</CardFooter>
-                  </CardContent>
-               </Card>
+         <MainScrollArea container={false}>
+            <div className="container">
+               <p className="mb-8 font-semibold text-xl max-md:hidden">
+                  {greeting}, {auth.user.name}
+               </p>
+               <div className="grid gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
+                  <Card>
+                     <CardHeader>
+                        <CardTitle>Зароблено</CardTitle>
+                     </CardHeader>
+                     <CardContent>
+                        <p className="font-mono font-semibold text-2xl tracking-tight md:text-3xl">
+                           $49,482
+                        </p>
+                        <CardFooter>За сьогодні</CardFooter>
+                     </CardContent>
+                  </Card>
+                  <Card>
+                     <CardHeader>
+                        <CardTitle>Зароблено</CardTitle>
+                     </CardHeader>
+                     <CardContent>
+                        <p className="font-mono font-semibold text-2xl tracking-tight md:text-3xl">
+                           $49,482
+                        </p>
+                        <CardFooter>За сьогодні</CardFooter>
+                     </CardContent>
+                  </Card>
+                  <Card>
+                     <CardHeader>
+                        <CardTitle>Зароблено</CardTitle>
+                     </CardHeader>
+                     <CardContent>
+                        <p className="font-mono font-semibold text-2xl tracking-tight md:text-3xl">
+                           $49,482
+                        </p>
+                        <CardFooter>За сьогодні</CardFooter>
+                     </CardContent>
+                  </Card>
+               </div>
+               <div className="mt-8 flex items-center justify-between gap-4">
+                  <p className="font-semibold text-xl">Замовлення</p>
+                  <NewOrder />
+               </div>
             </div>
-            <div className="mt-8 flex items-center justify-end gap-4">
-               <NewOrder />
-            </div>
-            <div className="mt-8">
-               {query.data?.map((item) => item.quantity)}
-            </div>
+            <Table className="mt-8 mb-16">
+               <TableHeader>
+                  <TableRow>
+                     <TableHead>Назва</TableHead>
+                     <TableHead>Кількість</TableHead>
+                     <TableHead>Ціна продажу</TableHead>
+                     <TableHead>Комент</TableHead>
+                     <TableHead>Менеджер</TableHead>
+                  </TableRow>
+               </TableHeader>
+               <TableBody>
+                  {query.data?.map((item) => {
+                     return (
+                        <Collapsible
+                           key={item.id}
+                           render={
+                              <>
+                                 <TableRow className="relative">
+                                    <TableCell>
+                                       <CollapsibleTrigger
+                                          className={
+                                             "before:-inset-x-1.5 before:-inset-y-0.5 relative isolate before:absolute before:z-[-1] before:rounded-sm before:bg-primary-3 before:opacity-0 before:transition-opacitys before:duration-75 hover:before:opacity-100 aria-expanded:before:opacity-100 max-md:p-1"
+                                          }
+                                       >
+                                          {item.name}
+                                       </CollapsibleTrigger>
+                                    </TableCell>
+                                    <TableCell>{item.quantity}</TableCell>
+                                    <TableCell>{item.sellingPrice}</TableCell>
+                                    <TableCell>{item.note}</TableCell>
+                                    <TableCell>
+                                       <UserAvatar
+                                          size={16}
+                                          user={item.creator}
+                                          className="mr-1.5 inline-block align-text-top"
+                                       />
+                                       {item.creator.name}
+                                    </TableCell>
+                                 </TableRow>
+                                 <CollapsiblePanel className={"container mb-3"}>
+                                    <p>Тут будуть закупівельники</p>
+                                 </CollapsiblePanel>
+                              </>
+                           }
+                        />
+                     )
+                  })}
+               </TableBody>
+            </Table>
          </MainScrollArea>
       </>
    )
@@ -162,7 +225,7 @@ function NewOrder() {
          <DrawerTrigger
             render={
                <Button>
-                  <Icons.plus /> Замовлення
+                  <Icons.plus /> Додати
                </Button>
             }
          />

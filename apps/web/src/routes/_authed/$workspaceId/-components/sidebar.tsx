@@ -25,14 +25,11 @@ export function SidebarContent() {
                <MenuTrigger
                   render={
                      <Button
-                        className="!gap-2 justify-start"
+                        className="!gap-2 justify-start md:pl-1.5"
                         variant={"ghost"}
                      >
-                        <WorkspaceLogo
-                           size={18}
-                           workspace={auth.workspace}
-                        />
-                        <span className="line-clamp-1 pb-px">
+                        <WorkspaceLogo workspace={auth.workspace} />
+                        <span className="line-clamp-1 py-px">
                            {auth.workspace.name}
                         </span>
                         <Icons.chevronUpDown className="-mr-1 ml-auto size-4 shrink-0 text-foreground/75" />
@@ -76,11 +73,11 @@ export function SidebarContent() {
                <MenuTrigger
                   render={
                      <Button
-                        className="w-full justify-start pl-1.5 [--active-color:var(--color-primary-3)]"
+                        className="!gap-2 w-full justify-start [--active-color:var(--color-primary-3)] md:pl-1.5"
                         variant={"ghost"}
                      >
                         <UserAvatar user={auth.user} />
-                        <span className="line-clamp-1 pb-px text-sm">
+                        <span className="line-clamp-1 py-px text-sm">
                            {auth.user.email}
                         </span>
                      </Button>

@@ -13,6 +13,9 @@ export const orderRouter = t.router({
       .query(async ({ ctx, input }) => {
          return await ctx.db.query.order.findMany({
             where: eq(order.workspaceId, input.workspaceId),
+            with: {
+               creator: true,
+            },
          })
       }),
    create: t.procedure

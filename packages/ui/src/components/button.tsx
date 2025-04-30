@@ -6,7 +6,7 @@ import { Loading } from "./loading"
 export const button = cva(
    [
       "inline-flex items-center justify-center overflow-hidden whitespace-nowrap text-base leading-none",
-      "md:[&>svg]:-ml-[0.3rem] [&>svg]:-ml-[0.2rem] relative cursor-pointer transition-all duration-100 disabled:opacity-80",
+      "relative cursor-pointer transition-all duration-100 disabled:opacity-80",
    ],
    {
       variants: {
@@ -23,7 +23,8 @@ export const button = cva(
             lg: "h-10 rounded-lg px-3 md:h-[2.1rem]",
          },
          kind: {
-            default: "gap-1.5 has-[svg]:gap-1",
+            default:
+               "md:[&>svg]:-ml-[0.3rem] [&>svg]:-ml-[0.2rem] gap-1.5 has-[svg]:gap-1",
             icon: "aspect-square w-auto justify-center px-0 md:px-0",
          },
       },
