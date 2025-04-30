@@ -1,7 +1,7 @@
 import { user } from "@ledgerblocks/core/auth/schema"
 import { d } from "@ledgerblocks/core/database"
 import { order } from "@ledgerblocks/core/order/schema"
-import type { ProcurementStatus } from "@ledgerblocks/core/procurement/types"
+import { PROCUREMENT_STATUSES } from "@ledgerblocks/core/procurement/constants"
 import { relations } from "drizzle-orm"
 
 export const procurement = d.table(
@@ -18,7 +18,10 @@ export const procurement = d.table(
          .references(() => user.id, { onDelete: "cascade" }),
       quantity: d.integer().notNull(),
       purchasePrice: d.integer().notNull(),
-      status: d.text().$type<ProcurementStatus>().notNull().default("pending"),
+      status: d
+         .text({ enum: PROCUREMENT_STATUSES })
+         .notNull()
+         .default("pending"),
       note: d.text().default(""),
       ...d.timestamps,
    },

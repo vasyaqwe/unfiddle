@@ -39,6 +39,7 @@
         "babel-plugin-react-compiler": "^19.1.0-rc.1",
         "better-auth": "^1.2.7",
         "boring-avatars": "^1.11.2",
+        "cmdk-base": "^0.0.3",
         "hono": "^4.7.7",
         "jotai": "^2.11.0",
         "react": "^19.0.0",
@@ -796,6 +797,8 @@
     "cloneable-readable": ["cloneable-readable@1.1.3", "", { "dependencies": { "inherits": "^2.0.1", "process-nextick-args": "^2.0.0", "readable-stream": "^2.3.5" } }, "sha512-2EF8zTQOxYq70Y4XKtorQupqF0m49MBz2/yf5Bj+MHjvpG3Hy7sImifnqD6UA+TKYxeSV+u6qqQPawN5UvnpKQ=="],
 
     "clsx": ["clsx@2.1.1", "", {}, "sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA=="],
+
+    "cmdk-base": ["cmdk-base@0.0.3", "", { "dependencies": { "@base-ui-components/react": "1.0.0-alpha.6", "use-sync-external-store": "^1.4.0" }, "peerDependencies": { "react": "^16.8 || ^17.0 || ^18.0 || ^19.0.0 || ^19.0.0-rc", "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0.0 || ^19.0.0-rc" } }, "sha512-R7ov3WdnPdL8kBu61t7JRWddWLSj6+PZIPzsReiIp7C2odezhHvoOrU/3lWakPuj0u0O70ltTUsIarpbbXAxfA=="],
 
     "co": ["co@4.6.0", "", {}, "sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ=="],
 
@@ -1854,6 +1857,8 @@
     "class-utils/isobject": ["isobject@3.0.1", "", {}, "sha512-WhB9zCku7EGTj/HQQRz5aUQEUeoQZH2bWcltRErOpymJ4boYE6wL9Tbr23krRPSZ+C5zqNSrSw+Cc7sZZ4b7vg=="],
 
     "clone-deep/lazy-cache": ["lazy-cache@1.0.4", "", {}, "sha512-RE2g0b5VGZsOCFOCgP7omTRYFqydmZkBwl5oNnQ1lDYC57uyO9KqNnNVxT7COSHTxrRCWVcAVOcbjk+tvh/rgQ=="],
+
+    "cmdk-base/@base-ui-components/react": ["@base-ui-components/react@1.0.0-alpha.6", "", { "dependencies": { "@babel/runtime": "^7.26.7", "@floating-ui/react": "^0.27.3", "@floating-ui/utils": "^0.2.9", "@react-aria/overlays": "^3.25.0", "prop-types": "^15.8.1", "use-sync-external-store": "^1.4.0" }, "peerDependencies": { "@types/react": "^17 || ^18 || ^19", "react": "^17 || ^18 || ^19", "react-dom": "^17 || ^18 || ^19" }, "optionalPeers": ["@types/react"] }, "sha512-0Jkp8twk3z3TJNOTUyzrK1dPOF7w1/LH+TYksuZc8TyJzuJx8V2O15BgpMJczvFdSR2ncdN1WQxsTe2ayYJ6cw=="],
 
     "composer/is-glob": ["is-glob@2.0.1", "", { "dependencies": { "is-extglob": "^1.0.0" } }, "sha512-a1dBeB19NXsf/E0+FHqkagizel/LQw2DjSQpvQrj3zT+jYPpaUCryPnrQajXKFLCMuf4I6FhRpaGtw4lPrG6Eg=="],
 

@@ -1,6 +1,6 @@
 import { user } from "@ledgerblocks/core/auth/schema"
 import { d } from "@ledgerblocks/core/database"
-import type { OrderStatus } from "@ledgerblocks/core/order/types"
+import { ORDER_STATUSES } from "@ledgerblocks/core/order/constants"
 import { procurement } from "@ledgerblocks/core/procurement/schema"
 import { workspace } from "@ledgerblocks/core/workspace/schema"
 import { relations } from "drizzle-orm"
@@ -21,7 +21,7 @@ export const order = d.table(
       quantity: d.integer().notNull(),
       sellingPrice: d.integer().notNull(),
       note: d.text().notNull().default(""),
-      status: d.text().$type<OrderStatus>().notNull().default("pending"),
+      status: d.text({ enum: ORDER_STATUSES }).notNull().default("pending"),
       ...d.timestamps,
    },
    (table) => [d.index("order_creator_id_idx").on(table.creatorId)],

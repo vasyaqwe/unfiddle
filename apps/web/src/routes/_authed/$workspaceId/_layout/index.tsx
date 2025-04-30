@@ -16,6 +16,7 @@ import {
 } from "@/routes/_authed/$workspaceId/-components/header"
 import { trpc } from "@/trpc"
 import { UserAvatar } from "@/user/components/user-avatar"
+import { ORDER_STATUSES } from "@ledgerblocks/core/order/constants"
 import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
 import { Badge } from "@ledgerblocks/ui/components/badge"
 import { Button } from "@ledgerblocks/ui/components/button"
@@ -32,6 +33,13 @@ import {
    CollapsibleTrigger,
    CollapsibleTriggerIcon,
 } from "@ledgerblocks/ui/components/collapsible"
+import {
+   Combobox,
+   ComboboxInput,
+   ComboboxItem,
+   ComboboxPopup,
+   ComboboxTrigger,
+} from "@ledgerblocks/ui/components/combobox"
 import {
    Drawer,
    DrawerPopup,
@@ -199,17 +207,42 @@ function RouteComponent() {
                                        {item.note}
                                     </TableCell>
                                     <TableCell>
-                                       <Badge
-                                          style={{
-                                             background: `linear-gradient(140deg, ${from}, ${to})`,
-                                          }}
-                                       >
-                                          {
-                                             ORDER_STATUSES_TRANSLATION[
-                                                item.status
-                                             ]
-                                          }
-                                       </Badge>
+                                       <Combobox value={item.status}>
+                                          <ComboboxTrigger
+                                             className={"cursor-pointer"}
+                                          >
+                                             <Badge
+                                                style={{
+                                                   background: `linear-gradient(140deg, ${from}, ${to})`,
+                                                }}
+                                             >
+                                                {
+                                                   ORDER_STATUSES_TRANSLATION[
+                                                      item.status
+                                                   ]
+                                                }
+                                             </Badge>
+                                          </ComboboxTrigger>
+                                          <ComboboxPopup align="end">
+                                             <ComboboxInput />
+                                             {ORDER_STATUSES.map((s) => (
+                                                <ComboboxItem
+                                                   key={s}
+                                                   value={
+                                                      ORDER_STATUSES_TRANSLATION[
+                                                         s
+                                                      ]
+                                                   }
+                                                >
+                                                   {
+                                                      ORDER_STATUSES_TRANSLATION[
+                                                         s
+                                                      ]
+                                                   }
+                                                </ComboboxItem>
+                                             ))}
+                                          </ComboboxPopup>
+                                       </Combobox>
                                     </TableCell>
                                     <TableCell>
                                        <UserAvatar
