@@ -6,5 +6,13 @@ export const formData = <T>(target: EventTarget) => {
    return Object.fromEntries(formData.entries()) as T
 }
 
+export const number = (str: string) => {
+   if (!str) return 0
+   // Remove all commas, spaces, and any currency symbols
+   const cleanedStr = str.replace(/[,\s$£€]/g, "")
+   const result = parseFloat(cleanedStr)
+   return Number.isNaN(result) ? 0 : result
+}
+
 export const cx = cxBase
 export const cn = (...inputs: Parameters<typeof cx>) => twMerge(cx(inputs))

@@ -1,8 +1,9 @@
 import type * as React from "react"
+import { createPortal } from "react-dom"
 import { Toaster as Sonner } from "sonner"
 
 export function Toaster(props: React.ComponentProps<typeof Sonner>) {
-   return (
+   return createPortal(
       <Sonner
          icons={{
             // loading: <Loading />,
@@ -96,6 +97,7 @@ export function Toaster(props: React.ComponentProps<typeof Sonner>) {
          }}
          position="bottom-right"
          {...props}
-      />
+      />,
+      document.body,
    )
 }

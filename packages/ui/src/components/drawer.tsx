@@ -30,7 +30,7 @@ function DrawerPopup({
    return (
       <DrawerPortal>
          <DrawerBackdrop
-            className={cx(DIALOG_STYLES.backdrop, "bg-black/60")}
+            className={cx(DIALOG_STYLES.backdrop, "bg-black/45")}
          />
          <DrawerPrimitive.Content
             className={cn(

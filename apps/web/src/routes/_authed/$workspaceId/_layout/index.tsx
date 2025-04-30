@@ -1,4 +1,5 @@
 import { useAuth } from "@/auth/hooks"
+import { useDelayedValue } from "@/interactions/use-delayed-value"
 import { useEventListener } from "@/interactions/use-event-listener"
 import { MainScrollArea } from "@/layout/components/main"
 import {
@@ -32,7 +33,7 @@ import {
    NumberField,
    NumberFieldInput,
 } from "@ledgerblocks/ui/components/number-field"
-import { formData } from "@ledgerblocks/ui/utils"
+import { formData, number } from "@ledgerblocks/ui/utils"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import * as React from "react"
@@ -125,7 +126,9 @@ function RouteComponent() {
             <div className="mt-8 flex items-center justify-end gap-4">
                <NewOrder />
             </div>
-            <div className="mt-8">{query.data?.map((item) => item.name)}</div>
+            <div className="mt-8">
+               {query.data?.map((item) => item.quantity)}
+            </div>
          </MainScrollArea>
       </>
    )
@@ -144,9 +147,12 @@ function NewOrder() {
                }),
             )
             setOpen(false)
+            mutation.reset
          },
       }),
    )
+
+   const pending = useDelayedValue(mutation.isPending, 150)
 
    return (
       <Drawer
@@ -172,12 +178,12 @@ function NewOrder() {
                      sellingPrice: string
                      note: string
                   }>(e.target)
-                  console.log(form)
+
                   mutation.mutate({
                      workspaceId: params.workspaceId,
                      name: form.name,
-                     quantity: +form.quantity,
-                     sellingPrice: +form.sellingPrice,
+                     quantity: number(form.quantity),
+                     sellingPrice: number(form.sellingPrice),
                      note: form.note,
                   })
                }}
@@ -185,6 +191,7 @@ function NewOrder() {
                <Field>
                   <FieldLabel>Назва</FieldLabel>
                   <FieldControl
+                     required
                      placeholder="Уведіть назву товару"
                      name="name"
                   />
@@ -193,6 +200,7 @@ function NewOrder() {
                   <Field>
                      <FieldLabel>Кількість</FieldLabel>
                      <NumberField
+                        required
                         name="quantity"
                         min={1}
                      >
@@ -202,6 +210,7 @@ function NewOrder() {
                   <Field>
                      <FieldLabel>Ціна продажу</FieldLabel>
                      <NumberField
+                        required
                         name="sellingPrice"
                         min={1}
                      >
@@ -217,8 +226,8 @@ function NewOrder() {
                   />
                </Field>
                <Button
-                  pending={mutation.isPending || mutation.isSuccess}
-                  disabled={mutation.isPending || mutation.isSuccess}
+                  pending={pending}
+                  disabled={pending}
                   className="mt-auto md:mr-auto"
                >
                   Додати

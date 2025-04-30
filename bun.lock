@@ -25,7 +25,7 @@
     "apps/web": {
       "name": "@ledgerblocks/web",
       "dependencies": {
-        "@base-ui-components/react": "^1.0.0-alpha.4",
+        "@base-ui-components/react": "^1.0.0-alpha.8",
         "@ledgerblocks/core": "workspace:*",
         "@ledgerblocks/infra": "workspace:*",
         "@ledgerblocks/ui": "workspace:*",

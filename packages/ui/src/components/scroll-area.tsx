@@ -15,7 +15,9 @@ export function ScrollArea({
             )}
             {...props}
          >
-            {children}
+            <ScrollAreaPrimitive.Content>
+               {children}
+            </ScrollAreaPrimitive.Content>
          </ScrollAreaPrimitive.Viewport>
          <ScrollAreaScrollbar />
       </ScrollAreaPrimitive.Root>

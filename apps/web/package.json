@@ -9,7 +9,7 @@
     "generate-pwa-assets": "pwa-assets-generator --preset minimal-2023 public/icon.svg"
   },
   "dependencies": {
-    "@base-ui-components/react": "^1.0.0-alpha.4",
+    "@base-ui-components/react": "^1.0.0-alpha.8",
     "@ledgerblocks/core": "workspace:*",
     "@ledgerblocks/infra": "workspace:*",
     "@ledgerblocks/ui": "workspace:*",

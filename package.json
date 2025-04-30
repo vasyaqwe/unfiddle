@@ -15,7 +15,7 @@
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "turbo clean",
     "db:generate": "bun --filter @ledgerblocks/core db:generate",
-    "db:create": "bun --cwd apps/api db:create",
+    "db:migrate:local": "bun --cwd apps/api db:create",
     "db:migrate": "bun --filter @ledgerblocks/core db:migrate",
     "db:push": "bun --filter @ledgerblocks/core db:push",
     "db:drop": "bun --filter @ledgerblocks/core db:drop",
