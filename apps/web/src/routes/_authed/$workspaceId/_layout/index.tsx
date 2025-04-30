@@ -2,6 +2,8 @@ import { useAuth } from "@/auth/hooks"
 import { useDelayedValue } from "@/interactions/use-delayed-value"
 import { useEventListener } from "@/interactions/use-event-listener"
 import { MainScrollArea } from "@/layout/components/main"
+import { ORDER_STATUSES_TRANSLATION } from "@/order/constants"
+import { orderStatusGradient } from "@/order/utils"
 import {
    Header,
    HeaderTitle,
@@ -10,6 +12,7 @@ import {
 } from "@/routes/_authed/$workspaceId/-components/header"
 import { trpc } from "@/trpc"
 import { UserAvatar } from "@/user/components/user-avatar"
+import { Badge } from "@ledgerblocks/ui/components/badge"
 import { Button } from "@ledgerblocks/ui/components/button"
 import {
    Card,
@@ -22,6 +25,7 @@ import {
    Collapsible,
    CollapsiblePanel,
    CollapsibleTrigger,
+   CollapsibleTriggerIcon,
 } from "@ledgerblocks/ui/components/collapsible"
 import {
    Drawer,
@@ -89,6 +93,15 @@ function RouteComponent() {
       trpc.order.list.queryOptions({ workspaceId: params.workspaceId }),
    )
 
+   const heads = [
+      "Назва",
+      "Кількість",
+      "Ціна продажу",
+      "Комент",
+      "Статус",
+      "Менеджер",
+   ]
+
    return (
       <>
          <Header>
@@ -146,15 +159,15 @@ function RouteComponent() {
             <Table className="mt-8 mb-16">
                <TableHeader>
                   <TableRow>
-                     <TableHead>Назва</TableHead>
-                     <TableHead>Кількість</TableHead>
-                     <TableHead>Ціна продажу</TableHead>
-                     <TableHead>Комент</TableHead>
-                     <TableHead>Менеджер</TableHead>
+                     {heads.map((head, idx) => (
+                        <TableHead key={idx}>{head}</TableHead>
+                     ))}
                   </TableRow>
                </TableHeader>
                <TableBody>
                   {query.data?.map((item) => {
+                     const [from, to] = orderStatusGradient(item.status)
+
                      return (
                         <Collapsible
                            key={item.id}
@@ -167,12 +180,28 @@ function RouteComponent() {
                                              "before:-inset-x-1.5 before:-inset-y-0.5 relative isolate before:absolute before:z-[-1] before:rounded-sm before:bg-primary-3 before:opacity-0 before:transition-opacitys before:duration-75 hover:before:opacity-100 aria-expanded:before:opacity-100 max-md:p-1"
                                           }
                                        >
+                                          <CollapsibleTriggerIcon />
                                           {item.name}
                                        </CollapsibleTrigger>
                                     </TableCell>
                                     <TableCell>{item.quantity}</TableCell>
                                     <TableCell>{item.sellingPrice}</TableCell>
-                                    <TableCell>{item.note}</TableCell>
+                                    <TableCell className="min-w-[260px] max-w-[200px] whitespace-pre-wrap break-words">
+                                       {item.note}
+                                    </TableCell>
+                                    <TableCell>
+                                       <Badge
+                                          style={{
+                                             background: `linear-gradient(140deg, ${from}, ${to})`,
+                                          }}
+                                       >
+                                          {
+                                             ORDER_STATUSES_TRANSLATION[
+                                                item.status
+                                             ]
+                                          }
+                                       </Badge>
+                                    </TableCell>
                                     <TableCell>
                                        <UserAvatar
                                           size={16}
@@ -182,9 +211,19 @@ function RouteComponent() {
                                        {item.creator.name}
                                     </TableCell>
                                  </TableRow>
-                                 <CollapsiblePanel className={"container mb-3"}>
-                                    <p>Тут будуть закупівельники</p>
-                                 </CollapsiblePanel>
+                                 <CollapsiblePanel
+                                    keepMounted
+                                    render={
+                                       <TableRow className="border-primary-2">
+                                          <TableCell
+                                             colSpan={heads.length}
+                                             className="bg-primary-1 py-5"
+                                          >
+                                             <p>Тут будуть закупівельники</p>
+                                          </TableCell>
+                                       </TableRow>
+                                    }
+                                 />
                               </>
                            }
                         />
