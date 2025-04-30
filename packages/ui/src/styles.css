@@ -38,7 +38,7 @@
 
    --font-primary: "inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
       Roboto, Helvetica, Arial, sans-serif;
-   --font-mono: "ibm_mono", monospace;
+   --font-mono: "mono", monospace;
 
    --text-xs: 0.7825rem;
    --text-base: 0.925rem;

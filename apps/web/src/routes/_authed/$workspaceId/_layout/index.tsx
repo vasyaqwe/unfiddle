@@ -189,10 +189,10 @@ function RouteComponent() {
                                           {item.name}
                                        </CollapsibleTrigger>
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell className="font-mono">
                                        {formatNumber(item.quantity)}
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell className="font-mono">
                                        {formatCurrency(item.sellingPrice)}
                                     </TableCell>
                                     <TableCell className="min-w-[170px] whitespace-pre-wrap break-words">
@@ -226,15 +226,15 @@ function RouteComponent() {
                                        <TableRow className="border-primary-2">
                                           <TableCell
                                              colSpan={heads.length}
-                                             className="bg-primary-1 pt-0 pb-5"
+                                             className="!p-0 bg-primary-1"
                                           >
                                              {item.procurements.length === 0 ? (
-                                                <p className="mt-4 font-medium text-foreground/80">
+                                                <p className="mx-8 mt-4 font-medium text-foreground/80">
                                                    Тут нічого немає.
                                                 </p>
                                              ) : (
-                                                <Table>
-                                                   <TableBody>
+                                                <Table className="z-[2]">
+                                                   <TableBody className="isolate before:absolute before:inset-2 before:z-[-1] before:rounded-xl before:border before:border-neutral before:bg-background before:shadow-md/4">
                                                       {item.procurements.map(
                                                          (item) => (
                                                             <ProcurementRow
@@ -249,6 +249,10 @@ function RouteComponent() {
                                              <NewProcurement
                                                 orderName={item.name}
                                                 orderId={item.id}
+                                                empty={
+                                                   item.procurements.length ===
+                                                   0
+                                                }
                                              />
                                           </TableCell>
                                        </TableRow>
@@ -372,7 +376,8 @@ function NewOrder() {
 function NewProcurement({
    orderName,
    orderId,
-}: { orderName: string; orderId: string }) {
+   empty,
+}: { orderName: string; orderId: string; empty: boolean }) {
    const queryClient = useQueryClient()
    const params = Route.useParams()
    const [open, setOpen] = React.useState(false)
@@ -398,12 +403,18 @@ function NewProcurement({
       >
          <DrawerTrigger
             render={
-               <Button
-                  variant={"secondary"}
-                  className="mt-5"
-               >
-                  <Icons.plus /> Нова закупівля
-               </Button>
+               empty ? (
+                  <Button
+                     variant={"secondary"}
+                     className="mx-8 my-5"
+                  >
+                     <Icons.plus /> Нова закупівля
+                  </Button>
+               ) : (
+                  <button className="-translate-y-2 -mt-2 mx-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-b-xl bg-primary-3/60 py-2.5 pt-4 transition-colors duration-75 hover:bg-primary-3">
+                     <Icons.plus /> Додати
+                  </button>
+               )
             }
          />
          <DrawerPopup>
@@ -483,8 +494,8 @@ function ProcurementRow({
    const [from, to] = procurementStatusGradient(item.status)
 
    return (
-      <TableRow className="first:border-none">
-         <TableCell className="!pl-0 w-[80px]">
+      <TableRow className="relative overflow-hidden border-none after:absolute after:inset-x-[0.3rem] after:bottom-0 after:z-[2] after:h-px after:w-[calc(100%-0.6rem)] after:border-neutral after:border-b last:after:hidden first:[&>td]:pt-5 last:[&>td]:pb-5 md:last:[&>td]:pb-4 md:first:[&>td]:pt-4">
+         <TableCell className="max-md:!pl-6 w-[100px]">
             <UserAvatar
                size={16}
                user={item.buyer}
@@ -492,10 +503,10 @@ function ProcurementRow({
             />
             {item.buyer.name}
          </TableCell>
-         <TableCell className="w-[50px] font-medium text-foreground/80">
+         <TableCell className="w-[50px] font-mono">
             {formatNumber(item.quantity)} шт.
          </TableCell>
-         <TableCell className="w-[50px] font-medium text-foreground/80">
+         <TableCell className="w-[50px] font-mono">
             {formatCurrency(item.purchasePrice)}
          </TableCell>
          <TableCell className="w-[100px]">
