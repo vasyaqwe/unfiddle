@@ -3,7 +3,7 @@ import { cn } from "@ledgerblocks/ui/utils"
 import Avatar from "boring-avatars"
 
 interface Props extends React.ComponentProps<"div"> {
-   user: Omit<User, "createdAt" | "updatedAt" | "emailVerified">
+   user: Omit<User, "createdAt" | "updatedAt" | "emailVerified" | "email">
    size?: number
 }
 

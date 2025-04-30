@@ -1,6 +1,6 @@
 import { CACHE_AWHILE } from "@/api"
 import { env } from "@/env"
-import type { AppRouter } from "@ledgerblocks/core/trpc"
+import type { AppRouter } from "@ledgerblocks/core/trpc/types"
 import { MutationCache, QueryClient } from "@tanstack/react-query"
 import {
    type TRPCClientErrorLike,

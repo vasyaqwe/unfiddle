@@ -1,7 +1,6 @@
-import { order } from "@ledgerblocks/core/database/schema"
+import { order } from "@ledgerblocks/core/order/schema"
 import { t } from "@ledgerblocks/core/trpc/context"
 import { workspaceMemberMiddleware } from "@ledgerblocks/core/workspace/middleware"
-import { workspace } from "@ledgerblocks/core/workspace/schema"
 import { eq } from "drizzle-orm"
 import { createInsertSchema } from "drizzle-zod"
 import { z } from "zod"
@@ -14,7 +13,31 @@ export const orderRouter = t.router({
          return await ctx.db.query.order.findMany({
             where: eq(order.workspaceId, input.workspaceId),
             with: {
-               creator: true,
+               creator: {
+                  columns: {
+                     id: true,
+                     name: true,
+                     image: true,
+                  },
+               },
+               procurements: {
+                  columns: {
+                     id: true,
+                     quantity: true,
+                     purchasePrice: true,
+                     status: true,
+                     note: true,
+                  },
+                  with: {
+                     buyer: {
+                        columns: {
+                           id: true,
+                           name: true,
+                           image: true,
+                        },
+                     },
+                  },
+               },
             },
          })
       }),
@@ -22,19 +45,14 @@ export const orderRouter = t.router({
       .use(workspaceMemberMiddleware)
       .input(createInsertSchema(order).omit({ creatorId: true }))
       .mutation(async ({ ctx, input }) => {
-         await ctx.db
-            .insert(order)
-            .values({
-               creatorId: ctx.user.id,
-               workspaceId: input.workspaceId,
-               name: input.name,
-               quantity: input.quantity,
-               sellingPrice: input.sellingPrice,
-               note: input.note,
-            })
-            .returning({
-               id: workspace.id,
-            })
+         await ctx.db.insert(order).values({
+            creatorId: ctx.user.id,
+            workspaceId: input.workspaceId,
+            name: input.name,
+            quantity: input.quantity,
+            sellingPrice: input.sellingPrice,
+            note: input.note,
+         })
       }),
    delete: t.procedure
       .use(workspaceMemberMiddleware)

@@ -30,4 +30,8 @@ export const procurementRelations = relations(procurement, ({ one }) => ({
       fields: [procurement.buyerId],
       references: [user.id],
    }),
+   order: one(order, {
+      fields: [procurement.orderId],
+      references: [order.id],
+   }),
 }))

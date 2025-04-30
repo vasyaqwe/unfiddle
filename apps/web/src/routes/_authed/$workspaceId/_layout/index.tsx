@@ -1,9 +1,13 @@
 import { useAuth } from "@/auth/hooks"
+import { formatCurrency } from "@/currency"
 import { useDelayedValue } from "@/interactions/use-delayed-value"
 import { useEventListener } from "@/interactions/use-event-listener"
 import { MainScrollArea } from "@/layout/components/main"
+import { formatNumber } from "@/number"
 import { ORDER_STATUSES_TRANSLATION } from "@/order/constants"
 import { orderStatusGradient } from "@/order/utils"
+import { PROCUREMENT_STATUSES_TRANSLATION } from "@/procurement/constants"
+import { procurementStatusGradient } from "@/procurement/utils"
 import {
    Header,
    HeaderTitle,
@@ -12,6 +16,7 @@ import {
 } from "@/routes/_authed/$workspaceId/-components/header"
 import { trpc } from "@/trpc"
 import { UserAvatar } from "@/user/components/user-avatar"
+import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
 import { Badge } from "@ledgerblocks/ui/components/badge"
 import { Button } from "@ledgerblocks/ui/components/button"
 import {
@@ -184,9 +189,13 @@ function RouteComponent() {
                                           {item.name}
                                        </CollapsibleTrigger>
                                     </TableCell>
-                                    <TableCell>{item.quantity}</TableCell>
-                                    <TableCell>{item.sellingPrice}</TableCell>
-                                    <TableCell className="min-w-[260px] max-w-[200px] whitespace-pre-wrap break-words">
+                                    <TableCell>
+                                       {formatNumber(item.quantity)}
+                                    </TableCell>
+                                    <TableCell>
+                                       {formatCurrency(item.sellingPrice)}
+                                    </TableCell>
+                                    <TableCell className="min-w-[170px] whitespace-pre-wrap break-words">
                                        {item.note}
                                     </TableCell>
                                     <TableCell>
@@ -217,9 +226,30 @@ function RouteComponent() {
                                        <TableRow className="border-primary-2">
                                           <TableCell
                                              colSpan={heads.length}
-                                             className="bg-primary-1 py-5"
+                                             className="bg-primary-1 pt-0 pb-5"
                                           >
-                                             <p>Тут будуть закупівельники</p>
+                                             {item.procurements.length === 0 ? (
+                                                <p className="mt-4 font-medium text-foreground/80">
+                                                   Тут нічого немає.
+                                                </p>
+                                             ) : (
+                                                <Table>
+                                                   <TableBody>
+                                                      {item.procurements.map(
+                                                         (item) => (
+                                                            <ProcurementRow
+                                                               key={item.id}
+                                                               item={item}
+                                                            />
+                                                         ),
+                                                      )}
+                                                   </TableBody>
+                                                </Table>
+                                             )}
+                                             <NewProcurement
+                                                orderName={item.name}
+                                                orderId={item.id}
+                                             />
                                           </TableCell>
                                        </TableRow>
                                     }
@@ -249,7 +279,6 @@ function NewOrder() {
                }),
             )
             setOpen(false)
-            mutation.reset
          },
       }),
    )
@@ -337,5 +366,148 @@ function NewOrder() {
             </form>
          </DrawerPopup>
       </Drawer>
+   )
+}
+
+function NewProcurement({
+   orderName,
+   orderId,
+}: { orderName: string; orderId: string }) {
+   const queryClient = useQueryClient()
+   const params = Route.useParams()
+   const [open, setOpen] = React.useState(false)
+   const mutation = useMutation(
+      trpc.procurement.create.mutationOptions({
+         onSuccess: () => {
+            queryClient.invalidateQueries(
+               trpc.order.list.queryOptions({
+                  workspaceId: params.workspaceId,
+               }),
+            )
+            setOpen(false)
+         },
+      }),
+   )
+
+   const pending = useDelayedValue(mutation.isPending, 150)
+
+   return (
+      <Drawer
+         open={open}
+         onOpenChange={setOpen}
+      >
+         <DrawerTrigger
+            render={
+               <Button
+                  variant={"secondary"}
+                  className="mt-5"
+               >
+                  <Icons.plus /> Нова закупівля
+               </Button>
+            }
+         />
+         <DrawerPopup>
+            <DrawerTitle>Нова закупівля</DrawerTitle>
+            <form
+               className="mt-4 flex grow flex-col space-y-7"
+               onSubmit={(e) => {
+                  e.preventDefault()
+                  const form = formData<{
+                     quantity: string
+                     purchasePrice: string
+                     note: string
+                  }>(e.target)
+
+                  mutation.mutate({
+                     orderId,
+                     workspaceId: params.workspaceId,
+                     quantity: number(form.quantity),
+                     purchasePrice: number(form.purchasePrice),
+                     note: form.note,
+                  })
+               }}
+            >
+               <Field>
+                  <FieldLabel>Замовлення</FieldLabel>
+                  <FieldControl
+                     defaultValue={orderName}
+                     readOnly
+                     disabled
+                  />
+               </Field>
+               <div className="grid grid-cols-2 gap-3">
+                  <Field>
+                     <FieldLabel>Кількість</FieldLabel>
+                     <NumberField
+                        required
+                        name="quantity"
+                        min={1}
+                     >
+                        <NumberFieldInput placeholder="шт." />
+                     </NumberField>
+                  </Field>
+                  <Field>
+                     <FieldLabel>Ціна</FieldLabel>
+                     <NumberField
+                        required
+                        name="purchasePrice"
+                        min={1}
+                     >
+                        <NumberFieldInput placeholder="₴" />
+                     </NumberField>
+                  </Field>
+               </div>
+               <Field>
+                  <FieldLabel>Комент</FieldLabel>
+                  <FieldControl
+                     name="note"
+                     placeholder="Додайте комент"
+                  />
+               </Field>
+               <Button
+                  pending={pending}
+                  disabled={pending}
+                  className="mt-auto md:mr-auto"
+               >
+                  Додати
+               </Button>
+            </form>
+         </DrawerPopup>
+      </Drawer>
+   )
+}
+
+function ProcurementRow({
+   item,
+}: { item: RouterOutput["order"]["list"][number]["procurements"][number] }) {
+   const [from, to] = procurementStatusGradient(item.status)
+
+   return (
+      <TableRow className="first:border-none">
+         <TableCell className="!pl-0 w-[80px]">
+            <UserAvatar
+               size={16}
+               user={item.buyer}
+               className="mr-1.5 inline-block align-text-top"
+            />
+            {item.buyer.name}
+         </TableCell>
+         <TableCell className="w-[50px] font-medium text-foreground/80">
+            {formatNumber(item.quantity)} шт.
+         </TableCell>
+         <TableCell className="w-[50px] font-medium text-foreground/80">
+            {formatCurrency(item.purchasePrice)}
+         </TableCell>
+         <TableCell className="w-[100px]">
+            <Badge
+               style={{
+                  background: `linear-gradient(140deg, ${from}, ${to})`,
+               }}
+            >
+               {PROCUREMENT_STATUSES_TRANSLATION[item.status]}
+            </Badge>
+         </TableCell>
+         <TableCell>{item.note}</TableCell>
+      </TableRow>
    )
 }

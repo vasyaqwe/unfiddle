@@ -46,7 +46,7 @@ export function ErrorComponent({ error, reset, className, ...props }: Props) {
                      router.invalidate()
                   }}
                >
-                  Try again
+                  Перезавантажити
                </Button>
             </div>
          </div>

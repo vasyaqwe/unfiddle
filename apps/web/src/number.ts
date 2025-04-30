@@ -1,11 +1,9 @@
-export const formatCurrency = (
-   price: number,
+export const formatNumber = (
+   number: number,
    options: Intl.NumberFormatOptions = {},
 ) => {
    return new Intl.NumberFormat("uk-UA", {
-      style: "currency",
-      currency: options.currency ?? "UAH",
       notation: options.notation ?? "standard",
       ...options,
-   }).format(Number(price))
+   }).format(Number(number))
 }

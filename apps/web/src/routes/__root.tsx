@@ -1,4 +1,4 @@
-import type { AppRouter } from "@ledgerblocks/core/trpc"
+import type { AppRouter } from "@ledgerblocks/core/trpc/types"
 import { Toaster } from "@ledgerblocks/ui/components/toast"
 import { MOBILE_BREAKPOINT } from "@ledgerblocks/ui/constants"
 import { isMobileAtom } from "@ledgerblocks/ui/store"
