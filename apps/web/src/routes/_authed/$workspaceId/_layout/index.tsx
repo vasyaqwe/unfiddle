@@ -295,7 +295,7 @@ function OrderRow({
       >
          <CollapsibleTrigger
             render={<div />}
-            className="container grid-cols-[1fr_100px_50px] items-start gap-3 border-neutral py-2.5 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-1 max-lg:grid max-lg:border-t lg:flex lg:gap-4 lg:py-2"
+            className="container grid-cols-[1fr_110px_50px] items-start gap-3 border-neutral py-2.5 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-1 max-lg:grid max-lg:border-t lg:flex lg:gap-4 lg:py-2"
          >
             <AlignedColumn
                id="price"
@@ -315,7 +315,7 @@ function OrderRow({
             >
                {item.name}
             </AlignedColumn>
-            <p className="lg:!max-w-[80ch] col-start-1 col-end-3 break-normal empty:hidden max-lg:order-5 lg:mt-1">
+            <p className="lg:!max-w-[80ch] col-start-1 col-end-3 break-normal empty:hidden max-lg:order-5 max-lg:self-center lg:mt-1">
                {item.note}
             </p>
             <Combobox
@@ -333,7 +333,7 @@ function OrderRow({
                      e.stopPropagation()
                   }}
                   className={
-                     "col-start-2 col-end-4 ml-auto cursor-pointer justify-self-end max-lg:order-4"
+                     "col-start-2 col-end-4 ml-auto cursor-pointer justify-self-end max-lg:order-4 lg:mt-px"
                   }
                >
                   <Badge
@@ -439,10 +439,10 @@ function ProcurementRow({
    const [from, to] = procurementStatusGradient(item.status)
 
    return (
-      <div className="grid-cols-2 items-start gap-3 border-neutral border-t px-4 py-3 text-left first:border-none max-lg:grid lg:flex lg:gap-4 lg:py-3.5">
+      <div className="grid-cols-[1fr_110px_50px] items-start gap-3 border-neutral border-t px-4 py-3 text-left first:border-none max-lg:grid lg:flex lg:gap-4 lg:py-2">
          <AlignedColumn
             id="buyer"
-            className="max-lg:order-3"
+            className="whitespace-nowrap max-lg:order-3 lg:mt-1"
          >
             <UserAvatar
                size={16}
@@ -452,19 +452,19 @@ function ProcurementRow({
             {item.buyer.name}
          </AlignedColumn>
          <AlignedColumn
-            id="quantity"
-            className="max-lg:order-1 max-lg:font-medium lg:text-sm"
-         >
-            {formatNumber(item.quantity)} шт.
-         </AlignedColumn>
-         <AlignedColumn
             id="price"
-            className="max-lg:order-2 max-lg:font-medium lg:text-sm"
+            className="whitespace-nowrap max-lg:order-1 max-lg:font-medium lg:mt-1 lg:text-sm"
          >
             {formatCurrency(item.purchasePrice)}
          </AlignedColumn>
          <AlignedColumn
-            className="max-lg:order-4"
+            id="quantity"
+            className="col-start-2 col-end-4 whitespace-nowrap max-lg:order-2 max-lg:text-right max-lg:font-medium lg:mt-1 lg:text-sm"
+         >
+            {formatNumber(item.quantity)} шт.
+         </AlignedColumn>
+         <AlignedColumn
+            className="col-start-2 col-end-4 justify-self-end max-lg:order-4 lg:mt-[0.2rem]"
             id="status"
          >
             <Badge
@@ -476,15 +476,38 @@ function ProcurementRow({
                {PROCUREMENT_STATUSES_TRANSLATION[item.status]}
             </Badge>
          </AlignedColumn>
-         <p className="lg:!max-w-[80ch] break-normal empty:hidden max-lg:order-5">
+         <p className="lg:!max-w-[80ch] col-span-3 break-normal empty:hidden max-lg:order-5 lg:mt-1">
             {item.note}
          </p>
-         <p className="col-span-2 font-medium text-lg max-lg:order-6 lg:ml-auto lg:text-right lg:text-base">
+         <p className="col-span-2 col-start-1 whitespace-nowrap font-medium text-lg max-lg:order-6 max-lg:self-center lg:mt-1 lg:ml-auto lg:text-right lg:text-base">
             {formatCurrency(
                (sellingPrice - item.purchasePrice) * item.quantity,
             )}{" "}
-            профіт
          </p>
+         <Menu>
+            <MenuTrigger
+               render={
+                  <Button
+                     variant={"ghost"}
+                     kind={"icon"}
+                     className="lg:-mr-2 shrink-0 justify-self-end max-lg:order-6 max-lg:mt-auto"
+                  >
+                     <Icons.ellipsisHorizontal />
+                  </Button>
+               }
+            />
+            <MenuPopup
+               align="end"
+               onClick={(e) => {
+                  e.stopPropagation()
+               }}
+            >
+               <MenuItem destructive>
+                  <Icons.trash />
+                  Видалити
+               </MenuItem>
+            </MenuPopup>
+         </Menu>
       </div>
    )
 }
