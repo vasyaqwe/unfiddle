@@ -400,6 +400,7 @@ function OrderRow({
                                  key={p.id}
                                  item={p}
                                  sellingPrice={item.sellingPrice}
+                                 orderId={item.id}
                               />
                            ))}
                         </div>
@@ -420,9 +421,11 @@ function OrderRow({
 function ProcurementRow({
    item,
    sellingPrice,
+   orderId,
 }: {
    item: RouterOutput["order"]["list"][number]["procurements"][number]
    sellingPrice: number
+   orderId: string
 }) {
    const params = Route.useParams()
    const [from, to] = procurementStatusGradient(item.status)
@@ -467,6 +470,7 @@ function ProcurementRow({
                      id: item.id,
                      workspaceId: params.workspaceId,
                      status: status as never,
+                     orderId,
                   })
                }
             >

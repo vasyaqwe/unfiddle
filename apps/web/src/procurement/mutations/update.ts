@@ -20,14 +20,14 @@ export function useUpdateProcurement({
    }: {
       input: Partial<
          RouterOutput["order"]["list"][number]["procurements"][number]
-      >
+      > & { orderId: string }
    }) => {
       queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
          if (!oldData) return oldData
          return oldData.map((item) => ({
             ...item,
             procurements: item.procurements.map((p) => {
-               if (p.id === input.id) return { ...p, input }
+               if (p.id === input.orderId) return { ...p, input }
                return p
             }),
          }))

@@ -18,12 +18,14 @@ export function useCreateProcurement({
    const mutateQueryData = ({
       input,
    }: {
-      input: RouterOutput["order"]["list"][number]["procurements"][number]
+      input: RouterOutput["order"]["list"][number]["procurements"][number] & {
+         orderId: string
+      }
    }) => {
       queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
          if (!oldData) return oldData
          return oldData.map((item) => {
-            if (item.id === input.id)
+            if (item.id === input.orderId)
                return { ...item, procurements: [input, ...item.procurements] }
             return item
          })
