@@ -42,19 +42,13 @@ export function CreateProcurement({
       >
          <DrawerTrigger
             render={
-               empty ? (
-                  <Button
-                     variant={"secondary"}
-                     className="mt-3"
-                  >
-                     <Icons.plus />
-                     Додати першу
-                  </Button>
-               ) : (
-                  <button className="-mt-2 flex cursor-pointer items-center justify-center gap-2 rounded-b-xl pt-5 pr-4 pb-3.5 pl-3 transition-colors duration-75 hover:bg-primary-3 max-lg:w-full lg:pt-4 lg:pb-2.5">
-                     <Icons.plus /> Додати
-                  </button>
-               )
+               <Button
+                  variant={"secondary"}
+                  className="mt-3"
+               >
+                  <Icons.plus />
+                  Додати {empty ? "Першу" : ""}
+               </Button>
             }
          />
          <DrawerPopup>

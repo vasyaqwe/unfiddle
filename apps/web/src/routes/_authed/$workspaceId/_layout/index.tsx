@@ -451,7 +451,7 @@ function ProcurementRow({
       <div className="grid-cols-2 items-start gap-3 border-neutral border-t px-4 py-3 text-left first:border-none max-lg:grid lg:flex lg:gap-4 lg:py-2">
          <AlignedColumn
             id="p_buyer"
-            className="col-end-4 flex items-center gap-1.5 justify-self-end whitespace-nowrap max-lg:order-4 max-lg:flex-row-reverse lg:mt-1"
+            className="col-end-4 flex items-center gap-1.5 justify-self-end whitespace-nowrap max-lg:order-4 max-lg:flex-row-reverse lg:mt-[0.17rem]"
          >
             <UserAvatar
                size={16}
