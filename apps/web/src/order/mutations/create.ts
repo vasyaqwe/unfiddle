@@ -4,7 +4,10 @@ import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 
-export function useCreateOrder() {
+export function useCreateOrder({
+   onMutate,
+   onError,
+}: { onMutate?: () => void; onError?: () => void } = {}) {
    const queryClient = useQueryClient()
    const auth = useAuth()
 
@@ -43,6 +46,8 @@ export function useCreateOrder() {
                },
             })
 
+            onMutate?.()
+
             return { data }
          },
          onError: (error, _data, context) => {
@@ -50,6 +55,7 @@ export function useCreateOrder() {
             toast.error("Ой-ой!", {
                description: error.message,
             })
+            onError?.()
          },
          onSettled: () => {
             queryClient.invalidateQueries(queryOptions)

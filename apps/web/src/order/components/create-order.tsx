@@ -1,6 +1,6 @@
 import { useAuth } from "@/auth/hooks"
 import { useDelayedValue } from "@/interactions/use-delayed-value"
-import { trpc } from "@/trpc"
+import { useCreateOrder } from "@/order/mutations/create"
 import { Button } from "@ledgerblocks/ui/components/button"
 import {
    Drawer,
@@ -19,25 +19,15 @@ import {
    NumberFieldInput,
 } from "@ledgerblocks/ui/components/number-field"
 import { formData, number } from "@ledgerblocks/ui/utils"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
 import * as React from "react"
 
 export function CreateOrder() {
-   const queryClient = useQueryClient()
    const auth = useAuth()
    const [open, setOpen] = React.useState(false)
-   const mutation = useMutation(
-      trpc.order.create.mutationOptions({
-         onSuccess: () => {
-            queryClient.invalidateQueries(
-               trpc.order.list.queryOptions({
-                  workspaceId: auth.workspace.id,
-               }),
-            )
-            setOpen(false)
-         },
-      }),
-   )
+   const mutation = useCreateOrder({
+      onMutate: () => setOpen(false),
+      onError: () => setOpen(true),
+   })
 
    const pending = useDelayedValue(mutation.isPending, 150)
 
