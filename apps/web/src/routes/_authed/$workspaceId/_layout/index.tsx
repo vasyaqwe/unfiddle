@@ -1,7 +1,6 @@
 import { CACHE_SHORT } from "@/api"
 import { useAuth } from "@/auth/hooks"
 import { formatCurrency } from "@/currency"
-import { useDelayedValue } from "@/interactions/use-delayed-value"
 import { useEventListener } from "@/interactions/use-event-listener"
 import { MainScrollArea } from "@/layout/components/main"
 import { formatNumber } from "@/number"
@@ -10,7 +9,10 @@ import { ORDER_STATUSES_TRANSLATION } from "@/order/constants"
 import { useDeleteOrder } from "@/order/mutations/delete"
 import { useUpdateOrder } from "@/order/mutations/update"
 import { orderStatusGradient } from "@/order/utils"
+import { CreateProcurement } from "@/procurement/components/create-procurement"
 import { PROCUREMENT_STATUSES_TRANSLATION } from "@/procurement/constants"
+import { useDeleteProcurement } from "@/procurement/mutations/delete"
+import { useUpdateProcurement } from "@/procurement/mutations/update"
 import { procurementStatusGradient } from "@/procurement/utils"
 import {
    Header,
@@ -21,6 +23,7 @@ import {
 import { trpc } from "@/trpc"
 import { UserAvatar } from "@/user/components/user-avatar"
 import { ORDER_STATUSES } from "@ledgerblocks/core/order/constants"
+import { PROCUREMENT_STATUSES } from "@ledgerblocks/core/procurement/constants"
 import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
 import { Badge } from "@ledgerblocks/ui/components/badge"
 import { Button } from "@ledgerblocks/ui/components/button"
@@ -43,17 +46,6 @@ import {
    ComboboxPopup,
    ComboboxTrigger,
 } from "@ledgerblocks/ui/components/combobox"
-import {
-   Drawer,
-   DrawerPopup,
-   DrawerTitle,
-   DrawerTrigger,
-} from "@ledgerblocks/ui/components/drawer"
-import {
-   Field,
-   FieldControl,
-   FieldLabel,
-} from "@ledgerblocks/ui/components/field"
 import { Icons } from "@ledgerblocks/ui/components/icons"
 import {
    Menu,
@@ -61,12 +53,8 @@ import {
    MenuPopup,
    MenuTrigger,
 } from "@ledgerblocks/ui/components/menu"
-import {
-   NumberField,
-   NumberFieldInput,
-} from "@ledgerblocks/ui/components/number-field"
-import { cn, cx, formData, number } from "@ledgerblocks/ui/utils"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { cn, cx } from "@ledgerblocks/ui/utils"
+import { useQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import { atom, useAtom } from "jotai"
 import { atomWithStorage } from "jotai/utils"
@@ -298,19 +286,19 @@ function OrderRow({
             className="container grid-cols-[1fr_110px_50px] items-start gap-3 border-neutral py-2.5 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-1 max-lg:grid max-lg:border-t lg:flex lg:gap-4 lg:py-2"
          >
             <AlignedColumn
-               id="price"
+               id="o_price"
                className="whitespace-nowrap font-medium font-mono max-lg:order-1 max-lg:text-[1rem] lg:mt-1"
             >
                {formatCurrency(item.sellingPrice)}
             </AlignedColumn>
             <AlignedColumn
-               id="quantity"
+               id="o_quantity"
                className="col-start-2 col-end-4 whitespace-nowrap font-medium font-mono max-lg:order-2 max-lg:text-right max-lg:text-[1rem] lg:mt-1"
             >
                {formatNumber(item.quantity)} шт.
             </AlignedColumn>
             <AlignedColumn
-               id="name"
+               id="o_name"
                className="max-lg:order-3 max-lg:self-center max-lg:font-medium lg:mt-1"
             >
                {item.name}
@@ -416,7 +404,7 @@ function OrderRow({
                            ))}
                         </div>
                      )}
-                     <NewProcurement
+                     <CreateProcurement
                         orderName={item.name}
                         orderId={item.id}
                         empty={item.procurements.length === 0}
@@ -436,13 +424,17 @@ function ProcurementRow({
    item: RouterOutput["order"]["list"][number]["procurements"][number]
    sellingPrice: number
 }) {
+   const params = Route.useParams()
    const [from, to] = procurementStatusGradient(item.status)
    const profit = (sellingPrice - item.purchasePrice) * item.quantity
+
+   const update = useUpdateProcurement()
+   const deleteItem = useDeleteProcurement()
 
    return (
       <div className="grid-cols-[1fr_110px_50px] items-start gap-3 border-neutral border-t px-4 py-3 text-left first:border-none max-lg:grid lg:flex lg:gap-4 lg:py-2">
          <AlignedColumn
-            id="buyer"
+            id="p_buyer"
             className="whitespace-nowrap max-lg:order-3 lg:mt-1"
          >
             <UserAvatar
@@ -453,29 +445,64 @@ function ProcurementRow({
             {item.buyer.name}
          </AlignedColumn>
          <AlignedColumn
-            id="price"
+            id="p_price"
             className="whitespace-nowrap font-medium font-mono max-lg:order-1 lg:mt-1 lg:text-sm"
          >
             {formatCurrency(item.purchasePrice)}
          </AlignedColumn>
          <AlignedColumn
-            id="quantity"
+            id="p_quantity"
             className="col-start-2 col-end-4 whitespace-nowrap font-medium font-mono max-lg:order-2 max-lg:text-right lg:mt-1 lg:text-sm"
          >
             {formatNumber(item.quantity)} шт.
          </AlignedColumn>
          <AlignedColumn
             className="col-start-2 col-end-4 justify-self-end max-lg:order-4 lg:mt-[0.2rem]"
-            id="status"
+            id="p_status"
          >
-            <Badge
-               size={"sm"}
-               style={{
-                  background: `linear-gradient(140deg, ${from}, ${to})`,
-               }}
+            <Combobox
+               value={item.status}
+               onValueChange={(status) =>
+                  update.mutate({
+                     id: item.id,
+                     workspaceId: params.workspaceId,
+                     status: status as never,
+                  })
+               }
             >
-               {PROCUREMENT_STATUSES_TRANSLATION[item.status]}
-            </Badge>
+               <ComboboxTrigger
+                  className={"cursor-pointer"}
+                  onClick={(e) => {
+                     e.stopPropagation()
+                  }}
+               >
+                  <Badge
+                     size={"sm"}
+                     style={{
+                        background: `linear-gradient(140deg, ${from}, ${to})`,
+                     }}
+                  >
+                     {PROCUREMENT_STATUSES_TRANSLATION[item.status]}
+                  </Badge>
+               </ComboboxTrigger>
+               <ComboboxPopup
+                  align="start"
+                  onClick={(e) => {
+                     e.stopPropagation()
+                  }}
+               >
+                  <ComboboxInput />
+                  {PROCUREMENT_STATUSES.map((s) => (
+                     <ComboboxItem
+                        key={s}
+                        value={s}
+                        keywords={[PROCUREMENT_STATUSES_TRANSLATION[s]]}
+                     >
+                        {PROCUREMENT_STATUSES_TRANSLATION[s]}
+                     </ComboboxItem>
+                  ))}
+               </ComboboxPopup>
+            </Combobox>
          </AlignedColumn>
          <p className="lg:!max-w-[80ch] col-span-3 break-normal empty:hidden max-lg:order-5 lg:mt-1">
             {item.note}
@@ -487,7 +514,6 @@ function ProcurementRow({
                   profit === 0 ? "" : profit > 0 ? "bg-green-3" : "bg-red-3",
                )}
             >
-               {" "}
                {profit === 0 ? null : profit > 0 ? (
                   <Icons.arrowUpRight className="-mt-px -ml-px size-5 text-green-10" />
                ) : (
@@ -514,128 +540,21 @@ function ProcurementRow({
                   e.stopPropagation()
                }}
             >
-               <MenuItem destructive>
+               <MenuItem
+                  destructive
+                  onClick={() => {
+                     if (confirm(`Видалити закупівлю?`))
+                        deleteItem.mutate({
+                           id: item.id,
+                           workspaceId: params.workspaceId,
+                        })
+                  }}
+               >
                   <Icons.trash />
                   Видалити
                </MenuItem>
             </MenuPopup>
          </Menu>
       </div>
-   )
-}
-
-function NewProcurement({
-   orderName,
-   orderId,
-   empty,
-}: { orderName: string; orderId: string; empty: boolean }) {
-   const queryClient = useQueryClient()
-   const params = Route.useParams()
-   const [open, setOpen] = React.useState(false)
-   const mutation = useMutation(
-      trpc.procurement.create.mutationOptions({
-         onSuccess: () => {
-            queryClient.invalidateQueries(
-               trpc.order.list.queryOptions({
-                  workspaceId: params.workspaceId,
-               }),
-            )
-            setOpen(false)
-         },
-      }),
-   )
-
-   const pending = useDelayedValue(mutation.isPending, 150)
-
-   return (
-      <Drawer
-         open={open}
-         onOpenChange={setOpen}
-      >
-         <DrawerTrigger
-            render={
-               empty ? (
-                  <Button
-                     variant={"secondary"}
-                     className="my-5"
-                  >
-                     <Icons.plus />
-                     Додати
-                  </Button>
-               ) : (
-                  <button className="-mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-b-lg bg-primary-3/60 py-2.5 pt-4 transition-colors duration-75 hover:bg-primary-3">
-                     <Icons.plus /> Додати
-                  </button>
-               )
-            }
-         />
-         <DrawerPopup>
-            <DrawerTitle>Нова закупівля</DrawerTitle>
-            <form
-               className="mt-4 flex grow flex-col space-y-7"
-               onSubmit={(e) => {
-                  e.preventDefault()
-                  const form = formData<{
-                     quantity: string
-                     purchasePrice: string
-                     note: string
-                  }>(e.target)
-
-                  mutation.mutate({
-                     orderId,
-                     workspaceId: params.workspaceId,
-                     quantity: number(form.quantity),
-                     purchasePrice: number(form.purchasePrice),
-                     note: form.note,
-                  })
-               }}
-            >
-               <Field>
-                  <FieldLabel>Замовлення</FieldLabel>
-                  <FieldControl
-                     defaultValue={orderName}
-                     readOnly
-                     disabled
-                  />
-               </Field>
-               <div className="grid grid-cols-2 gap-3">
-                  <Field>
-                     <FieldLabel>Кількість</FieldLabel>
-                     <NumberField
-                        required
-                        name="quantity"
-                        min={1}
-                     >
-                        <NumberFieldInput placeholder="шт." />
-                     </NumberField>
-                  </Field>
-                  <Field>
-                     <FieldLabel>Ціна</FieldLabel>
-                     <NumberField
-                        required
-                        name="purchasePrice"
-                        min={1}
-                     >
-                        <NumberFieldInput placeholder="₴" />
-                     </NumberField>
-                  </Field>
-               </div>
-               <Field>
-                  <FieldLabel>Комент</FieldLabel>
-                  <FieldControl
-                     name="note"
-                     placeholder="Додайте комент"
-                  />
-               </Field>
-               <Button
-                  pending={pending}
-                  disabled={pending}
-                  className="mt-auto lg:mr-auto"
-               >
-                  Додати
-               </Button>
-            </form>
-         </DrawerPopup>
-      </Drawer>
    )
 }

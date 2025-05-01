@@ -2,7 +2,7 @@ import { procurement } from "@ledgerblocks/core/procurement/schema"
 import { t } from "@ledgerblocks/core/trpc/context"
 import { workspaceMemberMiddleware } from "@ledgerblocks/core/workspace/middleware"
 import { eq } from "drizzle-orm"
-import { createInsertSchema } from "drizzle-zod"
+import { createInsertSchema, createUpdateSchema } from "drizzle-zod"
 import { z } from "zod"
 
 export const procurementRouter = t.router({
@@ -21,6 +21,31 @@ export const procurementRouter = t.router({
             purchasePrice: input.purchasePrice,
             note: input.note,
          })
+      }),
+   update: t.procedure
+      .use(workspaceMemberMiddleware)
+      .input(
+         createUpdateSchema(procurement)
+            .pick({
+               id: true,
+               note: true,
+               quantity: true,
+               status: true,
+               purchasePrice: true,
+            })
+            .required({ id: true })
+            .extend({ workspaceId: z.string() }),
+      )
+      .mutation(async ({ ctx, input }) => {
+         await ctx.db
+            .update(procurement)
+            .set({
+               quantity: input.quantity,
+               purchasePrice: input.purchasePrice,
+               note: input.note,
+               status: input.status,
+            })
+            .where(eq(procurement.id, input.id))
       }),
    delete: t.procedure
       .use(workspaceMemberMiddleware)

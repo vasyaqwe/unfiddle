@@ -139,7 +139,7 @@ export function ComboboxPopup({
       <PopoverPopup
          sideOffset={4}
          className={cn(
-            "max-h-56 min-w-(--anchor-width) max-w-56 scroll-py-1 overflow-y-auto p-1",
+            "max-h-56 min-w-(--anchor-width) scroll-py-1 overflow-y-auto p-1",
             className,
          )}
          {...props}
@@ -161,7 +161,7 @@ export function ComboboxInput({
          <CommandInput
             placeholder="Шукати.."
             className={cn(
-               "h-9 w-full border-transparent bg-transparent pr-3 pl-9 placeholder:text-white/55 focus:outline-hidden md:h-8 md:text-sm",
+               "h-9 w-full border-transparent bg-transparent pr-2 pl-9 placeholder:text-white/55 focus:outline-hidden md:h-8 md:text-sm",
                className,
             )}
             {...props}

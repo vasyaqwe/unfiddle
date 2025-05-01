@@ -1,10 +1,10 @@
 import { useAuth } from "@/auth/hooks"
 import { trpc } from "@/trpc"
-import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
+import type { RouterInput } from "@ledgerblocks/core/trpc/types"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 
-export function useCreateOrder({
+export function useDeleteProcurement({
    onMutate,
    onError,
 }: { onMutate?: () => void; onError?: () => void } = {}) {
@@ -18,16 +18,25 @@ export function useCreateOrder({
    const mutateQueryData = ({
       input,
    }: {
-      input: RouterOutput["order"]["list"][number]
+      input: RouterInput["procurement"]["delete"]
    }) => {
       queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
          if (!oldData) return oldData
-         return [input, ...oldData]
+         return oldData.map((item) => {
+            if (item.id === input.id)
+               return {
+                  ...item,
+                  procurements: item.procurements.filter(
+                     (p) => p.id !== input.id,
+                  ),
+               }
+            return item
+         })
       })
    }
 
    const mutation = useMutation(
-      trpc.order.create.mutationOptions({
+      trpc.procurement.delete.mutationOptions({
          onMutate: async (input) => {
             await queryClient.cancelQueries(queryOptions)
 
@@ -35,15 +44,7 @@ export function useCreateOrder({
             if (!data) return
 
             mutateQueryData({
-               input: {
-                  ...input,
-                  id: crypto.randomUUID(),
-                  status: "pending",
-                  creatorId: auth.user.id,
-                  creator: auth.user,
-                  note: input.note ?? "",
-                  procurements: [],
-               },
+               input,
             })
 
             onMutate?.()
