@@ -283,7 +283,7 @@ function OrderRow({
       >
          <CollapsibleTrigger
             render={<div />}
-            className="container grid-cols-[1fr_100px_50px] items-start gap-3 py-2.5 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-1 max-lg:grid lg:flex lg:gap-4 lg:py-2"
+            className="container grid-cols-2 items-start gap-3 py-2.5 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-1 max-lg:grid lg:flex lg:gap-4 lg:py-2"
          >
             <AlignedColumn
                id="o_price"
@@ -293,11 +293,11 @@ function OrderRow({
             </AlignedColumn>
             <AlignedColumn
                id="o_quantity"
-               className="col-start-2 col-end-4 whitespace-nowrap font-medium font-mono max-lg:order-2 max-lg:text-right max-lg:text-[1rem] lg:mt-1"
+               className="whitespace-nowrap font-medium font-mono max-lg:order-2 max-lg:text-right max-lg:text-[1rem] lg:mt-1"
             >
                {formatNumber(item.quantity)} шт.
             </AlignedColumn>
-            <p className="col-span-3 max-lg:order-3 max-lg:self-center max-lg:font-medium lg:mt-1">
+            <p className="col-span-2 max-lg:order-3 max-lg:self-center max-lg:font-medium lg:mt-1">
                {item.name}
             </p>
             <Combobox
@@ -350,7 +350,7 @@ function OrderRow({
                      <Button
                         variant={"ghost"}
                         kind={"icon"}
-                        className="col-start-3 shrink-0 justify-self-end max-lg:order-6 max-lg:mt-auto"
+                        className="col-start-2 shrink-0 justify-self-end max-lg:order-6 max-lg:mt-auto"
                      >
                         <Icons.ellipsisHorizontal />
                      </Button>
@@ -448,7 +448,7 @@ function ProcurementRow({
    const deleteItem = useDeleteProcurement()
 
    return (
-      <div className="grid-cols-[1fr_110px_50px] items-start gap-3 border-neutral border-t px-4 py-3 text-left first:border-none max-lg:grid lg:flex lg:gap-4 lg:py-2">
+      <div className="grid-cols-2 items-start gap-3 border-neutral border-t px-4 py-3 text-left first:border-none max-lg:grid lg:flex lg:gap-4 lg:py-2">
          <AlignedColumn
             id="p_buyer"
             className="col-end-4 flex items-center gap-1.5 justify-self-end whitespace-nowrap max-lg:order-4 max-lg:flex-row-reverse lg:mt-1"
