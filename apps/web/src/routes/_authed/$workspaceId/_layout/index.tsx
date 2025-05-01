@@ -65,7 +65,7 @@ import {
    NumberField,
    NumberFieldInput,
 } from "@ledgerblocks/ui/components/number-field"
-import { cn, formData, number } from "@ledgerblocks/ui/utils"
+import { cn, cx, formData, number } from "@ledgerblocks/ui/utils"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import { atom, useAtom } from "jotai"
@@ -140,7 +140,7 @@ function RouteComponent() {
                         <CardTitle>Профіт</CardTitle>
                      </CardHeader>
                      <CardContent>
-                        <p className="font-medium font-mono text-2xl text-black tracking-tight md:text-3xl">
+                        <p className="font-mono font-semibold text-2xl text-black tracking-tight md:text-3xl">
                            $49,482
                         </p>
                         <CardFooter>За сьогодні</CardFooter>
@@ -151,7 +151,7 @@ function RouteComponent() {
                         <CardTitle>Профіт</CardTitle>
                      </CardHeader>
                      <CardContent>
-                        <p className="font-medium font-mono text-2xl text-black tracking-tight md:text-3xl">
+                        <p className="font-mono font-semibold text-2xl text-black tracking-tight md:text-3xl">
                            $49,482
                         </p>
                         <CardFooter>За сьогодні</CardFooter>
@@ -162,7 +162,7 @@ function RouteComponent() {
                         <CardTitle>Профіт</CardTitle>
                      </CardHeader>
                      <CardContent>
-                        <p className="font-medium font-mono text-2xl tracking-tight md:text-3xl">
+                        <p className="font-mono font-semibold text-2xl tracking-tight md:text-3xl">
                            $49,482
                         </p>
                         <CardFooter>За сьогодні</CardFooter>
@@ -299,13 +299,13 @@ function OrderRow({
          >
             <AlignedColumn
                id="price"
-               className="whitespace-nowrap max-lg:order-1 max-lg:font-medium max-lg:text-[1rem] lg:mt-1"
+               className="whitespace-nowrap font-medium font-mono max-lg:order-1 max-lg:text-[1rem] lg:mt-1"
             >
                {formatCurrency(item.sellingPrice)}
             </AlignedColumn>
             <AlignedColumn
                id="quantity"
-               className="col-start-2 col-end-4 whitespace-nowrap max-lg:order-2 max-lg:text-right max-lg:font-medium max-lg:text-[1rem] lg:mt-1"
+               className="col-start-2 col-end-4 whitespace-nowrap font-medium font-mono max-lg:order-2 max-lg:text-right max-lg:text-[1rem] lg:mt-1"
             >
                {formatNumber(item.quantity)} шт.
             </AlignedColumn>
@@ -437,6 +437,7 @@ function ProcurementRow({
    sellingPrice: number
 }) {
    const [from, to] = procurementStatusGradient(item.status)
+   const profit = (sellingPrice - item.purchasePrice) * item.quantity
 
    return (
       <div className="grid-cols-[1fr_110px_50px] items-start gap-3 border-neutral border-t px-4 py-3 text-left first:border-none max-lg:grid lg:flex lg:gap-4 lg:py-2">
@@ -453,13 +454,13 @@ function ProcurementRow({
          </AlignedColumn>
          <AlignedColumn
             id="price"
-            className="whitespace-nowrap max-lg:order-1 max-lg:font-medium lg:mt-1 lg:text-sm"
+            className="whitespace-nowrap font-medium font-mono max-lg:order-1 lg:mt-1 lg:text-sm"
          >
             {formatCurrency(item.purchasePrice)}
          </AlignedColumn>
          <AlignedColumn
             id="quantity"
-            className="col-start-2 col-end-4 whitespace-nowrap max-lg:order-2 max-lg:text-right max-lg:font-medium lg:mt-1 lg:text-sm"
+            className="col-start-2 col-end-4 whitespace-nowrap font-medium font-mono max-lg:order-2 max-lg:text-right lg:mt-1 lg:text-sm"
          >
             {formatNumber(item.quantity)} шт.
          </AlignedColumn>
@@ -479,10 +480,21 @@ function ProcurementRow({
          <p className="lg:!max-w-[80ch] col-span-3 break-normal empty:hidden max-lg:order-5 lg:mt-1">
             {item.note}
          </p>
-         <p className="col-span-2 col-start-1 whitespace-nowrap font-medium text-lg max-lg:order-6 max-lg:self-center lg:mt-1 lg:ml-auto lg:text-right lg:text-base">
-            {formatCurrency(
-               (sellingPrice - item.purchasePrice) * item.quantity,
-            )}{" "}
+         <p className="col-span-2 col-start-1 whitespace-nowrap font-medium font-mono text-lg max-lg:order-6 max-lg:self-center lg:mt-1 lg:ml-auto lg:text-right lg:text-base">
+            <span
+               className={cx(
+                  "mr-1.5 inline-block size-4.5 rounded-xs align-sub max-md:mb-px",
+                  profit === 0 ? "" : profit > 0 ? "bg-green-3" : "bg-red-3",
+               )}
+            >
+               {" "}
+               {profit === 0 ? null : profit > 0 ? (
+                  <Icons.arrowUpRight className="-mt-px -ml-px size-5 text-green-10" />
+               ) : (
+                  <Icons.arrowDownRight className="-mt-px -ml-px size-5 text-red-10" />
+               )}{" "}
+            </span>
+            {formatCurrency(profit)}{" "}
          </p>
          <Menu>
             <MenuTrigger

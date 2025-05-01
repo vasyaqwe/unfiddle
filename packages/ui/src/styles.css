@@ -38,7 +38,7 @@
 
    --font-primary: "inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
       Roboto, Helvetica, Arial, sans-serif;
-   --font-mono: "mono", monospace;
+   --font-mono: "inter", monospace;
 
    --text-xs: 0.825rem;
    --text-base: 0.925rem;
@@ -116,6 +116,10 @@
 }
 
 @layer utilities {
+   .font-mono {
+      font-variant-numeric: tabular-nums;
+   }
+
    [data-loading-ellipsis]::after {
       position: absolute;
       display: inline-block;
