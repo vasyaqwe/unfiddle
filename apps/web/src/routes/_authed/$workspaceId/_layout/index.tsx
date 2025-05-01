@@ -31,7 +31,6 @@ import {
    Collapsible,
    CollapsiblePanel,
    CollapsibleTrigger,
-   CollapsibleTriggerIcon,
 } from "@ledgerblocks/ui/components/collapsible"
 import {
    Combobox,
@@ -56,18 +55,13 @@ import {
    NumberField,
    NumberFieldInput,
 } from "@ledgerblocks/ui/components/number-field"
-import {
-   Table,
-   TableBody,
-   TableCell,
-   TableHead,
-   TableHeader,
-   TableRow,
-} from "@ledgerblocks/ui/components/table"
-import { formData, number } from "@ledgerblocks/ui/utils"
+import { cn, formData, number } from "@ledgerblocks/ui/utils"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
+import { atom, useAtom } from "jotai"
+import { atomWithStorage } from "jotai/utils"
 import * as React from "react"
+import * as R from "remeda"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/")({
    component: RouteComponent,
@@ -106,14 +100,7 @@ function RouteComponent() {
       trpc.order.list.queryOptions({ workspaceId: params.workspaceId }),
    )
 
-   const heads = [
-      "Назва",
-      "Кількість",
-      "Ціна продажу",
-      "Комент",
-      "Статус",
-      "Менеджер",
-   ]
+   const groupedData = R.groupBy(query.data ?? [], R.prop("creatorId"))
 
    return (
       <>
@@ -132,10 +119,10 @@ function RouteComponent() {
                <div className="grid gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
                   <Card>
                      <CardHeader>
-                        <CardTitle>Зароблено</CardTitle>
+                        <CardTitle>Профіт</CardTitle>
                      </CardHeader>
                      <CardContent>
-                        <p className="font-mono font-semibold text-2xl tracking-tight md:text-3xl">
+                        <p className="font-medium font-mono text-2xl text-black tracking-tight md:text-3xl">
                            $49,482
                         </p>
                         <CardFooter>За сьогодні</CardFooter>
@@ -143,10 +130,10 @@ function RouteComponent() {
                   </Card>
                   <Card>
                      <CardHeader>
-                        <CardTitle>Зароблено</CardTitle>
+                        <CardTitle>Профіт</CardTitle>
                      </CardHeader>
                      <CardContent>
-                        <p className="font-mono font-semibold text-2xl tracking-tight md:text-3xl">
+                        <p className="font-medium font-mono text-2xl text-black tracking-tight md:text-3xl">
                            $49,482
                         </p>
                         <CardFooter>За сьогодні</CardFooter>
@@ -154,10 +141,10 @@ function RouteComponent() {
                   </Card>
                   <Card>
                      <CardHeader>
-                        <CardTitle>Зароблено</CardTitle>
+                        <CardTitle>Профіт</CardTitle>
                      </CardHeader>
                      <CardContent>
-                        <p className="font-mono font-semibold text-2xl tracking-tight md:text-3xl">
+                        <p className="font-medium font-mono text-2xl tracking-tight md:text-3xl">
                            $49,482
                         </p>
                         <CardFooter>За сьогодні</CardFooter>
@@ -169,141 +156,259 @@ function RouteComponent() {
                   <NewOrder />
                </div>
             </div>
-            <Table className="mt-8 mb-16">
-               <TableHeader>
-                  <TableRow>
-                     {heads.map((head, idx) => (
-                        <TableHead key={idx}>{head}</TableHead>
-                     ))}
-                  </TableRow>
-               </TableHeader>
-               <TableBody>
-                  {query.data?.map((item) => {
-                     const [from, to] = orderStatusGradient(item.status)
+            <div className="mt-5 mb-16">
+               {Object.entries(groupedData).map(([creatorId, data]) => {
+                  const creator = data.find(
+                     (item) => item.creatorId === creatorId,
+                  )?.creator
+                  if (!creator) return null
 
-                     return (
-                        <Collapsible
-                           key={item.id}
-                           render={
-                              <>
-                                 <TableRow className="relative">
-                                    <TableCell>
-                                       <CollapsibleTrigger
-                                          className={
-                                             "before:-inset-x-1.5 before:-inset-y-0.5 relative isolate before:absolute before:z-[-1] before:rounded-sm before:bg-primary-3 before:opacity-0 before:transition-opacitys before:duration-75 hover:before:opacity-100 aria-expanded:before:opacity-100 max-md:p-1"
-                                          }
-                                       >
-                                          <CollapsibleTriggerIcon />
-                                          {item.name}
-                                       </CollapsibleTrigger>
-                                    </TableCell>
-                                    <TableCell className="font-mono">
-                                       {formatNumber(item.quantity)}
-                                    </TableCell>
-                                    <TableCell className="font-mono">
-                                       {formatCurrency(item.sellingPrice)}
-                                    </TableCell>
-                                    <TableCell className="min-w-[170px] whitespace-pre-wrap break-words">
-                                       {item.note}
-                                    </TableCell>
-                                    <TableCell>
-                                       <Combobox value={item.status}>
-                                          <ComboboxTrigger
-                                             className={"cursor-pointer"}
-                                          >
-                                             <Badge
-                                                style={{
-                                                   background: `linear-gradient(140deg, ${from}, ${to})`,
-                                                }}
-                                             >
-                                                {
-                                                   ORDER_STATUSES_TRANSLATION[
-                                                      item.status
-                                                   ]
-                                                }
-                                             </Badge>
-                                          </ComboboxTrigger>
-                                          <ComboboxPopup align="end">
-                                             <ComboboxInput />
-                                             {ORDER_STATUSES.map((s) => (
-                                                <ComboboxItem
-                                                   key={s}
-                                                   value={
-                                                      ORDER_STATUSES_TRANSLATION[
-                                                         s
-                                                      ]
-                                                   }
-                                                >
-                                                   {
-                                                      ORDER_STATUSES_TRANSLATION[
-                                                         s
-                                                      ]
-                                                   }
-                                                </ComboboxItem>
-                                             ))}
-                                          </ComboboxPopup>
-                                       </Combobox>
-                                    </TableCell>
-                                    <TableCell>
-                                       <UserAvatar
-                                          size={16}
-                                          user={item.creator}
-                                          className="mr-1.5 inline-block align-text-top"
-                                       />
-                                       {item.creator.name}
-                                    </TableCell>
-                                 </TableRow>
-                                 <CollapsiblePanel
-                                    className={"[--table-padding:0.5rem]"}
-                                    keepMounted
-                                    render={
-                                       <TableRow className="border-primary-2">
-                                          <TableCell
-                                             colSpan={heads.length}
-                                             className="!p-0 bg-primary-1"
-                                          >
-                                             {item.procurements.length === 0 ? (
-                                                <p className="mx-8 mt-4 font-medium text-foreground/80">
-                                                   Тут нічого немає.
-                                                </p>
-                                             ) : (
-                                                <Table className="z-[2]">
-                                                   <TableBody className="isolate before:absolute before:inset-(--table-padding) before:z-[-1] before:rounded-xl before:border before:border-neutral before:bg-background before:shadow-md/4">
-                                                      {item.procurements.map(
-                                                         (p) => (
-                                                            <ProcurementRow
-                                                               key={p.id}
-                                                               item={p}
-                                                               sellingPrice={
-                                                                  item.sellingPrice
-                                                               }
-                                                            />
-                                                         ),
-                                                      )}
-                                                   </TableBody>
-                                                </Table>
-                                             )}
-                                             <NewProcurement
-                                                orderName={item.name}
-                                                orderId={item.id}
-                                                empty={
-                                                   item.procurements.length ===
-                                                   0
-                                                }
-                                             />
-                                          </TableCell>
-                                       </TableRow>
-                                    }
+                  return (
+                     <div
+                        key={creatorId}
+                        className="relative"
+                     >
+                        <div className="border-neutral border-y bg-primary-1 py-2">
+                           <div className="px-4 md:px-8">
+                              <p className="font-semibold">
+                                 <UserAvatar
+                                    size={16}
+                                    user={creator}
+                                    className="mr-1.5 inline-block align-text-top"
                                  />
-                              </>
+                                 {creator.name}
+                                 <span className="ml-1 text-foreground/70">
+                                    {data.length}
+                                 </span>
+                              </p>
+                           </div>
+                        </div>
+                        <div
+                           className={
+                              "divide-y divide-neutral md:divide-neutral/50"
                            }
-                        />
-                     )
-                  })}
-               </TableBody>
-            </Table>
+                        >
+                           {data.map((item) => (
+                              <OrderRow
+                                 key={item.id}
+                                 item={item}
+                              />
+                           ))}
+                        </div>
+                     </div>
+                  )
+               })}
+            </div>
          </MainScrollArea>
       </>
+   )
+}
+
+const columnWidthsAtom = atom<Record<string, number>>({})
+
+function AlignedColumn({
+   id,
+   children,
+   className = "",
+}: {
+   id: string
+   children: React.ReactNode
+   className?: string
+}) {
+   const [columnWidths, setColumnWidths] = useAtom(columnWidthsAtom)
+
+   return (
+      <p
+         ref={(el) => {
+            if (el) {
+               const width = el.getBoundingClientRect().width
+               if (!columnWidths[id] || width > columnWidths[id]) {
+                  setColumnWidths((prev) => ({
+                     ...prev,
+                     [id]: width,
+                  }))
+               }
+            }
+         }}
+         className={cn(
+            "max-md:![--min-width:auto] min-w-(--min-width)",
+            className,
+         )}
+         style={{ "--min-width": `${columnWidths[id] || "auto"}px` } as never}
+      >
+         {children}
+      </p>
+   )
+}
+
+const collapsiblesStateAtom = atomWithStorage<Record<string, boolean>>(
+   "collapsibles-open-states",
+   {
+      section1: false,
+      section2: false,
+      section3: false,
+   },
+)
+
+function OrderRow({
+   item,
+}: {
+   item: RouterOutput["order"]["list"][number]
+}) {
+   const [states, setStates] = useAtom(collapsiblesStateAtom)
+   const [from, to] = orderStatusGradient(item.status)
+
+   const open = states[item.id] ?? false
+   const setOpen = (open: boolean) => {
+      setStates({
+         ...states,
+         [item.id]: open,
+      })
+   }
+
+   return (
+      <Collapsible
+         open={open}
+         onOpenChange={setOpen}
+      >
+         <CollapsibleTrigger className="container grid-cols-2 items-start gap-3 border-neutral py-2.5 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 aria-expanded:bg-primary-1 max-md:grid max-md:border-t md:flex md:gap-4 md:py-2">
+            <AlignedColumn
+               id="price"
+               className="max-md:order-1 max-md:font-medium max-md:text-[1rem] md:mt-1"
+            >
+               {formatCurrency(item.sellingPrice)}
+            </AlignedColumn>
+            <AlignedColumn
+               id="quantity"
+               className="max-md:order-2 max-md:text-right max-md:font-medium max-md:text-[1rem] md:mt-1"
+            >
+               {formatNumber(item.quantity)} шт.
+            </AlignedColumn>
+            <AlignedColumn
+               id="name"
+               className="max-md:order-3 max-md:self-center max-md:font-medium md:mt-1"
+            >
+               {item.name}
+            </AlignedColumn>
+            <p className="col-span-2 empty:hidden max-md:order-5 md:mt-1">
+               {item.note}
+            </p>
+            <Combobox value={item.status}>
+               <ComboboxTrigger
+                  onClick={(e) => {
+                     e.stopPropagation()
+                  }}
+                  className={"ml-auto cursor-pointer max-md:order-4"}
+               >
+                  <Badge
+                     style={{
+                        background: `linear-gradient(140deg, ${from}, ${to})`,
+                     }}
+                  >
+                     {ORDER_STATUSES_TRANSLATION[item.status]}
+                  </Badge>
+               </ComboboxTrigger>
+               <ComboboxPopup align="end">
+                  <ComboboxInput />
+                  {ORDER_STATUSES.map((s) => (
+                     <ComboboxItem
+                        key={s}
+                        value={ORDER_STATUSES_TRANSLATION[s]}
+                     >
+                        {ORDER_STATUSES_TRANSLATION[s]}
+                     </ComboboxItem>
+                  ))}
+               </ComboboxPopup>
+            </Combobox>
+         </CollapsibleTrigger>
+         <CollapsiblePanel
+            key={item.procurements.length}
+            render={
+               <div className="bg-primary-1">
+                  <div className="container mt-1 mb-3">
+                     {item.procurements.length === 0 ? (
+                        <p className="mt-4 font-medium text-foreground/80">
+                           Тут нічого немає.
+                        </p>
+                     ) : (
+                        <div className="relative z-[2] rounded-lg border border-neutral bg-background shadow-md/4">
+                           {item.procurements.map((p) => (
+                              <ProcurementRow
+                                 key={p.id}
+                                 item={p}
+                                 sellingPrice={item.sellingPrice}
+                              />
+                           ))}
+                        </div>
+                     )}
+                     <NewProcurement
+                        orderName={item.name}
+                        orderId={item.id}
+                        empty={item.procurements.length === 0}
+                     />
+                  </div>
+               </div>
+            }
+         />
+      </Collapsible>
+   )
+}
+
+function ProcurementRow({
+   item,
+   sellingPrice,
+}: {
+   item: RouterOutput["order"]["list"][number]["procurements"][number]
+   sellingPrice: number
+}) {
+   const [from, to] = procurementStatusGradient(item.status)
+
+   return (
+      <div className="grid-cols-2 items-start gap-3 border-neutral border-t px-4 py-3 text-left first:border-none max-md:grid md:flex md:gap-4 md:py-3.5">
+         <AlignedColumn
+            id="buyer"
+            className="max-md:order-3"
+         >
+            <UserAvatar
+               size={16}
+               user={item.buyer}
+               className="mr-1.5 inline-block align-text-top"
+            />
+            {item.buyer.name}
+         </AlignedColumn>
+         <AlignedColumn
+            id="quantity"
+            className="max-md:order-1 max-md:font-medium md:text-sm"
+         >
+            {formatNumber(item.quantity)} шт.
+         </AlignedColumn>
+         <AlignedColumn
+            id="price"
+            className="max-md:order-2 max-md:font-medium md:text-sm"
+         >
+            {formatCurrency(item.purchasePrice)}
+         </AlignedColumn>
+         <AlignedColumn
+            className="max-md:order-4"
+            id="status"
+         >
+            <Badge
+               size={"sm"}
+               style={{
+                  background: `linear-gradient(140deg, ${from}, ${to})`,
+               }}
+            >
+               {PROCUREMENT_STATUSES_TRANSLATION[item.status]}
+            </Badge>
+         </AlignedColumn>
+         <p className="empty:hidden max-md:order-5">{item.note}</p>
+         <p className="col-span-2 font-medium text-lg max-md:order-6 md:ml-auto md:text-right md:text-base">
+            {formatCurrency(
+               (sellingPrice - item.purchasePrice) * item.quantity,
+            )}{" "}
+            профіт
+         </p>
+      </div>
    )
 }
 
@@ -443,12 +548,13 @@ function NewProcurement({
                empty ? (
                   <Button
                      variant={"secondary"}
-                     className="mx-8 my-5"
+                     className="my-5"
                   >
-                     <Icons.plus /> Нова закупівля
+                     <Icons.plus />
+                     Додати
                   </Button>
                ) : (
-                  <button className="-translate-y-(--table-padding) -mt-(--table-padding) mx-(--table-padding) flex w-[calc(100%-calc(var(--table-padding)*2))] cursor-pointer items-center justify-center gap-2 rounded-b-xl bg-primary-3/60 py-2.5 pt-4 transition-colors duration-75 hover:bg-primary-3">
+                  <button className="-mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-b-lg bg-primary-3/60 py-2.5 pt-4 transition-colors duration-75 hover:bg-primary-3">
                      <Icons.plus /> Додати
                   </button>
                )
@@ -522,50 +628,5 @@ function NewProcurement({
             </form>
          </DrawerPopup>
       </Drawer>
-   )
-}
-
-function ProcurementRow({
-   item,
-   sellingPrice,
-}: {
-   item: RouterOutput["order"]["list"][number]["procurements"][number]
-   sellingPrice: number
-}) {
-   const [from, to] = procurementStatusGradient(item.status)
-
-   return (
-      <TableRow className="relative overflow-hidden border-none after:absolute after:inset-x-(--table-padding) after:bottom-0 after:z-[2] after:h-px after:w-[calc(100%-calc(var(--table-padding)*2))] after:border-neutral after:border-b last:after:hidden first:[&>td]:pt-5 last:[&>td]:pb-5">
-         <TableCell className="max-md:!pl-6 w-[100px]">
-            <UserAvatar
-               size={16}
-               user={item.buyer}
-               className="mr-1.5 inline-block align-text-top"
-            />
-            {item.buyer.name}
-         </TableCell>
-         <TableCell className="w-[50px] font-mono">
-            {formatNumber(item.quantity)} шт.
-         </TableCell>
-         <TableCell className="w-[50px] font-mono">
-            {formatCurrency(item.purchasePrice)}
-         </TableCell>
-         <TableCell className="w-[100px]">
-            <Badge
-               size={"sm"}
-               style={{
-                  background: `linear-gradient(140deg, ${from}, ${to})`,
-               }}
-            >
-               {PROCUREMENT_STATUSES_TRANSLATION[item.status]}
-            </Badge>
-         </TableCell>
-         <TableCell>{item.note}</TableCell>
-         <TableCell className="text-right font-medium font-mono text-base">
-            {formatCurrency(
-               (sellingPrice - item.purchasePrice) * item.quantity,
-            )}
-         </TableCell>
-      </TableRow>
    )
 }

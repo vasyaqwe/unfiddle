@@ -1,7 +1,8 @@
 import { order } from "@ledgerblocks/core/order/schema"
+import { procurement } from "@ledgerblocks/core/procurement/schema"
 import { t } from "@ledgerblocks/core/trpc/context"
 import { workspaceMemberMiddleware } from "@ledgerblocks/core/workspace/middleware"
-import { eq } from "drizzle-orm"
+import { desc, eq } from "drizzle-orm"
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod"
 import { z } from "zod"
 
@@ -37,8 +38,10 @@ export const orderRouter = t.router({
                         },
                      },
                   },
+                  orderBy: [desc(procurement.createdAt)],
                },
             },
+            orderBy: [desc(order.createdAt)],
          })
       }),
    create: t.procedure

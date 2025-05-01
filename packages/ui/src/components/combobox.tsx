@@ -139,7 +139,7 @@ export function ComboboxPopup({
       <PopoverPopup
          sideOffset={4}
          className={cn(
-            "max-h-56 min-w-(--anchor-width) max-w-56 overflow-y-auto p-1",
+            "max-h-56 min-w-(--anchor-width) max-w-56 scroll-py-1 overflow-y-auto p-1",
             className,
          )}
          {...props}

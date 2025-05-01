@@ -7,5 +7,7 @@ export const formatCurrency = (
       currency: options.currency ?? "UAH",
       notation: options.notation ?? "standard",
       ...options,
-   }).format(Number(price))
+   })
+      .format(Number(price))
+      .replace(",00", "")
 }
