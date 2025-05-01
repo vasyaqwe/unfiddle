@@ -32,9 +32,8 @@ export const procurementRouter = t.router({
                quantity: true,
                status: true,
                purchasePrice: true,
-               orderId: true,
             })
-            .required({ id: true, orderId: true })
+            .required({ id: true })
             .extend({ workspaceId: z.string() }),
       )
       .mutation(async ({ ctx, input }) => {

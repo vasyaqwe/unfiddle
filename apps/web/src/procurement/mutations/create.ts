@@ -38,7 +38,6 @@ export function useCreateProcurement({
             await queryClient.cancelQueries(queryOptions)
 
             const data = queryClient.getQueryData(queryOptions.queryKey)
-            if (!data) return
 
             mutateQueryData({
                input: {

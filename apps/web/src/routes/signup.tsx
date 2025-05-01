@@ -45,11 +45,19 @@ function RouteComponent() {
          navigate({ to: "/" })
       },
       onError: (error: {
-         code?: "INVALID_EMAIL" | "INVALID_EMAIL_OR_PASSWORD"
+         code?:
+            | "INVALID_EMAIL"
+            | "INVALID_EMAIL_OR_PASSWORD"
+            | "USER_ALREADY_EXISTS"
          message?: string | undefined
          status: number
          statusText: string
       }) => {
+         if (error.code === "USER_ALREADY_EXISTS")
+            return toast.error("Ой-ой!", {
+               description: "Уже існує користувач з такою поштою",
+            })
+
          if (error.code === "INVALID_EMAIL")
             return toast.error("Ой-ой!", {
                description: "Уведіть правильну пошту",

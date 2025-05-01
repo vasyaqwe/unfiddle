@@ -23,7 +23,7 @@ export function useUpdateOrder({
       queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
          if (!oldData) return oldData
          return oldData.map((item) => {
-            if (item.id === input.id) return { ...item, input }
+            if (item.id === input.id) return { ...item, ...input }
             return item
          })
       })
@@ -35,7 +35,6 @@ export function useUpdateOrder({
             await queryClient.cancelQueries(queryOptions)
 
             const data = queryClient.getQueryData(queryOptions.queryKey)
-            if (!data) return
 
             mutateQueryData({
                input,

@@ -22,16 +22,10 @@ export function useDeleteProcurement({
    }) => {
       queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
          if (!oldData) return oldData
-         return oldData.map((item) => {
-            if (item.id === input.id)
-               return {
-                  ...item,
-                  procurements: item.procurements.filter(
-                     (p) => p.id !== input.id,
-                  ),
-               }
-            return item
-         })
+         return oldData.map((item) => ({
+            ...item,
+            procurements: item.procurements.filter((p) => p.id !== input.id),
+         }))
       })
    }
 
@@ -41,7 +35,6 @@ export function useDeleteProcurement({
             await queryClient.cancelQueries(queryOptions)
 
             const data = queryClient.getQueryData(queryOptions.queryKey)
-            if (!data) return
 
             mutateQueryData({
                input,
