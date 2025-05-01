@@ -44,7 +44,7 @@ export function CreateProcurement({
             render={
                <Button
                   variant={"secondary"}
-                  className="mt-3"
+                  className="mt-3 max-sm:w-full"
                >
                   <Icons.plus />
                   Додати {empty ? "Першу" : ""}

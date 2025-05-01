@@ -222,18 +222,30 @@ function AlignedColumn({
    className?: string
 }) {
    const [columnWidths, setColumnWidths] = useAtom(columnWidthsAtom)
+   const [isMobile, setIsMobile] = React.useState(true)
+
+   React.useEffect(() => {
+      const checkDevice = (event: MediaQueryList | MediaQueryListEvent) =>
+         setIsMobile(event.matches)
+      const mediaQueryList = window.matchMedia(`(max-width: 1024px)`)
+      checkDevice(mediaQueryList)
+      mediaQueryList.addEventListener("change", checkDevice)
+      return () => {
+         mediaQueryList.removeEventListener("change", checkDevice)
+      }
+   }, [])
 
    return (
       <p
          ref={(el) => {
-            if (el) {
-               const width = el.getBoundingClientRect().width
-               if (!columnWidths[id] || width > columnWidths[id]) {
-                  setColumnWidths((prev) => ({
-                     ...prev,
-                     [id]: width,
-                  }))
-               }
+            if (!el || isMobile) return
+
+            const width = el.getBoundingClientRect().width
+            if (!columnWidths[id] || width > columnWidths[id]) {
+               setColumnWidths((prev) => ({
+                  ...prev,
+                  [id]: width,
+               }))
             }
          }}
          className={cn(
@@ -526,7 +538,7 @@ function ProcurementRow({
          <p className="col-span-2 col-start-1 whitespace-nowrap font-medium font-mono text-lg max-lg:order-6 max-lg:self-center lg:mt-1 lg:ml-auto lg:text-right lg:text-base">
             <span
                className={cx(
-                  "mr-1.5 inline-block size-4.5 rounded-xs align-sub max-md:mb-px",
+                  "mr-1.5 mb-[-0.15rem] inline-block size-4.5 rounded-xs lg:mb-[-0.21rem]",
                   profit === 0
                      ? "!hidden"
                      : profit > 0
