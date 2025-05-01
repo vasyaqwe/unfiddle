@@ -1,7 +1,7 @@
 export const MOBILE_BREAKPOINT = 768
 
 export const FOCUS_STYLES =
-   "focus-visible:border-primary-10 focus-visible:ring-primary-3 focus-visible:ring-[3px] focus-visible:outline-hidden"
+   "focus-visible:border-primary-7 focus-visible:ring-primary-4 focus-visible:ring-[3px] focus-visible:outline-hidden"
 
 export const POPUP_STYLES = {
    transition:

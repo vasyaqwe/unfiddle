@@ -5,6 +5,7 @@ import { ErrorComponent } from "@/ui/components/error"
 import { button } from "@ledgerblocks/ui/components/button"
 import { Logo } from "@ledgerblocks/ui/components/logo"
 import { TooltipProvider } from "@ledgerblocks/ui/components/tooltip"
+import { cx } from "@ledgerblocks/ui/utils"
 import { QueryClientProvider } from "@tanstack/react-query"
 import { Link, RouterProvider, createRouter } from "@tanstack/react-router"
 import * as React from "react"
@@ -47,7 +48,7 @@ function NotFound() {
          </p>
          <Link
             to={"/"}
-            className={button()}
+            className={cx(button(), "text-white")}
          >
             Додому
          </Link>

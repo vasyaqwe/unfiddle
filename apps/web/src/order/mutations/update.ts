@@ -4,7 +4,7 @@ import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 
-export function useCreateOrder({
+export function useUpdateOrder({
    onMutate,
    onError,
 }: { onMutate?: () => void; onError?: () => void } = {}) {
@@ -18,16 +18,19 @@ export function useCreateOrder({
    const mutateQueryData = ({
       input,
    }: {
-      input: RouterOutput["order"]["list"][number]
+      input: Partial<RouterOutput["order"]["list"][number]>
    }) => {
       queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
          if (!oldData) return oldData
-         return [...oldData, input]
+         return oldData.map((item) => {
+            if (item.id === input.id) return { ...item, input }
+            return item
+         })
       })
    }
 
    const mutation = useMutation(
-      trpc.order.create.mutationOptions({
+      trpc.order.update.mutationOptions({
          onMutate: async (input) => {
             await queryClient.cancelQueries(queryOptions)
 
@@ -35,15 +38,7 @@ export function useCreateOrder({
             if (!data) return
 
             mutateQueryData({
-               input: {
-                  ...input,
-                  id: crypto.randomUUID(),
-                  status: "pending" as const,
-                  creatorId: auth.user.id,
-                  creator: auth.user,
-                  note: input.note ?? "",
-                  procurements: [],
-               },
+               input,
             })
 
             onMutate?.()

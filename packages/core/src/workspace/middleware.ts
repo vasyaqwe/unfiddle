@@ -16,7 +16,7 @@ export const workspaceMemberMiddleware = t.middleware(async (opts) => {
 
    const membership = opts.ctx.session.workspaceMemberships.some(
       (membership) =>
-         membership.workspaceId === (input.data.id ?? input.data.workspaceId),
+         membership.workspaceId === (input.data.workspaceId ?? input.data.id),
    )
 
    if (!membership) throw new TRPCError({ code: "FORBIDDEN" })

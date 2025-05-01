@@ -1,3 +1,4 @@
+import { CACHE_SHORT } from "@/api"
 import { useAuth } from "@/auth/hooks"
 import { formatCurrency } from "@/currency"
 import { useDelayedValue } from "@/interactions/use-delayed-value"
@@ -6,6 +7,8 @@ import { MainScrollArea } from "@/layout/components/main"
 import { formatNumber } from "@/number"
 import { CreateOrder } from "@/order/components/create-order"
 import { ORDER_STATUSES_TRANSLATION } from "@/order/constants"
+import { useDeleteOrder } from "@/order/mutations/delete"
+import { useUpdateOrder } from "@/order/mutations/update"
 import { orderStatusGradient } from "@/order/utils"
 import { PROCUREMENT_STATUSES_TRANSLATION } from "@/procurement/constants"
 import { procurementStatusGradient } from "@/procurement/utils"
@@ -53,6 +56,12 @@ import {
 } from "@ledgerblocks/ui/components/field"
 import { Icons } from "@ledgerblocks/ui/components/icons"
 import {
+   Menu,
+   MenuItem,
+   MenuPopup,
+   MenuTrigger,
+} from "@ledgerblocks/ui/components/menu"
+import {
    NumberField,
    NumberFieldInput,
 } from "@ledgerblocks/ui/components/number-field"
@@ -68,9 +77,12 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/")({
    component: RouteComponent,
    loader: async ({ context, params }) => {
       context.queryClient.prefetchQuery(
-         trpc.order.list.queryOptions({
-            workspaceId: params.workspaceId,
-         }),
+         trpc.order.list.queryOptions(
+            {
+               workspaceId: params.workspaceId,
+            },
+            { staleTime: CACHE_SHORT },
+         ),
       )
    },
 })
@@ -98,7 +110,12 @@ function RouteComponent() {
    )
 
    const query = useQuery(
-      trpc.order.list.queryOptions({ workspaceId: params.workspaceId }),
+      trpc.order.list.queryOptions(
+         { workspaceId: params.workspaceId },
+         {
+            staleTime: CACHE_SHORT,
+         },
+      ),
    )
 
    const groupedData = R.groupBy(query.data ?? [], R.prop("creatorId"))
@@ -114,7 +131,7 @@ function RouteComponent() {
          </Header>
          <MainScrollArea container={false}>
             <div className="container">
-               <p className="mb-8 font-semibold text-xl max-md:hidden">
+               <p className="mb-8 font-semibold text-xl max-lg:hidden">
                   {greeting}, {auth.user.name}
                </p>
                <div className="grid gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
@@ -140,7 +157,7 @@ function RouteComponent() {
                         <CardFooter>За сьогодні</CardFooter>
                      </CardContent>
                   </Card>
-                  <Card>
+                  <Card className="md:col-span-2 lg:col-span-1">
                      <CardHeader>
                         <CardTitle>Профіт</CardTitle>
                      </CardHeader>
@@ -170,8 +187,8 @@ function RouteComponent() {
                         className="relative"
                      >
                         <div className="border-neutral border-y bg-primary-1 py-2">
-                           <div className="px-4 md:px-8">
-                              <p className="font-semibold">
+                           <div className="px-4 lg:px-8">
+                              <p className="font-medium">
                                  <UserAvatar
                                     size={16}
                                     user={creator}
@@ -186,7 +203,7 @@ function RouteComponent() {
                         </div>
                         <div
                            className={
-                              "divide-y divide-neutral md:divide-neutral/50"
+                              "divide-y divide-neutral lg:divide-neutral/75"
                            }
                         >
                            {data.map((item) => (
@@ -232,7 +249,7 @@ function AlignedColumn({
             }
          }}
          className={cn(
-            "max-md:![--min-width:auto] min-w-(--min-width)",
+            "max-lg:![--min-width:auto] min-w-(--min-width)",
             className,
          )}
          style={{ "--min-width": `${columnWidths[id] || "auto"}px` } as never}
@@ -256,6 +273,7 @@ function OrderRow({
 }: {
    item: RouterOutput["order"]["list"][number]
 }) {
+   const params = Route.useParams()
    const [states, setStates] = useAtom(collapsiblesStateAtom)
    const [from, to] = orderStatusGradient(item.status)
 
@@ -267,39 +285,56 @@ function OrderRow({
       })
    }
 
+   const update = useUpdateOrder()
+   const deleteItem = useDeleteOrder()
+
    return (
       <Collapsible
          open={open}
          onOpenChange={setOpen}
       >
-         <CollapsibleTrigger className="container grid-cols-2 items-start gap-3 border-neutral py-2.5 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 aria-expanded:bg-primary-1 max-md:grid max-md:border-t md:flex md:gap-4 md:py-2">
+         <CollapsibleTrigger
+            render={<div />}
+            className="container grid-cols-[1fr_100px_50px] items-start gap-3 border-neutral py-2.5 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-1 max-lg:grid max-lg:border-t lg:flex lg:gap-4 lg:py-2"
+         >
             <AlignedColumn
                id="price"
-               className="max-md:order-1 max-md:font-medium max-md:text-[1rem] md:mt-1"
+               className="whitespace-nowrap max-lg:order-1 max-lg:font-medium max-lg:text-[1rem] lg:mt-1"
             >
                {formatCurrency(item.sellingPrice)}
             </AlignedColumn>
             <AlignedColumn
                id="quantity"
-               className="max-md:order-2 max-md:text-right max-md:font-medium max-md:text-[1rem] md:mt-1"
+               className="col-start-2 col-end-4 whitespace-nowrap max-lg:order-2 max-lg:text-right max-lg:font-medium max-lg:text-[1rem] lg:mt-1"
             >
                {formatNumber(item.quantity)} шт.
             </AlignedColumn>
             <AlignedColumn
                id="name"
-               className="max-md:order-3 max-md:self-center max-md:font-medium md:mt-1"
+               className="max-lg:order-3 max-lg:self-center max-lg:font-medium lg:mt-1"
             >
                {item.name}
             </AlignedColumn>
-            <p className="col-span-2 empty:hidden max-md:order-5 md:mt-1">
+            <p className="lg:!max-w-[80ch] col-start-1 col-end-3 break-normal empty:hidden max-lg:order-5 lg:mt-1">
                {item.note}
             </p>
-            <Combobox value={item.status}>
+            <Combobox
+               value={item.status}
+               onValueChange={(status) =>
+                  update.mutate({
+                     id: item.id,
+                     workspaceId: params.workspaceId,
+                     status: status as never,
+                  })
+               }
+            >
                <ComboboxTrigger
                   onClick={(e) => {
                      e.stopPropagation()
                   }}
-                  className={"ml-auto cursor-pointer max-md:order-4"}
+                  className={
+                     "col-start-2 col-end-4 ml-auto cursor-pointer justify-self-end max-lg:order-4"
+                  }
                >
                   <Badge
                      style={{
@@ -309,24 +344,63 @@ function OrderRow({
                      {ORDER_STATUSES_TRANSLATION[item.status]}
                   </Badge>
                </ComboboxTrigger>
-               <ComboboxPopup align="end">
+               <ComboboxPopup
+                  align="end"
+                  onClick={(e) => {
+                     e.stopPropagation()
+                  }}
+               >
                   <ComboboxInput />
                   {ORDER_STATUSES.map((s) => (
                      <ComboboxItem
                         key={s}
-                        value={ORDER_STATUSES_TRANSLATION[s]}
+                        value={s}
+                        keywords={[ORDER_STATUSES_TRANSLATION[s]]}
                      >
                         {ORDER_STATUSES_TRANSLATION[s]}
                      </ComboboxItem>
                   ))}
                </ComboboxPopup>
             </Combobox>
+            <Menu>
+               <MenuTrigger
+                  render={
+                     <Button
+                        variant={"ghost"}
+                        kind={"icon"}
+                        className="shrink-0 justify-self-end max-lg:order-6 max-lg:mt-auto"
+                     >
+                        <Icons.ellipsisHorizontal />
+                     </Button>
+                  }
+               />
+               <MenuPopup
+                  align="end"
+                  onClick={(e) => {
+                     e.stopPropagation()
+                  }}
+               >
+                  <MenuItem
+                     destructive
+                     onClick={() => {
+                        if (confirm(`Видалити замовлення ${item.name}?`))
+                           deleteItem.mutate({
+                              id: item.id,
+                              workspaceId: params.workspaceId,
+                           })
+                     }}
+                  >
+                     <Icons.trash />
+                     Видалити
+                  </MenuItem>
+               </MenuPopup>
+            </Menu>
          </CollapsibleTrigger>
          <CollapsiblePanel
             key={item.procurements.length}
             render={
                <div className="bg-primary-1">
-                  <div className="container mt-1 mb-3">
+                  <div className="container mt-1.5 mb-4">
                      {item.procurements.length === 0 ? (
                         <p className="mt-4 font-medium text-foreground/80">
                            Тут нічого немає.
@@ -365,10 +439,10 @@ function ProcurementRow({
    const [from, to] = procurementStatusGradient(item.status)
 
    return (
-      <div className="grid-cols-2 items-start gap-3 border-neutral border-t px-4 py-3 text-left first:border-none max-md:grid md:flex md:gap-4 md:py-3.5">
+      <div className="grid-cols-2 items-start gap-3 border-neutral border-t px-4 py-3 text-left first:border-none max-lg:grid lg:flex lg:gap-4 lg:py-3.5">
          <AlignedColumn
             id="buyer"
-            className="max-md:order-3"
+            className="max-lg:order-3"
          >
             <UserAvatar
                size={16}
@@ -379,18 +453,18 @@ function ProcurementRow({
          </AlignedColumn>
          <AlignedColumn
             id="quantity"
-            className="max-md:order-1 max-md:font-medium md:text-sm"
+            className="max-lg:order-1 max-lg:font-medium lg:text-sm"
          >
             {formatNumber(item.quantity)} шт.
          </AlignedColumn>
          <AlignedColumn
             id="price"
-            className="max-md:order-2 max-md:font-medium md:text-sm"
+            className="max-lg:order-2 max-lg:font-medium lg:text-sm"
          >
             {formatCurrency(item.purchasePrice)}
          </AlignedColumn>
          <AlignedColumn
-            className="max-md:order-4"
+            className="max-lg:order-4"
             id="status"
          >
             <Badge
@@ -402,8 +476,10 @@ function ProcurementRow({
                {PROCUREMENT_STATUSES_TRANSLATION[item.status]}
             </Badge>
          </AlignedColumn>
-         <p className="empty:hidden max-md:order-5">{item.note}</p>
-         <p className="col-span-2 font-medium text-lg max-md:order-6 md:ml-auto md:text-right md:text-base">
+         <p className="lg:!max-w-[80ch] break-normal empty:hidden max-lg:order-5">
+            {item.note}
+         </p>
+         <p className="col-span-2 font-medium text-lg max-lg:order-6 lg:ml-auto lg:text-right lg:text-base">
             {formatCurrency(
                (sellingPrice - item.purchasePrice) * item.quantity,
             )}{" "}
@@ -519,7 +595,7 @@ function NewProcurement({
                <Button
                   pending={pending}
                   disabled={pending}
-                  className="mt-auto md:mr-auto"
+                  className="mt-auto lg:mr-auto"
                >
                   Додати
                </Button>
