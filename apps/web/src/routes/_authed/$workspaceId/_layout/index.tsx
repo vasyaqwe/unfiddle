@@ -283,7 +283,7 @@ function OrderRow({
       >
          <CollapsibleTrigger
             render={<div />}
-            className="container grid-cols-[1fr_110px_50px] items-start gap-3 border-neutral py-2.5 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-1 max-lg:grid max-lg:border-t lg:flex lg:gap-4 lg:py-2"
+            className="container grid-cols-[1fr_100px_50px] items-start gap-3 py-2.5 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-1 max-lg:grid lg:flex lg:gap-4 lg:py-2"
          >
             <AlignedColumn
                id="o_price"
@@ -297,14 +297,8 @@ function OrderRow({
             >
                {formatNumber(item.quantity)} шт.
             </AlignedColumn>
-            <AlignedColumn
-               id="o_name"
-               className="max-lg:order-3 max-lg:self-center max-lg:font-medium lg:mt-1"
-            >
+            <p className="col-span-3 max-lg:order-3 max-lg:self-center max-lg:font-medium lg:mt-1">
                {item.name}
-            </AlignedColumn>
-            <p className="lg:!max-w-[80ch] col-start-1 col-end-3 break-normal empty:hidden max-lg:order-5 max-lg:self-center lg:mt-1">
-               {item.note}
             </p>
             <Combobox
                value={item.status}
@@ -321,7 +315,7 @@ function OrderRow({
                      e.stopPropagation()
                   }}
                   className={
-                     "col-start-2 col-end-4 ml-auto cursor-pointer justify-self-end max-lg:order-4 lg:mt-px"
+                     "col-start-1 mt-1 cursor-pointer justify-self-start max-lg:order-4 lg:mt-px lg:ml-auto"
                   }
                >
                   <Badge
@@ -356,7 +350,7 @@ function OrderRow({
                      <Button
                         variant={"ghost"}
                         kind={"icon"}
-                        className="shrink-0 justify-self-end max-lg:order-6 max-lg:mt-auto"
+                        className="col-start-3 shrink-0 justify-self-end max-lg:order-6 max-lg:mt-auto"
                      >
                         <Icons.ellipsisHorizontal />
                      </Button>
@@ -387,11 +381,33 @@ function OrderRow({
          <CollapsiblePanel
             key={item.procurements.length}
             render={
-               <div className="bg-primary-1">
-                  <div className="container mt-1.5 mb-4">
+               <div className="border-neutral border-t bg-primary-2 pt-4 lg:pt-3">
+                  <div className="container mb-4">
+                     <p
+                        className={cx(
+                           "mb-4 flex gap-1 font-medium",
+                           item.note.length === 0 ? "hidden" : "",
+                        )}
+                     >
+                        <svg
+                           className="mt-[0.1rem] size-4.5 shrink-0"
+                           viewBox="0 0 24 24"
+                           fill="none"
+                           xmlns="http://www.w3.org/2000/svg"
+                        >
+                           <path
+                              d="M12 11V16M12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21ZM12.0498 8V8.1L11.9502 8.1002V8H12.0498Z"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                           />
+                        </svg>
+                        {item.note}
+                     </p>
                      {item.procurements.length === 0 ? (
-                        <p className="mt-4 font-medium text-foreground/80">
-                           Тут нічого немає.
+                        <p className="font-medium text-foreground/80">
+                           Ще немає закупівель.
                         </p>
                      ) : (
                         <div className="relative z-[2] rounded-lg border border-neutral bg-background shadow-md/4">
@@ -438,12 +454,12 @@ function ProcurementRow({
       <div className="grid-cols-[1fr_110px_50px] items-start gap-3 border-neutral border-t px-4 py-3 text-left first:border-none max-lg:grid lg:flex lg:gap-4 lg:py-2">
          <AlignedColumn
             id="p_buyer"
-            className="whitespace-nowrap max-lg:order-3 lg:mt-1"
+            className="col-end-4 flex items-center gap-1.5 justify-self-end whitespace-nowrap max-lg:order-4 max-lg:flex-row-reverse lg:mt-1"
          >
             <UserAvatar
                size={16}
                user={item.buyer}
-               className="mr-1.5 inline-block align-text-top"
+               className="inline-block align-text-top"
             />
             {item.buyer.name}
          </AlignedColumn>
@@ -460,7 +476,7 @@ function ProcurementRow({
             {formatNumber(item.quantity)} шт.
          </AlignedColumn>
          <AlignedColumn
-            className="col-start-2 col-end-4 justify-self-end max-lg:order-4 lg:mt-[0.2rem]"
+            className="max-lg:order-3 lg:mt-[0.2rem]"
             id="p_status"
          >
             <Combobox
@@ -515,7 +531,11 @@ function ProcurementRow({
             <span
                className={cx(
                   "mr-1.5 inline-block size-4.5 rounded-xs align-sub max-md:mb-px",
-                  profit === 0 ? "" : profit > 0 ? "bg-green-3" : "bg-red-3",
+                  profit === 0
+                     ? "!hidden"
+                     : profit > 0
+                       ? "bg-green-3"
+                       : "bg-red-3",
                )}
             >
                {profit === 0 ? null : profit > 0 ? (

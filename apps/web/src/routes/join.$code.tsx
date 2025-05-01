@@ -76,7 +76,7 @@ function RouteComponent() {
          >
             <Logo />
          </Link>
-         <div className="-mt-16 relative w-full max-w-md">
+         <div className="-mt-16 relative w-full max-w-lg">
             <WorkspaceLogo
                workspace={workspace}
                size={40}
