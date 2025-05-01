@@ -1,0 +1,64 @@
+import { useAuth } from "@/auth/hooks"
+import { trpc } from "@/trpc"
+import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { toast } from "sonner"
+
+export function useCreateOrder() {
+   const queryClient = useQueryClient()
+   const auth = useAuth()
+
+   const queryOptions = trpc.order.list.queryOptions({
+      workspaceId: auth.workspace.id,
+   })
+
+   const mutateQueryData = ({
+      input,
+   }: {
+      input: RouterOutput["order"]["list"][number]
+   }) => {
+      queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
+         if (!oldData) return oldData
+         return [...oldData, input]
+      })
+   }
+
+   const mutation = useMutation(
+      trpc.order.create.mutationOptions({
+         onMutate: async (input) => {
+            await queryClient.cancelQueries(queryOptions)
+
+            const data = queryClient.getQueryData(queryOptions.queryKey)
+            if (!data) return
+
+            mutateQueryData({
+               input: {
+                  ...input,
+                  id: crypto.randomUUID(),
+                  status: "pending" as const,
+                  creatorId: auth.user.id,
+                  creator: auth.user,
+                  note: input.note ?? "",
+                  procurements: [],
+               },
+            })
+
+            return { data }
+         },
+         onError: (error, _data, context) => {
+            queryClient.setQueryData(queryOptions.queryKey, context?.data)
+            toast.error("Ой-ой!", {
+               description: error.message,
+            })
+         },
+         onSettled: () => {
+            queryClient.invalidateQueries(queryOptions)
+         },
+      }),
+   )
+
+   return {
+      mutateQueryData,
+      ...mutation,
+   }
+}

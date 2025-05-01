@@ -13,6 +13,15 @@ export const orderRouter = t.router({
       .query(async ({ ctx, input }) => {
          return await ctx.db.query.order.findMany({
             where: eq(order.workspaceId, input.workspaceId),
+            columns: {
+               id: true,
+               name: true,
+               quantity: true,
+               sellingPrice: true,
+               status: true,
+               note: true,
+               creatorId: true,
+            },
             with: {
                creator: {
                   columns: {

@@ -4,6 +4,7 @@ import { useDelayedValue } from "@/interactions/use-delayed-value"
 import { useEventListener } from "@/interactions/use-event-listener"
 import { MainScrollArea } from "@/layout/components/main"
 import { formatNumber } from "@/number"
+import { CreateOrder } from "@/order/components/create-order"
 import { ORDER_STATUSES_TRANSLATION } from "@/order/constants"
 import { orderStatusGradient } from "@/order/utils"
 import { PROCUREMENT_STATUSES_TRANSLATION } from "@/procurement/constants"
@@ -153,7 +154,7 @@ function RouteComponent() {
                </div>
                <div className="mt-8 flex items-center justify-between gap-4">
                   <p className="font-semibold text-xl">Замовлення</p>
-                  <NewOrder />
+                  <CreateOrder />
                </div>
             </div>
             <div className="mt-5 mb-16">
@@ -409,109 +410,6 @@ function ProcurementRow({
             профіт
          </p>
       </div>
-   )
-}
-
-function NewOrder() {
-   const queryClient = useQueryClient()
-   const params = Route.useParams()
-   const [open, setOpen] = React.useState(false)
-   const mutation = useMutation(
-      trpc.order.create.mutationOptions({
-         onSuccess: () => {
-            queryClient.invalidateQueries(
-               trpc.order.list.queryOptions({
-                  workspaceId: params.workspaceId,
-               }),
-            )
-            setOpen(false)
-         },
-      }),
-   )
-
-   const pending = useDelayedValue(mutation.isPending, 150)
-
-   return (
-      <Drawer
-         open={open}
-         onOpenChange={setOpen}
-      >
-         <DrawerTrigger
-            render={
-               <Button>
-                  <Icons.plus /> Додати
-               </Button>
-            }
-         />
-         <DrawerPopup>
-            <DrawerTitle>Нове замовлення</DrawerTitle>
-            <form
-               className="mt-4 flex grow flex-col space-y-7"
-               onSubmit={(e) => {
-                  e.preventDefault()
-                  const form = formData<{
-                     name: string
-                     quantity: string
-                     sellingPrice: string
-                     note: string
-                  }>(e.target)
-
-                  mutation.mutate({
-                     workspaceId: params.workspaceId,
-                     name: form.name,
-                     quantity: number(form.quantity),
-                     sellingPrice: number(form.sellingPrice),
-                     note: form.note,
-                  })
-               }}
-            >
-               <Field>
-                  <FieldLabel>Назва</FieldLabel>
-                  <FieldControl
-                     required
-                     placeholder="Уведіть назву товару"
-                     name="name"
-                  />
-               </Field>
-               <div className="grid grid-cols-2 gap-3">
-                  <Field>
-                     <FieldLabel>Кількість</FieldLabel>
-                     <NumberField
-                        required
-                        name="quantity"
-                        min={1}
-                     >
-                        <NumberFieldInput placeholder="шт." />
-                     </NumberField>
-                  </Field>
-                  <Field>
-                     <FieldLabel>Ціна продажу</FieldLabel>
-                     <NumberField
-                        required
-                        name="sellingPrice"
-                        min={1}
-                     >
-                        <NumberFieldInput placeholder="₴" />
-                     </NumberField>
-                  </Field>
-               </div>
-               <Field>
-                  <FieldLabel>Комент</FieldLabel>
-                  <FieldControl
-                     name="note"
-                     placeholder="Додайте комент"
-                  />
-               </Field>
-               <Button
-                  pending={pending}
-                  disabled={pending}
-                  className="mt-auto md:mr-auto"
-               >
-                  Додати
-               </Button>
-            </form>
-         </DrawerPopup>
-      </Drawer>
    )
 }
 

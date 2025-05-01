@@ -1,4 +1,4 @@
-import { randomBytes, scryptSync } from "node:crypto"
+import crypto from "node:crypto"
 import type { HonoEnv } from "@ledgerblocks/core/api/types"
 import { MIN_PASSWORD_LENGTH } from "@ledgerblocks/core/auth/constants"
 import { session } from "@ledgerblocks/core/auth/schema"
@@ -25,20 +25,22 @@ export const authClient = (c: Context<HonoEnv>) => {
          minPasswordLength: MIN_PASSWORD_LENGTH,
          password: {
             hash: async (password) => {
-               const salt = randomBytes(16).toString("hex")
+               const salt = crypto.randomBytes(16).toString("hex")
                // Lower cost parameters for Workers environment
-               const hash = scryptSync(password, salt, 64, {
-                  N: 4096,
-                  r: 8,
-                  p: 1,
-               }).toString("hex")
+               const hash = crypto
+                  .scryptSync(password, salt, 64, {
+                     N: 4096,
+                     r: 8,
+                     p: 1,
+                  })
+                  .toString("hex")
                return `${salt}:${hash}`
             },
             verify: async ({ hash, password }) => {
                const [salt, key] = hash.split(":")
                invariant(salt && key, "Invalid hash")
                const keyBuffer = Buffer.from(key, "hex")
-               const hashBuffer = scryptSync(password, salt, 64, {
+               const hashBuffer = crypto.scryptSync(password, salt, 64, {
                   N: 4096,
                   r: 8,
                   p: 1,
@@ -46,7 +48,8 @@ export const authClient = (c: Context<HonoEnv>) => {
 
                // Constant-time comparison
                return crypto.subtle
-                  ? crypto.subtle.timingSafeEqual(keyBuffer, hashBuffer)
+                  ? // @ts-expect-error ...
+                    crypto.subtle.timingSafeEqual(keyBuffer, hashBuffer)
                   : keyBuffer.equals(hashBuffer)
             },
          },

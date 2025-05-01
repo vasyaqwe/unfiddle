@@ -48,7 +48,7 @@ export function useAuth() {
    })
 
    return {
-      user: user.data,
+      user: { ...user.data, image: user.data.image ?? null },
       workspace: workspace.data,
       signout,
    }
