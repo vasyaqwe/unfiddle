@@ -17,7 +17,7 @@ export function useDeleteOrder({
       workspaceId: auth.workspace.id,
    })
 
-   const queryData = useDeleteOrderQueryData()
+   const optimisticDelete = useOptimisticDeleteOrder()
 
    return useMutation(
       trpc.order.delete.mutationOptions({
@@ -26,9 +26,7 @@ export function useDeleteOrder({
 
             const data = queryClient.getQueryData(queryOptions.queryKey)
 
-            queryData.mutate({
-               input,
-            })
+            optimisticDelete(input)
 
             onMutate?.()
 
@@ -56,7 +54,7 @@ export function useDeleteOrder({
    )
 }
 
-export function useDeleteOrderQueryData() {
+export function useOptimisticDeleteOrder() {
    const queryClient = useQueryClient()
    const auth = useAuth()
 
@@ -64,16 +62,10 @@ export function useDeleteOrderQueryData() {
       workspaceId: auth.workspace.id,
    })
 
-   return {
-      mutate: ({
-         input,
-      }: {
-         input: RouterInput["order"]["delete"]
-      }) => {
-         queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
-            if (!oldData) return oldData
-            return oldData.filter((item) => item.id !== input.id)
-         })
-      },
+   return (input: RouterInput["order"]["delete"]) => {
+      queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
+         if (!oldData) return oldData
+         return oldData.filter((item) => item.id !== input.id)
+      })
    }
 }

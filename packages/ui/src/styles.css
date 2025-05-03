@@ -185,4 +185,8 @@ input {
    animation-range: 0 6ch;
    mask-position: 0 0;
 }
-@keyframes in { 0% { mask-position: -6ch 0; }}
+@keyframes in {
+   0% {
+      mask-position: -6ch 0;
+   }
+}

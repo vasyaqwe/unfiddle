@@ -1,16 +1,16 @@
 import { useAuth } from "@/auth/hooks"
 import { env } from "@/env"
-import { useCreateOrderQueryData } from "@/order/mutations/create"
-import { useDeleteOrderQueryData } from "@/order/mutations/delete"
-import { useUpdateOrderQueryData } from "@/order/mutations/update"
+import { useOptimisticCreateOrder } from "@/order/mutations/create"
+import { useOptimisticDeleteOrder } from "@/order/mutations/delete"
+import { useOptimisticUpdateOrder } from "@/order/mutations/update"
 import type { OrderEvent } from "@ledgerblocks/core/order/types"
 import usePartySocket from "partysocket/react"
 
 export function useOrderSocket() {
    const auth = useAuth()
-   const create = useCreateOrderQueryData()
-   const update = useUpdateOrderQueryData()
-   const deleteOrder = useDeleteOrderQueryData()
+   const create = useOptimisticCreateOrder()
+   const update = useOptimisticUpdateOrder()
+   const deleteOrder = useOptimisticDeleteOrder()
 
    return usePartySocket({
       host: env.COLLABORATION_URL,
@@ -21,18 +21,14 @@ export function useOrderSocket() {
 
          if (data.senderId === auth.user.id) return
 
-         if (data.action === "create")
-            return create.mutate({ input: data.order })
+         if (data.action === "create") return create(data.order)
 
-         if (data.action === "update")
-            return update.mutate({ input: data.order })
+         if (data.action === "update") return update(data.order)
 
          if (data.action === "delete")
-            return deleteOrder.mutate({
-               input: {
-                  id: data.orderId,
-                  workspaceId: auth.workspace.id,
-               },
+            return deleteOrder({
+               id: data.orderId,
+               workspaceId: auth.workspace.id,
             })
       },
    })

@@ -17,7 +17,7 @@ export function useUpdateOrder({
       workspaceId: auth.workspace.id,
    })
 
-   const queryData = useUpdateOrderQueryData()
+   const optimisticUpdate = useOptimisticUpdateOrder()
 
    return useMutation(
       trpc.order.update.mutationOptions({
@@ -26,9 +26,7 @@ export function useUpdateOrder({
 
             const data = queryClient.getQueryData(queryOptions.queryKey)
 
-            queryData.mutate({
-               input,
-            })
+            optimisticUpdate(input)
 
             onMutate?.()
 
@@ -56,7 +54,7 @@ export function useUpdateOrder({
    )
 }
 
-export function useUpdateOrderQueryData() {
+export function useOptimisticUpdateOrder() {
    const queryClient = useQueryClient()
    const auth = useAuth()
 
@@ -64,19 +62,13 @@ export function useUpdateOrderQueryData() {
       workspaceId: auth.workspace.id,
    })
 
-   return {
-      mutate: ({
-         input,
-      }: {
-         input: Partial<RouterOutput["order"]["list"][number]>
-      }) => {
-         queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
-            if (!oldData) return oldData
-            return oldData.map((item) => {
-               if (item.id === input.id) return { ...item, ...input }
-               return item
-            })
+   return (input: Partial<RouterOutput["order"]["list"][number]>) => {
+      queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
+         if (!oldData) return oldData
+         return oldData.map((item) => {
+            if (item.id === input.id) return { ...item, ...input }
+            return item
          })
-      },
+      })
    }
 }

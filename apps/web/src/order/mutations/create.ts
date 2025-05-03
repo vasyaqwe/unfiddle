@@ -17,7 +17,7 @@ export function useCreateOrder({
       workspaceId: auth.workspace.id,
    })
 
-   const queryData = useCreateOrderQueryData()
+   const optimisticCreate = useOptimisticCreateOrder()
 
    return useMutation(
       trpc.order.create.mutationOptions({
@@ -26,16 +26,14 @@ export function useCreateOrder({
 
             const data = queryClient.getQueryData(queryOptions.queryKey)
 
-            queryData.mutate({
-               input: {
-                  ...input,
-                  id: crypto.randomUUID(),
-                  status: "pending",
-                  creatorId: auth.user.id,
-                  creator: auth.user,
-                  note: input.note ?? "",
-                  procurements: [],
-               },
+            optimisticCreate({
+               ...input,
+               id: crypto.randomUUID(),
+               status: "pending",
+               creatorId: auth.user.id,
+               creator: auth.user,
+               note: input.note ?? "",
+               procurements: [],
             })
 
             onMutate?.()
@@ -68,7 +66,7 @@ export function useCreateOrder({
    )
 }
 
-export function useCreateOrderQueryData() {
+export function useOptimisticCreateOrder() {
    const queryClient = useQueryClient()
    const auth = useAuth()
 
@@ -76,16 +74,10 @@ export function useCreateOrderQueryData() {
       workspaceId: auth.workspace.id,
    })
 
-   return {
-      mutate: ({
-         input,
-      }: {
-         input: RouterOutput["order"]["list"][number]
-      }) => {
-         queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
-            if (!oldData) return oldData
-            return [input, ...oldData]
-         })
-      },
+   return (input: RouterOutput["order"]["list"][number]) => {
+      queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
+         if (!oldData) return oldData
+         return [input, ...oldData]
+      })
    }
 }
