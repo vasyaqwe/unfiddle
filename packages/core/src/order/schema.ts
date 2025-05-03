@@ -4,6 +4,7 @@ import { ORDER_STATUSES } from "@ledgerblocks/core/order/constants"
 import { procurement } from "@ledgerblocks/core/procurement/schema"
 import { workspace } from "@ledgerblocks/core/workspace/schema"
 import { relations } from "drizzle-orm"
+import { createUpdateSchema } from "drizzle-zod"
 
 export const order = d.table(
    "order",
@@ -34,3 +35,15 @@ export const orderRelations = relations(order, ({ one, many }) => ({
    }),
    procurements: many(procurement),
 }))
+
+export const updateOrderSchema = createUpdateSchema(order)
+   .pick({
+      id: true,
+      workspaceId: true,
+      name: true,
+      note: true,
+      quantity: true,
+      sellingPrice: true,
+      status: true,
+   })
+   .required({ id: true, workspaceId: true })

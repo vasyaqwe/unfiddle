@@ -1,4 +1,5 @@
 import { useAuth } from "@/auth/hooks"
+import { useSocket } from "@/socket/hooks"
 import { trpc } from "@/trpc"
 import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -10,33 +11,22 @@ export function useUpdateOrder({
 }: { onMutate?: () => void; onError?: () => void } = {}) {
    const queryClient = useQueryClient()
    const auth = useAuth()
+   const socket = useSocket()
 
    const queryOptions = trpc.order.list.queryOptions({
       workspaceId: auth.workspace.id,
    })
 
-   const mutateQueryData = ({
-      input,
-   }: {
-      input: Partial<RouterOutput["order"]["list"][number]>
-   }) => {
-      queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
-         if (!oldData) return oldData
-         return oldData.map((item) => {
-            if (item.id === input.id) return { ...item, ...input }
-            return item
-         })
-      })
-   }
+   const queryData = useUpdateOrderQueryData()
 
-   const mutation = useMutation(
+   return useMutation(
       trpc.order.update.mutationOptions({
          onMutate: async (input) => {
             await queryClient.cancelQueries(queryOptions)
 
             const data = queryClient.getQueryData(queryOptions.queryKey)
 
-            mutateQueryData({
+            queryData.mutate({
                input,
             })
 
@@ -52,14 +42,41 @@ export function useUpdateOrder({
 
             onError?.()
          },
+         onSuccess: (_, order) => {
+            socket.order.send({
+               action: "update",
+               senderId: auth.user.id,
+               order,
+            })
+         },
          onSettled: () => {
             queryClient.invalidateQueries(queryOptions)
          },
       }),
    )
+}
+
+export function useUpdateOrderQueryData() {
+   const queryClient = useQueryClient()
+   const auth = useAuth()
+
+   const queryOptions = trpc.order.list.queryOptions({
+      workspaceId: auth.workspace.id,
+   })
 
    return {
-      mutateQueryData,
-      ...mutation,
+      mutate: ({
+         input,
+      }: {
+         input: Partial<RouterOutput["order"]["list"][number]>
+      }) => {
+         queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
+            if (!oldData) return oldData
+            return oldData.map((item) => {
+               if (item.id === input.id) return { ...item, ...input }
+               return item
+            })
+         })
+      },
    }
 }

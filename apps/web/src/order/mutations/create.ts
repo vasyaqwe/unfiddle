@@ -1,4 +1,5 @@
 import { useAuth } from "@/auth/hooks"
+import { useSocket } from "@/socket/hooks"
 import { trpc } from "@/trpc"
 import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -10,30 +11,22 @@ export function useCreateOrder({
 }: { onMutate?: () => void; onError?: () => void } = {}) {
    const queryClient = useQueryClient()
    const auth = useAuth()
+   const socket = useSocket()
 
    const queryOptions = trpc.order.list.queryOptions({
       workspaceId: auth.workspace.id,
    })
 
-   const mutateQueryData = ({
-      input,
-   }: {
-      input: RouterOutput["order"]["list"][number]
-   }) => {
-      queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
-         if (!oldData) return oldData
-         return [input, ...oldData]
-      })
-   }
+   const queryData = useCreateOrderQueryData()
 
-   const mutation = useMutation(
+   return useMutation(
       trpc.order.create.mutationOptions({
          onMutate: async (input) => {
             await queryClient.cancelQueries(queryOptions)
 
             const data = queryClient.getQueryData(queryOptions.queryKey)
 
-            mutateQueryData({
+            queryData.mutate({
                input: {
                   ...input,
                   id: crypto.randomUUID(),
@@ -57,14 +50,42 @@ export function useCreateOrder({
 
             onError?.()
          },
+         onSuccess: (order) => {
+            socket.order.send({
+               action: "create",
+               senderId: auth.user.id,
+               order: {
+                  ...order,
+                  creator: auth.user,
+                  procurements: [],
+               },
+            })
+         },
          onSettled: () => {
             queryClient.invalidateQueries(queryOptions)
          },
       }),
    )
+}
+
+export function useCreateOrderQueryData() {
+   const queryClient = useQueryClient()
+   const auth = useAuth()
+
+   const queryOptions = trpc.order.list.queryOptions({
+      workspaceId: auth.workspace.id,
+   })
 
    return {
-      mutateQueryData,
-      ...mutation,
+      mutate: ({
+         input,
+      }: {
+         input: RouterOutput["order"]["list"][number]
+      }) => {
+         queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
+            if (!oldData) return oldData
+            return [input, ...oldData]
+         })
+      },
    }
 }

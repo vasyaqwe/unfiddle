@@ -1,4 +1,5 @@
 import { useAuth } from "@/auth/hooks"
+import { useSocket } from "@/socket/hooks"
 import { trpc } from "@/trpc"
 import type { RouterInput } from "@ledgerblocks/core/trpc/types"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -10,30 +11,22 @@ export function useDeleteOrder({
 }: { onMutate?: () => void; onError?: () => void } = {}) {
    const queryClient = useQueryClient()
    const auth = useAuth()
+   const socket = useSocket()
 
    const queryOptions = trpc.order.list.queryOptions({
       workspaceId: auth.workspace.id,
    })
 
-   const mutateQueryData = ({
-      input,
-   }: {
-      input: RouterInput["order"]["delete"]
-   }) => {
-      queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
-         if (!oldData) return oldData
-         return oldData.filter((item) => item.id !== input.id)
-      })
-   }
+   const queryData = useDeleteOrderQueryData()
 
-   const mutation = useMutation(
+   return useMutation(
       trpc.order.delete.mutationOptions({
          onMutate: async (input) => {
             await queryClient.cancelQueries(queryOptions)
 
             const data = queryClient.getQueryData(queryOptions.queryKey)
 
-            mutateQueryData({
+            queryData.mutate({
                input,
             })
 
@@ -49,14 +42,38 @@ export function useDeleteOrder({
 
             onError?.()
          },
+         onSuccess: (_, order) => {
+            socket.order.send({
+               action: "delete",
+               senderId: auth.user.id,
+               orderId: order.id,
+            })
+         },
          onSettled: () => {
             queryClient.invalidateQueries(queryOptions)
          },
       }),
    )
+}
+
+export function useDeleteOrderQueryData() {
+   const queryClient = useQueryClient()
+   const auth = useAuth()
+
+   const queryOptions = trpc.order.list.queryOptions({
+      workspaceId: auth.workspace.id,
+   })
 
    return {
-      mutateQueryData,
-      ...mutation,
+      mutate: ({
+         input,
+      }: {
+         input: RouterInput["order"]["delete"]
+      }) => {
+         queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
+            if (!oldData) return oldData
+            return oldData.filter((item) => item.id !== input.id)
+         })
+      },
    }
 }

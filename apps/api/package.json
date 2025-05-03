@@ -2,7 +2,7 @@
    "name": "@ledgerblocks/api",
    "scripts": {
       "dev": "wrangler dev --local src/index.ts --port 8787",
-      "db:create": "wrangler d1 migrations apply ledgerblocks --local",
+      "db:migrate": "wrangler d1 migrations apply ledgerblocks --local",
       "deploy": "wrangler deploy --minify src/index.ts --env production",
       "typecheck": "tsc --noEmit"
    },

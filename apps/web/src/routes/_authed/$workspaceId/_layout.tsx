@@ -4,6 +4,7 @@ import { PendingComponent } from "@/layout/components/pending-component"
 import { Sidebar } from "@/layout/components/sidebar"
 import { BottomNavigation } from "@/routes/_authed/$workspaceId/-components/bottom-navigation"
 import { SidebarContent } from "@/routes/_authed/$workspaceId/-components/sidebar"
+import { SocketProvider } from "@/socket/context"
 import { trpc } from "@/trpc"
 import {
    Outlet,
@@ -40,7 +41,7 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout")({
 
 function RouteComponent() {
    return (
-      <>
+      <SocketProvider>
          <Sidebar className="md:motion-preset-fade">
             <SidebarContent />
          </Sidebar>
@@ -48,6 +49,6 @@ function RouteComponent() {
             <Outlet />
          </Main>
          <BottomNavigation />
-      </>
+      </SocketProvider>
    )
 }

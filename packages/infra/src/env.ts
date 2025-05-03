@@ -8,6 +8,7 @@ export const clientEnv = {
    development: {
       API_URL: API_URL.development,
       WEB_URL: "http://localhost:3000",
+      COLLABORATION_URL: "ledgerblocks.vasyaqwe.partykit.dev",
       STORAGE_URL: `${API_URL.development}/r2`,
       CLOUDFLARE_ACCOUNT_ID: "bfef1e994f1aac7e7a42dc4ba75197a0",
       CLOUDFLARE_DATABASE_ID: "0c2d4aab-cf2f-4c14-aa7e-89f11ef8daee",
@@ -16,6 +17,7 @@ export const clientEnv = {
       API_URL: API_URL.production,
       // WEB_URL: "https://app.ledgerblocks.com",
       WEB_URL: "https://ledgerblocks-web.pages.dev",
+      COLLABORATION_URL: "ledgerblocks.vasyaqwe.partykit.dev",
       STORAGE_URL: "",
       CLOUDFLARE_ACCOUNT_ID: "bfef1e994f1aac7e7a42dc4ba75197a0",
       CLOUDFLARE_DATABASE_ID: "0c2d4aab-cf2f-4c14-aa7e-89f11ef8daee",

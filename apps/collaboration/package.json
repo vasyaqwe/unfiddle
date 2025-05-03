@@ -1,0 +1,11 @@
+{
+  "name": "@ledgerblocks/collaboration",
+  "type": "module",
+  "devDependencies": {
+    "@ledgerblocks/tsconfig": "workspace:*",
+    "@ledgerblocks/core": "workspace:*"
+  },
+  "dependencies": {
+    "partykit": "^0.0.114"
+  }
+}

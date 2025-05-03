@@ -1,4 +1,3 @@
-import { CACHE_SHORT } from "@/api"
 import { useAuth } from "@/auth/hooks"
 import { formatCurrency } from "@/currency"
 import { useEventListener } from "@/interactions/use-event-listener"
@@ -65,12 +64,9 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/")({
    component: RouteComponent,
    loader: async ({ context, params }) => {
       context.queryClient.prefetchQuery(
-         trpc.order.list.queryOptions(
-            {
-               workspaceId: params.workspaceId,
-            },
-            { staleTime: CACHE_SHORT },
-         ),
+         trpc.order.list.queryOptions({
+            workspaceId: params.workspaceId,
+         }),
       )
    },
 })
@@ -98,12 +94,7 @@ function RouteComponent() {
    )
 
    const query = useQuery(
-      trpc.order.list.queryOptions(
-         { workspaceId: params.workspaceId },
-         {
-            staleTime: CACHE_SHORT,
-         },
-      ),
+      trpc.order.list.queryOptions({ workspaceId: params.workspaceId }),
    )
 
    const groupedData = R.groupBy(query.data ?? [], R.prop("creatorId"))
