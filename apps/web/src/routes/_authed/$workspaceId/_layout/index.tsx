@@ -52,6 +52,7 @@ import {
    MenuPopup,
    MenuTrigger,
 } from "@ledgerblocks/ui/components/menu"
+import { Separator } from "@ledgerblocks/ui/components/separator"
 import { cn, cx } from "@ledgerblocks/ui/utils"
 import { useQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
@@ -185,10 +186,11 @@ function RouteComponent() {
                               "divide-y divide-neutral lg:divide-neutral/75"
                            }
                         >
-                           {data.map((item) => (
+                           {data.map((item, idx) => (
                               <OrderRow
                                  key={item.id}
                                  item={item}
+                                 idx={idx}
                               />
                            ))}
                         </div>
@@ -261,8 +263,10 @@ const collapsiblesStateAtom = atomWithStorage<Record<string, boolean>>(
 
 function OrderRow({
    item,
+   idx,
 }: {
    item: RouterOutput["order"]["list"][number]
+   idx: number
 }) {
    const params = Route.useParams()
    const [states, setStates] = useAtom(collapsiblesStateAtom)
@@ -286,109 +290,109 @@ function OrderRow({
       >
          <CollapsibleTrigger
             render={<div />}
-            className="container grid-cols-2 items-start gap-3 py-2.5 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-1 max-lg:grid lg:flex lg:gap-4 lg:py-2"
+            className="container grid grid-cols-[100px_1fr] grid-rows-[1fr_auto] gap-x-3 gap-y-1 pt-2 pb-2.5 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-1 lg:flex lg:py-2"
          >
-            <AlignedColumn
-               id="o_price"
-               className="whitespace-nowrap font-medium font-mono max-lg:order-1 max-lg:text-[1rem] lg:mt-1"
-            >
-               {formatCurrency(item.sellingPrice)}
-            </AlignedColumn>
-            <AlignedColumn
-               id="o_quantity"
-               className="whitespace-nowrap font-medium font-mono max-lg:order-2 max-lg:text-right max-lg:text-[1rem] lg:mt-1"
-            >
-               {formatNumber(item.quantity)} шт.
-            </AlignedColumn>
-            <p className="col-span-2 max-lg:order-3 max-lg:self-center max-lg:font-medium lg:mt-1">
+            <p className="self-center whitespace-nowrap font-medium font-mono text-foreground/75">
+               №00{idx + 1}
+            </p>
+            <p className="col-span-2 row-start-2 font-semibold max-lg:order-last">
                {item.name}
             </p>
-            <Combobox
-               value={item.status}
-               onValueChange={(status) =>
-                  update.mutate({
-                     id: item.id,
-                     workspaceId: params.workspaceId,
-                     status: status as never,
-                  })
-               }
-            >
-               <ComboboxTrigger
-                  onClick={(e) => {
-                     e.stopPropagation()
-                  }}
-                  className={
-                     "col-start-1 mt-1 cursor-pointer justify-self-start max-lg:order-4 lg:mt-px lg:ml-auto"
+            <div className="ml-auto flex items-center gap-2">
+               <Combobox
+                  value={item.status}
+                  onValueChange={(status) =>
+                     update.mutate({
+                        id: item.id,
+                        workspaceId: params.workspaceId,
+                        status: status as never,
+                     })
                   }
                >
-                  <Badge
-                     style={{
-                        background: `linear-gradient(140deg, ${from}, ${to})`,
+                  <ComboboxTrigger
+                     onClick={(e) => {
+                        e.stopPropagation()
+                     }}
+                     className={"cursor-pointer"}
+                  >
+                     <Badge
+                        style={{
+                           background: `linear-gradient(140deg, ${from}, ${to})`,
+                        }}
+                     >
+                        {ORDER_STATUSES_TRANSLATION[item.status]}
+                     </Badge>
+                  </ComboboxTrigger>
+                  <ComboboxPopup
+                     align="end"
+                     onClick={(e) => {
+                        e.stopPropagation()
                      }}
                   >
-                     {ORDER_STATUSES_TRANSLATION[item.status]}
-                  </Badge>
-               </ComboboxTrigger>
-               <ComboboxPopup
-                  align="end"
-                  onClick={(e) => {
-                     e.stopPropagation()
-                  }}
-               >
-                  <ComboboxInput />
-                  {ORDER_STATUSES.map((s) => (
-                     <ComboboxItem
-                        key={s}
-                        value={s}
-                        keywords={[ORDER_STATUSES_TRANSLATION[s]]}
-                     >
-                        {ORDER_STATUSES_TRANSLATION[s]}
-                     </ComboboxItem>
-                  ))}
-               </ComboboxPopup>
-            </Combobox>
-            <Menu>
-               <MenuTrigger
-                  render={
-                     <Button
-                        variant={"ghost"}
-                        kind={"icon"}
-                        className="col-start-2 shrink-0 justify-self-end max-lg:order-6 max-lg:mt-auto"
-                     >
-                        <Icons.ellipsisHorizontal />
-                     </Button>
-                  }
-               />
-               <MenuPopup
-                  align="end"
-                  onClick={(e) => {
-                     e.stopPropagation()
-                  }}
-               >
-                  <MenuItem
-                     destructive
-                     onClick={() => {
-                        if (confirm(`Видалити замовлення ${item.name}?`))
-                           deleteItem.mutate({
-                              id: item.id,
-                              workspaceId: params.workspaceId,
-                           })
+                     <ComboboxInput />
+                     {ORDER_STATUSES.map((s) => (
+                        <ComboboxItem
+                           key={s}
+                           value={s}
+                           keywords={[ORDER_STATUSES_TRANSLATION[s]]}
+                        >
+                           {ORDER_STATUSES_TRANSLATION[s]}
+                        </ComboboxItem>
+                     ))}
+                  </ComboboxPopup>
+               </Combobox>
+               <Menu>
+                  <MenuTrigger
+                     render={
+                        <Button
+                           variant={"ghost"}
+                           kind={"icon"}
+                           className="shrink-0"
+                        >
+                           <Icons.ellipsisHorizontal />
+                        </Button>
+                     }
+                  />
+                  <MenuPopup
+                     align="end"
+                     onClick={(e) => {
+                        e.stopPropagation()
                      }}
                   >
-                     <Icons.trash />
-                     Видалити
-                  </MenuItem>
-               </MenuPopup>
-            </Menu>
+                     <MenuItem
+                        destructive
+                        onClick={() => {
+                           if (confirm(`Видалити замовлення ${item.name}?`))
+                              deleteItem.mutate({
+                                 id: item.id,
+                                 workspaceId: params.workspaceId,
+                              })
+                        }}
+                     >
+                        <Icons.trash />
+                        Видалити
+                     </MenuItem>
+                  </MenuPopup>
+               </Menu>
+            </div>
          </CollapsibleTrigger>
          <CollapsiblePanel
             key={item.procurements.length}
             render={
-               <div className="border-neutral border-t bg-primary-2 pt-4 lg:pt-3">
+               <div className="border-neutral border-t bg-primary-3/60 pt-4 lg:pt-3">
                   <div className="container mb-4">
+                     <div className="mb-4 flex items-center gap-3">
+                        <p className="whitespace-nowrap font-medium font-mono text-black text-lg leading-tight lg:text-[1rem]">
+                           {formatCurrency(item.sellingPrice)}
+                        </p>
+                        <Separator className={"h-6 w-px bg-primary-7"} />
+                        <p className="whitespace-nowrap font-medium font-mono text-black text-lg leading-tight lg:text-[1rem]">
+                           {formatNumber(item.quantity)} шт.
+                        </p>
+                     </div>
                      <p
                         className={cx(
-                           "mb-4 flex gap-1 font-medium",
+                           "mb-4 flex gap-1 font-medium text-foreground/75",
                            item.note.length === 0 ? "hidden" : "",
                         )}
                      >
@@ -459,7 +463,7 @@ function ProcurementRow({
             <UserAvatar
                size={16}
                user={item.buyer}
-               className="inline-block align-text-top"
+               className="inline-block"
             />
             {item.buyer.name}
          </AlignedColumn>

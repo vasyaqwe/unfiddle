@@ -47,7 +47,7 @@ export function CreateProcurement({
                   className="mt-3 max-sm:w-full"
                >
                   <Icons.plus />
-                  Додати {empty ? "Першу" : ""}
+                  Додати {empty ? "першу" : ""}
                </Button>
             }
          />

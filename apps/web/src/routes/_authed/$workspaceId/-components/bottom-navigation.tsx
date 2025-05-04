@@ -12,10 +12,10 @@ export function BottomNavigation() {
                   to={"/$workspaceId"}
                   params={params}
                   activeOptions={{ exact: true }}
-                  className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 aria-[current=page]:text-foreground"
+                  className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-tight aria-[current=page]:text-foreground"
                >
-                  <Icons.home className="size-6 shrink-0 group-aria-[current=page]:hidden" />
-                  <Icons.homeSolid className="hidden size-6 shrink-0 group-aria-[current=page]:block" />
+                  <Icons.home className="mb-px size-6 shrink-0 group-aria-[current=page]:hidden" />
+                  <Icons.homeSolid className="mb-px hidden size-6 shrink-0 group-aria-[current=page]:block" />
                   Головна
                </Link>
             </li>
@@ -23,10 +23,10 @@ export function BottomNavigation() {
                <Link
                   to={"/$workspaceId/team"}
                   params={params}
-                  className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 aria-[current=page]:text-foreground"
+                  className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-tight aria-[current=page]:text-foreground"
                >
-                  <Icons.users className="size-6 shrink-0 group-aria-[current=page]:hidden" />
-                  <Icons.usersSolid className="hidden size-6 shrink-0 group-aria-[current=page]:block" />
+                  <Icons.users className="mb-px size-6 shrink-0 group-aria-[current=page]:hidden" />
+                  <Icons.usersSolid className="mb-px hidden size-6 shrink-0 group-aria-[current=page]:block" />
                   Команда
                </Link>
             </li>
