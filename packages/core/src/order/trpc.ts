@@ -1,4 +1,8 @@
 import {
+   ORDER_SEVERITIES,
+   ORDER_STATUSES,
+} from "@ledgerblocks/core/order/constants"
+import {
    order,
    orderCounter,
    updateOrderSchema,
@@ -8,7 +12,7 @@ import { t } from "@ledgerblocks/core/trpc/context"
 import { tryCatch } from "@ledgerblocks/core/try-catch"
 import { workspaceMemberMiddleware } from "@ledgerblocks/core/workspace/middleware"
 import { TRPCError } from "@trpc/server"
-import { desc, eq } from "drizzle-orm"
+import { and, desc, eq, inArray } from "drizzle-orm"
 import type { BatchItem } from "drizzle-orm/batch"
 import { createInsertSchema } from "drizzle-zod"
 import { z } from "zod"
@@ -16,10 +20,30 @@ import { z } from "zod"
 export const orderRouter = t.router({
    list: t.procedure
       .use(workspaceMemberMiddleware)
-      .input(z.object({ workspaceId: z.string() }))
+      .input(
+         z.object({
+            workspaceId: z.string(),
+            filter: z
+               .object({
+                  status: z.array(z.enum(ORDER_STATUSES)).optional(),
+                  severity: z.array(z.enum(ORDER_SEVERITIES)).optional(),
+               })
+               .optional(),
+         }),
+      )
       .query(async ({ ctx, input }) => {
+         const filters = input.filter || {}
+
+         const whereConditions = [eq(order.workspaceId, input.workspaceId)]
+
+         if (filters.status?.length)
+            whereConditions.push(inArray(order.status, filters.status))
+
+         if (filters.severity?.length)
+            whereConditions.push(inArray(order.severity, filters.severity))
+
          return await ctx.db.query.order.findMany({
-            where: eq(order.workspaceId, input.workspaceId),
+            where: and(...whereConditions),
             columns: {
                id: true,
                shortId: true,

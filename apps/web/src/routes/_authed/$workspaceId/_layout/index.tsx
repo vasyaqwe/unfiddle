@@ -25,6 +25,7 @@ import {
 import { trpc } from "@/trpc"
 import { ErrorComponent } from "@/ui/components/error"
 import { UserAvatar } from "@/user/components/user-avatar"
+import { validator } from "@/validator"
 import {
    ORDER_SEVERITIES,
    ORDER_STATUSES,
@@ -51,39 +52,81 @@ import { DrawerTrigger } from "@ledgerblocks/ui/components/drawer"
 import { Icons } from "@ledgerblocks/ui/components/icons"
 import {
    Menu,
+   MenuCheckboxItem,
    MenuItem,
    MenuPopup,
+   MenuSubmenuTrigger,
    MenuTrigger,
 } from "@ledgerblocks/ui/components/menu"
 import { Separator } from "@ledgerblocks/ui/components/separator"
 import { cn, cx } from "@ledgerblocks/ui/utils"
-import { useQuery } from "@tanstack/react-query"
-import { createFileRoute } from "@tanstack/react-router"
+import { keepPreviousData, useQuery } from "@tanstack/react-query"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { atom, useAtom } from "jotai"
 import { atomWithStorage } from "jotai/utils"
 import * as React from "react"
 import * as R from "remeda"
+import { z } from "zod"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/")({
    component: RouteComponent,
-   loader: async ({ context, params }) => {
+   loaderDeps: (opts) => ({ search: opts.search }),
+   loader: async ({ context, params, deps }) => {
       context.queryClient.prefetchQuery(
          trpc.order.list.queryOptions({
             workspaceId: params.workspaceId,
+            filter: deps.search,
          }),
       )
    },
+   validateSearch: validator(
+      z.object({
+         status: z.array(z.enum(ORDER_STATUSES)).optional(),
+         severity: z.array(z.enum(ORDER_SEVERITIES)).optional(),
+      }),
+   ),
 })
 
 function RouteComponent() {
    const params = Route.useParams()
+   const search = Route.useSearch()
+   const navigate = useNavigate()
    const auth = useAuth()
 
    const query = useQuery(
-      trpc.order.list.queryOptions({ workspaceId: params.workspaceId }),
+      trpc.order.list.queryOptions(
+         {
+            workspaceId: params.workspaceId,
+            filter: search,
+         },
+         { placeholderData: keepPreviousData },
+      ),
    )
 
    const groupedData = R.groupBy(query.data ?? [], R.prop("creatorId"))
+
+   const onFilterChange = (
+      key: "status" | "severity",
+      value: string,
+      isChecked: boolean,
+   ) => {
+      const currentValues = search[key] ?? []
+      const newValues = isChecked
+         ? [...currentValues, value]
+         : currentValues.filter((v) => v !== value)
+
+      navigate({
+         to: ".",
+         search: (prev) => ({
+            ...prev,
+            [key]: newValues.length ? newValues : undefined,
+         }),
+      })
+   }
+
+   const selectedLength = Object.values(search)
+      .filter((value) => Array.isArray(value))
+      .reduce((total, arr) => total + arr.length, 0)
 
    return (
       <>
@@ -110,55 +153,88 @@ function RouteComponent() {
             </CreateOrder>
             <div className="mb-16">
                <div className="py-2">
-                  <div className="px-4 lg:px-8">
-                     <Button
-                        variant={"ghost"}
-                        size={"sm"}
-                        className="-ml-2"
-                     >
-                        <svg
-                           className="size-5"
-                           xmlns="http://www.w3.org/2000/svg"
-                           viewBox="0 0 20 20"
-                        >
-                           <g fill="currentColor">
-                              <line
-                                 x1="14"
-                                 y1="10"
-                                 x2="6"
-                                 y2="10"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 strokeLinecap="round"
-                                 strokeLinejoin="round"
-                                 strokeWidth="2"
-                              />
-                              <line
-                                 x1="3"
-                                 y1="5"
-                                 x2="17"
-                                 y2="5"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 strokeLinecap="round"
-                                 strokeLinejoin="round"
-                                 strokeWidth="2"
-                              />
-                              <line
-                                 x1="9"
-                                 y1="15"
-                                 x2="11"
-                                 y2="15"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 strokeLinecap="round"
-                                 strokeLinejoin="round"
-                                 strokeWidth="2"
-                              />
-                           </g>
-                        </svg>
-                        Фільтр
-                     </Button>
+                  <div className="flex items-center gap-1 px-4 lg:px-8">
+                     <Menu>
+                        <MenuTrigger
+                           render={
+                              <Button
+                                 variant={"ghost"}
+                                 size={"sm"}
+                                 className="-ml-2"
+                              >
+                                 <Icons.filter className="size-5" />
+                                 Фільтр
+                              </Button>
+                           }
+                        />
+                        <MenuPopup align="start">
+                           <Menu>
+                              <MenuSubmenuTrigger>
+                                 <Icons.circle />
+                                 Статус
+                              </MenuSubmenuTrigger>
+                              <MenuPopup className={"max-h-56 overflow-y-auto"}>
+                                 {ORDER_STATUSES.map((status) => (
+                                    <MenuCheckboxItem
+                                       checked={search.status?.includes(status)}
+                                       onCheckedChange={(checked) =>
+                                          onFilterChange(
+                                             "status",
+                                             status,
+                                             checked,
+                                          )
+                                       }
+                                       key={status}
+                                    >
+                                       {ORDER_STATUSES_TRANSLATION[status]}
+                                    </MenuCheckboxItem>
+                                 ))}
+                              </MenuPopup>
+                           </Menu>
+                           <Menu>
+                              <MenuSubmenuTrigger>
+                                 <SeverityIcon
+                                    className="!w-4 !mx-0.5"
+                                    severity="high"
+                                 />
+                                 Пріорітет
+                              </MenuSubmenuTrigger>
+                              <MenuPopup>
+                                 {ORDER_SEVERITIES.map((severity) => (
+                                    <MenuCheckboxItem
+                                       checked={search.severity?.includes(
+                                          severity,
+                                       )}
+                                       onCheckedChange={(checked) =>
+                                          onFilterChange(
+                                             "severity",
+                                             severity,
+                                             checked,
+                                          )
+                                       }
+                                       key={severity}
+                                    >
+                                       {ORDER_SEVERITIES_TRANSLATION[severity]}
+                                    </MenuCheckboxItem>
+                                 ))}
+                              </MenuPopup>
+                           </Menu>
+                        </MenuPopup>
+                     </Menu>
+                     {selectedLength === 0 ? null : (
+                        <Badge className="overflow-hidden pr-0">
+                           {selectedLength} обрано
+                           <Button
+                              variant={"ghost"}
+                              size={"sm"}
+                              kind={"icon"}
+                              onClick={() => navigate({ to: "." })}
+                              className="rounded-none"
+                           >
+                              <Icons.xMark className="size-4" />
+                           </Button>
+                        </Badge>
+                     )}
                   </div>
                </div>
                {query.isPending ? null : query.isError ? (
@@ -204,7 +280,7 @@ function RouteComponent() {
                            key={creatorId}
                            className="group relative"
                         >
-                           <div className="border-neutral border-y bg-primary-1 py-2.5 ">
+                           <div className="border-neutral border-y bg-primary-2 py-2.5 ">
                               <div className="px-4 lg:px-8">
                                  <p className="flex items-center gap-1.5 font-medium">
                                     <UserAvatar user={creator} />
@@ -322,10 +398,10 @@ function OrderRow({
       >
          <CollapsibleTrigger
             render={<div />}
-            className="container relative grid grid-cols-[100px_1fr] grid-rows-[1fr_auto] gap-x-3 gap-y-1 py-2 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-1 lg:flex lg:py-1.5"
+            className="container relative grid grid-cols-[100px_1fr] grid-rows-[1fr_auto] gap-x-3 gap-y-1 py-2 text-left transition-colors duration-50 first:border-none hover:bg-primary-2 has-data-[popup-open]:bg-primary-2 aria-expanded:bg-primary-2 lg:flex lg:py-1.5"
          >
             <div className="flex items-center gap-2">
-               <CollapsibleTriggerIcon className="left-2.5 lg:absolute lg:mb-[2px]" />
+               <CollapsibleTriggerIcon className="left-2.5 lg:absolute lg:mb-px" />
                <Combobox
                   value={item.severity}
                   onValueChange={(severity) =>
@@ -344,7 +420,7 @@ function OrderRow({
                   >
                      <SeverityIcon
                         severity={item.severity}
-                        className="mr-[2px] opacity-80 transition-opacity duration-75 group-hover/severity:opacity-100 group-data-[popup-open]/severity:opacity-100 lg:mb-[2px]"
+                        className="mr-[2px] opacity-60 transition-opacity duration-75 group-hover/severity:opacity-90 group-data-[popup-open]/severity:opacity-90 lg:mb-[2px]"
                      />
                   </ComboboxTrigger>
                   <ComboboxPopup

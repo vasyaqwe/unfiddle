@@ -26,14 +26,11 @@ export function useCreateOrder({
 
             const data = queryClient.getQueryData(queryOptions.queryKey)
 
-            const highestShortId = data?.length
-               ? Math.max(...data.map((o) => o.shortId))
-               : 0
-
             optimisticCreate({
                ...input,
                id: crypto.randomUUID(),
-               shortId: highestShortId + 1,
+               shortId: 0,
+               severity: input.severity ?? "low",
                status: "pending",
                creatorId: auth.user.id,
                creator: auth.user,

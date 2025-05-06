@@ -138,6 +138,65 @@ export const Icons = {
          />
       </svg>
    ),
+   filter: (props: IconProps) => (
+      <svg
+         xmlns="http://www.w3.org/2000/svg"
+         viewBox="0 0 20 20"
+         {...props}
+      >
+         <g fill="currentColor">
+            <line
+               x1="14"
+               y1="10"
+               x2="6"
+               y2="10"
+               fill="none"
+               stroke="currentColor"
+               strokeLinecap="round"
+               strokeLinejoin="round"
+               strokeWidth="2"
+            />
+            <line
+               x1="3"
+               y1="5"
+               x2="17"
+               y2="5"
+               fill="none"
+               stroke="currentColor"
+               strokeLinecap="round"
+               strokeLinejoin="round"
+               strokeWidth="2"
+            />
+            <line
+               x1="9"
+               y1="15"
+               x2="11"
+               y2="15"
+               fill="none"
+               stroke="currentColor"
+               strokeLinecap="round"
+               strokeLinejoin="round"
+               strokeWidth="2"
+            />
+         </g>
+      </svg>
+   ),
+   circle: ({ ...props }: IconProps) => (
+      <svg
+         viewBox="0 0 20 20"
+         fill="none"
+         xmlns="http://www.w3.org/2000/svg"
+         {...props}
+      >
+         <path
+            d="M10 4C6.68629 4 4 6.68629 4 10C4 13.3137 6.68629 16 10 16C13.3137 16 16 13.3137 16 10C16 6.68629 13.3137 4 10 4Z"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+         />
+      </svg>
+   ),
    trash: ({ className, ...props }: IconProps) => (
       <svg
          className={cn("size-5 md:size-4", className)}

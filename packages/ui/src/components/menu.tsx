@@ -14,7 +14,7 @@ export const MenuPositioner = MenuPrimitive.Positioner
 export const MenuArrow = MenuPrimitive.Arrow
 
 export const MENU_ITEM_STYLES = {
-   base: "cursor-pointer text-base h-9 md:h-8 flex items-center select-none gap-2 rounded-[calc(var(--popup-radius)-var(--popup-padding))] px-[0.525rem] md:px-[0.46rem] focus-visible:border-transparent [&>svg]:size-[22px] md:[&>svg]:size-5 [&>svg]:text-primary-9 hover:[&>svg]:text-white focus-visible:[&>svg]:text-white data-[popup-open]:[&>svg]:text-white hover:bg-primary-11/50 hover:shadow-sm focus-visible:outline-none focus-visible:outline-hidden focus-visible:bg-primary-11/50 data-[popup-open]:bg-primary-11/50 data-[selected=true]:bg-primary-11/50 data-[selected=true]:shadow-sm shadow-black/20 focus-visible:shadow-sm md:text-sm",
+   base: "cursor-pointer text-base h-9 md:h-8 flex items-center select-none gap-2 md:gap-1.5 rounded-[calc(var(--popup-radius)-var(--popup-padding))] px-[0.525rem] md:px-[0.46rem] focus-visible:border-transparent [&>svg]:size-[22px] md:[&>svg]:size-5 [&>svg]:text-primary-9 hover:[&>svg]:text-white focus-visible:[&>svg]:text-white data-[popup-open]:[&>svg]:text-white hover:bg-primary-11/50 hover:shadow-sm focus-visible:outline-none focus-visible:outline-hidden focus-visible:bg-primary-11/50 data-[popup-open]:bg-primary-11/50 data-[selected=true]:bg-primary-11/50 data-[selected=true]:shadow-sm shadow-black/20 focus-visible:shadow-sm md:text-sm",
    destructive: "hover:bg-red-9 focus-visible:bg-red-9",
 }
 
@@ -121,6 +121,17 @@ export function MenuSubmenuTrigger({
          {...props}
       >
          {children}
+         <svg
+            className="!size-2 ml-auto"
+            viewBox="0 0 79 91"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+         >
+            <path
+               d="M71.1338 32.4487C79.5945 36.784 79.8946 48.7674 71.6616 53.5207L18 84.5022C10 89.121 0 83.3475 0 74.1099V15.6324C0 6.65996 9.48705 0.861131 17.4722 4.95271L71.1338 32.4487Z"
+               fill="currentColor"
+            />
+         </svg>
       </MenuPrimitive.SubmenuTrigger>
    )
 }

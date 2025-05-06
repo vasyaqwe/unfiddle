@@ -11,7 +11,7 @@ export function BottomNavigation() {
                <Link
                   to={"/$workspaceId"}
                   params={params}
-                  activeOptions={{ exact: true }}
+                  activeOptions={{ exact: true, includeSearch: false }}
                   className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-tight aria-[current=page]:text-foreground"
                >
                   <Icons.home className="mb-px size-6 shrink-0 group-aria-[current=page]:hidden" />

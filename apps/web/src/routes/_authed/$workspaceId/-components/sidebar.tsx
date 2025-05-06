@@ -60,7 +60,7 @@ export function SidebarContent() {
                   <Link
                      to={"/$workspaceId"}
                      params={params}
-                     activeOptions={{ exact: true }}
+                     activeOptions={{ exact: true, includeSearch: false }}
                      className={
                         "group flex h-8 items-center justify-start gap-2 rounded-md px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:bg-primary-3 hover:text-foreground aria-[current=page]:bg-primary-4/75 aria-[current=page]:text-foreground"
                      }
