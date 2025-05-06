@@ -81,6 +81,15 @@ import * as React from "react"
 import * as R from "remeda"
 import { z } from "zod"
 
+const collapsiblesStateAtom = atomWithStorage<Record<string, boolean>>(
+   "collapsibles-open-states",
+   {
+      section1: false,
+      section2: false,
+      section3: false,
+   },
+)
+
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/")({
    component: RouteComponent,
    loaderDeps: (opts) => ({ search: opts.search }),
@@ -178,6 +187,7 @@ function RouteComponent() {
    const summary = useQuery(
       trpc.workspace.summary.queryOptions({ id: params.workspaceId }),
    )
+   const [states, setStates] = useAtom(collapsiblesStateAtom)
 
    return (
       <>
@@ -196,7 +206,7 @@ function RouteComponent() {
                   </CardHeader>
                   <CardContent>
                      <p className="font-mono font-semibold text-2xl text-black tracking-tight md:text-3xl">
-                        {formatNumber(summary.data?.weekProfit)} ₴
+                        {formatNumber(summary.data?.weekProfit ?? 0)} ₴
                      </p>
                      <CardFooter>За сьогодні</CardFooter>
                   </CardContent>
@@ -207,7 +217,7 @@ function RouteComponent() {
                   </CardHeader>
                   <CardContent>
                      <p className="font-mono font-semibold text-2xl text-black tracking-tight md:text-3xl">
-                        {formatNumber(summary.data?.monthProfit)} ₴
+                        {formatNumber(summary.data?.monthProfit ?? 0)} ₴
                      </p>
                      <CardFooter>За місяць</CardFooter>
                   </CardContent>
@@ -218,7 +228,7 @@ function RouteComponent() {
                   </CardHeader>
                   <CardContent>
                      <p className="font-mono font-semibold text-2xl tracking-tight md:text-3xl">
-                        {formatNumber(summary.data?.allTimeProfit)} ₴
+                        {formatNumber(summary.data?.allTimeProfit ?? 0)} ₴
                      </p>
                      <CardFooter>За весь час</CardFooter>
                   </CardContent>
@@ -236,6 +246,36 @@ function RouteComponent() {
             </CreateOrder>
             <div className="mt-8 mb-16">
                <div className="flex min-h-[44px] items-center gap-1 px-4 lg:px-8">
+                  <Button
+                     variant={"ghost"}
+                     kind={"icon"}
+                     size={"sm"}
+                     className="absolute left-[3px] max-lg:hidden"
+                     onClick={() =>
+                        Object.keys(states).length === 0
+                           ? setStates(
+                                data.reduce(
+                                   (acc: Record<string, boolean>, item) => {
+                                      acc[item.id] = true
+                                      return acc
+                                   },
+                                   {},
+                                ),
+                             )
+                           : setStates({})
+                     }
+                  >
+                     <Icons.chevronUpDuo
+                        className={cx(
+                           "size-6 shrink-0 text-foreground/60 transition-all duration-200",
+                           Object.values(states).every((v) => !v)
+                              ? ""
+                              : Object.keys(states).length !== 0
+                                ? "rotate-180"
+                                : "",
+                        )}
+                     />
+                  </Button>
                   <Menu>
                      <MenuTrigger
                         render={
@@ -448,15 +488,6 @@ function AlignedColumn({
       </p>
    )
 }
-
-const collapsiblesStateAtom = atomWithStorage<Record<string, boolean>>(
-   "collapsibles-open-states",
-   {
-      section1: false,
-      section2: false,
-      section3: false,
-   },
-)
 
 function OrderRow({
    item,
