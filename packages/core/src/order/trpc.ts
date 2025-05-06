@@ -12,7 +12,7 @@ import { t } from "@ledgerblocks/core/trpc/context"
 import { tryCatch } from "@ledgerblocks/core/try-catch"
 import { workspaceMemberMiddleware } from "@ledgerblocks/core/workspace/middleware"
 import { TRPCError } from "@trpc/server"
-import { and, desc, eq, inArray } from "drizzle-orm"
+import { and, desc, eq, inArray, or, sql } from "drizzle-orm"
 import type { BatchItem } from "drizzle-orm/batch"
 import { createInsertSchema } from "drizzle-zod"
 import { z } from "zod"
@@ -27,12 +27,13 @@ export const orderRouter = t.router({
                .object({
                   status: z.array(z.enum(ORDER_STATUSES)).optional(),
                   severity: z.array(z.enum(ORDER_SEVERITIES)).optional(),
+                  q: z.string().optional(),
                })
                .optional(),
          }),
       )
       .query(async ({ ctx, input }) => {
-         const filters = input.filter || {}
+         const filters = input.filter ?? {}
 
          const whereConditions = [eq(order.workspaceId, input.workspaceId)]
 
@@ -41,6 +42,28 @@ export const orderRouter = t.router({
 
          if (filters.severity?.length)
             whereConditions.push(inArray(order.severity, filters.severity))
+
+         if (filters.q?.length) {
+            const searchTerms = filters.q
+               .trim()
+               .toLowerCase()
+               .split(/\s+/)
+               .map((term) => term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+
+            whereConditions.push(
+               // @ts-expect-error ...
+               or(
+                  ...searchTerms.map(
+                     (term) =>
+                        sql`(
+                           LOWER(${order.name}) LIKE '%' || LOWER(${term}) || '%'
+                           OR
+                           LOWER(${order.shortId}) LIKE '%' || LOWER(${term}) || '%'
+                           )`,
+                  ),
+               ),
+            )
+         }
 
          return await ctx.db.query.order.findMany({
             where: and(...whereConditions),

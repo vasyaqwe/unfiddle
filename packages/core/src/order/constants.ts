@@ -11,4 +11,4 @@ export const ORDER_STATUSES = [
    "sent_for_payment", // Передано на оплату
 ] as const
 
-export const ORDER_SEVERITIES = ["low", "medium", "high"] as const
+export const ORDER_SEVERITIES = ["low", "high"] as const

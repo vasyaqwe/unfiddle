@@ -30,7 +30,6 @@ export const ORDER_STATUSES_TRANSLATION: Record<OrderStatus, string> = {
 }
 
 export const ORDER_SEVERITIES_TRANSLATION: Record<OrderSeverity, string> = {
-   low: "Низький",
-   medium: "Середній",
-   high: "Високий",
+   low: "Звичайно",
+   high: "Терміново",
 }

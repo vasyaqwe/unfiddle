@@ -5,7 +5,7 @@ import { Loading } from "./loading"
 
 export const button = cva(
    [
-      "inline-flex items-center justify-center overflow-hidden whitespace-nowrap leading-none",
+      "inline-flex shrink-0 items-center justify-center overflow-hidden whitespace-nowrap leading-none",
       "relative cursor-pointer transition-all duration-100 disabled:opacity-80 [&>svg]:shrink-0 [&>svg]:drop-shadow-md",
    ],
    {

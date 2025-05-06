@@ -24,23 +24,36 @@ export function SidebarContent() {
    return (
       <Sidebar>
          <div className="px-4 pt-4">
-            <Menu>
-               <MenuTrigger
-                  render={
-                     <Button
-                        className="!gap-2 justify-start md:pl-1.5"
-                        variant={"ghost"}
-                     >
-                        <WorkspaceLogo workspace={auth.workspace} />
-                        <span className="line-clamp-1 py-px">
-                           {auth.workspace.name}
-                        </span>
-                        <Icons.chevronUpDown className="-mr-1 ml-auto size-4 shrink-0 text-foreground/75" />
-                     </Button>
-                  }
-               />
-               <WorkspaceMenuPopup />
-            </Menu>
+            <div className="flex">
+               <Menu>
+                  <MenuTrigger
+                     render={
+                        <Button
+                           className="!gap-2 justify-start md:pl-1.5"
+                           variant={"ghost"}
+                        >
+                           <WorkspaceLogo workspace={auth.workspace} />
+                           <span className="line-clamp-1 py-px">
+                              {auth.workspace.name}
+                           </span>
+                           <Icons.chevronUpDown className="-mr-1 ml-auto size-4 shrink-0 text-foreground/75" />
+                        </Button>
+                     }
+                  />
+                  <WorkspaceMenuPopup />
+               </Menu>
+               {/* <Link
+                  to="/$workspaceId/search"
+                  params={params}
+                  search={search}
+                  className={cx(
+                     button({ kind: "icon", variant: "tertiary" }),
+                     "!rounded-[0.6125rem] ml-auto shrink-0",
+                  )}
+               >
+                  <Icons.search className="size-4" />
+               </Link> */}
+            </div>
             <CreateOrder>
                <DrawerTrigger
                   render={

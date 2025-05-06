@@ -50,6 +50,7 @@ import {
 } from "@ledgerblocks/ui/components/combobox"
 import { DrawerTrigger } from "@ledgerblocks/ui/components/drawer"
 import { Icons } from "@ledgerblocks/ui/components/icons"
+import { Input } from "@ledgerblocks/ui/components/input"
 import {
    Menu,
    MenuCheckboxItem,
@@ -87,6 +88,7 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/")({
       z.object({
          status: z.array(z.enum(ORDER_STATUSES)).optional(),
          severity: z.array(z.enum(ORDER_SEVERITIES)).optional(),
+         q: z.string().optional(),
       }),
    ),
 })
@@ -133,6 +135,38 @@ function RouteComponent() {
       .filter((value) => Array.isArray(value))
       .reduce((total, arr) => total + arr.length, 0)
 
+   const [searching, setSearching] = React.useState(false)
+
+   const onSearch = R.funnel<[string], void>(
+      (query) => {
+         navigate({
+            to: ".",
+            search: (prev) => ({
+               ...prev,
+               q: query ?? undefined,
+            }),
+            replace: true,
+         })
+      },
+      { minQuietPeriodMs: 350, reducer: (_acc, newQuery) => newQuery },
+   )
+
+   const removeFilter = () => {
+      navigate({ to: "." }).then(() =>
+         queryClient.invalidateQueries(
+            trpc.order.list.queryOptions(
+               {
+                  workspaceId: params.workspaceId,
+               },
+               {
+                  placeholderData: keepPreviousData,
+               },
+            ),
+         ),
+      )
+      setSearching(false)
+   }
+
    return (
       <>
          <Header>
@@ -142,10 +176,7 @@ function RouteComponent() {
             </HeaderTitle>
             <HeaderUserMenu />
          </Header>
-         <MainScrollArea
-            className="pt-0 lg:pt-0"
-            container={false}
-         >
+         <MainScrollArea container={false}>
             <CreateOrder>
                <DrawerTrigger
                   render={
@@ -156,108 +187,120 @@ function RouteComponent() {
                   }
                />
             </CreateOrder>
-            <div className="mb-16">
-               <div className="py-2">
-                  <div className="flex items-center gap-1 px-4 lg:px-8">
-                     <Menu>
-                        <MenuTrigger
-                           render={
-                              <Button
-                                 variant={"ghost"}
-                                 size={"sm"}
-                                 className="-ml-2"
-                              >
-                                 <Icons.filter className="size-5" />
-                                 Фільтр
-                              </Button>
-                           }
-                        />
-                        <MenuPopup align="start">
-                           <Menu>
-                              <MenuSubmenuTrigger>
-                                 <Icons.circle />
-                                 Статус
-                              </MenuSubmenuTrigger>
-                              <MenuPopup className={"max-h-56 overflow-y-auto"}>
-                                 {ORDER_STATUSES.map((status) => (
-                                    <MenuCheckboxItem
-                                       checked={
-                                          search.status?.includes(status) ??
-                                          false
-                                       }
-                                       onCheckedChange={(checked) =>
-                                          onFilterChange(
-                                             "status",
-                                             status,
-                                             checked,
-                                          )
-                                       }
-                                       key={status}
-                                    >
-                                       {ORDER_STATUSES_TRANSLATION[status]}
-                                    </MenuCheckboxItem>
-                                 ))}
-                              </MenuPopup>
-                           </Menu>
-                           <Menu>
-                              <MenuSubmenuTrigger>
-                                 <SeverityIcon
-                                    className="!w-4 !mx-0.5"
-                                    severity="high"
-                                 />
-                                 Пріорітет
-                              </MenuSubmenuTrigger>
-                              <MenuPopup>
-                                 {ORDER_SEVERITIES.map((severity) => (
-                                    <MenuCheckboxItem
-                                       checked={
-                                          search.severity?.includes(severity) ??
-                                          false
-                                       }
-                                       onCheckedChange={(checked) =>
-                                          onFilterChange(
-                                             "severity",
-                                             severity,
-                                             checked,
-                                          )
-                                       }
-                                       key={severity}
-                                    >
-                                       {ORDER_SEVERITIES_TRANSLATION[severity]}
-                                    </MenuCheckboxItem>
-                                 ))}
-                              </MenuPopup>
-                           </Menu>
-                        </MenuPopup>
-                     </Menu>
-                     {selectedLength === 0 ? null : (
-                        <Badge className="overflow-hidden pr-0">
-                           {selectedLength} обрано
+            <div className="mb-16 ">
+               <div className="flex min-h-[44px] items-center gap-1 px-4 lg:px-8">
+                  <Menu>
+                     <MenuTrigger
+                        render={
                            <Button
                               variant={"ghost"}
                               size={"sm"}
-                              kind={"icon"}
-                              onClick={() =>
-                                 navigate({ to: "." }).then(() =>
-                                    queryClient.invalidateQueries(
-                                       trpc.order.list.queryOptions(
-                                          {
-                                             workspaceId: params.workspaceId,
-                                          },
-                                          {
-                                             placeholderData: keepPreviousData,
-                                          },
-                                       ),
-                                    ),
-                                 )
-                              }
-                              className="rounded-none"
+                              className="-ml-2"
                            >
-                              <Icons.xMark className="size-4" />
+                              <Icons.filter className="size-5" />
+                              Фільтр
                            </Button>
-                        </Badge>
-                     )}
-                  </div>
+                        }
+                     />
+                     <MenuPopup align="start">
+                        <Menu>
+                           <MenuSubmenuTrigger>
+                              <Icons.circle />
+                              Статус
+                           </MenuSubmenuTrigger>
+                           <MenuPopup className={"max-h-56 overflow-y-auto"}>
+                              {ORDER_STATUSES.map((status) => (
+                                 <MenuCheckboxItem
+                                    checked={
+                                       search.status?.includes(status) ?? false
+                                    }
+                                    onCheckedChange={(checked) =>
+                                       onFilterChange("status", status, checked)
+                                    }
+                                    key={status}
+                                 >
+                                    {ORDER_STATUSES_TRANSLATION[status]}
+                                 </MenuCheckboxItem>
+                              ))}
+                           </MenuPopup>
+                        </Menu>
+                        <Menu>
+                           <MenuSubmenuTrigger>
+                              <SeverityIcon
+                                 className="!w-4 !mx-0.5"
+                                 severity="high"
+                              />
+                              Пріорітет
+                           </MenuSubmenuTrigger>
+                           <MenuPopup>
+                              {ORDER_SEVERITIES.map((severity) => (
+                                 <MenuCheckboxItem
+                                    checked={
+                                       search.severity?.includes(severity) ??
+                                       false
+                                    }
+                                    onCheckedChange={(checked) =>
+                                       onFilterChange(
+                                          "severity",
+                                          severity,
+                                          checked,
+                                       )
+                                    }
+                                    key={severity}
+                                 >
+                                    {ORDER_SEVERITIES_TRANSLATION[severity]}
+                                 </MenuCheckboxItem>
+                              ))}
+                           </MenuPopup>
+                        </Menu>
+                     </MenuPopup>
+                  </Menu>
+                  {selectedLength === 0 ? null : (
+                     <Badge className="overflow-hidden pr-0">
+                        {selectedLength} обрано
+                        <Button
+                           variant={"ghost"}
+                           size={"sm"}
+                           kind={"icon"}
+                           onClick={removeFilter}
+                           className="rounded-none"
+                        >
+                           <Icons.xMark className="size-4" />
+                        </Button>
+                     </Badge>
+                  )}
+                  {searching || (search.q && search.q.length > 0) ? (
+                     <div className="relative ml-auto flex max-w-[320px] items-center">
+                        <Input
+                           autoFocus
+                           className={
+                              "h-9 border-b-0 pt-0 pr-10 md:h-9 md:pt-0"
+                           }
+                           defaultValue={search.q}
+                           placeholder="Шукати.."
+                           onChange={(e) => onSearch.call(e.target.value)}
+                        />
+                        <Button
+                           variant={"ghost"}
+                           kind={"icon"}
+                           size={"sm"}
+                           className="absolute inset-y-0 right-0 my-auto"
+                           type="button"
+                           onClick={removeFilter}
+                        >
+                           <Icons.xMark className="size-[18px]" />
+                        </Button>
+                     </div>
+                  ) : (
+                     <Button
+                        onClick={() => setSearching(true)}
+                        className="ml-auto"
+                        variant={"ghost"}
+                        kind={"icon"}
+                     >
+                        <Icons.search className="size-[18px]" />
+                     </Button>
+                  )}
                </div>
                {query.isPending ? null : query.isError ? (
                   <ErrorComponent error={query.error} />
@@ -302,7 +345,7 @@ function RouteComponent() {
                            key={creatorId}
                            className="group relative"
                         >
-                           <div className="border-neutral border-y bg-primary-2 py-2.5 ">
+                           <div className="border-primary-5 border-y bg-primary-2 py-2.5 ">
                               <div className="px-4 lg:px-8">
                                  <p className="flex items-center gap-1.5 font-medium">
                                     <UserAvatar user={creator} />
@@ -315,7 +358,7 @@ function RouteComponent() {
                            </div>
                            <div
                               className={
-                                 "divide-y divide-neutral lg:divide-neutral/75"
+                                 "divide-y divide-neutral lg:divide-primary-5"
                               }
                            >
                               {data.map((item) => (
@@ -521,7 +564,7 @@ function OrderRow({
                         <Button
                            variant={"ghost"}
                            kind={"icon"}
-                           className="shrink-0"
+                           className="-mr-2 shrink-0"
                         >
                            <Icons.ellipsisHorizontal />
                         </Button>

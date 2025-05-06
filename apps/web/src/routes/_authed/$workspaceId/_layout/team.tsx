@@ -74,7 +74,10 @@ function RouteComponent() {
                }
             />
          </Header>
-         <MainScrollArea container={false}>
+         <MainScrollArea
+            container={false}
+            className="pt-4 lg:pt-8"
+         >
             <div className="container mb-8 flex items-center justify-between max-md:hidden">
                <p className="font-semibold text-xl">Команда</p>
                <DialogTrigger render={<Button>Запросити</Button>} />
