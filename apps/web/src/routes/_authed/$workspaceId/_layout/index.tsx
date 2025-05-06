@@ -381,7 +381,7 @@ function RouteComponent() {
                   ) : (
                      <Button
                         onClick={() => setSearching(true)}
-                        className="ml-auto"
+                        className="lg:-mr-2 ml-auto"
                         variant={"ghost"}
                         kind={"icon"}
                      >

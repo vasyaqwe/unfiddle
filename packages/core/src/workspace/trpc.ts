@@ -16,8 +16,15 @@ export const workspaceRouter = t.router({
          const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
          const lastMonth = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
 
-         const getProfit = async (fromDate?: Date) => {
-            const query = ctx.db
+         const getProfit = async (fromDate?: Date): Promise<number> => {
+            const whereCondition = fromDate
+               ? and(
+                    eq(order.status, "successful"),
+                    gte(procurement.createdAt, fromDate),
+                 )
+               : eq(order.status, "successful")
+
+            const [result] = await ctx.db
                .select({
                   profit:
                      sql<number>`SUM(${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice}))`.as(
@@ -26,10 +33,8 @@ export const workspaceRouter = t.router({
                })
                .from(procurement)
                .innerJoin(order, eq(procurement.orderId, order.id))
+               .where(whereCondition)
 
-            if (fromDate) query.where(gte(procurement.createdAt, fromDate))
-
-            const [result] = await query
             return result?.profit ?? 0
          }
 
