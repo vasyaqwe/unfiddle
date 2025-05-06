@@ -1,4 +1,5 @@
 import { Collapsible as CollapsiblePrimitive } from "@base-ui-components/react/collapsible"
+import { Icons } from "@ledgerblocks/ui/components/icons"
 import { cn } from "../utils"
 
 export function Collapsible({
@@ -21,7 +22,7 @@ export function CollapsibleTrigger({
    return (
       <CollapsiblePrimitive.Trigger
          className={cn(
-            "group flex cursor-pointer items-baseline gap-1.5",
+            "group flex cursor-pointer items-center gap-1.5",
             className,
          )}
          {...props}
@@ -36,21 +37,25 @@ export function CollapsibleTriggerIcon({
    ...props
 }: React.ComponentProps<"svg">) {
    return (
-      <svg
+      <Icons.chevronRight
+         strokeWidth={3}
          className={cn(
-            "mt-px size-2.5 shrink-0 text-foreground/60 transition-all duration-200 group-data-[panel-closed]:rotate-0 group-data-[panel-open]:rotate-90 group-data-[panel-open]:text-foreground",
+            "mt-px size-3.5 shrink-0 text-foreground/60 transition-all duration-200 group-data-[panel-closed]:rotate-0 group-data-[panel-open]:rotate-90 group-data-[panel-open]:text-foreground",
             className,
          )}
-         viewBox="0 0 79 91"
-         fill="none"
-         xmlns="http://www.w3.org/2000/svg"
          {...props}
-      >
-         <path
-            d="M71.1338 32.4487C79.5945 36.784 79.8946 48.7674 71.6616 53.5207L18 84.5022C10 89.121 0 83.3475 0 74.1099V15.6324C0 6.65996 9.48705 0.861131 17.4722 4.95271L71.1338 32.4487Z"
-            fill="currentColor"
-         />
-      </svg>
+      />
+      // <svg
+
+      //    viewBox="0 0 79 91"
+      //    fill="none"
+      //    xmlns="http://www.w3.org/2000/svg"
+      // >
+      //    <path
+      //       d="M71.1338 32.4487C79.5945 36.784 79.8946 48.7674 71.6616 53.5207L18 84.5022C10 89.121 0 83.3475 0 74.1099V15.6324C0 6.65996 9.48705 0.861131 17.4722 4.95271L71.1338 32.4487Z"
+      //       fill="currentColor"
+      //    />
+      // </svg>
    )
 }
 

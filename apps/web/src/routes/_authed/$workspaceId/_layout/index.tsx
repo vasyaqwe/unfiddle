@@ -3,7 +3,11 @@ import { formatCurrency } from "@/currency"
 import { MainScrollArea } from "@/layout/components/main"
 import { formatNumber } from "@/number"
 import { CreateOrder } from "@/order/components/create-order"
-import { ORDER_STATUSES_TRANSLATION } from "@/order/constants"
+import { SeverityIcon } from "@/order/components/severity-icon"
+import {
+   ORDER_SEVERITIES_TRANSLATION,
+   ORDER_STATUSES_TRANSLATION,
+} from "@/order/constants"
 import { useDeleteOrder } from "@/order/mutations/delete"
 import { useUpdateOrder } from "@/order/mutations/update"
 import { orderStatusGradient } from "@/order/utils"
@@ -21,7 +25,10 @@ import {
 import { trpc } from "@/trpc"
 import { ErrorComponent } from "@/ui/components/error"
 import { UserAvatar } from "@/user/components/user-avatar"
-import { ORDER_STATUSES } from "@ledgerblocks/core/order/constants"
+import {
+   ORDER_SEVERITIES,
+   ORDER_STATUSES,
+} from "@ledgerblocks/core/order/constants"
 import { PROCUREMENT_STATUSES } from "@ledgerblocks/core/procurement/constants"
 import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
 import { Badge } from "@ledgerblocks/ui/components/badge"
@@ -102,6 +109,58 @@ function RouteComponent() {
                />
             </CreateOrder>
             <div className="mb-16">
+               <div className="py-2">
+                  <div className="px-4 lg:px-8">
+                     <Button
+                        variant={"ghost"}
+                        size={"sm"}
+                        className="-ml-2"
+                     >
+                        <svg
+                           className="size-5"
+                           xmlns="http://www.w3.org/2000/svg"
+                           viewBox="0 0 20 20"
+                        >
+                           <g fill="currentColor">
+                              <line
+                                 x1="14"
+                                 y1="10"
+                                 x2="6"
+                                 y2="10"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 strokeLinecap="round"
+                                 strokeLinejoin="round"
+                                 strokeWidth="2"
+                              />
+                              <line
+                                 x1="3"
+                                 y1="5"
+                                 x2="17"
+                                 y2="5"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 strokeLinecap="round"
+                                 strokeLinejoin="round"
+                                 strokeWidth="2"
+                              />
+                              <line
+                                 x1="9"
+                                 y1="15"
+                                 x2="11"
+                                 y2="15"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 strokeLinecap="round"
+                                 strokeLinejoin="round"
+                                 strokeWidth="2"
+                              />
+                           </g>
+                        </svg>
+                        Фільтр
+                     </Button>
+                  </div>
+               </div>
                {query.isPending ? null : query.isError ? (
                   <ErrorComponent error={query.error} />
                ) : !query.data || query.data.length === 0 ? (
@@ -145,7 +204,7 @@ function RouteComponent() {
                            key={creatorId}
                            className="group relative"
                         >
-                           <div className="border-neutral border-y bg-primary-1 py-2 group-first:border-t-0">
+                           <div className="border-neutral border-y bg-primary-1 py-2.5 ">
                               <div className="px-4 lg:px-8">
                                  <p className="flex items-center gap-1.5 font-medium">
                                     <UserAvatar user={creator} />
@@ -263,13 +322,56 @@ function OrderRow({
       >
          <CollapsibleTrigger
             render={<div />}
-            className="container relative grid grid-cols-[100px_1fr] grid-rows-[1fr_auto] gap-x-3 gap-y-1 pt-2 pb-2.5 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-1 lg:flex lg:py-2"
+            className="container relative grid grid-cols-[100px_1fr] grid-rows-[1fr_auto] gap-x-3 gap-y-1 py-2 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-1 lg:flex lg:py-1.5"
          >
-            <p className="self-center whitespace-nowrap font-medium font-mono text-foreground/75">
-               <CollapsibleTriggerIcon className="mr-2 inline-block align-baseline" />
-               №{String(item.shortId).padStart(3, "0")}
-            </p>
-            <p className="col-span-2 row-start-2 font-semibold max-lg:order-last">
+            <div className="flex items-center gap-2">
+               <CollapsibleTriggerIcon className="left-2.5 lg:absolute lg:mb-[2px]" />
+               <Combobox
+                  value={item.severity}
+                  onValueChange={(severity) =>
+                     update.mutate({
+                        id: item.id,
+                        workspaceId: params.workspaceId,
+                        severity: severity as never,
+                     })
+                  }
+               >
+                  <ComboboxTrigger
+                     onClick={(e) => {
+                        e.stopPropagation()
+                     }}
+                     className={"group/severity flex h-9 w-6 justify-center"}
+                  >
+                     <SeverityIcon
+                        severity={item.severity}
+                        className="mr-[2px] opacity-80 transition-opacity duration-75 group-hover/severity:opacity-100 group-data-[popup-open]/severity:opacity-100 lg:mb-[2px]"
+                     />
+                  </ComboboxTrigger>
+                  <ComboboxPopup
+                     className={"w-40"}
+                     sideOffset={0}
+                     align="start"
+                     onClick={(e) => {
+                        e.stopPropagation()
+                     }}
+                  >
+                     <ComboboxInput placeholder="Пріорітет" />
+                     {ORDER_SEVERITIES.map((s) => (
+                        <ComboboxItem
+                           key={s}
+                           value={s}
+                           keywords={[ORDER_SEVERITIES_TRANSLATION[s]]}
+                        >
+                           {ORDER_SEVERITIES_TRANSLATION[s]}
+                        </ComboboxItem>
+                     ))}
+                  </ComboboxPopup>
+               </Combobox>
+               <p className="whitespace-nowrap font-medium font-mono text-foreground/75">
+                  №{String(item.shortId).padStart(3, "0")}
+               </p>
+            </div>
+            <p className="col-span-2 row-start-2 break-normal font-semibold max-lg:order-last">
                {item.name}
             </p>
             <div className="ml-auto flex items-center gap-2">
@@ -357,11 +459,11 @@ function OrderRow({
                   <div className="container mb-4">
                      <div className="mb-4 flex items-center gap-3">
                         <p className="whitespace-nowrap font-medium font-mono text-black text-lg leading-tight lg:text-[1rem]">
-                           {formatCurrency(item.sellingPrice)}
+                           {formatNumber(item.quantity)} шт.
                         </p>
                         <Separator className={"h-6 w-px bg-primary-7"} />
                         <p className="whitespace-nowrap font-medium font-mono text-black text-lg leading-tight lg:text-[1rem]">
-                           {formatNumber(item.quantity)} шт.
+                           {formatCurrency(item.sellingPrice)}
                         </p>
                      </div>
                      <p
@@ -397,6 +499,7 @@ function OrderRow({
                                  key={p.id}
                                  item={p}
                                  sellingPrice={item.sellingPrice}
+                                 orderId={item.id}
                               />
                            ))}
                         </div>
@@ -417,9 +520,11 @@ function OrderRow({
 function ProcurementRow({
    item,
    sellingPrice,
+   orderId,
 }: {
    item: RouterOutput["order"]["list"][number]["procurements"][number]
    sellingPrice: number
+   orderId: string
 }) {
    const params = Route.useParams()
    const [from, to] = procurementStatusGradient(item.status)
@@ -431,7 +536,7 @@ function ProcurementRow({
    return (
       <div className="grid-cols-[1fr_1fr_var(--spacing-9)] items-start gap-3 border-neutral border-t px-4 py-3 text-left first:border-none max-lg:grid lg:flex lg:gap-4 lg:py-2">
          <AlignedColumn
-            id="p_buyer"
+            id={`${orderId}_p_buyer`}
             className="flex items-center gap-1.5 whitespace-nowrap font-medium lg:mt-[0.17rem]"
          >
             <UserAvatar
@@ -443,17 +548,17 @@ function ProcurementRow({
          </AlignedColumn>
          <span className="col-end-4 flex items-center justify-end gap-2 lg:gap-4">
             <AlignedColumn
-               id="p_price"
-               className="whitespace-nowrap font-medium font-mono lg:mt-1 lg:text-sm"
-            >
-               {formatCurrency(item.purchasePrice)}
-            </AlignedColumn>
-            <Separator className={"h-4 w-px bg-primary-7 lg:hidden"} />
-            <AlignedColumn
-               id="p_quantity"
+               id={`${orderId}_p_quantity`}
                className="whitespace-nowrap font-medium font-mono lg:mt-1 lg:text-sm"
             >
                {formatNumber(item.quantity)} шт.
+            </AlignedColumn>
+            <Separator className={"h-4 w-px bg-primary-7 lg:hidden"} />
+            <AlignedColumn
+               id={`${orderId}_p_price`}
+               className="whitespace-nowrap font-medium font-mono lg:mt-1 lg:text-sm"
+            >
+               {formatCurrency(item.purchasePrice)}
             </AlignedColumn>
          </span>
          <AlignedColumn
@@ -507,10 +612,10 @@ function ProcurementRow({
          <p className="lg:!max-w-[80ch] col-span-2 mt-2 break-normal empty:hidden max-lg:order-5 lg:mt-1">
             {item.note}
          </p>
-         <p className="col-start-1 whitespace-nowrap font-medium font-mono text-lg max-lg:order-3 max-lg:self-center lg:mt-1 lg:ml-auto lg:text-right lg:text-base">
+         <p className="col-start-1 whitespace-nowrap font-medium font-mono text-[1rem] max-lg:order-3 max-lg:self-center lg:mt-1 lg:ml-auto lg:text-right">
             <span
                className={cx(
-                  "mr-1.5 mb-[-0.15rem] inline-block size-4.5 rounded-xs lg:mb-[-0.21rem]",
+                  "mr-1.5 mb-[-0.2rem] inline-block size-4.5 rounded-xs lg:mb-[-0.21rem]",
                   profit === 0
                      ? "!hidden"
                      : profit > 0

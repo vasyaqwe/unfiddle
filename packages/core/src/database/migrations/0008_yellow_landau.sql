@@ -1,0 +1,1 @@
+ALTER TABLE `order` ADD `severity` text DEFAULT 'low' NOT NULL;

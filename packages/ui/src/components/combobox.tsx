@@ -100,7 +100,7 @@ export function Combobox(props: ComboboxProps) {
 
 interface Props extends React.ComponentProps<typeof PopoverTrigger> {}
 
-export function ComboboxTrigger({ children, ...props }: Props) {
+export function ComboboxTrigger({ className, children, ...props }: Props) {
    const context = React.useContext(ComboboxContext)
    if (!context)
       throw new Error("ComboboxTrigger must be used within a Combobox")
@@ -108,7 +108,13 @@ export function ComboboxTrigger({ children, ...props }: Props) {
    const { internalValue: value, multiple } = context
 
    return (
-      <PopoverTrigger {...props}>
+      <PopoverTrigger
+         className={cn(
+            "cursor-pointer has-[[data-combobox-icon]]:gap-2",
+            className,
+         )}
+         {...props}
+      >
          {multiple ? (
             <span
                data-active={(value as string[]).length > 0}
@@ -127,6 +133,15 @@ export function ComboboxTrigger({ children, ...props }: Props) {
             }
          /> */}
       </PopoverTrigger>
+   )
+}
+
+export function ComboboxTriggerIcon() {
+   return (
+      <Icons.chevronUpDown
+         data-combobox-icon
+         className="-mr-1 !ml-auto size-4 text-foreground/75"
+      />
    )
 }
 

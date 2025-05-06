@@ -24,6 +24,7 @@ export const orderRouter = t.router({
                id: true,
                shortId: true,
                name: true,
+               severity: true,
                quantity: true,
                sellingPrice: true,
                status: true,
@@ -77,6 +78,7 @@ export const orderRouter = t.router({
                shortId: nextId,
                creatorId: ctx.user.id,
                workspaceId: input.workspaceId,
+               severity: input.severity,
                name: input.name,
                quantity: input.quantity,
                sellingPrice: input.sellingPrice,
@@ -131,6 +133,7 @@ export const orderRouter = t.router({
                sellingPrice: input.sellingPrice,
                note: input.note,
                status: input.status,
+               severity: input.severity,
             })
             .where(eq(order.id, input.id))
       }),

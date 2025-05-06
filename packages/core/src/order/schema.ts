@@ -1,6 +1,9 @@
 import { user } from "@ledgerblocks/core/auth/schema"
 import { d } from "@ledgerblocks/core/database"
-import { ORDER_STATUSES } from "@ledgerblocks/core/order/constants"
+import {
+   ORDER_SEVERITIES,
+   ORDER_STATUSES,
+} from "@ledgerblocks/core/order/constants"
 import { procurement } from "@ledgerblocks/core/procurement/schema"
 import { workspace } from "@ledgerblocks/core/workspace/schema"
 import { relations } from "drizzle-orm"
@@ -31,6 +34,7 @@ export const order = d.table(
       name: d.text().notNull(),
       quantity: d.integer().notNull(),
       sellingPrice: d.integer().notNull(),
+      severity: d.text({ enum: ORDER_SEVERITIES }).notNull().default("low"),
       note: d.text().notNull().default(""),
       status: d.text({ enum: ORDER_STATUSES }).notNull().default("pending"),
       ...d.timestamps,
@@ -60,5 +64,6 @@ export const updateOrderSchema = createUpdateSchema(order)
       quantity: true,
       sellingPrice: true,
       status: true,
+      severity: true,
    })
    .required({ id: true, workspaceId: true })

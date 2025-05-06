@@ -1,7 +1,18 @@
 import { useAuth } from "@/auth/hooks"
 import { useDelayedValue } from "@/interactions/use-delayed-value"
+import { ORDER_SEVERITIES_TRANSLATION } from "@/order/constants"
 import { useCreateOrder } from "@/order/mutations/create"
+import { ORDER_SEVERITIES } from "@ledgerblocks/core/order/constants"
+import type { OrderSeverity } from "@ledgerblocks/core/order/types"
 import { Button } from "@ledgerblocks/ui/components/button"
+import {
+   Combobox,
+   ComboboxInput,
+   ComboboxItem,
+   ComboboxPopup,
+   ComboboxTrigger,
+   ComboboxTriggerIcon,
+} from "@ledgerblocks/ui/components/combobox"
 import {
    Drawer,
    DrawerPopup,
@@ -22,6 +33,7 @@ import * as React from "react"
 export function CreateOrder({ children }: { children?: React.ReactNode }) {
    const auth = useAuth()
    const [open, setOpen] = React.useState(false)
+   const [severity, setSeverity] = React.useState<OrderSeverity>("low")
    const mutation = useCreateOrder({
       onMutate: () => setOpen(false),
       onError: () => setOpen(true),
@@ -54,6 +66,7 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
                      quantity: number(form.quantity),
                      sellingPrice: number(form.sellingPrice),
                      note: form.note,
+                     severity,
                   })
                }}
             >
@@ -93,6 +106,37 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
                      name="note"
                      placeholder="Додайте комент"
                   />
+               </Field>
+               <Field>
+                  <FieldLabel className={"mb-2.5"}>Пріорітет</FieldLabel>
+                  <Combobox
+                     value={severity}
+                     onValueChange={(s) => setSeverity(s as never)}
+                  >
+                     <ComboboxTrigger
+                        render={
+                           <Button
+                              variant={"secondary"}
+                              className="w-32 justify-start"
+                           >
+                              {ORDER_SEVERITIES_TRANSLATION[severity]}
+                              <ComboboxTriggerIcon />
+                           </Button>
+                        }
+                     />
+                     <ComboboxPopup align="start">
+                        <ComboboxInput placeholder="Пріорітет" />
+                        {ORDER_SEVERITIES.map((s) => (
+                           <ComboboxItem
+                              key={s}
+                              value={s}
+                              keywords={[ORDER_SEVERITIES_TRANSLATION[s]]}
+                           >
+                              {ORDER_SEVERITIES_TRANSLATION[s]}
+                           </ComboboxItem>
+                        ))}
+                     </ComboboxPopup>
+                  </Combobox>
                </Field>
                <Button
                   pending={pending}

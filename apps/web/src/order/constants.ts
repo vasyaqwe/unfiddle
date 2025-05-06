@@ -1,4 +1,4 @@
-import type { OrderStatus } from "@ledgerblocks/core/order/types"
+import type { OrderSeverity, OrderStatus } from "@ledgerblocks/core/order/types"
 import type tailwindColors from "tailwindcss/colors"
 
 type TailwindColor = keyof typeof tailwindColors
@@ -27,4 +27,10 @@ export const ORDER_STATUSES_TRANSLATION: Record<OrderStatus, string> = {
    failed: "Неуспішно",
    partially_successful: "Частково виконано",
    sent_for_payment: "Передано на оплату",
+}
+
+export const ORDER_SEVERITIES_TRANSLATION: Record<OrderSeverity, string> = {
+   low: "Низький",
+   medium: "Середній",
+   high: "Високий",
 }

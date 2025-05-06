@@ -1,7 +1,7 @@
 export const DIALOG_STYLES = {
    transition:
       "transition-all duration-150 data-[ending-style]:scale-[98%] data-[starting-style]:scale-[102%] data-[ending-style]:opacity-0 data-[starting-style]:opacity-0",
-   popup: "w-96 rounded-xl bg-primary-2 p-4 shadow-md outline outline-transparent",
+   popup: "w-96 rounded-xl bg-background p-4 shadow-md outline outline-transparent",
    center:
       "-mt-8 max-w-[calc(100vw-3rem)] -translate-x-1/2 -translate-y-1/2 fixed top-1/2 left-1/2",
    backdrop:

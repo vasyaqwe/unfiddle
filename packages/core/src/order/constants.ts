@@ -10,3 +10,5 @@ export const ORDER_STATUSES = [
    "partially_successful", // Купили тільки 46шт
    "sent_for_payment", // Передано на оплату
 ] as const
+
+export const ORDER_SEVERITIES = ["low", "medium", "high"] as const
