@@ -15,6 +15,8 @@ export const button = cva(
                "bg-accent-6 font-[400] text-shadow-md/7 shadow-[inset_0_-2.5px_1px_0_rgb(0_0_0_/_0.2),0_1px_3px_0_rgb(0_0_0_/_0.1),_0_1px_2px_-1px_rgb(0_0_0_/_0.1)] hover:bg-accent-5 active:bg-accent-6",
             secondary:
                "border border-primary-4 bg-background shadow-[inset_0_-1px_0.5px_rgb(0_0_0_/_0.15)] hover:bg-primary-1 active:bg-primary-2",
+            tertiary:
+               "border border-primary-2 bg-background bg-primary-4 hover:bg-primary-5 active:bg-primary-4",
             ghost: "border border-transparent bg-transparent [--active-color:var(--color-primary-3)] hover:bg-(--active-color) aria-[current=page]:bg-(--active-color) data-[popup-open]:bg-(--active-color)",
          },
          size: {

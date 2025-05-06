@@ -1,9 +1,11 @@
 import { useAuth } from "@/auth/hooks"
 import { Sidebar } from "@/layout/components/sidebar"
+import { CreateOrder } from "@/order/components/create-order"
 import { WorkspaceMenuPopup } from "@/routes/_authed/$workspaceId/-components/workspace-menu"
 import { UserAvatar } from "@/user/components/user-avatar"
 import { WorkspaceLogo } from "@/workspace/components/workspace-logo"
 import { Button } from "@ledgerblocks/ui/components/button"
+import { DrawerTrigger } from "@ledgerblocks/ui/components/drawer"
 import { Icons } from "@ledgerblocks/ui/components/icons"
 import {
    Menu,
@@ -38,6 +40,19 @@ export function SidebarContent() {
                />
                <WorkspaceMenuPopup />
             </Menu>
+            <CreateOrder>
+               <DrawerTrigger
+                  render={
+                     <Button
+                        variant={"secondary"}
+                        className="mt-3 w-full"
+                     >
+                        <Icons.pencilLine className="size-5" />
+                        Нове замовлення
+                     </Button>
+                  }
+               />
+            </CreateOrder>
          </div>
          <ScrollArea render={<nav className="p-4" />}>
             <ul className="space-y-1">
@@ -47,7 +62,7 @@ export function SidebarContent() {
                      params={params}
                      activeOptions={{ exact: true }}
                      className={
-                        "group flex h-8 items-center justify-start gap-2 rounded-md border border-transparent px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:text-foreground aria-[current=page]:border-neutral aria-[current=page]:bg-white aria-[current=page]:text-foreground aria-[current=page]:shadow-[inset_0_-1px_0.5px_rgb(0_0_0_/_0.15)]"
+                        "group flex h-8 items-center justify-start gap-2 rounded-md px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:bg-primary-3 hover:text-foreground aria-[current=page]:bg-primary-4/75 aria-[current=page]:text-foreground"
                      }
                   >
                      <Icons.home className="size-5" />
@@ -59,7 +74,7 @@ export function SidebarContent() {
                      to={"/$workspaceId/team"}
                      params={params}
                      className={
-                        "group flex h-8 items-center justify-start gap-2 rounded-md border border-transparent px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:text-foreground aria-[current=page]:border-neutral aria-[current=page]:bg-white aria-[current=page]:text-foreground aria-[current=page]:shadow-[inset_0_-1px_0.5px_rgb(0_0_0_/_0.15)]"
+                        "group flex h-8 items-center justify-start gap-2 rounded-md px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:bg-primary-3 hover:text-foreground aria-[current=page]:bg-primary-4/75 aria-[current=page]:text-foreground"
                      }
                   >
                      <Icons.users className="size-5" />

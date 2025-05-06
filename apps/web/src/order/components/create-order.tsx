@@ -6,14 +6,12 @@ import {
    Drawer,
    DrawerPopup,
    DrawerTitle,
-   DrawerTrigger,
 } from "@ledgerblocks/ui/components/drawer"
 import {
    Field,
    FieldControl,
    FieldLabel,
 } from "@ledgerblocks/ui/components/field"
-import { Icons } from "@ledgerblocks/ui/components/icons"
 import {
    NumberField,
    NumberFieldInput,
@@ -21,7 +19,7 @@ import {
 import { formData, number } from "@ledgerblocks/ui/utils"
 import * as React from "react"
 
-export function CreateOrder() {
+export function CreateOrder({ children }: { children?: React.ReactNode }) {
    const auth = useAuth()
    const [open, setOpen] = React.useState(false)
    const mutation = useCreateOrder({
@@ -36,13 +34,7 @@ export function CreateOrder() {
          open={open}
          onOpenChange={setOpen}
       >
-         <DrawerTrigger
-            render={
-               <Button>
-                  <Icons.plus /> Додати
-               </Button>
-            }
-         />
+         {children}
          <DrawerPopup>
             <DrawerTitle>Нове замовлення</DrawerTitle>
             <form

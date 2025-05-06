@@ -1,6 +1,5 @@
 import { useAuth } from "@/auth/hooks"
 import { formatCurrency } from "@/currency"
-import { useEventListener } from "@/interactions/use-event-listener"
 import { MainScrollArea } from "@/layout/components/main"
 import { formatNumber } from "@/number"
 import { CreateOrder } from "@/order/components/create-order"
@@ -26,13 +25,7 @@ import { PROCUREMENT_STATUSES } from "@ledgerblocks/core/procurement/constants"
 import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
 import { Badge } from "@ledgerblocks/ui/components/badge"
 import { Button } from "@ledgerblocks/ui/components/button"
-import {
-   Card,
-   CardContent,
-   CardFooter,
-   CardHeader,
-   CardTitle,
-} from "@ledgerblocks/ui/components/card"
+import {} from "@ledgerblocks/ui/components/card"
 import {
    Collapsible,
    CollapsiblePanel,
@@ -45,6 +38,7 @@ import {
    ComboboxPopup,
    ComboboxTrigger,
 } from "@ledgerblocks/ui/components/combobox"
+import { DrawerTrigger } from "@ledgerblocks/ui/components/drawer"
 import { Icons } from "@ledgerblocks/ui/components/icons"
 import {
    Menu,
@@ -72,27 +66,9 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/")({
    },
 })
 
-const currentGreeting = () => {
-   const hour = new Date().getHours()
-   if (hour < 12) return "Добрий ранок"
-   if (hour < 18) return "Добрий день"
-   return "Добрий вечір"
-}
-
 function RouteComponent() {
    const params = Route.useParams()
    const auth = useAuth()
-   const documentRef = React.useRef<Document>(document)
-
-   const [greeting, setGreeting] = React.useState(currentGreeting())
-   useEventListener(
-      "visibilitychange",
-      () => {
-         if (document.visibilityState === "visible")
-            setGreeting(currentGreeting())
-      },
-      documentRef,
-   )
 
    const query = useQuery(
       trpc.order.list.queryOptions({ workspaceId: params.workspaceId }),
@@ -109,52 +85,21 @@ function RouteComponent() {
             </HeaderTitle>
             <HeaderUserMenu />
          </Header>
-         <MainScrollArea container={false}>
-            <div className="container">
-               <p className="mb-8 font-semibold text-xl max-lg:hidden">
-                  {greeting}, {auth.user.name}
-               </p>
-               <div className="grid gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
-                  <Card>
-                     <CardHeader>
-                        <CardTitle>Профіт</CardTitle>
-                     </CardHeader>
-                     <CardContent>
-                        <p className="font-mono font-semibold text-2xl text-black tracking-tight md:text-3xl">
-                           $49,482
-                        </p>
-                        <CardFooter>За сьогодні</CardFooter>
-                     </CardContent>
-                  </Card>
-                  <Card>
-                     <CardHeader>
-                        <CardTitle>Профіт</CardTitle>
-                     </CardHeader>
-                     <CardContent>
-                        <p className="font-mono font-semibold text-2xl text-black tracking-tight md:text-3xl">
-                           $49,482
-                        </p>
-                        <CardFooter>За сьогодні</CardFooter>
-                     </CardContent>
-                  </Card>
-                  <Card className="md:col-span-2 lg:col-span-1">
-                     <CardHeader>
-                        <CardTitle>Профіт</CardTitle>
-                     </CardHeader>
-                     <CardContent>
-                        <p className="font-mono font-semibold text-2xl tracking-tight md:text-3xl">
-                           $49,482
-                        </p>
-                        <CardFooter>За сьогодні</CardFooter>
-                     </CardContent>
-                  </Card>
-               </div>
-               <div className="mt-8 flex items-center justify-between gap-4">
-                  <p className="font-semibold text-xl">Замовлення</p>
-                  <CreateOrder />
-               </div>
-            </div>
-            <div className="mt-5 mb-16">
+         <MainScrollArea
+            className="pt-0 lg:pt-0"
+            container={false}
+         >
+            <CreateOrder>
+               <DrawerTrigger
+                  render={
+                     <Button className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-[10] overflow-visible md:hidden">
+                        <Icons.plus className="size-6" />
+                        Замовлення
+                     </Button>
+                  }
+               />
+            </CreateOrder>
+            <div className="mb-16">
                {Object.entries(groupedData).map(([creatorId, data]) => {
                   const creator = data.find(
                      (item) => item.creatorId === creatorId,
@@ -164,9 +109,9 @@ function RouteComponent() {
                   return (
                      <div
                         key={creatorId}
-                        className="relative"
+                        className="group relative"
                      >
-                        <div className="border-neutral border-y bg-primary-1 py-2">
+                        <div className="border-neutral border-y bg-primary-1 py-2 group-first:border-t-0">
                            <div className="px-4 lg:px-8">
                               <p className="font-medium">
                                  <UserAvatar
