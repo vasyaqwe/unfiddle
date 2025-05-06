@@ -36,7 +36,13 @@ import { PROCUREMENT_STATUSES } from "@ledgerblocks/core/procurement/constants"
 import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
 import { Badge } from "@ledgerblocks/ui/components/badge"
 import { Button } from "@ledgerblocks/ui/components/button"
-import {} from "@ledgerblocks/ui/components/card"
+import {
+   Card,
+   CardContent,
+   CardFooter,
+   CardHeader,
+   CardTitle,
+} from "@ledgerblocks/ui/components/card"
 import {
    Collapsible,
    CollapsiblePanel,
@@ -169,6 +175,10 @@ function RouteComponent() {
       setSearching(false)
    }
 
+   const summary = useQuery(
+      trpc.workspace.summary.queryOptions({ id: params.workspaceId }),
+   )
+
    return (
       <>
          <Header>
@@ -179,6 +189,41 @@ function RouteComponent() {
             <HeaderUserMenu />
          </Header>
          <MainScrollArea container={false}>
+            <div className="container grid gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
+               <Card>
+                  <CardHeader>
+                     <CardTitle>Профіт</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                     <p className="font-mono font-semibold text-2xl text-black tracking-tight md:text-3xl">
+                        {formatNumber(summary.data?.weekProfit)} ₴
+                     </p>
+                     <CardFooter>За сьогодні</CardFooter>
+                  </CardContent>
+               </Card>
+               <Card>
+                  <CardHeader>
+                     <CardTitle>Профіт</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                     <p className="font-mono font-semibold text-2xl text-black tracking-tight md:text-3xl">
+                        {formatNumber(summary.data?.monthProfit)} ₴
+                     </p>
+                     <CardFooter>За місяць</CardFooter>
+                  </CardContent>
+               </Card>
+               <Card className="md:col-span-2 lg:col-span-1">
+                  <CardHeader>
+                     <CardTitle>Профіт</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                     <p className="font-mono font-semibold text-2xl tracking-tight md:text-3xl">
+                        {formatNumber(summary.data?.allTimeProfit)} ₴
+                     </p>
+                     <CardFooter>За весь час</CardFooter>
+                  </CardContent>
+               </Card>
+            </div>
             <CreateOrder>
                <DrawerTrigger
                   render={
@@ -189,7 +234,7 @@ function RouteComponent() {
                   }
                />
             </CreateOrder>
-            <div className="mb-16 ">
+            <div className="mt-8 mb-16">
                <div className="flex min-h-[44px] items-center gap-1 px-4 lg:px-8">
                   <Menu>
                      <MenuTrigger

@@ -1,13 +1,48 @@
-import { order, session } from "@ledgerblocks/core/database/schema"
+import { order, procurement, session } from "@ledgerblocks/core/database/schema"
 import { t } from "@ledgerblocks/core/trpc/context"
 import { tryCatch } from "@ledgerblocks/core/try-catch"
 import { workspaceMemberMiddleware } from "@ledgerblocks/core/workspace/middleware"
 import { workspace, workspaceMember } from "@ledgerblocks/core/workspace/schema"
 import { TRPCError } from "@trpc/server"
-import { and, desc, eq, or, sql } from "drizzle-orm"
+import { and, desc, eq, gte, or, sql } from "drizzle-orm"
 import { z } from "zod"
 
 export const workspaceRouter = t.router({
+   summary: t.procedure
+      .use(workspaceMemberMiddleware)
+      .input(z.object({ id: z.string() }))
+      .query(async ({ ctx }) => {
+         const now = new Date()
+         const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+         const lastMonth = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+
+         const getProfit = async (fromDate?: Date) => {
+            const query = ctx.db
+               .select({
+                  profit:
+                     sql<number>`SUM(${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice}))`.as(
+                        "profit",
+                     ),
+               })
+               .from(procurement)
+               .innerJoin(order, eq(procurement.orderId, order.id))
+
+            if (fromDate) query.where(gte(procurement.createdAt, fromDate))
+
+            const [result] = await query
+            return result?.profit ?? 0
+         }
+
+         const weekProfit = await getProfit(lastWeek)
+         const monthProfit = await getProfit(lastMonth)
+         const allTimeProfit = await getProfit()
+
+         return {
+            weekProfit: weekProfit ?? 0,
+            monthProfit: monthProfit ?? 0,
+            allTimeProfit: allTimeProfit ?? 0,
+         }
+      }),
    search: t.procedure
       .use(workspaceMemberMiddleware)
       .input(z.object({ id: z.string(), query: z.string() }))

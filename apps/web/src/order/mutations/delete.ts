@@ -52,6 +52,11 @@ export function useDeleteOrder({
          },
          onSettled: () => {
             queryClient.invalidateQueries(queryOptions)
+            queryClient.invalidateQueries(
+               trpc.workspace.summary.queryOptions({
+                  id: auth.workspace.id,
+               }),
+            )
          },
       }),
    )
