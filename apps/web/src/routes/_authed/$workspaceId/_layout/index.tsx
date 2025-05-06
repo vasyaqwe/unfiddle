@@ -112,7 +112,7 @@ function RouteComponent() {
       ),
    )
 
-   const groupedData = R.groupBy(query.data ?? [], R.prop("creatorId"))
+   const data = query.data ?? []
 
    const onFilterChange = (
       key: "status" | "severity",
@@ -306,7 +306,7 @@ function RouteComponent() {
                </div>
                {query.isPending ? null : query.isError ? (
                   <ErrorComponent error={query.error} />
-               ) : !query.data || query.data.length === 0 ? (
+               ) : !data || data.length === 0 ? (
                   <div className="-translate-y-8 absolute inset-0 m-auto size-fit text-center">
                      <svg
                         className="mx-auto mb-5 size-12"
@@ -336,43 +336,18 @@ function RouteComponent() {
                      </p>
                   </div>
                ) : (
-                  Object.entries(groupedData).map(([creatorId, data]) => {
-                     const creator = data.find(
-                        (item) => item.creatorId === creatorId,
-                     )?.creator
-                     if (!creator) return null
-
-                     return (
-                        <div
-                           key={creatorId}
-                           className="group relative"
-                        >
-                           <div className="border-primary-5 border-y bg-primary-2 py-2.5 ">
-                              <div className="px-4 lg:px-8">
-                                 <p className="flex items-center gap-1.5 font-medium">
-                                    <UserAvatar user={creator} />
-                                    {creator.name}
-                                    <span className="ml-1 text-foreground/70">
-                                       {data.length}
-                                    </span>
-                                 </p>
-                              </div>
-                           </div>
-                           <div
-                              className={
-                                 "divide-y divide-neutral lg:divide-primary-5"
-                              }
-                           >
-                              {data.map((item) => (
-                                 <OrderRow
-                                    key={item.id}
-                                    item={item}
-                                 />
-                              ))}
-                           </div>
-                        </div>
-                     )
-                  })
+                  <div
+                     className={
+                        "divide-y divide-primary-5 border-primary-5 border-t"
+                     }
+                  >
+                     {data.map((item) => (
+                        <OrderRow
+                           key={item.id}
+                           item={item}
+                        />
+                     ))}
+                  </div>
                )}
             </div>
          </MainScrollArea>
@@ -468,7 +443,7 @@ function OrderRow({
       >
          <CollapsibleTrigger
             render={<div />}
-            className="container relative grid grid-cols-[100px_1fr] grid-rows-[1fr_auto] gap-x-3 gap-y-1 py-2 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-2 aria-expanded:bg-primary-2 lg:flex lg:py-1"
+            className="container relative grid grid-cols-[100px_1fr] grid-rows-[1fr_auto] gap-x-2.5 gap-y-1 py-2 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-2 aria-expanded:bg-primary-2 lg:flex lg:py-1"
          >
             <div className="flex items-center gap-2">
                <CollapsibleTriggerIcon className="left-2.5 lg:absolute lg:mb-px" />
@@ -519,11 +494,22 @@ function OrderRow({
                      ))}
                   </ComboboxPopup>
                </Combobox> */}
-               <p className="whitespace-nowrap font-medium font-mono text-foreground/75">
+               <p className="whitespace-nowrap font-medium font-mono text-foreground/75 text-sm">
                   №{String(item.shortId).padStart(3, "0")}
                </p>
             </div>
-            <p className="col-span-2 row-start-2 break-normal font-semibold max-lg:order-last">
+            <AlignedColumn
+               id={`o_creator`}
+               className="flex items-center gap-0.5 whitespace-nowrap font-medium text-sm"
+            >
+               <UserAvatar
+                  size={15}
+                  user={item.creator}
+                  className="inline-block"
+               />
+               {item.creator.name}
+            </AlignedColumn>
+            <p className="col-span-2 row-start-2 mt-px break-normal font-semibold max-lg:order-last">
                {item.name}
             </p>
             <div className="ml-auto flex items-center gap-2">
