@@ -14,11 +14,12 @@ import {
    MenuTrigger,
 } from "@ledgerblocks/ui/components/menu"
 import { ScrollArea } from "@ledgerblocks/ui/components/scroll-area"
-import { Link, useParams } from "@tanstack/react-router"
+import { Link, useParams, useSearch } from "@tanstack/react-router"
 
 export function SidebarContent() {
    const auth = useAuth()
    const params = useParams({ from: "/_authed/$workspaceId" })
+   const search = useSearch({ strict: false })
 
    return (
       <Sidebar>
@@ -60,6 +61,7 @@ export function SidebarContent() {
                   <Link
                      to={"/$workspaceId"}
                      params={params}
+                     search={search}
                      activeOptions={{ exact: true, includeSearch: false }}
                      className={
                         "group flex h-8 items-center justify-start gap-2 rounded-md px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:bg-primary-3 hover:text-foreground aria-[current=page]:bg-primary-4/75 aria-[current=page]:text-foreground"
@@ -73,6 +75,7 @@ export function SidebarContent() {
                   <Link
                      to={"/$workspaceId/team"}
                      params={params}
+                     search={search}
                      className={
                         "group flex h-8 items-center justify-start gap-2 rounded-md px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:bg-primary-3 hover:text-foreground aria-[current=page]:bg-primary-4/75 aria-[current=page]:text-foreground"
                      }

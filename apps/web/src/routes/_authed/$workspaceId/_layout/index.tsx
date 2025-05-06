@@ -60,7 +60,11 @@ import {
 } from "@ledgerblocks/ui/components/menu"
 import { Separator } from "@ledgerblocks/ui/components/separator"
 import { cn, cx } from "@ledgerblocks/ui/utils"
-import { keepPreviousData, useQuery } from "@tanstack/react-query"
+import {
+   keepPreviousData,
+   useQuery,
+   useQueryClient,
+} from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { atom, useAtom } from "jotai"
 import { atomWithStorage } from "jotai/utils"
@@ -88,6 +92,7 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/")({
 })
 
 function RouteComponent() {
+   const queryClient = useQueryClient()
    const params = Route.useParams()
    const search = Route.useSearch()
    const navigate = useNavigate()
@@ -176,7 +181,10 @@ function RouteComponent() {
                               <MenuPopup className={"max-h-56 overflow-y-auto"}>
                                  {ORDER_STATUSES.map((status) => (
                                     <MenuCheckboxItem
-                                       checked={search.status?.includes(status)}
+                                       checked={
+                                          search.status?.includes(status) ??
+                                          false
+                                       }
                                        onCheckedChange={(checked) =>
                                           onFilterChange(
                                              "status",
@@ -202,9 +210,10 @@ function RouteComponent() {
                               <MenuPopup>
                                  {ORDER_SEVERITIES.map((severity) => (
                                     <MenuCheckboxItem
-                                       checked={search.severity?.includes(
-                                          severity,
-                                       )}
+                                       checked={
+                                          search.severity?.includes(severity) ??
+                                          false
+                                       }
                                        onCheckedChange={(checked) =>
                                           onFilterChange(
                                              "severity",
@@ -228,7 +237,20 @@ function RouteComponent() {
                               variant={"ghost"}
                               size={"sm"}
                               kind={"icon"}
-                              onClick={() => navigate({ to: "." })}
+                              onClick={() =>
+                                 navigate({ to: "." }).then(() =>
+                                    queryClient.invalidateQueries(
+                                       trpc.order.list.queryOptions(
+                                          {
+                                             workspaceId: params.workspaceId,
+                                          },
+                                          {
+                                             placeholderData: keepPreviousData,
+                                          },
+                                       ),
+                                    ),
+                                 )
+                              }
                               className="rounded-none"
                            >
                               <Icons.xMark className="size-4" />
@@ -398,7 +420,7 @@ function OrderRow({
       >
          <CollapsibleTrigger
             render={<div />}
-            className="container relative grid grid-cols-[100px_1fr] grid-rows-[1fr_auto] gap-x-3 gap-y-1 py-2 text-left transition-colors duration-50 first:border-none hover:bg-primary-2 has-data-[popup-open]:bg-primary-2 aria-expanded:bg-primary-2 lg:flex lg:py-1.5"
+            className="container relative grid grid-cols-[100px_1fr] grid-rows-[1fr_auto] gap-x-3 gap-y-1 py-2 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-2 aria-expanded:bg-primary-2 lg:flex lg:py-1.5"
          >
             <div className="flex items-center gap-2">
                <CollapsibleTriggerIcon className="left-2.5 lg:absolute lg:mb-px" />

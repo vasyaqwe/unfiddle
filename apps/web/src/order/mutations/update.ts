@@ -3,6 +3,7 @@ import { useSocket } from "@/socket/hooks"
 import { trpc } from "@/trpc"
 import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useSearch } from "@tanstack/react-router"
 import { toast } from "sonner"
 
 export function useUpdateOrder({
@@ -12,9 +13,11 @@ export function useUpdateOrder({
    const queryClient = useQueryClient()
    const auth = useAuth()
    const socket = useSocket()
+   const search = useSearch({ strict: false })
 
    const queryOptions = trpc.order.list.queryOptions({
       workspaceId: auth.workspace.id,
+      filter: search,
    })
 
    const optimisticUpdate = useOptimisticUpdateOrder()
@@ -57,9 +60,11 @@ export function useUpdateOrder({
 export function useOptimisticUpdateOrder() {
    const queryClient = useQueryClient()
    const auth = useAuth()
+   const search = useSearch({ strict: false })
 
    const queryOptions = trpc.order.list.queryOptions({
       workspaceId: auth.workspace.id,
+      filter: search,
    })
 
    return (input: Partial<RouterOutput["order"]["list"][number]>) => {
