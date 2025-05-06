@@ -1,0 +1,1 @@
+ALTER TABLE `order` ADD `short_id` integer NOT NULL;

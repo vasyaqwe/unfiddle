@@ -30,6 +30,7 @@ import {
    Collapsible,
    CollapsiblePanel,
    CollapsibleTrigger,
+   CollapsibleTriggerIcon,
 } from "@ledgerblocks/ui/components/collapsible"
 import {
    Combobox,
@@ -131,11 +132,10 @@ function RouteComponent() {
                               "divide-y divide-neutral lg:divide-neutral/75"
                            }
                         >
-                           {data.map((item, idx) => (
+                           {data.map((item) => (
                               <OrderRow
                                  key={item.id}
                                  item={item}
-                                 idx={idx}
                               />
                            ))}
                         </div>
@@ -208,10 +208,8 @@ const collapsiblesStateAtom = atomWithStorage<Record<string, boolean>>(
 
 function OrderRow({
    item,
-   idx,
 }: {
    item: RouterOutput["order"]["list"][number]
-   idx: number
 }) {
    const params = Route.useParams()
    const [states, setStates] = useAtom(collapsiblesStateAtom)
@@ -235,10 +233,11 @@ function OrderRow({
       >
          <CollapsibleTrigger
             render={<div />}
-            className="container grid grid-cols-[100px_1fr] grid-rows-[1fr_auto] gap-x-3 gap-y-1 pt-2 pb-2.5 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-1 lg:flex lg:py-2"
+            className="container relative grid grid-cols-[100px_1fr] grid-rows-[1fr_auto] gap-x-3 gap-y-1 pt-2 pb-2.5 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-1 lg:flex lg:py-2"
          >
             <p className="self-center whitespace-nowrap font-medium font-mono text-foreground/75">
-               №00{idx + 1}
+               <CollapsibleTriggerIcon className="mr-2 inline-block align-baseline" />
+               №{String(item.shortId).padStart(3, "0")}
             </p>
             <p className="col-span-2 row-start-2 font-semibold max-lg:order-last">
                {item.name}
@@ -400,10 +399,10 @@ function ProcurementRow({
    const deleteItem = useDeleteProcurement()
 
    return (
-      <div className="grid-cols-2 items-start gap-3 border-neutral border-t px-4 py-3 text-left first:border-none max-lg:grid lg:flex lg:gap-4 lg:py-2">
+      <div className="grid-cols-[1fr_1fr_var(--spacing-9)] items-start gap-3 border-neutral border-t px-4 py-3 text-left first:border-none max-lg:grid lg:flex lg:gap-4 lg:py-2">
          <AlignedColumn
             id="p_buyer"
-            className="col-end-4 flex items-center gap-1.5 justify-self-end whitespace-nowrap max-lg:order-4 max-lg:flex-row-reverse lg:mt-[0.17rem]"
+            className="flex items-center gap-1.5 whitespace-nowrap font-medium lg:mt-[0.17rem]"
          >
             <UserAvatar
                size={16}
@@ -412,20 +411,23 @@ function ProcurementRow({
             />
             {item.buyer.name}
          </AlignedColumn>
+         <span className="col-end-4 flex items-center justify-end gap-2 lg:gap-4">
+            <AlignedColumn
+               id="p_price"
+               className="whitespace-nowrap font-medium font-mono lg:mt-1 lg:text-sm"
+            >
+               {formatCurrency(item.purchasePrice)}
+            </AlignedColumn>
+            <Separator className={"h-4 w-px bg-primary-7 lg:hidden"} />
+            <AlignedColumn
+               id="p_quantity"
+               className="whitespace-nowrap font-medium font-mono lg:mt-1 lg:text-sm"
+            >
+               {formatNumber(item.quantity)} шт.
+            </AlignedColumn>
+         </span>
          <AlignedColumn
-            id="p_price"
-            className="whitespace-nowrap font-medium font-mono max-lg:order-1 lg:mt-1 lg:text-sm"
-         >
-            {formatCurrency(item.purchasePrice)}
-         </AlignedColumn>
-         <AlignedColumn
-            id="p_quantity"
-            className="col-start-2 col-end-4 whitespace-nowrap font-medium font-mono max-lg:order-2 max-lg:text-right lg:mt-1 lg:text-sm"
-         >
-            {formatNumber(item.quantity)} шт.
-         </AlignedColumn>
-         <AlignedColumn
-            className="max-lg:order-3 lg:mt-[0.2rem]"
+            className="col-end-4 mt-[2px] justify-self-end max-lg:order-4 lg:mt-[0.2rem]"
             id="p_status"
          >
             <Combobox
@@ -472,10 +474,10 @@ function ProcurementRow({
                </ComboboxPopup>
             </Combobox>
          </AlignedColumn>
-         <p className="lg:!max-w-[80ch] col-span-3 break-normal empty:hidden max-lg:order-5 lg:mt-1">
+         <p className="lg:!max-w-[80ch] col-span-2 mt-2 break-normal empty:hidden max-lg:order-5 lg:mt-1">
             {item.note}
          </p>
-         <p className="col-span-2 col-start-1 whitespace-nowrap font-medium font-mono text-lg max-lg:order-6 max-lg:self-center lg:mt-1 lg:ml-auto lg:text-right lg:text-base">
+         <p className="col-start-1 whitespace-nowrap font-medium font-mono text-lg max-lg:order-3 max-lg:self-center lg:mt-1 lg:ml-auto lg:text-right lg:text-base">
             <span
                className={cx(
                   "mr-1.5 mb-[-0.15rem] inline-block size-4.5 rounded-xs lg:mb-[-0.21rem]",
@@ -500,7 +502,7 @@ function ProcurementRow({
                   <Button
                      variant={"ghost"}
                      kind={"icon"}
-                     className="lg:-mr-2 shrink-0 justify-self-end max-lg:order-6 max-lg:mt-auto"
+                     className="lg:-mr-2 col-start-3 shrink-0 justify-self-end max-lg:order-last max-lg:mt-auto"
                   >
                      <Icons.ellipsisHorizontal />
                   </Button>

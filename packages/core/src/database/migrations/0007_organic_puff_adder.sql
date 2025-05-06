@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX `order_workspace_id_short_id_unique_idx` ON `order` (`workspace_id`,`short_id`);

@@ -1,8 +1,15 @@
-import { order, updateOrderSchema } from "@ledgerblocks/core/order/schema"
+import {
+   order,
+   orderCounter,
+   updateOrderSchema,
+} from "@ledgerblocks/core/order/schema"
 import { procurement } from "@ledgerblocks/core/procurement/schema"
 import { t } from "@ledgerblocks/core/trpc/context"
+import { tryCatch } from "@ledgerblocks/core/try-catch"
 import { workspaceMemberMiddleware } from "@ledgerblocks/core/workspace/middleware"
+import { TRPCError } from "@trpc/server"
 import { desc, eq } from "drizzle-orm"
+import type { BatchItem } from "drizzle-orm/batch"
 import { createInsertSchema } from "drizzle-zod"
 import { z } from "zod"
 
@@ -15,6 +22,7 @@ export const orderRouter = t.router({
             where: eq(order.workspaceId, input.workspaceId),
             columns: {
                id: true,
+               shortId: true,
                name: true,
                quantity: true,
                sellingPrice: true,
@@ -55,11 +63,18 @@ export const orderRouter = t.router({
       }),
    create: t.procedure
       .use(workspaceMemberMiddleware)
-      .input(createInsertSchema(order).omit({ creatorId: true }))
+      .input(createInsertSchema(order).omit({ creatorId: true, shortId: true }))
       .mutation(async ({ ctx, input }) => {
-         return await ctx.db
+         const existingCounter = await ctx.db.query.orderCounter.findFirst({
+            where: eq(orderCounter.workspaceId, input.workspaceId),
+         })
+         const lastId = existingCounter?.lastId ?? 0
+         const nextId = lastId + 1
+
+         const createdOrder = await ctx.db
             .insert(order)
             .values({
+               shortId: nextId,
                creatorId: ctx.user.id,
                workspaceId: input.workspaceId,
                name: input.name,
@@ -69,6 +84,40 @@ export const orderRouter = t.router({
             })
             .returning()
             .get()
+
+         const batchQueries: BatchItem[] = []
+
+         if (!existingCounter) {
+            batchQueries.push(
+               ctx.db
+                  .insert(orderCounter)
+                  .values({ workspaceId: input.workspaceId })
+                  .onConflictDoNothing(),
+            )
+         }
+
+         batchQueries.push(
+            ctx.db
+               .update(orderCounter)
+               .set({ lastId: nextId })
+               .where(eq(orderCounter.workspaceId, input.workspaceId)),
+         )
+
+         const batch = await tryCatch(
+            ctx.db.batch(
+               batchQueries as unknown as readonly [
+                  BatchItem<"sqlite">,
+                  ...BatchItem<"sqlite">[],
+               ],
+            ),
+         )
+
+         if (batch.error || batch.data.some((r) => r.error)) {
+            await ctx.db.delete(order).where(eq(order.id, createdOrder.id))
+            throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" })
+         }
+
+         return createdOrder
       }),
    update: t.procedure
       .use(workspaceMemberMiddleware)

@@ -1,5 +1,6 @@
 import { session } from "@ledgerblocks/core/database/schema"
 import { t } from "@ledgerblocks/core/trpc/context"
+import { tryCatch } from "@ledgerblocks/core/try-catch"
 import { workspaceMemberMiddleware } from "@ledgerblocks/core/workspace/middleware"
 import { workspace, workspaceMember } from "@ledgerblocks/core/workspace/schema"
 import { TRPCError } from "@trpc/server"
@@ -57,26 +58,28 @@ export const workspaceRouter = t.router({
          if (!createdWorkspace)
             throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" })
 
-         const batch = await ctx.db.batch([
-            ctx.db.insert(workspaceMember).values({
-               workspaceId: createdWorkspace.id,
-               userId: ctx.user.id,
-               role: "admin",
-            }),
-            ctx.db
-               .update(session)
-               .set({
-                  workspaceMemberships: [
-                     ...ctx.session.workspaceMemberships,
-                     {
-                        workspaceId: createdWorkspace.id,
-                     },
-                  ],
-               })
-               .where(eq(session.userId, ctx.user.id)),
-         ])
+         const batch = await tryCatch(
+            ctx.db.batch([
+               ctx.db.insert(workspaceMember).values({
+                  workspaceId: createdWorkspace.id,
+                  userId: ctx.user.id,
+                  role: "admin",
+               }),
+               ctx.db
+                  .update(session)
+                  .set({
+                     workspaceMemberships: [
+                        ...ctx.session.workspaceMemberships,
+                        {
+                           workspaceId: createdWorkspace.id,
+                        },
+                     ],
+                  })
+                  .where(eq(session.userId, ctx.user.id)),
+            ]),
+         )
 
-         if (batch.some((r) => r.error)) {
+         if (batch.error || batch.data.some((r) => r.error)) {
             await ctx.db
                .delete(workspace)
                .where(eq(workspace.id, createdWorkspace.id))

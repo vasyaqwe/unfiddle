@@ -6,10 +6,20 @@ import { workspace } from "@ledgerblocks/core/workspace/schema"
 import { relations } from "drizzle-orm"
 import { createUpdateSchema } from "drizzle-zod"
 
+export const orderCounter = d.table("order_counter", {
+   workspaceId: d
+      .text()
+      .notNull()
+      .primaryKey()
+      .references(() => workspace.id, { onDelete: "cascade" }),
+   lastId: d.integer().notNull().default(0),
+})
+
 export const order = d.table(
    "order",
    {
       id: d.id("order"),
+      shortId: d.integer().notNull(),
       creatorId: d
          .text()
          .notNull()
@@ -25,7 +35,12 @@ export const order = d.table(
       status: d.text({ enum: ORDER_STATUSES }).notNull().default("pending"),
       ...d.timestamps,
    },
-   (table) => [d.index("order_creator_id_idx").on(table.creatorId)],
+   (table) => [
+      d.index("order_creator_id_idx").on(table.creatorId),
+      d
+         .uniqueIndex("order_workspace_id_short_id_unique_idx")
+         .on(table.workspaceId, table.shortId),
+   ],
 )
 
 export const orderRelations = relations(order, ({ one, many }) => ({
