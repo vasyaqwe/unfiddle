@@ -19,6 +19,7 @@ import {
    HeaderWorkspaceMenu,
 } from "@/routes/_authed/$workspaceId/-components/header"
 import { trpc } from "@/trpc"
+import { ErrorComponent } from "@/ui/components/error"
 import { UserAvatar } from "@/user/components/user-avatar"
 import { ORDER_STATUSES } from "@ledgerblocks/core/order/constants"
 import { PROCUREMENT_STATUSES } from "@ledgerblocks/core/procurement/constants"
@@ -93,7 +94,7 @@ function RouteComponent() {
             <CreateOrder>
                <DrawerTrigger
                   render={
-                     <Button className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-[10] overflow-visible md:hidden">
+                     <Button className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-[10] overflow-visible shadow-md md:hidden">
                         <Icons.plus className="size-6" />
                         Замовлення
                      </Button>
@@ -101,47 +102,76 @@ function RouteComponent() {
                />
             </CreateOrder>
             <div className="mb-16">
-               {Object.entries(groupedData).map(([creatorId, data]) => {
-                  const creator = data.find(
-                     (item) => item.creatorId === creatorId,
-                  )?.creator
-                  if (!creator) return null
-
-                  return (
-                     <div
-                        key={creatorId}
-                        className="group relative"
+               {query.isPending ? null : query.isError ? (
+                  <ErrorComponent error={query.error} />
+               ) : !query.data || query.data.length === 0 ? (
+                  <div className="-translate-y-8 absolute inset-0 m-auto size-fit text-center">
+                     <svg
+                        className="mx-auto mb-5 size-12"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 32 32"
                      >
-                        <div className="border-neutral border-y bg-primary-1 py-2 group-first:border-t-0">
-                           <div className="px-4 lg:px-8">
-                              <p className="font-medium">
-                                 <UserAvatar
-                                    size={16}
-                                    user={creator}
-                                    className="mr-1.5 inline-block align-text-top"
+                        <g fill="currentColor">
+                           <path
+                              d="M2.424,17.977l.068-10.18c.012-1.843,1.301-3.423,3.08-3.775l9.831-1.949c2.362-.468,4.555,1.38,4.539,3.827l-.068,10.182c-.013,1.842-1.302,3.421-3.081,3.774l-9.831,1.949c-2.362,.468-4.555-1.38-4.539-3.828Z"
+                              opacity=".2"
+                           />
+                           <path
+                              d="M7.241,22.039l.068-10.182c.011-1.841,1.301-3.42,3.08-3.773l9.831-1.948c2.362-.468,4.555,1.38,4.539,3.827l-.068,10.182c-.012,1.842-1.301,3.421-3.08,3.774l-9.831,1.949c-2.362,.468-4.555-1.38-4.539-3.827v-.002Z"
+                              opacity=".5"
+                           />
+                           <path
+                              d="M12.058,26.1l.068-10.182c.012-1.843,1.301-3.421,3.08-3.774l9.831-1.949c2.362-.468,4.555,1.38,4.539,3.827l-.068,10.182c-.012,1.843-1.301,3.422-3.08,3.774l-9.831,1.949c-2.362,.468-4.555-1.38-4.539-3.827h0Z"
+                              opacity=".8"
+                           />
+                        </g>
+                     </svg>
+                     <p className="mb-2 font-semibold text-xl">
+                        Тут нічого немає
+                     </p>
+                     <p className="text-foreground/75">
+                        Додайте перше замовлення
+                     </p>
+                  </div>
+               ) : (
+                  Object.entries(groupedData).map(([creatorId, data]) => {
+                     const creator = data.find(
+                        (item) => item.creatorId === creatorId,
+                     )?.creator
+                     if (!creator) return null
+
+                     return (
+                        <div
+                           key={creatorId}
+                           className="group relative"
+                        >
+                           <div className="border-neutral border-y bg-primary-1 py-2 group-first:border-t-0">
+                              <div className="px-4 lg:px-8">
+                                 <p className="flex items-center gap-1.5 font-medium">
+                                    <UserAvatar user={creator} />
+                                    {creator.name}
+                                    <span className="ml-1 text-foreground/70">
+                                       {data.length}
+                                    </span>
+                                 </p>
+                              </div>
+                           </div>
+                           <div
+                              className={
+                                 "divide-y divide-neutral lg:divide-neutral/75"
+                              }
+                           >
+                              {data.map((item) => (
+                                 <OrderRow
+                                    key={item.id}
+                                    item={item}
                                  />
-                                 {creator.name}
-                                 <span className="ml-1 text-foreground/70">
-                                    {data.length}
-                                 </span>
-                              </p>
+                              ))}
                            </div>
                         </div>
-                        <div
-                           className={
-                              "divide-y divide-neutral lg:divide-neutral/75"
-                           }
-                        >
-                           {data.map((item) => (
-                              <OrderRow
-                                 key={item.id}
-                                 item={item}
-                              />
-                           ))}
-                        </div>
-                     </div>
-                  )
-               })}
+                     )
+                  })
+               )}
             </div>
          </MainScrollArea>
       </>

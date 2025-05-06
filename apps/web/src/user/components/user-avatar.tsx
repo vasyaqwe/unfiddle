@@ -1,6 +1,5 @@
 import type { User } from "@ledgerblocks/core/auth/types"
 import { cn } from "@ledgerblocks/ui/utils"
-import Avatar from "boring-avatars"
 
 interface Props extends React.ComponentProps<"div"> {
    user: Omit<User, "createdAt" | "updatedAt" | "emailVerified" | "email">
@@ -14,6 +13,8 @@ export function UserAvatar({
    size = 20,
    ...props
 }: Props) {
+   const name = user.name[0]?.toUpperCase()
+
    return (
       <span
          style={
@@ -37,10 +38,14 @@ export function UserAvatar({
                }
             />
          ) : (
-            <Avatar
-               name={user.id}
-               size={size}
-            />
+            <span
+               style={{ fontSize: "calc(var(--size) * 0.575)" }}
+               className={cn(
+                  "grid size-full place-items-center rounded-full bg-[#f45b68] font-medium text-white/85 leading-[0] shadow-xs",
+               )}
+            >
+               {name}
+            </span>
          )}
          {children}
       </span>

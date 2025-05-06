@@ -27,14 +27,14 @@ export function ErrorComponent({ error, reset, className, ...props }: Props) {
    return (
       <div
          className={cn(
-            "flex grow flex-col items-center pt-8 text-center md:pt-16",
+            "flex grow flex-col items-center pt-12 text-center md:pt-24",
             className,
          )}
          {...props}
       >
          <div>
             <h1 className="mb-2 text-xl">Виникла помилка</h1>
-            <p className="mb-5 text-foreground/70 text-lg">
+            <p className="mb-5 text-balance text-foreground/70">
                {reset && error?.message
                   ? error.message
                   : "У нас технічні несправності — спробуйте ще раз пізніше."}
