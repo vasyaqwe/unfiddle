@@ -3,6 +3,7 @@ import { formatCurrency } from "@/currency"
 import { MainScrollArea } from "@/layout/components/main"
 import { formatNumber } from "@/number"
 import { CreateOrder } from "@/order/components/create-order"
+import { EditOrder } from "@/order/components/edit-order"
 import { SeverityIcon } from "@/order/components/severity-icon"
 import {
    ORDER_SEVERITIES_TRANSLATION,
@@ -12,6 +13,7 @@ import { useDeleteOrder } from "@/order/mutations/delete"
 import { useUpdateOrder } from "@/order/mutations/update"
 import { orderStatusGradient } from "@/order/utils"
 import { CreateProcurement } from "@/procurement/components/create-procurement"
+import { EditProcurement } from "@/procurement/components/edit-procurement"
 import { PROCUREMENT_STATUSES_TRANSLATION } from "@/procurement/constants"
 import { useDeleteProcurement } from "@/procurement/mutations/delete"
 import { useUpdateProcurement } from "@/procurement/mutations/update"
@@ -456,6 +458,9 @@ function OrderRow({
    const update = useUpdateOrder()
    const deleteItem = useDeleteOrder()
 
+   const [editOpen, setEditOpen] = React.useState(false)
+   const menuTriggerRef = React.useRef<HTMLButtonElement>(null)
+
    return (
       <Collapsible
          open={open}
@@ -463,11 +468,17 @@ function OrderRow({
       >
          <CollapsibleTrigger
             render={<div />}
-            className="container relative grid grid-cols-[100px_1fr] grid-rows-[1fr_auto] gap-x-3 gap-y-1 py-2 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-2 aria-expanded:bg-primary-2 lg:flex lg:py-1.5"
+            className="container relative grid grid-cols-[100px_1fr] grid-rows-[1fr_auto] gap-x-3 gap-y-1 py-2 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-2 aria-expanded:bg-primary-2 lg:flex lg:py-1"
          >
             <div className="flex items-center gap-2">
                <CollapsibleTriggerIcon className="left-2.5 lg:absolute lg:mb-px" />
-               <Combobox
+               <div className={"flex h-9 w-6 justify-center"}>
+                  <SeverityIcon
+                     severity={item.severity}
+                     className="mr-[2px] opacity-60 transition-opacity duration-75 group-hover/severity:opacity-90 group-data-[popup-open]/severity:opacity-90 lg:mb-[2px]"
+                  />
+               </div>
+               {/* <Combobox
                   value={item.severity}
                   onValueChange={(severity) =>
                      update.mutate({
@@ -507,7 +518,7 @@ function OrderRow({
                         </ComboboxItem>
                      ))}
                   </ComboboxPopup>
-               </Combobox>
+               </Combobox> */}
                <p className="whitespace-nowrap font-medium font-mono text-foreground/75">
                   №{String(item.shortId).padStart(3, "0")}
                </p>
@@ -558,8 +569,15 @@ function OrderRow({
                      ))}
                   </ComboboxPopup>
                </Combobox>
+               <EditOrder
+                  open={editOpen}
+                  setOpen={setEditOpen}
+                  order={item}
+                  finalFocus={menuTriggerRef}
+               />
                <Menu>
                   <MenuTrigger
+                     ref={menuTriggerRef}
                      render={
                         <Button
                            variant={"ghost"}
@@ -576,6 +594,14 @@ function OrderRow({
                         e.stopPropagation()
                      }}
                   >
+                     <MenuItem
+                        onClick={() => {
+                           setEditOpen(true)
+                        }}
+                     >
+                        <Icons.pencil />
+                        Редагувати
+                     </MenuItem>
                      <MenuItem
                         destructive
                         onClick={() => {
@@ -673,6 +699,9 @@ function ProcurementRow({
 
    const update = useUpdateProcurement()
    const deleteItem = useDeleteProcurement()
+
+   const [editOpen, setEditOpen] = React.useState(false)
+   const menuTriggerRef = React.useRef<HTMLButtonElement>(null)
 
    return (
       <div className="grid-cols-[1fr_1fr_var(--spacing-9)] items-start gap-3 border-neutral border-t px-4 py-3 text-left first:border-none max-lg:grid lg:flex lg:gap-4 lg:py-2">
@@ -772,8 +801,15 @@ function ProcurementRow({
             </span>
             {formatCurrency(profit)}{" "}
          </p>
+         <EditProcurement
+            procurement={item}
+            open={editOpen}
+            setOpen={setEditOpen}
+            finalFocus={menuTriggerRef}
+         />
          <Menu>
             <MenuTrigger
+               ref={menuTriggerRef}
                render={
                   <Button
                      variant={"ghost"}
@@ -790,6 +826,14 @@ function ProcurementRow({
                   e.stopPropagation()
                }}
             >
+               <MenuItem
+                  onClick={() => {
+                     setEditOpen(true)
+                  }}
+               >
+                  <Icons.pencil />
+                  Редагувати
+               </MenuItem>
                <MenuItem
                   destructive
                   onClick={() => {

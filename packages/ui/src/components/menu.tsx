@@ -14,7 +14,7 @@ export const MenuPositioner = MenuPrimitive.Positioner
 export const MenuArrow = MenuPrimitive.Arrow
 
 export const MENU_ITEM_STYLES = {
-   base: "cursor-pointer text-base h-9 md:h-8 flex items-center select-none gap-2 md:gap-1.5 rounded-[calc(var(--popup-radius)-var(--popup-padding))] px-[0.525rem] md:px-[0.46rem] focus-visible:border-transparent [&>svg]:size-[22px] md:[&>svg]:size-5 [&>svg]:text-primary-9 hover:[&>svg]:text-white focus-visible:[&>svg]:text-white data-[popup-open]:[&>svg]:text-white hover:bg-primary-11/50 hover:shadow-sm focus-visible:outline-none focus-visible:outline-hidden focus-visible:bg-primary-11/50 data-[popup-open]:bg-primary-11/50 data-[selected=true]:bg-primary-11/50 data-[selected=true]:shadow-sm shadow-black/20 focus-visible:shadow-sm md:text-sm",
+   base: "cursor-pointer text-base h-9 md:h-8 flex items-center select-none gap-2 md:gap-1.5 rounded-[calc(var(--popup-radius)-var(--popup-padding))] px-[0.525rem] md:px-[0.46rem] focus-visible:border-transparent [&>svg]:size-[22px] md:[&>svg]:size-5 [&>svg]:text-primary-9 hover:[&>svg]:text-white focus-visible:[&>svg]:text-white data-[popup-open]:[&>svg]:text-white hover:bg-accent-6 hover:shadow-sm focus-visible:outline-none focus-visible:outline-hidden focus-visible:bg-accent-6 data-[popup-open]:bg-accent-6 data-[selected=true]:bg-accent-6 data-[selected=true]:shadow-sm shadow-black/20 focus-visible:shadow-sm md:text-sm",
    destructive: "hover:bg-red-9 focus-visible:bg-red-9",
 }
 
