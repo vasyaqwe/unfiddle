@@ -52,11 +52,11 @@ export function useUpdateOrder({
          },
          onSettled: () => {
             queryClient.invalidateQueries(queryOptions)
-            queryClient.invalidateQueries(
-               trpc.workspace.summary.queryOptions({
-                  id: auth.workspace.id,
-               }),
-            )
+            // queryClient.invalidateQueries(
+            //    trpc.workspace.summary.queryOptions({
+            //       id: auth.workspace.id,
+            //    }),
+            // )
          },
       }),
    )

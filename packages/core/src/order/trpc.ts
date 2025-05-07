@@ -35,6 +35,9 @@ export const orderRouter = t.router({
          if (filter.severity?.length)
             whereConditions.push(inArray(order.severity, filter.severity))
 
+         if (filter.creator?.length)
+            whereConditions.push(inArray(order.creatorId, filter.creator))
+
          if (filter.archived) {
             whereConditions.push(isNotNull(order.deletedAt))
          } else {

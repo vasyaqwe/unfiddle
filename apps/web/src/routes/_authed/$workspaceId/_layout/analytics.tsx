@@ -5,13 +5,6 @@ import {
    HeaderUserMenu,
    HeaderWorkspaceMenu,
 } from "@/routes/_authed/$workspaceId/-components/header"
-import {
-   Card,
-   CardContent,
-   CardFooter,
-   CardHeader,
-   CardTitle,
-} from "@ledgerblocks/ui/components/card"
 import { createFileRoute } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
@@ -29,14 +22,14 @@ function RouteComponent() {
             <HeaderUserMenu />
          </Header>
          <MainScrollArea>
-            <div className="grid gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
+            {/* <div className="container grid gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
                <Card>
                   <CardHeader>
                      <CardTitle>Профіт</CardTitle>
                   </CardHeader>
                   <CardContent>
                      <p className="font-mono font-semibold text-2xl text-black tracking-tight md:text-3xl">
-                        $49,482
+                        {formatNumber(summary.data?.weekProfit ?? 0)} ₴
                      </p>
                      <CardFooter>За сьогодні</CardFooter>
                   </CardContent>
@@ -47,9 +40,9 @@ function RouteComponent() {
                   </CardHeader>
                   <CardContent>
                      <p className="font-mono font-semibold text-2xl text-black tracking-tight md:text-3xl">
-                        $49,482
+                        {formatNumber(summary.data?.monthProfit ?? 0)} ₴
                      </p>
-                     <CardFooter>За сьогодні</CardFooter>
+                     <CardFooter>За місяць</CardFooter>
                   </CardContent>
                </Card>
                <Card className="md:col-span-2 lg:col-span-1">
@@ -58,12 +51,12 @@ function RouteComponent() {
                   </CardHeader>
                   <CardContent>
                      <p className="font-mono font-semibold text-2xl tracking-tight md:text-3xl">
-                        $49,482
+                        {formatNumber(summary.data?.allTimeProfit ?? 0)} ₴
                      </p>
-                     <CardFooter>За сьогодні</CardFooter>
+                     <CardFooter>За весь час</CardFooter>
                   </CardContent>
                </Card>
-            </div>
+            </div> */}
          </MainScrollArea>
       </>
    )

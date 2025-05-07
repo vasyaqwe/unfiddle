@@ -77,12 +77,8 @@ import * as React from "react"
 import * as R from "remeda"
 
 const collapsiblesStateAtom = atomWithStorage<Record<string, boolean>>(
-   "collapsibles-open-states",
-   {
-      section1: false,
-      section2: false,
-      section3: false,
-   },
+   "collapsibles_open_states",
+   {},
 )
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/")({
@@ -119,7 +115,7 @@ function RouteComponent() {
    const data = query.data ?? []
 
    const onFilterChange = (
-      key: "status" | "severity",
+      key: "status" | "severity" | "creator",
       value: string,
       isChecked: boolean,
    ) => {
@@ -174,10 +170,11 @@ function RouteComponent() {
       setSearching(false)
    }
 
-   // const summary = useQuery(
-   //    trpc.workspace.summary.queryOptions({ id: params.workspaceId }),
-   // )
    const [states, setStates] = useAtom(collapsiblesStateAtom)
+
+   const creators = Array.from(
+      new Map(data.map((item) => [item.creator.id, item.creator])).values(),
+   )
 
    return (
       <>
@@ -192,41 +189,6 @@ function RouteComponent() {
             className="pt-0 lg:pt-0"
             container={false}
          >
-            {/* <div className="container grid gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
-               <Card>
-                  <CardHeader>
-                     <CardTitle>Профіт</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                     <p className="font-mono font-semibold text-2xl text-black tracking-tight md:text-3xl">
-                        {formatNumber(summary.data?.weekProfit ?? 0)} ₴
-                     </p>
-                     <CardFooter>За сьогодні</CardFooter>
-                  </CardContent>
-               </Card>
-               <Card>
-                  <CardHeader>
-                     <CardTitle>Профіт</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                     <p className="font-mono font-semibold text-2xl text-black tracking-tight md:text-3xl">
-                        {formatNumber(summary.data?.monthProfit ?? 0)} ₴
-                     </p>
-                     <CardFooter>За місяць</CardFooter>
-                  </CardContent>
-               </Card>
-               <Card className="md:col-span-2 lg:col-span-1">
-                  <CardHeader>
-                     <CardTitle>Профіт</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                     <p className="font-mono font-semibold text-2xl tracking-tight md:text-3xl">
-                        {formatNumber(summary.data?.allTimeProfit ?? 0)} ₴
-                     </p>
-                     <CardFooter>За весь час</CardFooter>
-                  </CardContent>
-               </Card>
-            </div> */}
             <CreateOrder>
                <DrawerTrigger
                   render={
@@ -330,6 +292,32 @@ function RouteComponent() {
                                     key={severity}
                                  >
                                     {ORDER_SEVERITIES_TRANSLATION[severity]}
+                                 </MenuCheckboxItem>
+                              ))}
+                           </MenuPopup>
+                        </Menu>
+                        <Menu>
+                           <MenuSubmenuTrigger>
+                              <Icons.user />
+                              Менеджер
+                           </MenuSubmenuTrigger>
+                           <MenuPopup>
+                              {creators.map((creator) => (
+                                 <MenuCheckboxItem
+                                    checked={
+                                       search.creator?.includes(creator.id) ??
+                                       false
+                                    }
+                                    onCheckedChange={(checked) =>
+                                       onFilterChange(
+                                          "creator",
+                                          creator.id,
+                                          checked,
+                                       )
+                                    }
+                                    key={creator.id}
+                                 >
+                                    {creator.name}
                                  </MenuCheckboxItem>
                               ))}
                            </MenuPopup>
@@ -519,9 +507,7 @@ function OrderRow({
                      user={item.creator}
                      className="inline-block"
                   />
-                  <span className="max-lg:line-clamp-1">
-                     {item.creator.name}
-                  </span>
+                  <span className="whitespace-nowrap">{item.creator.name}</span>
                </AlignedColumn>
             </div>
             <p className="lg:!max-w-[80%] col-span-2 col-start-1 row-start-2 mt-px w-[calc(100%-36px)] break-normal font-semibold">
