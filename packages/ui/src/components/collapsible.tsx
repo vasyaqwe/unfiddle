@@ -40,7 +40,7 @@ export function CollapsibleTriggerIcon({
       <Icons.chevronRight
          strokeWidth={3}
          className={cn(
-            "mt-px size-3.5 shrink-0 text-foreground/60 transition-all duration-200 group-data-[panel-closed]:rotate-0 group-data-[panel-open]:rotate-90 group-data-[panel-open]:text-foreground",
+            "mt-px size-3.5 shrink-0 text-foreground/60 transition-all duration-150 group-data-[panel-closed]:rotate-0 group-data-[panel-open]:rotate-90 group-data-[panel-open]:text-foreground",
             className,
          )}
          {...props}

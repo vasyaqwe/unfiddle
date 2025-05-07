@@ -20,7 +20,7 @@ export const button = cva(
             ghost: "border border-transparent bg-transparent [--active-color:var(--color-primary-3)] hover:bg-(--active-color) aria-[current=page]:bg-(--active-color) data-[popup-open]:bg-(--active-color)",
          },
          size: {
-            sm: "h-9 rounded-sm px-2 md:h-7",
+            sm: "h-9 rounded-sm px-1.5 md:h-7",
             md: "h-9 rounded-md px-3 md:h-[1.9rem] md:px-2.5",
             lg: "h-10 rounded-lg px-3 md:h-[2.1rem]",
          },

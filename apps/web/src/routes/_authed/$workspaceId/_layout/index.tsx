@@ -245,14 +245,15 @@ function RouteComponent() {
                />
             </CreateOrder>
             <div className="mt-8 mb-16">
-               <div className="flex min-h-[44px] items-center gap-1 px-4 lg:px-8">
+               <div className="container flex min-h-[44px] items-center gap-1">
                   <Button
                      variant={"ghost"}
                      kind={"icon"}
                      size={"sm"}
                      className="absolute left-[3px] max-lg:hidden"
                      onClick={() =>
-                        Object.keys(states).length === 0
+                        Object.keys(states).length === 0 ||
+                        Object.values(states).every((v) => !v)
                            ? setStates(
                                 data.reduce(
                                    (acc: Record<string, boolean>, item) => {
@@ -267,7 +268,7 @@ function RouteComponent() {
                   >
                      <Icons.chevronUpDuo
                         className={cx(
-                           "size-6 shrink-0 text-foreground/60 transition-all duration-200",
+                           "size-6 shrink-0 text-foreground/75 transition-all duration-150",
                            Object.values(states).every((v) => !v)
                               ? ""
                               : Object.keys(states).length !== 0
@@ -282,7 +283,7 @@ function RouteComponent() {
                            <Button
                               variant={"ghost"}
                               size={"sm"}
-                              className="-ml-2"
+                              className="-ml-1"
                            >
                               <Icons.filter className="size-5" />
                               Фільтр
@@ -357,7 +358,7 @@ function RouteComponent() {
                      </Badge>
                   )}
                   {searching || (search.q && search.q.length > 0) ? (
-                     <div className="relative ml-auto flex max-w-[320px] items-center">
+                     <div className="lg:-mr-2 relative ml-auto flex max-w-[320px] items-center">
                         <Input
                            autoFocus
                            className={
@@ -519,8 +520,14 @@ function OrderRow({
       >
          <CollapsibleTrigger
             render={<div />}
-            className="container relative grid grid-cols-[100px_1fr] grid-rows-[1fr_auto] gap-x-2.5 gap-y-1 py-2 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-2 aria-expanded:bg-primary-2 lg:flex lg:py-1"
+            className="container relative grid grid-cols-2 grid-rows-[1fr_auto] gap-x-2.5 gap-y-1 py-2 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-2 aria-expanded:bg-primary-2 lg:flex lg:py-1"
          >
+            <EditOrder
+               open={editOpen}
+               setOpen={setEditOpen}
+               order={item}
+               finalFocus={menuTriggerRef}
+            />
             <div className="flex items-center gap-2">
                <CollapsibleTriggerIcon className="left-2.5 lg:absolute lg:mb-px" />
                <div className={"flex h-9 w-6 justify-center"}>
@@ -529,157 +536,110 @@ function OrderRow({
                      className="mr-[2px] opacity-60 transition-opacity duration-75 group-hover/severity:opacity-90 group-data-[popup-open]/severity:opacity-90 lg:mb-[2px]"
                   />
                </div>
-               {/* <Combobox
-                  value={item.severity}
-                  onValueChange={(severity) =>
-                     update.mutate({
-                        id: item.id,
-                        workspaceId: params.workspaceId,
-                        severity: severity as never,
-                     })
-                  }
-               >
-                  <ComboboxTrigger
-                     onClick={(e) => {
-                        e.stopPropagation()
-                     }}
-                     className={"group/severity flex h-9 w-6 justify-center"}
-                  >
-                     <SeverityIcon
-                        severity={item.severity}
-                        className="mr-[2px] opacity-60 transition-opacity duration-75 group-hover/severity:opacity-90 group-data-[popup-open]/severity:opacity-90 lg:mb-[2px]"
-                     />
-                  </ComboboxTrigger>
-                  <ComboboxPopup
-                     className={"w-40"}
-                     sideOffset={0}
-                     align="start"
-                     onClick={(e) => {
-                        e.stopPropagation()
-                     }}
-                  >
-                     <ComboboxInput placeholder="Пріорітет" />
-                     {ORDER_SEVERITIES.map((s) => (
-                        <ComboboxItem
-                           key={s}
-                           value={s}
-                           keywords={[ORDER_SEVERITIES_TRANSLATION[s]]}
-                        >
-                           {ORDER_SEVERITIES_TRANSLATION[s]}
-                        </ComboboxItem>
-                     ))}
-                  </ComboboxPopup>
-               </Combobox> */}
                <p className="whitespace-nowrap font-medium font-mono text-foreground/75 text-sm">
                   №{String(item.shortId).padStart(3, "0")}
                </p>
+               <AlignedColumn
+                  id={`o_creator`}
+                  className="flex items-center gap-0.5 whitespace-nowrap font-medium text-sm"
+               >
+                  <UserAvatar
+                     size={15}
+                     user={item.creator}
+                     className="inline-block"
+                  />
+                  <span className="max-lg:line-clamp-1">
+                     {item.creator.name}
+                  </span>
+               </AlignedColumn>
             </div>
-            <AlignedColumn
-               id={`o_creator`}
-               className="flex items-center gap-0.5 whitespace-nowrap font-medium text-sm"
-            >
-               <UserAvatar
-                  size={15}
-                  user={item.creator}
-                  className="inline-block"
-               />
-               {item.creator.name}
-            </AlignedColumn>
-            <p className="col-span-2 row-start-2 mt-px break-normal font-semibold max-lg:order-last">
+            <p className="col-span-2 col-start-1 row-start-2 mt-px break-normal font-semibold max-lg:w-[calc(100%-36px)]">
                {item.name}
             </p>
-            <div className="ml-auto flex items-center gap-2">
-               <Combobox
-                  value={item.status}
-                  onValueChange={(status) =>
-                     update.mutate({
-                        id: item.id,
-                        workspaceId: params.workspaceId,
-                        status: status as never,
-                     })
-                  }
+            <Combobox
+               value={item.status}
+               onValueChange={(status) =>
+                  update.mutate({
+                     id: item.id,
+                     workspaceId: params.workspaceId,
+                     status: status as never,
+                  })
+               }
+            >
+               <ComboboxTrigger
+                  onClick={(e) => {
+                     e.stopPropagation()
+                  }}
+                  className={"ml-auto cursor-pointer"}
                >
-                  <ComboboxTrigger
-                     onClick={(e) => {
-                        e.stopPropagation()
+                  <Badge
+                     style={{
+                        background: `linear-gradient(140deg, ${from}, ${to})`,
                      }}
-                     className={"cursor-pointer"}
                   >
-                     <Badge
-                        style={{
-                           background: `linear-gradient(140deg, ${from}, ${to})`,
-                        }}
+                     {ORDER_STATUSES_TRANSLATION[item.status]}
+                  </Badge>
+               </ComboboxTrigger>
+               <ComboboxPopup
+                  align="end"
+                  onClick={(e) => {
+                     e.stopPropagation()
+                  }}
+               >
+                  <ComboboxInput />
+                  {ORDER_STATUSES.map((s) => (
+                     <ComboboxItem
+                        key={s}
+                        value={s}
+                        keywords={[ORDER_STATUSES_TRANSLATION[s]]}
                      >
-                        {ORDER_STATUSES_TRANSLATION[item.status]}
-                     </Badge>
-                  </ComboboxTrigger>
-                  <ComboboxPopup
-                     align="end"
-                     onClick={(e) => {
-                        e.stopPropagation()
-                     }}
-                  >
-                     <ComboboxInput />
-                     {ORDER_STATUSES.map((s) => (
-                        <ComboboxItem
-                           key={s}
-                           value={s}
-                           keywords={[ORDER_STATUSES_TRANSLATION[s]]}
-                        >
-                           {ORDER_STATUSES_TRANSLATION[s]}
-                        </ComboboxItem>
-                     ))}
-                  </ComboboxPopup>
-               </Combobox>
-               <EditOrder
-                  open={editOpen}
-                  setOpen={setEditOpen}
-                  order={item}
-                  finalFocus={menuTriggerRef}
+                        {ORDER_STATUSES_TRANSLATION[s]}
+                     </ComboboxItem>
+                  ))}
+               </ComboboxPopup>
+            </Combobox>
+            <Menu>
+               <MenuTrigger
+                  ref={menuTriggerRef}
+                  render={
+                     <Button
+                        variant={"ghost"}
+                        kind={"icon"}
+                        className="-mr-1 lg:-mr-2 col-start-2 row-start-2 shrink-0 justify-self-end max-lg:self-end"
+                     >
+                        <Icons.ellipsisHorizontal />
+                     </Button>
+                  }
                />
-               <Menu>
-                  <MenuTrigger
-                     ref={menuTriggerRef}
-                     render={
-                        <Button
-                           variant={"ghost"}
-                           kind={"icon"}
-                           className="-mr-2 shrink-0"
-                        >
-                           <Icons.ellipsisHorizontal />
-                        </Button>
-                     }
-                  />
-                  <MenuPopup
-                     align="end"
-                     onClick={(e) => {
-                        e.stopPropagation()
+               <MenuPopup
+                  align="end"
+                  onClick={(e) => {
+                     e.stopPropagation()
+                  }}
+               >
+                  <MenuItem
+                     onClick={() => {
+                        setEditOpen(true)
                      }}
                   >
-                     <MenuItem
-                        onClick={() => {
-                           setEditOpen(true)
-                        }}
-                     >
-                        <Icons.pencil />
-                        Редагувати
-                     </MenuItem>
-                     <MenuItem
-                        destructive
-                        onClick={() => {
-                           if (confirm(`Видалити замовлення ${item.name}?`))
-                              deleteItem.mutate({
-                                 id: item.id,
-                                 workspaceId: params.workspaceId,
-                              })
-                        }}
-                     >
-                        <Icons.trash />
-                        Видалити
-                     </MenuItem>
-                  </MenuPopup>
-               </Menu>
-            </div>
+                     <Icons.pencil />
+                     Редагувати
+                  </MenuItem>
+                  <MenuItem
+                     destructive
+                     onClick={() => {
+                        if (confirm(`Видалити замовлення ${item.name}?`))
+                           deleteItem.mutate({
+                              id: item.id,
+                              workspaceId: params.workspaceId,
+                           })
+                     }}
+                  >
+                     <Icons.trash />
+                     Видалити
+                  </MenuItem>
+               </MenuPopup>
+            </Menu>
          </CollapsibleTrigger>
          <CollapsiblePanel
             key={item.procurements.length}
@@ -913,4 +873,49 @@ function ProcurementRow({
          </Menu>
       </div>
    )
+}
+
+{
+   /* <Combobox
+                  value={item.severity}
+                  onValueChange={(severity) =>
+                     update.mutate({
+                        id: item.id,
+                        workspaceId: params.workspaceId,
+                        severity: severity as never,
+                     })
+                  }
+               >
+                  <ComboboxTrigger
+                     onClick={(e) => {
+                        e.stopPropagation()
+                     }}
+                     className={"group/severity flex h-9 w-6 justify-center"}
+                  >
+                     <SeverityIcon
+                        severity={item.severity}
+                        className="mr-[2px] opacity-60 transition-opacity duration-75 group-hover/severity:opacity-90 group-data-[popup-open]/severity:opacity-90 lg:mb-[2px]"
+                     />
+                  </ComboboxTrigger>
+                  <ComboboxPopup
+                     className={"w-40"}
+                     sideOffset={0}
+                     align="start"
+                     onClick={(e) => {
+                        e.stopPropagation()
+                     }}
+                  >
+                     <ComboboxInput placeholder="Пріорітет" />
+                     {ORDER_SEVERITIES.map((s) => (
+                        <ComboboxItem
+                           key={s}
+                           value={s}
+                           keywords={[ORDER_SEVERITIES_TRANSLATION[s]]}
+                        >
+                           {ORDER_SEVERITIES_TRANSLATION[s]}
+                        </ComboboxItem>
+                     ))}
+                  </ComboboxPopup>
+               </Combobox> */
+   // biome-ignore lint/complexity/noUselessLoneBlockStatements: <explanation>
 }

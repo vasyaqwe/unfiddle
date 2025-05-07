@@ -420,7 +420,7 @@ export const Icons = {
          <path
             d="M8 17L12 13L16 17M8 11L12 7L16 11"
             stroke="currentColor"
-            strokeWidth="2"
+            strokeWidth="1.6"
             strokeLinecap="round"
             strokeLinejoin="round"
          />

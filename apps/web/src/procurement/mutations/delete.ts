@@ -2,6 +2,7 @@ import { useAuth } from "@/auth/hooks"
 import { trpc } from "@/trpc"
 import type { RouterInput } from "@ledgerblocks/core/trpc/types"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useSearch } from "@tanstack/react-router"
 import { toast } from "sonner"
 
 export function useDeleteProcurement({
@@ -10,9 +11,11 @@ export function useDeleteProcurement({
 }: { onMutate?: () => void; onError?: () => void } = {}) {
    const queryClient = useQueryClient()
    const auth = useAuth()
+   const search = useSearch({ strict: false })
 
    const queryOptions = trpc.order.list.queryOptions({
       workspaceId: auth.workspace.id,
+      filter: search,
    })
 
    const mutateQueryData = ({
