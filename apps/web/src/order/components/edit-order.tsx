@@ -110,7 +110,7 @@ export function EditOrder({
                         required
                         name="sellingPrice"
                         min={1}
-                        defaultValue={order.sellingPrice}
+                        defaultValue={order.sellingPrice ?? undefined}
                      >
                         <NumberFieldInput placeholder="₴" />
                      </NumberField>

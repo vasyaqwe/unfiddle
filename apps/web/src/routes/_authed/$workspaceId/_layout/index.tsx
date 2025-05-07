@@ -38,13 +38,7 @@ import { PROCUREMENT_STATUSES } from "@ledgerblocks/core/procurement/constants"
 import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
 import { Badge } from "@ledgerblocks/ui/components/badge"
 import { Button } from "@ledgerblocks/ui/components/button"
-import {
-   Card,
-   CardContent,
-   CardFooter,
-   CardHeader,
-   CardTitle,
-} from "@ledgerblocks/ui/components/card"
+import {} from "@ledgerblocks/ui/components/card"
 import {
    Collapsible,
    CollapsiblePanel,
@@ -180,9 +174,9 @@ function RouteComponent() {
       setSearching(false)
    }
 
-   const summary = useQuery(
-      trpc.workspace.summary.queryOptions({ id: params.workspaceId }),
-   )
+   // const summary = useQuery(
+   //    trpc.workspace.summary.queryOptions({ id: params.workspaceId }),
+   // )
    const [states, setStates] = useAtom(collapsiblesStateAtom)
 
    return (
@@ -194,8 +188,11 @@ function RouteComponent() {
             </HeaderTitle>
             <HeaderUserMenu />
          </Header>
-         <MainScrollArea container={false}>
-            <div className="container grid gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
+         <MainScrollArea
+            className="pt-0 lg:pt-0"
+            container={false}
+         >
+            {/* <div className="container grid gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
                <Card>
                   <CardHeader>
                      <CardTitle>Профіт</CardTitle>
@@ -229,7 +226,7 @@ function RouteComponent() {
                      <CardFooter>За весь час</CardFooter>
                   </CardContent>
                </Card>
-            </div>
+            </div> */}
             <CreateOrder>
                <DrawerTrigger
                   render={
@@ -240,7 +237,7 @@ function RouteComponent() {
                   }
                />
             </CreateOrder>
-            <div className="mt-8 mb-16">
+            <div className="mb-16">
                <div className="container flex min-h-[44px] items-center gap-1">
                   <Button
                      variant={"ghost"}
@@ -417,7 +414,7 @@ function RouteComponent() {
                {query.isPending ? null : query.isError ? (
                   <ErrorComponent error={query.error} />
                ) : !data || data.length === 0 ? (
-                  <div className="mx-auto my-16 size-fit text-center lg:my-24">
+                  <div className="-translate-y-8 absolute inset-0 m-auto size-fit text-center">
                      <svg
                         className="mx-auto mb-5 size-12"
                         xmlns="http://www.w3.org/2000/svg"
@@ -663,7 +660,9 @@ function OrderRow({
                         </p>
                         <Separator className={"h-6 w-px bg-primary-7"} />
                         <p className="whitespace-nowrap font-medium font-mono text-black text-lg leading-tight lg:text-[1rem]">
-                           {formatCurrency(item.sellingPrice)}
+                           {item.sellingPrice
+                              ? formatCurrency(item.sellingPrice)
+                              : "Без ціни"}
                         </p>
                      </div>
                      <p
@@ -693,12 +692,12 @@ function OrderRow({
                            Ще немає закупівель.
                         </p>
                      ) : (
-                        <div className="relative z-[2] rounded-lg border border-neutral bg-background shadow-md/4">
+                        <div className="relative z-[2] rounded-lg border border-neutral bg-background shadow-xs/4">
                            {item.procurements.map((p) => (
                               <ProcurementRow
                                  key={p.id}
                                  item={p}
-                                 sellingPrice={item.sellingPrice}
+                                 sellingPrice={item.sellingPrice ?? 0}
                                  orderId={item.id}
                               />
                            ))}
@@ -765,7 +764,7 @@ function ProcurementRow({
             </AlignedColumn>
          </span>
          <AlignedColumn
-            className="col-end-4 mt-[2px] justify-self-end max-lg:order-4 lg:mt-[0.2rem]"
+            className="col-end-4 mt-[2px] justify-self-end max-lg:order-4 lg:mt-[2px]"
             id="p_status"
          >
             <Combobox

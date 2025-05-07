@@ -33,6 +33,7 @@ export function useCreateOrder({
                ...input,
                id: crypto.randomUUID(),
                shortId: 0,
+               sellingPrice: input.sellingPrice ?? null,
                severity: input.severity ?? "low",
                status: "pending",
                creatorId: auth.user.id,

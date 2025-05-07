@@ -35,7 +35,7 @@ export const order = d.table(
       nameLower: d.text().notNull().default(""),
       name: d.text().notNull(),
       quantity: d.integer().notNull(),
-      sellingPrice: d.integer().notNull(),
+      sellingPrice: d.integer(),
       severity: d.text({ enum: ORDER_SEVERITIES }).notNull().default("low"),
       note: d.text().notNull().default(""),
       status: d.text({ enum: ORDER_STATUSES }).notNull().default("pending"),
@@ -43,6 +43,9 @@ export const order = d.table(
       ...d.timestamps,
    },
    (table) => [
+      d.index("order_short_id_idx").on(table.shortId),
+      d.index("order_name_idx").on(table.nameLower),
+      d.index("order_status_idx").on(table.status),
       d.index("order_creator_id_idx").on(table.creatorId),
       d
          .uniqueIndex("order_workspace_id_short_id_unique_idx")

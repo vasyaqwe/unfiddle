@@ -1,5 +1,4 @@
 import { useAuth } from "@/auth/hooks"
-import { useDelayedValue } from "@/interactions/use-delayed-value"
 import { ORDER_SEVERITIES_TRANSLATION } from "@/order/constants"
 import { useCreateOrder } from "@/order/mutations/create"
 import { ORDER_SEVERITIES } from "@ledgerblocks/core/order/constants"
@@ -38,8 +37,6 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
       onMutate: () => setOpen(false),
       onError: () => setOpen(true),
    })
-
-   const pending = useDelayedValue(mutation.isPending, 150)
 
    return (
       <Drawer
@@ -92,7 +89,6 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
                   <Field>
                      <FieldLabel>Ціна продажу</FieldLabel>
                      <NumberField
-                        required
                         name="sellingPrice"
                         min={1}
                      >
@@ -138,13 +134,7 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
                      </ComboboxPopup>
                   </Combobox>
                </Field>
-               <Button
-                  pending={pending}
-                  disabled={pending}
-                  className="mt-auto md:mr-auto"
-               >
-                  Додати
-               </Button>
+               <Button className="mt-auto md:mr-auto">Додати</Button>
             </form>
          </DrawerPopup>
       </Drawer>
