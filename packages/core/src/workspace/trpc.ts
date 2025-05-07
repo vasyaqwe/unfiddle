@@ -11,18 +11,18 @@ export const workspaceRouter = t.router({
    summary: t.procedure
       .use(workspaceMemberMiddleware)
       .input(z.object({ id: z.string() }))
-      .query(async ({ ctx }) => {
+      .query(async ({ ctx, input }) => {
          const now = new Date()
          const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
          const lastMonth = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
 
          const getProfit = async (fromDate?: Date): Promise<number> => {
-            const whereCondition = fromDate
-               ? and(
-                    eq(order.status, "successful"),
-                    gte(procurement.createdAt, fromDate),
-                 )
-               : eq(order.status, "successful")
+            const whereCondition = [
+               eq(order.status, "successful"),
+               eq(order.workspaceId, input.id),
+            ]
+            if (fromDate)
+               whereCondition.push(gte(procurement.createdAt, fromDate))
 
             const [result] = await ctx.db
                .select({
@@ -33,14 +33,16 @@ export const workspaceRouter = t.router({
                })
                .from(procurement)
                .innerJoin(order, eq(procurement.orderId, order.id))
-               .where(whereCondition)
+               .where(and(...whereCondition))
 
             return result?.profit ?? 0
          }
 
-         const weekProfit = await getProfit(lastWeek)
-         const monthProfit = await getProfit(lastMonth)
-         const allTimeProfit = await getProfit()
+         const [weekProfit, monthProfit, allTimeProfit] = await Promise.all([
+            getProfit(lastWeek),
+            getProfit(lastMonth),
+            getProfit(),
+         ])
 
          return {
             weekProfit: weekProfit ?? 0,
