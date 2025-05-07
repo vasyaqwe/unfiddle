@@ -75,6 +75,10 @@ export function useOptimisticUpdateOrder() {
    return (input: Partial<RouterOutput["order"]["list"][number]>) => {
       queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
          if (!oldData) return oldData
+
+         if (input.deletedAt || input.deletedAt === null)
+            return oldData.filter((item) => item.id !== input.id)
+
          return oldData.map((item) => {
             if (item.id === input.id) return { ...item, ...input }
             return item

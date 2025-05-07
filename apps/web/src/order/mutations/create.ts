@@ -39,6 +39,7 @@ export function useCreateOrder({
                creator: auth.user,
                note: input.note ?? "",
                procurements: [],
+               deletedAt: null,
             })
 
             onMutate?.()
