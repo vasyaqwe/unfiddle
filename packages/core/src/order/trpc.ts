@@ -70,6 +70,7 @@ export const orderRouter = t.router({
                note: true,
                creatorId: true,
                deletedAt: true,
+               createdAt: true,
             },
             with: {
                creator: {

@@ -11,7 +11,7 @@ import {
 } from "@/order/constants"
 import { useDeleteOrder } from "@/order/mutations/delete"
 import { useUpdateOrder } from "@/order/mutations/update"
-import { orderStatusGradient } from "@/order/utils"
+import { formatOrderDate, orderStatusGradient } from "@/order/utils"
 import { CreateProcurement } from "@/procurement/components/create-procurement"
 import { EditProcurement } from "@/procurement/components/edit-procurement"
 import { PROCUREMENT_STATUSES_TRANSLATION } from "@/procurement/constants"
@@ -493,7 +493,7 @@ function OrderRow({
       >
          <CollapsibleTrigger
             render={<div />}
-            className="container relative grid grid-cols-2 grid-rows-[1fr_auto] gap-x-2.5 gap-y-1 py-2 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-2 lg:flex lg:py-1"
+            className="container relative grid grid-cols-2 grid-rows-[1fr_auto] gap-x-2.5 gap-y-1 py-2 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-2 lg:flex lg:py-[0.4rem]"
          >
             <EditOrder
                open={editOpen}
@@ -503,12 +503,10 @@ function OrderRow({
             />
             <div className="flex items-center gap-2">
                <CollapsibleTriggerIcon className="left-2.5 lg:absolute lg:mb-px" />
-               <div className={"flex h-9 w-6 justify-center"}>
-                  <SeverityIcon
-                     severity={item.severity}
-                     className="mr-[2px] opacity-60 transition-opacity duration-75 group-hover/severity:opacity-90 group-data-[popup-open]/severity:opacity-90 lg:mb-[2px]"
-                  />
-               </div>
+               <SeverityIcon
+                  severity={item.severity}
+                  className="mr-[2px] opacity-60 transition-opacity duration-75 group-hover/severity:opacity-90 group-data-[popup-open]/severity:opacity-90 lg:mb-[2px]"
+               />
                <p className="whitespace-nowrap font-medium font-mono text-foreground/75 text-sm">
                   №{String(item.shortId).padStart(3, "0")}
                </p>
@@ -571,6 +569,9 @@ function OrderRow({
                   ))}
                </ComboboxPopup>
             </Combobox>
+            <p className="min-w-[60px] text-foreground/75 max-lg:hidden">
+               {formatOrderDate(item.createdAt)}
+            </p>
             <Menu>
                <MenuTrigger
                   ref={menuTriggerRef}

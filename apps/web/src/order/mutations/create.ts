@@ -41,6 +41,7 @@ export function useCreateOrder({
                note: input.note ?? "",
                procurements: [],
                deletedAt: null,
+               createdAt: new Date().toString(),
             })
 
             onMutate?.()

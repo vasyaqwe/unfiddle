@@ -1,3 +1,4 @@
+import { formatDate } from "@/date"
 import { ORDER_STATUSES_COLORS } from "@/order/constants"
 import type { OrderStatus } from "@ledgerblocks/core/order/types"
 import tailwindColors from "tailwindcss/colors"
@@ -13,4 +14,13 @@ export const orderStatusGradient = (status: OrderStatus) => {
    }
 
    return [tailwindColors[color][50], tailwindColors[color][100]] as const
+}
+
+export const formatOrderDate = (date: string) => {
+   return formatDate(
+      date,
+      new Date(date).getDate() === new Date().getDate()
+         ? { timeStyle: "short" }
+         : { dateStyle: "short" },
+   )
 }
