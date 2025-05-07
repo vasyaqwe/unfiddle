@@ -6,13 +6,13 @@ import { Loading } from "./loading"
 export const button = cva(
    [
       "inline-flex shrink-0 items-center justify-center overflow-hidden whitespace-nowrap leading-none",
-      "relative cursor-pointer transition-all duration-100 disabled:opacity-80 [&>svg]:shrink-0 [&>svg]:drop-shadow-md",
+      "relative cursor-pointer transition-all duration-100 disabled:opacity-80 [&>svg]:shrink-0",
    ],
    {
       variants: {
          variant: {
             primary:
-               "bg-accent-6 font-[400] text-shadow-md/7 shadow-[inset_0_-2.5px_1px_0_rgb(0_0_0_/_0.2),0_1px_3px_0_rgb(0_0_0_/_0.1),_0_1px_2px_-1px_rgb(0_0_0_/_0.1)] hover:bg-accent-5 active:bg-accent-6",
+               "bg-accent-6 font-[400] text-shadow-md/7 shadow-[inset_0_-2.5px_1px_0_rgb(0_0_0_/_0.2),0_1px_3px_0_rgb(0_0_0_/_0.1),_0_1px_2px_-1px_rgb(0_0_0_/_0.1)] hover:bg-accent-5 active:bg-accent-6 [&>svg]:drop-shadow-md",
             secondary:
                "border border-primary-4 bg-background shadow-[inset_0_-1px_0.5px_rgb(0_0_0_/_0.15)] hover:bg-primary-1 active:bg-primary-2 data-[popup-open]:bg-primary-2",
             tertiary:

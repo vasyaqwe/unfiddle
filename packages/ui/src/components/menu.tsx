@@ -66,7 +66,7 @@ export function MenuCheckboxItem({
       <MenuPrimitive.CheckboxItem
          className={cn(
             MENU_ITEM_STYLES.base,
-            "grid min-w-[calc(var(--anchor-width)+1.45rem)] grid-cols-[1.4rem_1fr] items-center md:grid-cols-[22px_1fr]",
+            "grid min-w-[calc(var(--anchor-width)+1.45rem)] grid-cols-[1.4rem_1fr] items-center md:grid-cols-[21px_1fr]",
             className,
          )}
          {...props}
@@ -74,7 +74,7 @@ export function MenuCheckboxItem({
          <MenuPrimitive.CheckboxItemIndicator className="col-start-1">
             <Icons.check
                strokeWidth={2.5}
-               className={"size-[23px] text-white/90 md:size-[22px]"}
+               className={"md:-ml-px size-[23px] text-white/90 md:size-[22px]"}
             />
          </MenuPrimitive.CheckboxItemIndicator>
          <span className={"col-start-2"}>{children}</span>

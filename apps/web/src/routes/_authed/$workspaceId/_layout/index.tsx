@@ -25,6 +25,7 @@ import {
    HeaderWorkspaceMenu,
 } from "@/routes/_authed/$workspaceId/-components/header"
 import { trpc } from "@/trpc"
+import { AlignedColumn } from "@/ui/components/aligned-column"
 import { ErrorComponent } from "@/ui/components/error"
 import { UserAvatar } from "@/user/components/user-avatar"
 import { validator } from "@/validator"
@@ -32,6 +33,7 @@ import {
    ORDER_SEVERITIES,
    ORDER_STATUSES,
 } from "@ledgerblocks/core/order/constants"
+import { orderFilterSchema } from "@ledgerblocks/core/order/filter"
 import { PROCUREMENT_STATUSES } from "@ledgerblocks/core/procurement/constants"
 import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
 import { Badge } from "@ledgerblocks/ui/components/badge"
@@ -68,18 +70,17 @@ import {
    MenuTrigger,
 } from "@ledgerblocks/ui/components/menu"
 import { Separator } from "@ledgerblocks/ui/components/separator"
-import { cn, cx } from "@ledgerblocks/ui/utils"
+import { cx } from "@ledgerblocks/ui/utils"
 import {
    keepPreviousData,
    useQuery,
    useQueryClient,
 } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
-import { atom, useAtom } from "jotai"
+import { useAtom } from "jotai"
 import { atomWithStorage } from "jotai/utils"
 import * as React from "react"
 import * as R from "remeda"
-import { z } from "zod"
 
 const collapsiblesStateAtom = atomWithStorage<Record<string, boolean>>(
    "collapsibles-open-states",
@@ -101,13 +102,7 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/")({
          }),
       )
    },
-   validateSearch: validator(
-      z.object({
-         status: z.array(z.enum(ORDER_STATUSES)).optional(),
-         severity: z.array(z.enum(ORDER_SEVERITIES)).optional(),
-         q: z.string().optional(),
-      }),
-   ),
+   validateSearch: validator(orderFilterSchema),
 })
 
 function RouteComponent() {
@@ -174,6 +169,7 @@ function RouteComponent() {
             trpc.order.list.queryOptions(
                {
                   workspaceId: params.workspaceId,
+                  filter: {},
                },
                {
                   placeholderData: keepPreviousData,
@@ -315,7 +311,7 @@ function RouteComponent() {
                         <Menu>
                            <MenuSubmenuTrigger>
                               <SeverityIcon
-                                 className="!w-4 !mx-0.5"
+                                 className="!w-[1.13rem] md:!w-4 !mx-0.5"
                                  severity="high"
                               />
                               Пріорітет
@@ -341,6 +337,20 @@ function RouteComponent() {
                               ))}
                            </MenuPopup>
                         </Menu>
+                        <MenuCheckboxItem
+                           checked={!!search.archived}
+                           onCheckedChange={(checked) =>
+                              navigate({
+                                 to: ".",
+                                 search: (prev) => ({
+                                    ...prev,
+                                    archived: checked,
+                                 }),
+                              })
+                           }
+                        >
+                           Архівовані
+                        </MenuCheckboxItem>
                      </MenuPopup>
                   </Menu>
                   {selectedLength === 0 ? null : (
@@ -357,6 +367,20 @@ function RouteComponent() {
                         </Button>
                      </Badge>
                   )}
+                  {search.archived ? (
+                     <Badge className="overflow-hidden pr-0">
+                        Лише архівовані
+                        <Button
+                           variant={"ghost"}
+                           size={"sm"}
+                           kind={"icon"}
+                           onClick={removeFilter}
+                           className="rounded-none"
+                        >
+                           <Icons.xMark className="size-4" />
+                        </Button>
+                     </Badge>
+                  ) : null}
                   {searching || (search.q && search.q.length > 0) ? (
                      <div className="lg:-mr-2 relative ml-auto flex max-w-[320px] items-center">
                         <Input
@@ -393,7 +417,7 @@ function RouteComponent() {
                {query.isPending ? null : query.isError ? (
                   <ErrorComponent error={query.error} />
                ) : !data || data.length === 0 ? (
-                  <div className="-translate-y-8 absolute inset-0 m-auto size-fit text-center">
+                  <div className="mx-auto my-16 size-fit text-center lg:my-24">
                      <svg
                         className="mx-auto mb-5 size-12"
                         xmlns="http://www.w3.org/2000/svg"
@@ -441,61 +465,13 @@ function RouteComponent() {
    )
 }
 
-const columnWidthsAtom = atom<Record<string, number>>({})
-
-function AlignedColumn({
-   id,
-   children,
-   className = "",
-}: {
-   id: string
-   children: React.ReactNode
-   className?: string
-}) {
-   const [columnWidths, setColumnWidths] = useAtom(columnWidthsAtom)
-   const [isMobile, setIsMobile] = React.useState(true)
-
-   React.useEffect(() => {
-      const checkDevice = (event: MediaQueryList | MediaQueryListEvent) =>
-         setIsMobile(event.matches)
-      const mediaQueryList = window.matchMedia(`(max-width: 1024px)`)
-      checkDevice(mediaQueryList)
-      mediaQueryList.addEventListener("change", checkDevice)
-      return () => {
-         mediaQueryList.removeEventListener("change", checkDevice)
-      }
-   }, [])
-
-   return (
-      <p
-         ref={(el) => {
-            if (!el || isMobile) return
-
-            const width = el.getBoundingClientRect().width
-            if (!columnWidths[id] || width > columnWidths[id]) {
-               setColumnWidths((prev) => ({
-                  ...prev,
-                  [id]: width,
-               }))
-            }
-         }}
-         className={cn(
-            "max-lg:![--min-width:auto] min-w-(--min-width)",
-            className,
-         )}
-         style={{ "--min-width": `${columnWidths[id] || "auto"}px` } as never}
-      >
-         {children}
-      </p>
-   )
-}
-
 function OrderRow({
    item,
 }: {
    item: RouterOutput["order"]["list"][number]
 }) {
    const params = Route.useParams()
+   const auth = useAuth()
    const [states, setStates] = useAtom(collapsiblesStateAtom)
    const [from, to] = orderStatusGradient(item.status)
 
@@ -625,19 +601,54 @@ function OrderRow({
                      <Icons.pencil />
                      Редагувати
                   </MenuItem>
-                  <MenuItem
-                     destructive
-                     onClick={() => {
-                        if (confirm(`Видалити замовлення ${item.name}?`))
-                           deleteItem.mutate({
+                  {item.deletedAt === null ? (
+                     <MenuItem
+                        destructive
+                        onClick={() => {
+                           if (confirm(`Архівувати замовлення ${item.name}?`))
+                              update.mutate({
+                                 id: item.id,
+                                 workspaceId: params.workspaceId,
+                                 deletedAt: new Date().toString(),
+                              })
+                        }}
+                     >
+                        <Icons.archive />
+                        Архівувати
+                     </MenuItem>
+                  ) : (
+                     <MenuItem
+                        onClick={() =>
+                           update.mutate({
                               id: item.id,
                               workspaceId: params.workspaceId,
+                              deletedAt: null,
                            })
-                     }}
-                  >
-                     <Icons.trash />
-                     Видалити
-                  </MenuItem>
+                        }
+                     >
+                        <Icons.undo />
+                        Відновити
+                     </MenuItem>
+                  )}
+                  {item.deletedAt && auth.user.id === item.creatorId ? (
+                     <MenuItem
+                        destructive
+                        onClick={() => {
+                           if (
+                              confirm(
+                                 `Видалити замовлення ${item.name}? Це назавжди.`,
+                              )
+                           )
+                              deleteItem.mutate({
+                                 id: item.id,
+                                 workspaceId: params.workspaceId,
+                              })
+                        }}
+                     >
+                        <Icons.trash />
+                        Видалити
+                     </MenuItem>
+                  ) : null}
                </MenuPopup>
             </Menu>
          </CollapsibleTrigger>

@@ -20,12 +20,12 @@ export function SeverityIcon({
          <path
             d="M10.25 5H11.75C12.9926 5 14 6.00736 14 7.25V16.75C14 17.9926 12.9926 19 11.75 19H10.25C9.00736 19 8 17.9926 8 16.75V7.25C8 6.00736 9.00736 5 10.25 5Z"
             fill="currentColor"
-            opacity={severity === "medium" || severity === "high" ? 1 : 0.3}
+            opacity={severity === "high" ? 1 : 0.3}
          />
          <path
             d="M18.25 0H19.75C20.9926 0 22 1.36713 22 3.05357V15.9464C22 17.6329 20.9926 19 19.75 19H18.25C17.0074 19 16 17.6329 16 15.9464V3.05357C16 1.36713 17.0074 0 18.25 0Z"
             fill="currentColor"
-            opacity={severity === "low" ? 0.3 : severity === "medium" ? 0.3 : 1}
+            opacity={severity === "low" ? 0.3 : 1}
          />
       </svg>
    )

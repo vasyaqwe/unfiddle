@@ -1,7 +1,5 @@
-import {
-   ORDER_SEVERITIES,
-   ORDER_STATUSES,
-} from "@ledgerblocks/core/order/constants"
+import {} from "@ledgerblocks/core/order/constants"
+import { orderFilterSchema } from "@ledgerblocks/core/order/filter"
 import {
    order,
    orderCounter,
@@ -12,7 +10,7 @@ import { t } from "@ledgerblocks/core/trpc/context"
 import { tryCatch } from "@ledgerblocks/core/try-catch"
 import { workspaceMemberMiddleware } from "@ledgerblocks/core/workspace/middleware"
 import { TRPCError } from "@trpc/server"
-import { and, desc, eq, inArray, or, sql } from "drizzle-orm"
+import { and, desc, eq, inArray, isNotNull, isNull, or, sql } from "drizzle-orm"
 import type { BatchItem } from "drizzle-orm/batch"
 import { createInsertSchema } from "drizzle-zod"
 import { z } from "zod"
@@ -23,28 +21,28 @@ export const orderRouter = t.router({
       .input(
          z.object({
             workspaceId: z.string(),
-            filter: z
-               .object({
-                  status: z.array(z.enum(ORDER_STATUSES)).optional(),
-                  severity: z.array(z.enum(ORDER_SEVERITIES)).optional(),
-                  q: z.string().optional(),
-               })
-               .optional(),
+            filter: orderFilterSchema,
          }),
       )
       .query(async ({ ctx, input }) => {
-         const filters = input.filter ?? {}
+         const filter = input.filter
 
          const whereConditions = [eq(order.workspaceId, input.workspaceId)]
 
-         if (filters.status?.length)
-            whereConditions.push(inArray(order.status, filters.status))
+         if (filter.status?.length)
+            whereConditions.push(inArray(order.status, filter.status))
 
-         if (filters.severity?.length)
-            whereConditions.push(inArray(order.severity, filters.severity))
+         if (filter.severity?.length)
+            whereConditions.push(inArray(order.severity, filter.severity))
 
-         if (filters.q?.length) {
-            const searchTerms = filters.q
+         if (filter.archived) {
+            whereConditions.push(isNotNull(order.deletedAt))
+         } else {
+            whereConditions.push(isNull(order.deletedAt))
+         }
+
+         if (filter.q?.length) {
+            const searchTerms = filter.q
                .trim()
                .toLowerCase()
                .split(/\s+/)
@@ -77,6 +75,7 @@ export const orderRouter = t.router({
                status: true,
                note: true,
                creatorId: true,
+               deletedAt: true,
             },
             with: {
                creator: {
@@ -181,6 +180,12 @@ export const orderRouter = t.router({
                note: input.note,
                status: input.status,
                severity: input.severity,
+               deletedAt:
+                  input.deletedAt === undefined
+                     ? undefined
+                     : input.deletedAt === null
+                       ? null
+                       : new Date(input.deletedAt),
             })
             .where(eq(order.id, input.id))
       }),

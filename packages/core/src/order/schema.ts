@@ -8,6 +8,7 @@ import { procurement } from "@ledgerblocks/core/procurement/schema"
 import { workspace } from "@ledgerblocks/core/workspace/schema"
 import { relations } from "drizzle-orm"
 import { createUpdateSchema } from "drizzle-zod"
+import { z } from "zod"
 
 export const orderCounter = d.table("order_counter", {
    workspaceId: d
@@ -37,6 +38,7 @@ export const order = d.table(
       severity: d.text({ enum: ORDER_SEVERITIES }).notNull().default("low"),
       note: d.text().notNull().default(""),
       status: d.text({ enum: ORDER_STATUSES }).notNull().default("pending"),
+      deletedAt: d.integer({ mode: "timestamp" }),
       ...d.timestamps,
    },
    (table) => [
@@ -67,3 +69,4 @@ export const updateOrderSchema = createUpdateSchema(order)
       severity: true,
    })
    .required({ id: true, workspaceId: true })
+   .extend({ deletedAt: z.string().nullable().optional() })
