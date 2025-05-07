@@ -496,7 +496,7 @@ function OrderRow({
       >
          <CollapsibleTrigger
             render={<div />}
-            className="container relative grid grid-cols-2 grid-rows-[1fr_auto] gap-x-2.5 gap-y-1 py-2 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-2 aria-expanded:bg-primary-2 lg:flex lg:py-1"
+            className="container relative grid grid-cols-2 grid-rows-[1fr_auto] gap-x-2.5 gap-y-1 py-2 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-2 lg:flex lg:py-1"
          >
             <EditOrder
                open={editOpen}
@@ -529,7 +529,7 @@ function OrderRow({
                   </span>
                </AlignedColumn>
             </div>
-            <p className="col-span-2 col-start-1 row-start-2 mt-px break-normal font-semibold max-lg:w-[calc(100%-36px)]">
+            <p className="lg:!max-w-[80%] col-span-2 col-start-1 row-start-2 mt-px w-[calc(100%-36px)] break-normal font-semibold">
                {item.name}
             </p>
             <Combobox

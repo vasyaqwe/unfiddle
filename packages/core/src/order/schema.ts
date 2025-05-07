@@ -32,6 +32,7 @@ export const order = d.table(
          .text()
          .notNull()
          .references(() => workspace.id, { onDelete: "cascade" }),
+      nameLower: d.text().notNull().default(""),
       name: d.text().notNull(),
       quantity: d.integer().notNull(),
       sellingPrice: d.integer().notNull(),

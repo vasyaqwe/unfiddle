@@ -10,7 +10,7 @@ import { t } from "@ledgerblocks/core/trpc/context"
 import { tryCatch } from "@ledgerblocks/core/try-catch"
 import { workspaceMemberMiddleware } from "@ledgerblocks/core/workspace/middleware"
 import { TRPCError } from "@trpc/server"
-import { and, desc, eq, inArray, isNotNull, isNull, or, sql } from "drizzle-orm"
+import { and, desc, eq, inArray, isNotNull, isNull, sql } from "drizzle-orm"
 import type { BatchItem } from "drizzle-orm/batch"
 import { createInsertSchema } from "drizzle-zod"
 import { z } from "zod"
@@ -42,24 +42,14 @@ export const orderRouter = t.router({
          }
 
          if (filter.q?.length) {
-            const searchTerms = filter.q
-               .trim()
-               .toLowerCase()
-               .split(/\s+/)
-               .map((term) => term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+            const searchTerm = `%${filter.q.trim().toLowerCase().normalize("NFC")}%`
 
             whereConditions.push(
-               // @ts-expect-error ...
-               or(
-                  ...searchTerms.map(
-                     (term) =>
-                        sql`(
-                           LOWER(${order.name}) LIKE '%' || LOWER(${term}) || '%'
-                           OR
-                           LOWER(${order.shortId}) LIKE '%' || LOWER(${term}) || '%'
-                           )`,
-                  ),
-               ),
+               sql`(
+                ${order.nameLower} LIKE ${searchTerm}
+                OR
+                ${order.shortId} LIKE ${searchTerm}
+              )`,
             )
          }
 
@@ -118,6 +108,8 @@ export const orderRouter = t.router({
          const lastId = existingCounter?.lastId ?? 0
          const nextId = lastId + 1
 
+         const nameLower = input.name.normalize("NFC").toLocaleLowerCase("uk")
+
          const createdOrder = await ctx.db
             .insert(order)
             .values({
@@ -126,6 +118,7 @@ export const orderRouter = t.router({
                workspaceId: input.workspaceId,
                severity: input.severity,
                name: input.name,
+               nameLower,
                quantity: input.quantity,
                sellingPrice: input.sellingPrice,
                note: input.note,
@@ -171,10 +164,13 @@ export const orderRouter = t.router({
       .use(workspaceMemberMiddleware)
       .input(updateOrderSchema)
       .mutation(async ({ ctx, input }) => {
+         const nameLower = input.name?.normalize("NFC").toLocaleLowerCase("uk")
+
          await ctx.db
             .update(order)
             .set({
                name: input.name,
+               nameLower,
                quantity: input.quantity,
                sellingPrice: input.sellingPrice,
                note: input.note,
