@@ -31,6 +31,7 @@ import { AlignedColumn } from "@/ui/components/aligned-column"
 import { ErrorComponent } from "@/ui/components/error"
 import { UserAvatar } from "@/user/components/user-avatar"
 import { validator } from "@/validator"
+import { Toggle } from "@base-ui-components/react/toggle"
 import {
    ORDER_SEVERITIES,
    ORDER_STATUSES,
@@ -333,20 +334,6 @@ function RouteComponent() {
                               ))}
                            </MenuPopup>
                         </Menu>
-                        <MenuCheckboxItem
-                           checked={!!search.archived}
-                           onCheckedChange={(checked) =>
-                              navigate({
-                                 to: ".",
-                                 search: (prev) => ({
-                                    ...prev,
-                                    archived: checked,
-                                 }),
-                              })
-                           }
-                        >
-                           Архівовані
-                        </MenuCheckboxItem>
                      </MenuPopup>
                   </Menu>
                   {selectedLength === 0 ? null : (
@@ -363,22 +350,9 @@ function RouteComponent() {
                         </Button>
                      </Badge>
                   )}
-                  {search.archived ? (
-                     <Badge className="overflow-hidden pr-0">
-                        Лише архівовані
-                        <Button
-                           variant={"ghost"}
-                           size={"sm"}
-                           kind={"icon"}
-                           onClick={removeFilter}
-                           className="rounded-none"
-                        >
-                           <Icons.xMark className="size-4" />
-                        </Button>
-                     </Badge>
-                  ) : null}
+
                   {searching || (search.q && search.q.length > 0) ? (
-                     <div className="lg:-mr-2 relative ml-auto flex max-w-[320px] items-center">
+                     <div className="relative ml-auto flex max-w-[320px] items-center">
                         <Input
                            autoFocus
                            className={
@@ -402,13 +376,45 @@ function RouteComponent() {
                   ) : (
                      <Button
                         onClick={() => setSearching(true)}
-                        className="lg:-mr-2 ml-auto"
+                        className="ml-auto"
                         variant={"ghost"}
                         kind={"icon"}
                      >
                         <Icons.search className="size-[18px]" />
                      </Button>
                   )}
+                  <Tooltip>
+                     <TooltipTrigger>
+                        <Toggle
+                           pressed={!search.archived}
+                           onPressedChange={(pressed) => {
+                              navigate({
+                                 to: ".",
+                                 params,
+                                 search: (prev) => ({
+                                    ...prev,
+                                    archived: !pressed,
+                                 }),
+                              })
+                           }}
+                           render={(props, state) => (
+                              <Button
+                                 {...props}
+                                 kind={"icon"}
+                                 variant={state.pressed ? "primary" : "ghost"}
+                                 className="lg:-mr-2"
+                              >
+                                 <Icons.archive className="size-5" />
+                              </Button>
+                           )}
+                        />
+                     </TooltipTrigger>
+                     <TooltipPopup>
+                        {search.archived
+                           ? "Показати архівовані"
+                           : "Показати усі"}
+                     </TooltipPopup>
+                  </Tooltip>
                </div>
                {query.isPending ? null : query.isError ? (
                   <ErrorComponent error={query.error} />

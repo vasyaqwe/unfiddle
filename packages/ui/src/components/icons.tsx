@@ -265,9 +265,8 @@ export const Icons = {
          />
       </svg>
    ),
-   archive: ({ className, ...props }: IconProps) => (
+   archive: ({ ...props }: IconProps) => (
       <svg
-         className={cn("size-5 md:size-4", className)}
          viewBox="0 0 24 24"
          fill="none"
          xmlns="http://www.w3.org/2000/svg"
