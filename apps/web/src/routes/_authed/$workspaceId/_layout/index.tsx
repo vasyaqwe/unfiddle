@@ -203,8 +203,8 @@ function RouteComponent() {
             <CreateOrder>
                <DrawerTrigger
                   render={
-                     <Button className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-[10] overflow-visible shadow-md md:hidden">
-                        <Icons.plus className="size-6" />
+                     <Button className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-[10] overflow-visible shadow-md md:right-8 md:bottom-8 md:h-9 md:px-3">
+                        <Icons.plus className="md:size-6" />
                         Замовлення
                      </Button>
                   }
@@ -532,17 +532,19 @@ function OrderRow({
             <p className="lg:!max-w-[80%] col-span-2 col-start-1 row-start-2 mt-px w-[calc(100%-36px)] break-normal font-semibold">
                {item.name}
             </p>
-            <div className="ml-auto flex items-center gap-3">
+            <div className="ml-auto flex items-center gap-3.5">
                <AvatarStack className="mt-px max-md:hidden">
                   {item.assignees.map((assignee) => (
                      <AvatarStackItem key={assignee.user.id}>
-                        <Tooltip>
-                           <TooltipTrigger>
-                              <UserAvatar
-                                 size={22}
-                                 user={assignee.user}
-                              />
-                           </TooltipTrigger>
+                        <Tooltip delay={0}>
+                           <TooltipTrigger
+                              render={
+                                 <UserAvatar
+                                    size={24}
+                                    user={assignee.user}
+                                 />
+                              }
+                           />
                            <TooltipPopup>{assignee.user.name}</TooltipPopup>
                         </Tooltip>
                      </AvatarStackItem>

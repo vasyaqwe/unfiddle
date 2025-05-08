@@ -33,6 +33,18 @@ export function BottomNavigation() {
                   Команда
                </Link>
             </li>
+            <li>
+               <Link
+                  to={"/$workspaceId/settings"}
+                  params={params}
+                  search={search}
+                  className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-tight aria-[current=page]:text-foreground"
+               >
+                  <Icons.gear className="mb-px size-6 shrink-0 group-aria-[current=page]:hidden" />
+                  <Icons.gearSolid className="mb-px hidden size-6 shrink-0 group-aria-[current=page]:block" />
+                  Налаштув.
+               </Link>
+            </li>
          </ul>
       </nav>
    )

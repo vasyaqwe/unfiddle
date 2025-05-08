@@ -97,6 +97,19 @@ export function SidebarContent() {
                      <span className="pt-px"> Команда</span>
                   </Link>
                </li>
+               <li>
+                  <Link
+                     to={"/$workspaceId/settings"}
+                     params={params}
+                     search={search}
+                     className={
+                        "group flex h-8 items-center justify-start gap-2 rounded-md px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:bg-primary-3 hover:text-foreground aria-[current=page]:bg-primary-4/75 aria-[current=page]:text-foreground"
+                     }
+                  >
+                     <Icons.gear className="size-5" />
+                     <span className="pt-px"> Налаштування</span>
+                  </Link>
+               </li>
             </ul>
          </ScrollArea>
          <div className="mt-auto p-4 pt-1">

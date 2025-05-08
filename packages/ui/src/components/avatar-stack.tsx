@@ -12,7 +12,7 @@ export function AvatarStack({
       <span
          style={{ "--length": length } as never}
          className={cn(
-            "grid h-(--size) grid-cols-[repeat(var(--length),var(--column))] content-end [--border:2px] [--column:17px] [--size:22px]",
+            "grid h-(--size) grid-cols-[repeat(var(--length),var(--column))] content-end [--border:2px] [--column:17px] [--size:24px]",
             className,
          )}
          {...props}

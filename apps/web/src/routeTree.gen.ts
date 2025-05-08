@@ -22,6 +22,7 @@ import { Route as AuthedNewImport } from './routes/_authed/new'
 import { Route as AuthedWorkspaceIdLayoutImport } from './routes/_authed/$workspaceId/_layout'
 import { Route as AuthedWorkspaceIdLayoutIndexImport } from './routes/_authed/$workspaceId/_layout/index'
 import { Route as AuthedWorkspaceIdLayoutTeamImport } from './routes/_authed/$workspaceId/_layout/team'
+import { Route as AuthedWorkspaceIdLayoutSettingsImport } from './routes/_authed/$workspaceId/_layout/settings'
 import { Route as AuthedWorkspaceIdLayoutSearchImport } from './routes/_authed/$workspaceId/_layout/search'
 import { Route as AuthedWorkspaceIdLayoutAnalyticsImport } from './routes/_authed/$workspaceId/_layout/analytics'
 
@@ -88,6 +89,13 @@ const AuthedWorkspaceIdLayoutTeamRoute =
   AuthedWorkspaceIdLayoutTeamImport.update({
     id: '/team',
     path: '/team',
+    getParentRoute: () => AuthedWorkspaceIdLayoutRoute,
+  } as any)
+
+const AuthedWorkspaceIdLayoutSettingsRoute =
+  AuthedWorkspaceIdLayoutSettingsImport.update({
+    id: '/settings',
+    path: '/settings',
     getParentRoute: () => AuthedWorkspaceIdLayoutRoute,
   } as any)
 
@@ -179,6 +187,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedWorkspaceIdLayoutSearchImport
       parentRoute: typeof AuthedWorkspaceIdLayoutImport
     }
+    '/_authed/$workspaceId/_layout/settings': {
+      id: '/_authed/$workspaceId/_layout/settings'
+      path: '/settings'
+      fullPath: '/$workspaceId/settings'
+      preLoaderRoute: typeof AuthedWorkspaceIdLayoutSettingsImport
+      parentRoute: typeof AuthedWorkspaceIdLayoutImport
+    }
     '/_authed/$workspaceId/_layout/team': {
       id: '/_authed/$workspaceId/_layout/team'
       path: '/team'
@@ -201,6 +216,7 @@ declare module '@tanstack/react-router' {
 interface AuthedWorkspaceIdLayoutRouteChildren {
   AuthedWorkspaceIdLayoutAnalyticsRoute: typeof AuthedWorkspaceIdLayoutAnalyticsRoute
   AuthedWorkspaceIdLayoutSearchRoute: typeof AuthedWorkspaceIdLayoutSearchRoute
+  AuthedWorkspaceIdLayoutSettingsRoute: typeof AuthedWorkspaceIdLayoutSettingsRoute
   AuthedWorkspaceIdLayoutTeamRoute: typeof AuthedWorkspaceIdLayoutTeamRoute
   AuthedWorkspaceIdLayoutIndexRoute: typeof AuthedWorkspaceIdLayoutIndexRoute
 }
@@ -210,6 +226,7 @@ const AuthedWorkspaceIdLayoutRouteChildren: AuthedWorkspaceIdLayoutRouteChildren
     AuthedWorkspaceIdLayoutAnalyticsRoute:
       AuthedWorkspaceIdLayoutAnalyticsRoute,
     AuthedWorkspaceIdLayoutSearchRoute: AuthedWorkspaceIdLayoutSearchRoute,
+    AuthedWorkspaceIdLayoutSettingsRoute: AuthedWorkspaceIdLayoutSettingsRoute,
     AuthedWorkspaceIdLayoutTeamRoute: AuthedWorkspaceIdLayoutTeamRoute,
     AuthedWorkspaceIdLayoutIndexRoute: AuthedWorkspaceIdLayoutIndexRoute,
   }
@@ -255,6 +272,7 @@ export interface FileRoutesByFullPath {
   '/$workspaceId': typeof AuthedWorkspaceIdLayoutRouteWithChildren
   '/$workspaceId/analytics': typeof AuthedWorkspaceIdLayoutAnalyticsRoute
   '/$workspaceId/search': typeof AuthedWorkspaceIdLayoutSearchRoute
+  '/$workspaceId/settings': typeof AuthedWorkspaceIdLayoutSettingsRoute
   '/$workspaceId/team': typeof AuthedWorkspaceIdLayoutTeamRoute
   '/$workspaceId/': typeof AuthedWorkspaceIdLayoutIndexRoute
 }
@@ -268,6 +286,7 @@ export interface FileRoutesByTo {
   '/$workspaceId': typeof AuthedWorkspaceIdLayoutIndexRoute
   '/$workspaceId/analytics': typeof AuthedWorkspaceIdLayoutAnalyticsRoute
   '/$workspaceId/search': typeof AuthedWorkspaceIdLayoutSearchRoute
+  '/$workspaceId/settings': typeof AuthedWorkspaceIdLayoutSettingsRoute
   '/$workspaceId/team': typeof AuthedWorkspaceIdLayoutTeamRoute
 }
 
@@ -283,6 +302,7 @@ export interface FileRoutesById {
   '/_authed/$workspaceId/_layout': typeof AuthedWorkspaceIdLayoutRouteWithChildren
   '/_authed/$workspaceId/_layout/analytics': typeof AuthedWorkspaceIdLayoutAnalyticsRoute
   '/_authed/$workspaceId/_layout/search': typeof AuthedWorkspaceIdLayoutSearchRoute
+  '/_authed/$workspaceId/_layout/settings': typeof AuthedWorkspaceIdLayoutSettingsRoute
   '/_authed/$workspaceId/_layout/team': typeof AuthedWorkspaceIdLayoutTeamRoute
   '/_authed/$workspaceId/_layout/': typeof AuthedWorkspaceIdLayoutIndexRoute
 }
@@ -299,6 +319,7 @@ export interface FileRouteTypes {
     | '/$workspaceId'
     | '/$workspaceId/analytics'
     | '/$workspaceId/search'
+    | '/$workspaceId/settings'
     | '/$workspaceId/team'
     | '/$workspaceId/'
   fileRoutesByTo: FileRoutesByTo
@@ -311,6 +332,7 @@ export interface FileRouteTypes {
     | '/$workspaceId'
     | '/$workspaceId/analytics'
     | '/$workspaceId/search'
+    | '/$workspaceId/settings'
     | '/$workspaceId/team'
   id:
     | '__root__'
@@ -324,6 +346,7 @@ export interface FileRouteTypes {
     | '/_authed/$workspaceId/_layout'
     | '/_authed/$workspaceId/_layout/analytics'
     | '/_authed/$workspaceId/_layout/search'
+    | '/_authed/$workspaceId/_layout/settings'
     | '/_authed/$workspaceId/_layout/team'
     | '/_authed/$workspaceId/_layout/'
   fileRoutesById: FileRoutesById
@@ -397,6 +420,7 @@ export const routeTree = rootRoute
       "children": [
         "/_authed/$workspaceId/_layout/analytics",
         "/_authed/$workspaceId/_layout/search",
+        "/_authed/$workspaceId/_layout/settings",
         "/_authed/$workspaceId/_layout/team",
         "/_authed/$workspaceId/_layout/"
       ]
@@ -407,6 +431,10 @@ export const routeTree = rootRoute
     },
     "/_authed/$workspaceId/_layout/search": {
       "filePath": "_authed/$workspaceId/_layout/search.tsx",
+      "parent": "/_authed/$workspaceId/_layout"
+    },
+    "/_authed/$workspaceId/_layout/settings": {
+      "filePath": "_authed/$workspaceId/_layout/settings.tsx",
       "parent": "/_authed/$workspaceId/_layout"
     },
     "/_authed/$workspaceId/_layout/team": {
