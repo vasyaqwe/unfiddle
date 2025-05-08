@@ -33,7 +33,10 @@ export function SidebarContent() {
                            variant={"ghost"}
                            size={"lg"}
                         >
-                           <WorkspaceLogo size={auth.workspace.image ? 30 : 24} workspace={auth.workspace} />
+                           <WorkspaceLogo
+                              size={auth.workspace.image ? 30 : 24}
+                              workspace={auth.workspace}
+                           />
                            <span className="line-clamp-1 py-px">
                               {auth.workspace.name}
                            </span>
@@ -83,6 +86,19 @@ export function SidebarContent() {
                   >
                      <Icons.home className="size-5" />
                      <span className="pt-px"> Головна</span>
+                  </Link>
+               </li>
+               <li>
+                  <Link
+                     to={"/$workspaceId/analytics"}
+                     params={params}
+                     search={search}
+                     className={
+                        "group flex h-8 items-center justify-start gap-2 rounded-md px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:bg-primary-3 hover:text-foreground aria-[current=page]:bg-primary-4/75 aria-[current=page]:text-foreground"
+                     }
+                  >
+                     <Icons.lineChart className="size-5" />
+                     <span className="pt-px"> Аналітика</span>
                   </Link>
                </li>
                <li>

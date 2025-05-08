@@ -23,6 +23,18 @@ export function BottomNavigation() {
             </li>
             <li>
                <Link
+                  to={"/$workspaceId/analytics"}
+                  params={params}
+                  search={search}
+                  className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-tight aria-[current=page]:text-foreground"
+               >
+                  <Icons.barChart className="mb-[3px] size-[22px] shrink-0 group-aria-[current=page]:hidden" />
+                  <Icons.barChartSolid className="mb-[3px] hidden size-[22px] shrink-0 group-aria-[current=page]:block" />
+                  Аналітика
+               </Link>
+            </li>
+            <li>
+               <Link
                   to={"/$workspaceId/team"}
                   params={params}
                   search={search}

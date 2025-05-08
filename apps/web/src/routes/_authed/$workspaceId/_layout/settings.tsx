@@ -65,7 +65,7 @@ function RouteComponent() {
             queryClient.invalidateQueries(orderQueryOptions.list)
             queryClient.invalidateQueries(
                trpc.workspace.members.queryOptions({
-                  workspaceId: auth.workspace.id,
+                  id: auth.workspace.id,
                }),
             )
          },

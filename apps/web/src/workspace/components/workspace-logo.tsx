@@ -11,7 +11,7 @@ export function WorkspaceLogo({
    workspace,
    className,
    children,
-   size = 30,
+   size = 28,
    ...props
 }: Props) {
    return (

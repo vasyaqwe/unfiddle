@@ -194,11 +194,13 @@ input {
 }
 
 [data-masked]:not(:first-of-type) {
-  --circle: calc(((var(--border) * 2) + var(--size)) * 0.5);
-  --y: calc(100% - (var(--size) * 0.5));
-  mask: radial-gradient(
-    var(--circle) var(--circle) at 
-    calc(var(--circle) - var(--column) - var(--border))
-    50%
-  , #0000 var(--circle), #fff var(--circle)) 0 calc(var(--size) * 0.5) / 100% 100%;
+   --circle: calc(((var(--border) * 2) + var(--size)) * 0.5);
+   --y: calc(100% - (var(--size) * 0.5));
+   mask: radial-gradient(
+         var(--circle) var(--circle) at
+            calc(var(--circle) - var(--column) - var(--border)) 50%,
+         #0000 var(--circle),
+         #fff var(--circle)
+      )
+      0 calc(var(--size) * 0.5) / 100% 100%;
 }

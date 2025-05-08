@@ -39,7 +39,7 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/team")({
    loader: async ({ context, params }) => {
       context.queryClient.prefetchQuery(
          trpc.workspace.members.queryOptions({
-            workspaceId: params.workspaceId,
+            id: params.workspaceId,
          }),
       )
    },
@@ -50,7 +50,7 @@ function RouteComponent() {
    const params = Route.useParams()
    const auth = useAuth()
    const query = useQuery(
-      trpc.workspace.members.queryOptions({ workspaceId: params.workspaceId }),
+      trpc.workspace.members.queryOptions({ id: params.workspaceId }),
    )
 
    const inputRef = React.useRef<HTMLInputElement>(null)
