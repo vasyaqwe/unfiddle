@@ -212,7 +212,7 @@ function RouteComponent() {
                />
             </CreateOrder>
             <div className="mb-16">
-               <div className="container flex min-h-[44px] items-center gap-1">
+               <div className="container sticky top-0 z-[2] flex min-h-[44px] items-center gap-1 border-primary-5 border-b bg-background shadow-xs/4">
                   <Button
                      variant={"ghost"}
                      kind={"icon"}
@@ -450,11 +450,7 @@ function RouteComponent() {
                      </p>
                   </div>
                ) : (
-                  <div
-                     className={
-                        "divide-y divide-primary-5 border-primary-5 border-t"
-                     }
-                  >
+                  <div className={"divide-y divide-primary-5"}>
                      {data.map((item) => (
                         <OrderRow
                            key={item.id}
