@@ -11,7 +11,7 @@ export function WorkspaceLogo({
    workspace,
    className,
    children,
-   size = 20,
+   size = 30,
    ...props
 }: Props) {
    return (
@@ -19,10 +19,14 @@ export function WorkspaceLogo({
          style={
             {
                "--size": `${size}px`,
+               "--radius": `${size / 5}px`,
             } as never
          }
          className={cn(
-            "relative size-(--size) shrink-0 overflow-hidden",
+            "relative size-(--size) shrink-0 overflow-hidden rounded-(--radius)",
+            workspace.image
+               ? "border border-neutral bg-background shadow-[inset_0_-1px_2px_0_rgb(0_0_0_/_0.12)]"
+               : "",
             className,
          )}
          {...props}
@@ -33,7 +37,7 @@ export function WorkspaceLogo({
                alt={""}
                referrerPolicy="no-referrer"
                className={
-                  "grid h-[inherit] w-full place-content-center object-cover object-top"
+                  "grid h-[inherit] w-full place-content-center object-contain"
                }
             />
          ) : (

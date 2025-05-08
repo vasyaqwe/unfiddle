@@ -26,6 +26,12 @@
          }
       ]
    },
+   "r2_buckets": [
+      {
+         "binding": "BUCKET",
+         "bucket_name": "ledgerblocks"
+      }
+   ],
    "kv_namespaces": [
       {
          "binding": "LB_KV",
@@ -62,6 +68,12 @@
                }
             ]
          },
+         "r2_buckets": [
+            {
+               "binding": "BUCKET",
+               "bucket_name": "ledgerblocks"
+            }
+         ],
          "kv_namespaces": [
             {
                "binding": "LB_KV",

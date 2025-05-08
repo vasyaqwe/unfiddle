@@ -24,6 +24,7 @@ export const button = cva(
             sm: "h-9 rounded-sm px-1.5 md:h-7",
             md: "h-9 rounded-md px-3 md:h-[1.9rem] md:px-2.5",
             lg: "h-10 rounded-lg px-3 md:h-[2.1rem]",
+            xl: "h-10 rounded-lg px-3 md:h-10",
          },
          kind: {
             default: "gap-1.5",

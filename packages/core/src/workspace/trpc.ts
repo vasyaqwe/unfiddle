@@ -1,8 +1,14 @@
-import { order, procurement, session } from "@ledgerblocks/core/database/schema"
+import { session } from "@ledgerblocks/core/auth/schema"
+import { order } from "@ledgerblocks/core/order/schema"
+import { procurement } from "@ledgerblocks/core/procurement/schema"
 import { t } from "@ledgerblocks/core/trpc/context"
 import { tryCatch } from "@ledgerblocks/core/try-catch"
 import { workspaceMemberMiddleware } from "@ledgerblocks/core/workspace/middleware"
-import { workspace, workspaceMember } from "@ledgerblocks/core/workspace/schema"
+import {
+   updateWorkspaceSchema,
+   workspace,
+   workspaceMember,
+} from "@ledgerblocks/core/workspace/schema"
 import { TRPCError } from "@trpc/server"
 import { and, desc, eq, gte, or, sql } from "drizzle-orm"
 import { z } from "zod"
@@ -184,6 +190,18 @@ export const workspaceRouter = t.router({
          }
 
          return createdWorkspace.id
+      }),
+   update: t.procedure
+      .use(workspaceMemberMiddleware)
+      .input(updateWorkspaceSchema)
+      .mutation(async ({ ctx, input }) => {
+         await ctx.db
+            .update(workspace)
+            .set({
+               name: input.name,
+               image: input.image,
+            })
+            .where(eq(workspace.id, input.id))
       }),
    delete: t.procedure
       .input(z.object({ id: z.string() }))

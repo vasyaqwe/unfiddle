@@ -3,6 +3,7 @@ import { d } from "@ledgerblocks/core/database"
 import { createCode } from "@ledgerblocks/core/id"
 import { WORKSPACE_ROLES } from "@ledgerblocks/core/workspace/constants"
 import { relations } from "drizzle-orm"
+import { createUpdateSchema } from "drizzle-zod"
 
 const userId = d
    .text()
@@ -53,3 +54,11 @@ export const workspaceMemberRelations = relations(
       }),
    }),
 )
+
+export const updateWorkspaceSchema = createUpdateSchema(workspace)
+   .pick({
+      id: true,
+      name: true,
+      image: true,
+   })
+   .required({ id: true })

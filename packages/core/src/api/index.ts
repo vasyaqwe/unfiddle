@@ -4,6 +4,7 @@ import { createRouter } from "@ledgerblocks/core/api/utils"
 import { authClient } from "@ledgerblocks/core/auth"
 import { authMiddleware } from "@ledgerblocks/core/auth/middleware"
 import { d } from "@ledgerblocks/core/database"
+import { storageRouter } from "@ledgerblocks/core/storage/api"
 import { appRouter } from "@ledgerblocks/core/trpc"
 import type { TRPCContext } from "@ledgerblocks/core/trpc/context"
 import { workspaceRouter } from "@ledgerblocks/core/workspace/api"
@@ -20,6 +21,16 @@ const app = createRouter()
       c.set("auth", authClient(c))
       await next()
    })
+   .get("/r2/*", async (c) => {
+      const key = c.req.path.substring("/r2/".length)
+      const file = await c.var.env.BUCKET.get(key)
+      if (!file) return c.json({ status: 404 })
+      const headers = new Headers()
+      headers.append("etag", file.httpEtag)
+      return new Response(file.body, {
+         headers,
+      })
+   })
    .onError(handleApiError)
 
 const base = createRouter()
@@ -31,6 +42,7 @@ const base = createRouter()
       })
       return handler(c, next)
    })
+   .route("/storage", storageRouter)
    .route("/workspace", workspaceRouter)
    .get("/health", (c) =>
       c.json({

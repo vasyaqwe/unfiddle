@@ -29,8 +29,9 @@ export function SidebarContent() {
                   <MenuTrigger
                      render={
                         <Button
-                           className="!gap-2 justify-start md:pl-1.5"
+                           className="!gap-1.5 justify-start md:pl-0.5"
                            variant={"ghost"}
+                           size={"lg"}
                         >
                            <WorkspaceLogo workspace={auth.workspace} />
                            <span className="line-clamp-1 py-px">

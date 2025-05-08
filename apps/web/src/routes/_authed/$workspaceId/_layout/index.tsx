@@ -244,13 +244,48 @@ function RouteComponent() {
                         )}
                      />
                   </Button>
+                  <Tooltip>
+                     <TooltipTrigger>
+                        <Toggle
+                           pressed={!search.archived}
+                           onPressedChange={(pressed) => {
+                              navigate({
+                                 to: ".",
+                                 params,
+                                 search: (prev) => ({
+                                    ...prev,
+                                    archived: !pressed,
+                                 }),
+                              })
+                           }}
+                           render={(props, state) => (
+                              <Button
+                                 {...props}
+                                 kind={"icon"}
+                                 variant={"ghost"}
+                                 className="-ml-1.5"
+                              >
+                                 {state.pressed ? (
+                                    <Icons.arrowLeft className="size-5" />
+                                 ) : (
+                                    <Icons.archive className="size-5" />
+                                 )}
+                              </Button>
+                           )}
+                        />
+                     </TooltipTrigger>
+                     <TooltipPopup>
+                        {search.archived
+                           ? "Показати архівовані"
+                           : "Показати усі"}
+                     </TooltipPopup>
+                  </Tooltip>
                   <Menu>
                      <MenuTrigger
                         render={
                            <Button
                               variant={"ghost"}
                               size={"sm"}
-                              className="-ml-1.5"
                            >
                               <Icons.filter className="size-5" />
                               Фільтр
@@ -350,9 +385,8 @@ function RouteComponent() {
                         </Button>
                      </Badge>
                   )}
-
                   {searching || (search.q && search.q.length > 0) ? (
-                     <div className="relative ml-auto flex max-w-[320px] items-center">
+                     <div className="lg:-mr-2 relative ml-auto flex max-w-[320px] items-center">
                         <Input
                            autoFocus
                            className={
@@ -376,45 +410,13 @@ function RouteComponent() {
                   ) : (
                      <Button
                         onClick={() => setSearching(true)}
-                        className="ml-auto"
+                        className="lg:-mr-2 ml-auto"
                         variant={"ghost"}
                         kind={"icon"}
                      >
                         <Icons.search className="size-[18px]" />
                      </Button>
                   )}
-                  <Tooltip>
-                     <TooltipTrigger>
-                        <Toggle
-                           pressed={!search.archived}
-                           onPressedChange={(pressed) => {
-                              navigate({
-                                 to: ".",
-                                 params,
-                                 search: (prev) => ({
-                                    ...prev,
-                                    archived: !pressed,
-                                 }),
-                              })
-                           }}
-                           render={(props, state) => (
-                              <Button
-                                 {...props}
-                                 kind={"icon"}
-                                 variant={state.pressed ? "primary" : "ghost"}
-                                 className="lg:-mr-2"
-                              >
-                                 <Icons.archive className="size-5" />
-                              </Button>
-                           )}
-                        />
-                     </TooltipTrigger>
-                     <TooltipPopup>
-                        {search.archived
-                           ? "Показати архівовані"
-                           : "Показати усі"}
-                     </TooltipPopup>
-                  </Tooltip>
                </div>
                {query.isPending ? null : query.isError ? (
                   <ErrorComponent error={query.error} />
