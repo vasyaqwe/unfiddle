@@ -14,12 +14,12 @@ export const workspaceMemberMiddleware = t.middleware(async (opts) => {
          message: parseZodErrorIssues(input.error.issues),
       })
 
-   const membership = opts.ctx.session.workspaceMemberships.some(
+   const membership = opts.ctx.session.workspaceMemberships.find(
       (membership) =>
          membership.workspaceId === (input.data.workspaceId ?? input.data.id),
    )
 
    if (!membership) throw new TRPCError({ code: "FORBIDDEN" })
 
-   return opts.next()
+   return opts.next({ ctx: { membership } })
 })

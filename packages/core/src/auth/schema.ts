@@ -1,4 +1,5 @@
 import { d } from "@ledgerblocks/core/database"
+import { WORKSPACE_ROLES } from "@ledgerblocks/core/workspace/constants"
 import { z } from "zod"
 
 export const user = d.table(
@@ -20,7 +21,7 @@ const userId = d
    .references(() => user.id, { onDelete: "cascade" })
 
 const workspaceMembershipsSchema = z.array(
-   z.object({ workspaceId: z.string() }),
+   z.object({ workspaceId: z.string(), role: z.enum(WORKSPACE_ROLES) }),
 )
 
 export const session = d.table("session", {

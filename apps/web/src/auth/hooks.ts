@@ -29,7 +29,7 @@ export function useAuth() {
    const user = useSuspenseQuery(userQueryOptions)
    const workspace = useSuspenseQuery(workspaceQueryOptions)
 
-   invariant(workspace.data, "workspace not found")
+   invariant(workspace.data?.id, "workspace not found")
 
    const signout = useMutation({
       mutationFn: async () => {

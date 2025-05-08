@@ -30,7 +30,7 @@ import {
    TableHeader,
    TableRow,
 } from "@ledgerblocks/ui/components/table"
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import * as React from "react"
 
@@ -46,6 +46,7 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/team")({
 })
 
 function RouteComponent() {
+   const queryClient = useQueryClient()
    const params = Route.useParams()
    const auth = useAuth()
    const query = useQuery(
@@ -53,31 +54,42 @@ function RouteComponent() {
    )
 
    const inputRef = React.useRef<HTMLInputElement>(null)
-
    const joinLink = `${env.WEB_URL}/join/${auth.workspace?.inviteCode}`
+
+   const mutation = useMutation(
+      trpc.workspace.createCode.mutationOptions({
+         onSuccess: () => {
+            queryClient.invalidateQueries(auth.queryOptions.workspace)
+         },
+      }),
+   )
 
    return (
       <Dialog>
          <Header>
             <HeaderBackButton />
             <HeaderTitle>Команда</HeaderTitle>
-            <DialogTrigger
-               render={
-                  <Button
-                     className="ml-auto"
-                     variant={"ghost"}
-                     kind={"icon"}
-                     aria-label="Запросити"
-                  >
-                     <Icons.plus />
-                  </Button>
-               }
-            />
+            {auth.workspace.role === "admin" ? (
+               <DialogTrigger
+                  render={
+                     <Button
+                        className="ml-auto"
+                        variant={"ghost"}
+                        kind={"icon"}
+                        aria-label="Запросити"
+                     >
+                        <Icons.plus />
+                     </Button>
+                  }
+               />
+            ) : null}
          </Header>
          <MainScrollArea container={false}>
             <div className="container mb-8 flex items-center justify-between max-md:hidden">
                <p className="font-semibold text-xl">Команда</p>
-               <DialogTrigger render={<Button>Запросити</Button>} />
+               {auth.workspace.role === "admin" ? (
+                  <DialogTrigger render={<Button>Запросити</Button>} />
+               ) : null}
             </div>
             {query.isPending ? (
                <Loading
@@ -134,17 +146,26 @@ function RouteComponent() {
             <p className="text-foreground/75">
                Будь-хто може приєднатися до проєкту за цим посиланням.
             </p>
-            <div className="relative mt-4 flex items-center gap-1.5">
+            <div className="relative mt-4 flex items-center gap-0.5">
                <Input
                   readOnly
                   ref={inputRef}
                   value={joinLink}
-                  className={"truncate"}
+                  className={"mr-1 truncate"}
                />
                <CopyButton
                   value={joinLink}
                   size={"lg"}
                />
+               <Button
+                  disabled={mutation.isPending}
+                  onClick={() => mutation.mutate({ id: auth.workspace.id })}
+                  size={"lg"}
+                  kind={"icon"}
+                  variant={"ghost"}
+               >
+                  <Icons.reload className="size-5" />
+               </Button>
             </div>
          </DialogPopup>
       </Dialog>

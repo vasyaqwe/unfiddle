@@ -87,6 +87,7 @@ export const authClient = (c: Context<HonoEnv>) => {
                      where: eq(workspaceMember.userId, newSession.user.id),
                      columns: {
                         workspaceId: true,
+                        role: true,
                      },
                   })
 

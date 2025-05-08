@@ -1,4 +1,5 @@
 import { session } from "@ledgerblocks/core/auth/schema"
+import { createCode } from "@ledgerblocks/core/id"
 import { order } from "@ledgerblocks/core/order/schema"
 import { procurement } from "@ledgerblocks/core/procurement/schema"
 import { t } from "@ledgerblocks/core/trpc/context"
@@ -116,7 +117,9 @@ export const workspaceRouter = t.router({
                where: and(eq(workspace.id, input.id)),
             })) ?? null
 
-         return found
+         if (!found?.id) return null
+
+         return { ...found, role: ctx.membership.role }
       }),
    memberships: t.procedure.query(async ({ ctx }) => {
       return await ctx.db.query.workspaceMember.findMany({
@@ -171,6 +174,7 @@ export const workspaceRouter = t.router({
                         ...ctx.session.workspaceMemberships,
                         {
                            workspaceId: createdWorkspace.id,
+                           role: "admin",
                         },
                      ],
                   })
@@ -225,6 +229,15 @@ export const workspaceRouter = t.router({
                .where(eq(session.userId, ctx.user.id)),
          ])
       }),
+   createCode: t.procedure
+      .use(workspaceMemberMiddleware)
+      .input(z.object({ id: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+         await ctx.db
+            .update(workspace)
+            .set({ inviteCode: createCode() })
+            .where(eq(workspace.id, input.id))
+      }),
    join: t.procedure
       .input(z.object({ code: z.string() }))
       .mutation(async ({ ctx, input }) => {
@@ -259,10 +272,15 @@ export const workspaceRouter = t.router({
                      ),
                      {
                         workspaceId: foundWorkspace.id,
+                        role: "member",
                      },
                   ],
                })
                .where(eq(session.userId, ctx.user.id)),
+            ctx.db
+               .update(workspace)
+               .set({ inviteCode: createCode() })
+               .where(eq(workspace.id, foundWorkspace.id)),
          ])
 
          return foundWorkspace
