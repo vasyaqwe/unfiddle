@@ -1,5 +1,7 @@
 import { useAuth } from "@/auth/hooks"
 import { env } from "@/env"
+import { useOptimisticCreateOrderAssignee } from "@/order/assignee/mutations/create"
+import { useOptimisticDeleteOrderAssignee } from "@/order/assignee/mutations/delete"
 import { useOptimisticCreateOrder } from "@/order/mutations/create"
 import { useOptimisticDeleteOrder } from "@/order/mutations/delete"
 import { useOptimisticUpdateOrder } from "@/order/mutations/update"
@@ -11,6 +13,8 @@ export function useOrderSocket() {
    const create = useOptimisticCreateOrder()
    const update = useOptimisticUpdateOrder()
    const deleteOrder = useOptimisticDeleteOrder()
+   const createAssignee = useOptimisticCreateOrderAssignee()
+   const deleteAssignee = useOptimisticDeleteOrderAssignee()
 
    return usePartySocket({
       host: env.COLLABORATION_URL,
@@ -20,6 +24,18 @@ export function useOrderSocket() {
          const data = JSON.parse(event.data) as OrderEvent
 
          if (data.senderId === auth.user.id) return
+
+         if (data.action === "create_assignee")
+            return createAssignee({
+               orderId: data.orderId,
+               assignee: data.assignee,
+            })
+
+         if (data.action === "delete_assignee")
+            return deleteAssignee({
+               orderId: data.orderId,
+               userId: data.userId,
+            })
 
          if (data.action === "create") return create(data.order)
 

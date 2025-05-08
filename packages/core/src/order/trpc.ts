@@ -1,4 +1,4 @@
-import {} from "@ledgerblocks/core/order/constants"
+import { orderAssigneeRouter } from "@ledgerblocks/core/order/assignee/trpc"
 import { orderFilterSchema } from "@ledgerblocks/core/order/filter"
 import {
    order,
@@ -16,6 +16,7 @@ import { createInsertSchema } from "drizzle-zod"
 import { z } from "zod"
 
 export const orderRouter = t.router({
+   assignee: orderAssigneeRouter,
    list: t.procedure
       .use(workspaceMemberMiddleware)
       .input(
@@ -81,6 +82,18 @@ export const orderRouter = t.router({
                      id: true,
                      name: true,
                      image: true,
+                  },
+               },
+               assignees: {
+                  columns: {},
+                  with: {
+                     user: {
+                        columns: {
+                           id: true,
+                           name: true,
+                           image: true,
+                        },
+                     },
                   },
                },
                procurements: {

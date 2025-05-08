@@ -19,15 +19,17 @@ export const orderCounter = d.table("order_counter", {
    lastId: d.integer().notNull().default(0),
 })
 
+const userId = d
+   .text()
+   .references(() => user.id, { onDelete: "cascade" })
+   .notNull()
+
 export const order = d.table(
    "order",
    {
       id: d.id("order"),
       shortId: d.integer().notNull(),
-      creatorId: d
-         .text()
-         .notNull()
-         .references(() => user.id, { onDelete: "cascade" }),
+      creatorId: userId,
       workspaceId: d
          .text()
          .notNull()
@@ -53,12 +55,37 @@ export const order = d.table(
    ],
 )
 
+export const orderAssignee = d.table(
+   "order_assignee",
+   {
+      userId,
+      orderId: d
+         .text()
+         .references(() => order.id, { onDelete: "cascade" })
+         .notNull(),
+      ...d.timestamps,
+   },
+   (table) => [d.primaryKey({ columns: [table.userId, table.orderId] })],
+)
+
+export const orderAssigneeRelations = relations(orderAssignee, ({ one }) => ({
+   user: one(user, {
+      fields: [orderAssignee.userId],
+      references: [user.id],
+   }),
+   order: one(order, {
+      fields: [orderAssignee.orderId],
+      references: [order.id],
+   }),
+}))
+
 export const orderRelations = relations(order, ({ one, many }) => ({
    creator: one(user, {
       fields: [order.creatorId],
       references: [user.id],
    }),
    procurements: many(procurement),
+   assignees: many(orderAssignee),
 }))
 
 export const updateOrderSchema = createUpdateSchema(order)

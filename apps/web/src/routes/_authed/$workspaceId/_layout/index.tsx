@@ -2,6 +2,8 @@ import { useAuth } from "@/auth/hooks"
 import { formatCurrency } from "@/currency"
 import { MainScrollArea } from "@/layout/components/main"
 import { formatNumber } from "@/number"
+import { useCreateOrderAssignee } from "@/order/assignee/mutations/create"
+import { useDeleteOrderAssignee } from "@/order/assignee/mutations/delete"
 import { CreateOrder } from "@/order/components/create-order"
 import { EditOrder } from "@/order/components/edit-order"
 import { SeverityIcon } from "@/order/components/severity-icon"
@@ -36,6 +38,10 @@ import {
 import { orderFilterSchema } from "@ledgerblocks/core/order/filter"
 import { PROCUREMENT_STATUSES } from "@ledgerblocks/core/procurement/constants"
 import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
+import {
+   AvatarStack,
+   AvatarStackItem,
+} from "@ledgerblocks/ui/components/avatar-stack"
 import { Badge } from "@ledgerblocks/ui/components/badge"
 import { Button } from "@ledgerblocks/ui/components/button"
 import {} from "@ledgerblocks/ui/components/card"
@@ -64,6 +70,11 @@ import {
    MenuTrigger,
 } from "@ledgerblocks/ui/components/menu"
 import { Separator } from "@ledgerblocks/ui/components/separator"
+import {
+   Tooltip,
+   TooltipPopup,
+   TooltipTrigger,
+} from "@ledgerblocks/ui/components/tooltip"
 import { cx } from "@ledgerblocks/ui/utils"
 import {
    keepPreviousData,
@@ -470,6 +481,8 @@ function OrderRow({
 
    const update = useUpdateOrder()
    const deleteItem = useDeleteOrder()
+   const createAssignee = useCreateOrderAssignee()
+   const deleteAssignee = useDeleteOrderAssignee()
 
    const [editOpen, setEditOpen] = React.useState(false)
    const menuTriggerRef = React.useRef<HTMLButtonElement>(null)
@@ -506,10 +519,10 @@ function OrderRow({
                </p>
                <AlignedColumn
                   id={`o_creator`}
-                  className="flex items-center gap-0.5 whitespace-nowrap font-medium text-sm"
+                  className="flex items-center gap-[3px] whitespace-nowrap font-medium text-sm"
                >
                   <UserAvatar
-                     size={15}
+                     size={17}
                      user={item.creator}
                      className="inline-block"
                   />
@@ -519,51 +532,68 @@ function OrderRow({
             <p className="lg:!max-w-[80%] col-span-2 col-start-1 row-start-2 mt-px w-[calc(100%-36px)] break-normal font-semibold">
                {item.name}
             </p>
-            <Combobox
-               value={item.status}
-               onValueChange={(status) =>
-                  update.mutate({
-                     id: item.id,
-                     workspaceId: params.workspaceId,
-                     status: status as never,
-                  })
-               }
-            >
-               <ComboboxTrigger
-                  onClick={(e) => {
-                     e.stopPropagation()
-                  }}
-                  className={"ml-auto cursor-pointer"}
+            <div className="ml-auto flex items-center gap-3">
+               <AvatarStack className="mt-px max-md:hidden">
+                  {item.assignees.map((assignee) => (
+                     <AvatarStackItem key={assignee.user.id}>
+                        <Tooltip>
+                           <TooltipTrigger>
+                              <UserAvatar
+                                 size={22}
+                                 user={assignee.user}
+                              />
+                           </TooltipTrigger>
+                           <TooltipPopup>{assignee.user.name}</TooltipPopup>
+                        </Tooltip>
+                     </AvatarStackItem>
+                  ))}
+               </AvatarStack>
+               <Combobox
+                  value={item.status}
+                  onValueChange={(status) =>
+                     update.mutate({
+                        id: item.id,
+                        workspaceId: params.workspaceId,
+                        status: status as never,
+                     })
+                  }
                >
-                  <Badge
-                     style={{
-                        background: `linear-gradient(140deg, ${from}, ${to})`,
+                  <ComboboxTrigger
+                     onClick={(e) => {
+                        e.stopPropagation()
+                     }}
+                     className={" cursor-pointer"}
+                  >
+                     <Badge
+                        style={{
+                           background: `linear-gradient(140deg, ${from}, ${to})`,
+                        }}
+                     >
+                        {ORDER_STATUSES_TRANSLATION[item.status]}{" "}
+                        {item.status === "successful"
+                           ? `(${formatCurrency(totalProfit)})`
+                           : ""}
+                     </Badge>
+                  </ComboboxTrigger>
+                  <ComboboxPopup
+                     align="end"
+                     onClick={(e) => {
+                        e.stopPropagation()
                      }}
                   >
-                     {ORDER_STATUSES_TRANSLATION[item.status]}{" "}
-                     {item.status === "successful"
-                        ? `(${formatCurrency(totalProfit)})`
-                        : ""}
-                  </Badge>
-               </ComboboxTrigger>
-               <ComboboxPopup
-                  align="end"
-                  onClick={(e) => {
-                     e.stopPropagation()
-                  }}
-               >
-                  <ComboboxInput />
-                  {ORDER_STATUSES.map((s) => (
-                     <ComboboxItem
-                        key={s}
-                        value={s}
-                        keywords={[ORDER_STATUSES_TRANSLATION[s]]}
-                     >
-                        {ORDER_STATUSES_TRANSLATION[s]}
-                     </ComboboxItem>
-                  ))}
-               </ComboboxPopup>
-            </Combobox>
+                     <ComboboxInput />
+                     {ORDER_STATUSES.map((s) => (
+                        <ComboboxItem
+                           key={s}
+                           value={s}
+                           keywords={[ORDER_STATUSES_TRANSLATION[s]]}
+                        >
+                           {ORDER_STATUSES_TRANSLATION[s]}
+                        </ComboboxItem>
+                     ))}
+                  </ComboboxPopup>
+               </Combobox>
+            </div>
             <p className="min-w-[60px] text-foreground/75 max-lg:hidden">
                {formatOrderDate(item.createdAt)}
             </p>
@@ -699,11 +729,44 @@ function OrderRow({
                            ))}
                         </div>
                      )}
-                     <CreateProcurement
-                        orderName={item.name}
-                        orderId={item.id}
-                        empty={item.procurements.length === 0}
-                     />
+                     <div className="mt-3 flex grid-cols-2 items-center gap-2 max-sm:grid">
+                        <CreateProcurement
+                           orderName={item.name}
+                           orderId={item.id}
+                           empty={item.procurements.length === 0}
+                        />
+                        {item.assignees.some(
+                           (a) => a.user.id === auth.user.id,
+                        ) ? (
+                           <Button
+                              variant={"secondary"}
+                              onClick={() =>
+                                 deleteAssignee.mutate({
+                                    orderId: item.id,
+                                    userId: auth.user.id,
+                                    workspaceId: auth.workspace.id,
+                                 })
+                              }
+                           >
+                              <Icons.undo className="size-[18px]" />
+                              Залишити
+                           </Button>
+                        ) : (
+                           <Button
+                              variant={"secondary"}
+                              onClick={() =>
+                                 createAssignee.mutate({
+                                    orderId: item.id,
+                                    userId: auth.user.id,
+                                    workspaceId: auth.workspace.id,
+                                 })
+                              }
+                           >
+                              <Icons.pin className="size-5" />
+                              Зайняти
+                           </Button>
+                        )}
+                     </div>
                   </div>
                </div>
             }

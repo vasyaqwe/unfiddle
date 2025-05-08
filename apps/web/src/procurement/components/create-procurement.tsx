@@ -42,10 +42,7 @@ export function CreateProcurement({
       >
          <DrawerTrigger
             render={
-               <Button
-                  variant={"secondary"}
-                  className="mt-3 max-sm:w-full"
-               >
+               <Button variant={"secondary"}>
                   <Icons.plus />
                   Додати {empty ? "першу" : ""}
                </Button>

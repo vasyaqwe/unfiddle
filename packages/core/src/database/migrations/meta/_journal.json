@@ -85,6 +85,13 @@
       "when": 1746617311560,
       "tag": "0011_dizzy_diamondback",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1746690223970,
+      "tag": "0012_long_shotgun",
+      "breakpoints": true
     }
   ]
 }

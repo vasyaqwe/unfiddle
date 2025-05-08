@@ -2,11 +2,10 @@ import { useAuth } from "@/auth/hooks"
 import { useOrderQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket/hooks"
 import { trpc } from "@/trpc"
-import type { RouterInput } from "@ledgerblocks/core/trpc/types"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 
-export function useDeleteOrder({
+export function useDeleteOrderAssignee({
    onMutate,
    onError,
 }: { onMutate?: () => void; onError?: () => void } = {}) {
@@ -14,10 +13,10 @@ export function useDeleteOrder({
    const auth = useAuth()
    const socket = useSocket()
    const queryOptions = useOrderQueryOptions()
-   const deleteItem = useOptimisticDeleteOrder()
+   const deleteItem = useOptimisticDeleteOrderAssignee()
 
    return useMutation(
-      trpc.order.delete.mutationOptions({
+      trpc.order.assignee.delete.mutationOptions({
          onMutate: async (input) => {
             await queryClient.cancelQueries(queryOptions.list)
 
@@ -37,33 +36,39 @@ export function useDeleteOrder({
 
             onError?.()
          },
-         onSuccess: (_, order) => {
+         onSuccess: (_, assignee) => {
             socket.order.send({
-               action: "delete",
+               action: "delete_assignee",
                senderId: auth.user.id,
-               orderId: order.id,
+               orderId: assignee.orderId,
+               userId: assignee.userId,
             })
          },
          onSettled: () => {
             queryClient.invalidateQueries(queryOptions.list)
-            // queryClient.invalidateQueries(
-            //    trpc.workspace.summary.queryOptions({
-            //       id: auth.workspace.id,
-            //    }),
-            // )
          },
       }),
    )
 }
 
-export function useOptimisticDeleteOrder() {
+export function useOptimisticDeleteOrderAssignee() {
    const queryClient = useQueryClient()
    const queryOptions = useOrderQueryOptions()
 
-   return (input: RouterInput["order"]["delete"]) => {
+   return (input: { orderId: string; userId: string }) => {
       queryClient.setQueryData(queryOptions.list.queryKey, (oldData) => {
          if (!oldData) return oldData
-         return oldData.filter((item) => item.id !== input.id)
+
+         return oldData.map((item) => {
+            if (item.id === input.orderId)
+               return {
+                  ...item,
+                  assignees: item.assignees.filter(
+                     (a) => a.user.id !== input.userId,
+                  ),
+               }
+            return item
+         })
       })
    }
 }

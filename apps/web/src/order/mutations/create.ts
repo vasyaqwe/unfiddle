@@ -1,4 +1,5 @@
 import { useAuth } from "@/auth/hooks"
+import { useOrderQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket/hooks"
 import { trpc } from "@/trpc"
 import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
@@ -13,23 +14,17 @@ export function useCreateOrder({
    const queryClient = useQueryClient()
    const auth = useAuth()
    const socket = useSocket()
-   const search = useSearch({ strict: false })
-
-   const queryOptions = trpc.order.list.queryOptions({
-      workspaceId: auth.workspace.id,
-      filter: search,
-   })
-
-   const optimisticCreate = useOptimisticCreateOrder()
+   const queryOptions = useOrderQueryOptions()
+   const create = useOptimisticCreateOrder()
 
    return useMutation(
       trpc.order.create.mutationOptions({
          onMutate: async (input) => {
-            await queryClient.cancelQueries(queryOptions)
+            await queryClient.cancelQueries(queryOptions.list)
 
-            const data = queryClient.getQueryData(queryOptions.queryKey)
+            const data = queryClient.getQueryData(queryOptions.list.queryKey)
 
-            optimisticCreate({
+            create({
                ...input,
                id: crypto.randomUUID(),
                shortId: 0,
@@ -40,6 +35,7 @@ export function useCreateOrder({
                creator: auth.user,
                note: input.note ?? "",
                procurements: [],
+               assignees: [],
                deletedAt: null,
                createdAt: new Date().toString(),
             })
@@ -49,7 +45,7 @@ export function useCreateOrder({
             return { data }
          },
          onError: (error, _data, context) => {
-            queryClient.setQueryData(queryOptions.queryKey, context?.data)
+            queryClient.setQueryData(queryOptions.list.queryKey, context?.data)
             toast.error("Ой-ой!", {
                description: error.message,
             })
@@ -64,11 +60,12 @@ export function useCreateOrder({
                   ...order,
                   creator: auth.user,
                   procurements: [],
+                  assignees: [],
                },
             })
          },
          onSettled: () => {
-            queryClient.invalidateQueries(queryOptions)
+            queryClient.invalidateQueries(queryOptions.list)
          },
       }),
    )
@@ -76,16 +73,11 @@ export function useCreateOrder({
 
 export function useOptimisticCreateOrder() {
    const queryClient = useQueryClient()
-   const auth = useAuth()
    const search = useSearch({ strict: false })
-
-   const queryOptions = trpc.order.list.queryOptions({
-      workspaceId: auth.workspace.id,
-      filter: search,
-   })
+   const queryOptions = useOrderQueryOptions()
 
    return (input: RouterOutput["order"]["list"][number]) => {
-      queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
+      queryClient.setQueryData(queryOptions.list.queryKey, (oldData) => {
          if (!oldData) return oldData
 
          if (search.status?.length && !search.status.includes(input.status))

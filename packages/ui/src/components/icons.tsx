@@ -138,6 +138,41 @@ export const Icons = {
          </g>
       </svg>
    ),
+   pin: (props: IconProps) => (
+      <svg
+         viewBox="0 0 34 34"
+         fill="none"
+         xmlns="http://www.w3.org/2000/svg"
+         {...props}
+      >
+         <g clip-path="url(#clip0_465_124)">
+            <path
+               d="M10.196 25.9692L13.9724 21.2144"
+               stroke="currentColor"
+               strokeWidth="2.5"
+               strokeLinecap="round"
+               strokeLinejoin="round"
+            />
+            <path
+               d="M20.213 26.171C20.7672 25.2561 21.4966 23.7787 21.7755 21.8387C21.9192 20.8401 21.9104 19.953 21.8481 19.2309L25.8606 14.179C26.9039 12.8655 26.685 10.9566 25.3715 9.91336L22.3998 7.55307C21.0863 6.50982 19.1774 6.72871 18.1342 8.04221L14.1217 13.0941C13.403 13.196 12.5369 13.3882 11.598 13.7552C9.77265 14.4669 8.49755 15.5109 7.73182 16.2578L20.213 26.171Z"
+               stroke="currentColor"
+               strokeWidth="2.5"
+               strokeLinecap="round"
+               strokeLinejoin="round"
+            />
+         </g>
+         <defs>
+            <clipPath id="clip0_465_124">
+               <rect
+                  width="24"
+                  height="24"
+                  fill="currentColor"
+                  transform="translate(15.0671 0.139832) rotate(38.4584)"
+               />
+            </clipPath>
+         </defs>
+      </svg>
+   ),
    exit: (props: IconProps) => (
       <svg
          viewBox="0 0 24 24"

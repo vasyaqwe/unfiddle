@@ -28,7 +28,7 @@ export function AlignedColumn({
    }, [])
 
    return (
-      <p
+      <div
          ref={(el) => {
             if (!el || isMobile) return
 
@@ -47,6 +47,6 @@ export function AlignedColumn({
          style={{ "--min-width": `${columnWidths[id] || "auto"}px` } as never}
       >
          {children}
-      </p>
+      </div>
    )
 }

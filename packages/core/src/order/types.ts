@@ -9,6 +9,9 @@ import type { z } from "zod"
 export type OrderStatus = (typeof ORDER_STATUSES)[number]
 export type OrderSeverity = (typeof ORDER_SEVERITIES)[number]
 
+export type OrderAssignee =
+   RouterOutput["order"]["list"][number]["assignees"][number]
+
 export type OrderEvent =
    | {
         action: "create"
@@ -18,6 +21,18 @@ export type OrderEvent =
    | {
         action: "update"
         order: z.infer<typeof updateOrderSchema>
+        senderId: string
+     }
+   | {
+        action: "create_assignee"
+        assignee: OrderAssignee
+        orderId: string
+        senderId: string
+     }
+   | {
+        action: "delete_assignee"
+        orderId: string
+        userId: string
         senderId: string
      }
    | {
