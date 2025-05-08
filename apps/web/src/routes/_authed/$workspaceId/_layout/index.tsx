@@ -59,6 +59,14 @@ import {
    ComboboxPopup,
    ComboboxTrigger,
 } from "@ledgerblocks/ui/components/combobox"
+import {
+   AlertDialog,
+   AlertDialogClose,
+   AlertDialogDescription,
+   AlertDialogFooter,
+   AlertDialogPopup,
+   AlertDialogTitle,
+} from "@ledgerblocks/ui/components/dialog/alert"
 import { DrawerTrigger } from "@ledgerblocks/ui/components/drawer"
 import { Icons } from "@ledgerblocks/ui/components/icons"
 import { Input } from "@ledgerblocks/ui/components/input"
@@ -247,14 +255,14 @@ function RouteComponent() {
                   <Tooltip>
                      <TooltipTrigger>
                         <Toggle
-                           pressed={!search.archived}
+                           pressed={search.archived}
                            onPressedChange={(pressed) => {
                               navigate({
                                  to: ".",
                                  params,
                                  search: (prev) => ({
                                     ...prev,
-                                    archived: !pressed,
+                                    archived: pressed,
                                  }),
                               })
                            }}
@@ -489,6 +497,8 @@ function OrderRow({
    const deleteAssignee = useDeleteOrderAssignee()
 
    const [editOpen, setEditOpen] = React.useState(false)
+   const [confirmArchiveOpen, setConfirmArchiveOpen] = React.useState(false)
+   const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false)
    const menuTriggerRef = React.useRef<HTMLButtonElement>(null)
 
    const totalProfit = item.procurements.reduce(
@@ -506,12 +516,96 @@ function OrderRow({
             render={<div />}
             className="container relative grid grid-cols-2 grid-rows-[1fr_auto] gap-x-2.5 gap-y-1 py-2 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-2 lg:flex lg:py-[0.4rem]"
          >
-            <EditOrder
-               open={editOpen}
-               setOpen={setEditOpen}
-               order={item}
-               finalFocus={menuTriggerRef}
-            />
+            <div
+               className="absolute"
+               onClick={(e) => e.stopPropagation()}
+            >
+               <EditOrder
+                  open={editOpen}
+                  setOpen={setEditOpen}
+                  order={item}
+                  finalFocus={menuTriggerRef}
+               />
+               <AlertDialog
+                  open={confirmArchiveOpen}
+                  onOpenChange={setConfirmArchiveOpen}
+               >
+                  <AlertDialogPopup
+                     finalFocus={menuTriggerRef}
+                     onClick={(e) => e.stopPropagation()}
+                  >
+                     <AlertDialogTitle>
+                        Архівувати {item.name}?,{" "}
+                     </AlertDialogTitle>
+                     <AlertDialogDescription>
+                        Замовлення не буде повністю видалене, лише переміщене в
+                        архівовані.
+                     </AlertDialogDescription>
+                     <AlertDialogFooter>
+                        <AlertDialogClose
+                           render={
+                              <Button variant="secondary">Відмінити</Button>
+                           }
+                        />
+                        <AlertDialogClose
+                           render={
+                              <Button
+                                 variant={"destructive"}
+                                 onClick={() =>
+                                    update.mutate({
+                                       id: item.id,
+                                       workspaceId: params.workspaceId,
+                                       deletedAt: new Date().toString(),
+                                    })
+                                 }
+                              >
+                                 Архівувати
+                              </Button>
+                           }
+                        />
+                     </AlertDialogFooter>
+                  </AlertDialogPopup>
+               </AlertDialog>
+               <AlertDialog
+                  open={confirmDeleteOpen}
+                  onOpenChange={setConfirmDeleteOpen}
+               >
+                  <AlertDialogPopup
+                     finalFocus={menuTriggerRef}
+                     onClick={(e) => e.stopPropagation()}
+                  >
+                     <AlertDialogTitle>
+                        Видалити {item.name}?,{" "}
+                     </AlertDialogTitle>
+                     <AlertDialogDescription>
+                        Замовлення буде видалене назавжди, разом із всіми його
+                        закупівлями.
+                     </AlertDialogDescription>
+                     <AlertDialogFooter>
+                        <AlertDialogClose
+                           render={
+                              <Button variant="secondary">Відмінити</Button>
+                           }
+                        />
+                        <AlertDialogClose
+                           render={
+                              <Button
+                                 variant={"destructive"}
+                                 onClick={() =>
+                                    deleteItem.mutate({
+                                       id: item.id,
+                                       workspaceId: params.workspaceId,
+                                    })
+                                 }
+                              >
+                                 Видалити
+                              </Button>
+                           }
+                        />
+                     </AlertDialogFooter>
+                  </AlertDialogPopup>
+               </AlertDialog>
+            </div>
             <div className="flex items-center gap-2">
                <CollapsibleTriggerIcon className="left-2.5 lg:absolute lg:mb-px" />
                <SeverityIcon
@@ -633,14 +727,7 @@ function OrderRow({
                   {item.deletedAt === null ? (
                      <MenuItem
                         destructive
-                        onClick={() => {
-                           if (confirm(`Архівувати замовлення ${item.name}?`))
-                              update.mutate({
-                                 id: item.id,
-                                 workspaceId: params.workspaceId,
-                                 deletedAt: new Date().toString(),
-                              })
-                        }}
+                        onClick={() => setConfirmArchiveOpen(true)}
                      >
                         <Icons.archive />
                         Архівувати
@@ -662,17 +749,7 @@ function OrderRow({
                   {item.deletedAt && auth.user.id === item.creatorId ? (
                      <MenuItem
                         destructive
-                        onClick={() => {
-                           if (
-                              confirm(
-                                 `Видалити замовлення ${item.name}? Це назавжди.`,
-                              )
-                           )
-                              deleteItem.mutate({
-                                 id: item.id,
-                                 workspaceId: params.workspaceId,
-                              })
-                        }}
+                        onClick={() => setConfirmDeleteOpen(true)}
                      >
                         <Icons.trash />
                         Видалити
