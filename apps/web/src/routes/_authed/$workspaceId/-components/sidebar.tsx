@@ -33,7 +33,7 @@ export function SidebarContent() {
                            variant={"ghost"}
                            size={"lg"}
                         >
-                           <WorkspaceLogo workspace={auth.workspace} />
+                           <WorkspaceLogo size={auth.workspace.image ? 30 : 24} workspace={auth.workspace} />
                            <span className="line-clamp-1 py-px">
                               {auth.workspace.name}
                            </span>

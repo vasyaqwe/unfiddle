@@ -220,7 +220,7 @@ function RouteComponent() {
                />
             </CreateOrder>
             <div className="mb-16">
-               <div className="container sticky top-0 z-[2] flex min-h-[44px] items-center gap-1 border-primary-5 border-b bg-background shadow-xs/4">
+               <div className="container sticky top-0 z-[5] flex min-h-[44px] items-center gap-1 border-primary-5 border-b bg-background shadow-xs/4">
                   <Button
                      variant={"ghost"}
                      kind={"icon"}
