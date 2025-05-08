@@ -1,7 +1,8 @@
 import { Dialog as DialogPrimitive } from "@base-ui-components/react/dialog"
 import { Button } from "@ledgerblocks/ui/components/button"
 import { Icons } from "@ledgerblocks/ui/components/icons"
-import { cn } from "../../utils"
+import { type VariantProps, cva } from "class-variance-authority"
+import { cn, cx } from "../../utils"
 import { DIALOG_STYLES } from "./constants"
 
 export const Dialog = DialogPrimitive.Root
@@ -10,20 +11,40 @@ export const DialogClose = DialogPrimitive.Close
 export const DialogPortal = DialogPrimitive.Portal
 export const DialogBackdrop = DialogPrimitive.Backdrop
 
+export const dialog = cva("", {
+   variants: {
+      size: {
+         sm: "w-96",
+         md: "w-116",
+         lg: "w-132",
+      },
+   },
+   defaultVariants: {
+      size: "md",
+   },
+})
+
 export function DialogPopup({
    className,
    children,
+   size,
    ...props
-}: React.ComponentProps<typeof DialogPrimitive.Popup>) {
+}: React.ComponentProps<typeof DialogPrimitive.Popup> &
+   VariantProps<typeof dialog>) {
    return (
       <DialogPortal>
          <DialogBackdrop className={DIALOG_STYLES.backdrop} />
          <DialogPrimitive.Popup
             className={cn(
-               DIALOG_STYLES.transition,
-               DIALOG_STYLES.popup,
-               DIALOG_STYLES.center,
-               className,
+               dialog({
+                  size,
+                  className: cx(
+                     DIALOG_STYLES.transition,
+                     DIALOG_STYLES.popup,
+                     DIALOG_STYLES.center,
+                     className,
+                  ),
+               }),
             )}
             {...props}
          >

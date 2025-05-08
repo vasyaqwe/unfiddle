@@ -1,5 +1,6 @@
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui-components/react/alert-dialog"
-import { cn } from "../../utils"
+import { type VariantProps, cva } from "class-variance-authority"
+import { cn, cx } from "../../utils"
 import { DIALOG_STYLES } from "./constants"
 
 export const AlertDialog = AlertDialogPrimitive.Root
@@ -8,20 +9,40 @@ export const AlertDialogClose = AlertDialogPrimitive.Close
 export const AlertDialogPortal = AlertDialogPrimitive.Portal
 export const AlertDialogBackdrop = AlertDialogPrimitive.Backdrop
 
+export const dialog = cva("", {
+   variants: {
+      size: {
+         sm: "w-96",
+         md: "w-116",
+         lg: "w-132",
+      },
+   },
+   defaultVariants: {
+      size: "md",
+   },
+})
+
 export function AlertDialogPopup({
    className,
    children,
+   size,
    ...props
-}: React.ComponentProps<typeof AlertDialogPrimitive.Popup>) {
+}: React.ComponentProps<typeof AlertDialogPrimitive.Popup> &
+   VariantProps<typeof dialog>) {
    return (
       <AlertDialogPortal>
          <AlertDialogBackdrop className={DIALOG_STYLES.backdrop} />
          <AlertDialogPrimitive.Popup
             className={cn(
-               DIALOG_STYLES.transition,
-               DIALOG_STYLES.popup,
-               DIALOG_STYLES.center,
-               className,
+               dialog({
+                  size,
+                  className: cx(
+                     DIALOG_STYLES.transition,
+                     DIALOG_STYLES.popup,
+                     DIALOG_STYLES.center,
+                     className,
+                  ),
+               }),
             )}
             {...props}
          >

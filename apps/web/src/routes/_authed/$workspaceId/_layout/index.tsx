@@ -538,8 +538,8 @@ function OrderRow({
                         Архівувати {item.name}?,{" "}
                      </AlertDialogTitle>
                      <AlertDialogDescription>
-                        Замовлення не буде повністю видалене, лише переміщене в
-                        архівовані.
+                        Замовлення не буде повністю видалене, лише <br />{" "}
+                        переміщене в архівовані.
                      </AlertDialogDescription>
                      <AlertDialogFooter>
                         <AlertDialogClose
@@ -578,8 +578,8 @@ function OrderRow({
                         Видалити {item.name}?,{" "}
                      </AlertDialogTitle>
                      <AlertDialogDescription>
-                        Замовлення буде видалене назавжди, разом із всіми його
-                        закупівлями.
+                        Замовлення буде видалене назавжди, разом <br /> із всіми
+                        його закупівлями.
                      </AlertDialogDescription>
                      <AlertDialogFooter>
                         <AlertDialogClose

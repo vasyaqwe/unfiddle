@@ -82,7 +82,7 @@ function RouteComponent() {
             {query.isPending ? (
                <Loading
                   size={"xl"}
-                  className="-translate-y-12 md:-translate-y-20 m-auto"
+                  className="mx-auto mt-40"
                />
             ) : query.isError ? (
                <ErrorComponent error={query.error} />
