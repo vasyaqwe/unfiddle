@@ -204,8 +204,8 @@ function RouteComponent() {
                   <Button
                      variant={"ghost"}
                      kind={"icon"}
-                     size={"sm"}
-                     className="absolute left-[3px] max-lg:hidden"
+                     size={"xs"}
+                     className="absolute left-[5px] max-lg:hidden"
                      onClick={() =>
                         Object.keys(states).length === 0 ||
                         Object.values(states).every((v) => !v)
@@ -238,7 +238,7 @@ function RouteComponent() {
                            <Button
                               variant={"ghost"}
                               size={"sm"}
-                              className="-ml-1"
+                              className="-ml-1.5"
                            >
                               <Icons.filter className="size-5" />
                               Фільтр
@@ -474,6 +474,12 @@ function OrderRow({
    const [editOpen, setEditOpen] = React.useState(false)
    const menuTriggerRef = React.useRef<HTMLButtonElement>(null)
 
+   const totalProfit = item.procurements.reduce(
+      (acc, p) =>
+         acc + ((item.sellingPrice ?? 0) - p.purchasePrice) * p.quantity,
+      0,
+   )
+
    return (
       <Collapsible
          open={open}
@@ -534,7 +540,10 @@ function OrderRow({
                         background: `linear-gradient(140deg, ${from}, ${to})`,
                      }}
                   >
-                     {ORDER_STATUSES_TRANSLATION[item.status]}
+                     {ORDER_STATUSES_TRANSLATION[item.status]}{" "}
+                     {item.status === "successful"
+                        ? `(${formatCurrency(totalProfit)})`
+                        : ""}
                   </Badge>
                </ComboboxTrigger>
                <ComboboxPopup

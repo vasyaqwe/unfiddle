@@ -4,6 +4,7 @@ import { cn } from "../utils"
 const loading = cva("!relative sonner-loading-wrapper", {
    variants: {
       size: {
+         xs: "![--size:19px] md:![--size:15px]",
          sm: "![--size:20px] md:![--size:16px]",
          md: "![--size:20px] md:![--size:18px]",
          lg: "![--size:21px] md:![--size:19px]",
