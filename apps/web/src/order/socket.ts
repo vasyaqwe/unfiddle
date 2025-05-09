@@ -11,7 +11,8 @@ import usePartySocket from "partysocket/react"
 export function useOrderSocket() {
    const auth = useAuth()
    const create = useOptimisticCreateOrder()
-   const update = useOptimisticUpdateOrder()
+   // because we're adding/removing items on lists that might not have been loaded (like archived list), we need to invalidate them
+   const update = useOptimisticUpdateOrder({ invalidate: true })
    const deleteOrder = useOptimisticDeleteOrder()
    const createAssignee = useOptimisticCreateOrderAssignee()
    const deleteAssignee = useOptimisticDeleteOrderAssignee()

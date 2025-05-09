@@ -44,28 +44,85 @@ export function useUpdateOrder({
                order,
             })
          },
-         onSettled: () => {
-            queryClient.invalidateQueries(queryOptions.list)
+         onSettled: (_, _2, input) => {
             // queryClient.invalidateQueries(
             //    trpc.workspace.summary.queryOptions({
             //       id: auth.workspace.id,
             //    }),
             // )
+            queryClient.invalidateQueries(queryOptions.list)
+            if (input.deletedAt)
+               return queryClient.invalidateQueries(queryOptions.listArchived)
+            if (input.deletedAt === null)
+               return queryClient.invalidateQueries(
+                  queryOptions.listNotArchived,
+               )
          },
       }),
    )
 }
 
-export function useOptimisticUpdateOrder() {
+export function useOptimisticUpdateOrder({
+   invalidate = false,
+}: { invalidate?: boolean } = {}) {
    const queryClient = useQueryClient()
    const queryOptions = useOrderQueryOptions()
 
+   const desc = (a: { createdAt: string }, b: { createdAt: string }) =>
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+
+   const moveItemBetweenQueries = <
+      T extends Record<string, string | null> & {
+         id: string
+         createdAt: string
+      },
+   >(
+      fromKey: unknown[],
+      toKey: unknown[],
+      itemId: string,
+      update: Partial<T>,
+   ) => {
+      const fromData = queryClient.getQueryData<T[]>(fromKey) || []
+      const item = fromData.find((i) => i.id === itemId)
+      if (!item) return
+
+      queryClient.setQueryData(
+         fromKey,
+         fromData.filter((i) => i.id !== itemId),
+      )
+
+      queryClient.setQueryData(toKey, (toData: T[] = []) =>
+         [...toData, { ...item, ...update }].sort(desc),
+      )
+   }
+
    return (input: Partial<RouterOutput["order"]["list"][number]>) => {
+      if (input.deletedAt === null) {
+         moveItemBetweenQueries(
+            queryOptions.listArchived.queryKey,
+            queryOptions.listNotArchived.queryKey,
+            input.id ?? "",
+            { deletedAt: null },
+         )
+         if (invalidate)
+            queryClient.invalidateQueries(queryOptions.listNotArchived)
+         return
+      }
+
+      if (input.deletedAt) {
+         moveItemBetweenQueries(
+            queryOptions.listNotArchived.queryKey,
+            queryOptions.listArchived.queryKey,
+            input.id ?? "",
+            { deletedAt: new Date().toString() },
+         )
+         if (invalidate)
+            queryClient.invalidateQueries(queryOptions.listArchived)
+         return
+      }
+
       queryClient.setQueryData(queryOptions.list.queryKey, (oldData) => {
          if (!oldData) return oldData
-
-         if (input.deletedAt || input.deletedAt === null)
-            return oldData.filter((item) => item.id !== input.id)
 
          return oldData.map((item) => {
             if (item.id === input.id) return { ...item, ...input }

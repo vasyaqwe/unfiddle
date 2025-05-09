@@ -13,6 +13,7 @@ import {
 } from "@/order/constants"
 import { useDeleteOrder } from "@/order/mutations/delete"
 import { useUpdateOrder } from "@/order/mutations/update"
+import { useOrderQueryOptions } from "@/order/queries"
 import { formatOrderDate, orderStatusGradient } from "@/order/utils"
 import { CreateProcurement } from "@/procurement/components/create-procurement"
 import { EditProcurement } from "@/procurement/components/edit-procurement"
@@ -122,16 +123,8 @@ function RouteComponent() {
    const navigate = useNavigate()
    const auth = useAuth()
 
-   const query = useQuery(
-      trpc.order.list.queryOptions(
-         {
-            workspaceId: params.workspaceId,
-            filter: search,
-         },
-         { placeholderData: keepPreviousData },
-      ),
-   )
-
+   const queryOptions = useOrderQueryOptions()
+   const query = useQuery(queryOptions.list)
    const data = query.data ?? []
 
    const onFilterChange = (
@@ -253,39 +246,41 @@ function RouteComponent() {
                      />
                   </Button>
                   <Tooltip>
-                     <TooltipTrigger>
-                        <Toggle
-                           pressed={!!search.archived}
-                           onPressedChange={(pressed) => {
-                              navigate({
-                                 to: ".",
-                                 params,
-                                 search: (prev) => ({
-                                    ...prev,
-                                    archived: pressed,
-                                 }),
-                              })
-                           }}
-                           render={(props, state) => (
-                              <Button
-                                 {...props}
-                                 kind={"icon"}
-                                 variant={"ghost"}
-                                 className="-ml-1.5"
-                              >
-                                 {state.pressed ? (
-                                    <Icons.arrowLeft className="size-5" />
-                                 ) : (
-                                    <Icons.archive className="size-5" />
-                                 )}
-                              </Button>
-                           )}
-                        />
-                     </TooltipTrigger>
+                     <TooltipTrigger
+                        render={
+                           <Toggle
+                              pressed={!!search.archived}
+                              onPressedChange={(pressed) => {
+                                 navigate({
+                                    to: ".",
+                                    params,
+                                    search: (prev) => ({
+                                       ...prev,
+                                       archived: pressed,
+                                    }),
+                                 })
+                              }}
+                              render={(props, state) => (
+                                 <Button
+                                    {...props}
+                                    kind={"icon"}
+                                    variant={"ghost"}
+                                    className="-ml-1.5"
+                                 >
+                                    {state.pressed ? (
+                                       <Icons.arrowLeft className="size-5" />
+                                    ) : (
+                                       <Icons.archive className="size-5" />
+                                    )}
+                                 </Button>
+                              )}
+                           />
+                        }
+                     />
                      <TooltipPopup>
                         {search.archived
-                           ? "Показати архівовані"
-                           : "Показати усі"}
+                           ? "Показати усі"
+                           : "Показати архівовані"}
                      </TooltipPopup>
                   </Tooltip>
                   <Menu>
@@ -556,8 +551,9 @@ function OrderRow({
                         Архівувати {item.name}?,{" "}
                      </AlertDialogTitle>
                      <AlertDialogDescription>
-                        Замовлення не буде повністю видалене, лише <br />{" "}
-                        переміщене в архівовані.
+                        Замовлення не буде повністю видалене, лише{" "}
+                        <br className="max-sm:hidden" /> переміщене в
+                        архівовані.
                      </AlertDialogDescription>
                      <AlertDialogFooter>
                         <AlertDialogClose
@@ -596,8 +592,9 @@ function OrderRow({
                         Видалити {item.name}?,{" "}
                      </AlertDialogTitle>
                      <AlertDialogDescription>
-                        Замовлення буде видалене назавжди, разом <br /> із всіми
-                        його закупівлями.
+                        Замовлення буде видалене назавжди, разом{" "}
+                        <br className="max-sm:hidden" /> із всіми його
+                        закупівлями.
                      </AlertDialogDescription>
                      <AlertDialogFooter>
                         <AlertDialogClose
