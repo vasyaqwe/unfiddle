@@ -165,6 +165,42 @@ function RouteComponent() {
    )
 }
 
+function ToggleAll() {
+   const queryOptions = useOrderQueryOptions()
+   const query = useQuery(queryOptions.list)
+   const data = query.data ?? []
+
+   const orderIds = data.map((item) => item.id)
+   const [expandedOrderIds, setExpandedOrderIds] = useAtom(expandedOrderIdsAtom)
+
+   return (
+      <Toggle
+         pressed={
+            expandedOrderIds.filter((id) => orderIds.includes(id)).length > 0
+         }
+         onPressedChange={(pressed) =>
+            !pressed ? setExpandedOrderIds([]) : setExpandedOrderIds(orderIds)
+         }
+         render={(props, state) => (
+            <Button
+               {...props}
+               variant={"ghost"}
+               kind={"icon"}
+               size={"xs"}
+               className="absolute left-[5px] max-lg:hidden"
+            >
+               <Icons.chevronUpDuo
+                  className={cx(
+                     "size-6 shrink-0 text-foreground/75 transition-all duration-150",
+                     state.pressed ? "rotate-180" : "",
+                  )}
+               />
+            </Button>
+         )}
+      />
+   )
+}
+
 function ToggleArchived() {
    const params = Route.useParams()
    const search = Route.useSearch()
@@ -207,42 +243,6 @@ function ToggleArchived() {
             {search.archived ? "Показати усі" : "Показати архівовані"}
          </TooltipPopup>
       </Tooltip>
-   )
-}
-
-function ToggleAll() {
-   const queryOptions = useOrderQueryOptions()
-   const query = useQuery(queryOptions.list)
-   const data = query.data ?? []
-
-   const orderIds = data.map((item) => item.id)
-   const [expandedOrderIds, setExpandedOrderIds] = useAtom(expandedOrderIdsAtom)
-
-   return (
-      <Toggle
-         pressed={
-            expandedOrderIds.filter((id) => orderIds.includes(id)).length > 0
-         }
-         onPressedChange={(pressed) =>
-            !pressed ? setExpandedOrderIds([]) : setExpandedOrderIds(orderIds)
-         }
-         render={(props, state) => (
-            <Button
-               {...props}
-               variant={"ghost"}
-               kind={"icon"}
-               size={"xs"}
-               className="absolute left-[5px] max-lg:hidden"
-            >
-               <Icons.chevronUpDuo
-                  className={cx(
-                     "size-6 shrink-0 text-foreground/75 transition-all duration-150",
-                     state.pressed ? "rotate-180" : "",
-                  )}
-               />
-            </Button>
-         )}
-      />
    )
 }
 
@@ -411,53 +411,48 @@ function Search() {
             replace: true,
          })
       },
-      { minQuietPeriodMs: 350, reducer: (_acc, newQuery) => newQuery },
+      { minQuietPeriodMs: 300, reducer: (_acc, newQuery) => newQuery },
    )
 
+   const active = searching || (search.q && search.q.length > 0)
+
    return (
-      <>
-         {searching || (search.q && search.q.length > 0) ? (
-            <div className="lg:-mr-2 relative ml-auto flex max-w-[320px] items-center">
-               <Input
-                  autoFocus
-                  className={"h-9 border-b-0 pt-0 pr-10 md:h-9 md:pt-0"}
-                  defaultValue={search.q}
-                  placeholder="Шукати.."
-                  onChange={(e) => onChange.call(e.target.value)}
-               />
-               <Button
-                  variant={"ghost"}
-                  kind={"icon"}
-                  size={"sm"}
-                  className="absolute inset-y-0 right-0 my-auto"
-                  type="button"
-                  onClick={() => {
-                     navigate({
-                        to: ".",
-                        search: (prev) => ({
-                           ...prev,
-                           q: undefined,
-                        }),
-                     }).then(() =>
-                        queryClient.invalidateQueries(queryOptions.list),
-                     )
-                     setSearching(false)
-                  }}
-               >
-                  <Icons.xMark className="size-[18px]" />
-               </Button>
-            </div>
-         ) : (
-            <Button
-               onClick={() => setSearching(true)}
-               className="lg:-mr-2 ml-auto"
-               variant={"ghost"}
-               kind={"icon"}
-            >
+      <div className="lg:-mr-2 relative ml-auto flex h-9 max-w-[320px] items-center md:h-9">
+         {active ? (
+            <Input
+               autoFocus
+               className={"h-9 border-b-0 pt-0 pr-10 md:h-9 md:pt-0"}
+               defaultValue={search.q}
+               placeholder="Шукати.."
+               onChange={(e) => onChange.call(e.target.value)}
+            />
+         ) : null}
+         <Button
+            variant={"ghost"}
+            kind={"icon"}
+            size={"sm"}
+            className="absolute inset-y-0 right-0 my-auto"
+            type="button"
+            onClick={() => {
+               if (!active) return setSearching(true)
+
+               navigate({
+                  to: ".",
+                  search: (prev) => ({
+                     ...prev,
+                     q: undefined,
+                  }),
+               }).then(() => queryClient.invalidateQueries(queryOptions.list))
+               setSearching(false)
+            }}
+         >
+            {active ? (
+               <Icons.xMark className="size-[18px]" />
+            ) : (
                <Icons.search className="size-[18px]" />
-            </Button>
-         )}
-      </>
+            )}
+         </Button>
+      </div>
    )
 }
 
@@ -551,7 +546,7 @@ function OrderRow({
       >
          <CollapsibleTrigger
             render={<div />}
-            className="container relative grid grid-cols-2 grid-rows-[1fr_auto] gap-x-2.5 gap-y-1 py-2 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-2 lg:flex lg:py-[0.4rem]"
+            className="container relative grid grid-cols-2 grid-rows-[1fr_auto] gap-x-2.5 gap-y-1 py-2 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-1 lg:flex lg:py-[0.4rem]"
          >
             <div
                className="absolute"

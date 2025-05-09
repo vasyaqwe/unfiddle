@@ -45,11 +45,11 @@ export function useUpdateOrder({
             })
          },
          onSettled: (_, _2, input) => {
-            // queryClient.invalidateQueries(
-            //    trpc.workspace.summary.queryOptions({
-            //       id: auth.workspace.id,
-            //    }),
-            // )
+            queryClient.invalidateQueries(
+               trpc.workspace.summary.queryOptions({
+                  id: auth.workspace.id,
+               }),
+            )
             queryClient.invalidateQueries(queryOptions.list)
             if (input.deletedAt)
                return queryClient.invalidateQueries(queryOptions.listArchived)

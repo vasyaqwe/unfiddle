@@ -45,12 +45,12 @@ export function useDeleteOrder({
             })
          },
          onSettled: () => {
+            queryClient.invalidateQueries(
+               trpc.workspace.summary.queryOptions({
+                  id: auth.workspace.id,
+               }),
+            )
             queryClient.invalidateQueries(queryOptions.list)
-            // queryClient.invalidateQueries(
-            //    trpc.workspace.summary.queryOptions({
-            //       id: auth.workspace.id,
-            //    }),
-            // )
          },
       }),
    )

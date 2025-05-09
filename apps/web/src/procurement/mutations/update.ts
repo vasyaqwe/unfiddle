@@ -61,12 +61,12 @@ export function useUpdateProcurement({
             onError?.()
          },
          onSettled: () => {
+            queryClient.invalidateQueries(
+               trpc.workspace.summary.queryOptions({
+                  id: auth.workspace.id,
+               }),
+            )
             queryClient.invalidateQueries(queryOptions)
-            // queryClient.invalidateQueries(
-            //    trpc.workspace.summary.queryOptions({
-            //       id: auth.workspace.id,
-            //    }),
-            // )
          },
       }),
    )

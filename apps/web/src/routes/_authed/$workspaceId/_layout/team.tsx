@@ -115,6 +115,7 @@ function RouteComponent() {
                               <TableCell>
                                  <div className="flex items-center gap-1.5">
                                     <UserAvatar
+                                    size={24}
                                        className="-mt-px"
                                        user={member.user}
                                     />

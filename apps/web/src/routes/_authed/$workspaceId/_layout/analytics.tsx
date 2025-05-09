@@ -7,9 +7,9 @@ import {
 } from "@/routes/_authed/$workspaceId/-components/fake-data"
 import {
    Header,
+   HeaderBackButton,
    HeaderTitle,
    HeaderUserMenu,
-   HeaderWorkspaceMenu,
 } from "@/routes/_authed/$workspaceId/-components/header"
 import { trpc } from "@/trpc"
 import { Card, CardFooter, CardTitle } from "@ledgerblocks/ui/components/card"
@@ -58,7 +58,7 @@ function RouteComponent() {
    return (
       <>
          <Header>
-            <HeaderWorkspaceMenu />
+            <HeaderBackButton />
             <HeaderTitle>Аналітика</HeaderTitle>
             <HeaderUserMenu />
          </Header>

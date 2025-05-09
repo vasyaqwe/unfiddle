@@ -14,6 +14,7 @@ import {
    MenuTrigger,
 } from "@ledgerblocks/ui/components/menu"
 import { ScrollArea } from "@ledgerblocks/ui/components/scroll-area"
+import { cx } from "@ledgerblocks/ui/utils"
 import { Link, useParams, useSearch } from "@tanstack/react-router"
 
 export function SidebarContent() {
@@ -29,7 +30,10 @@ export function SidebarContent() {
                   <MenuTrigger
                      render={
                         <Button
-                           className="!gap-1.5 justify-start md:pl-0.5"
+                           className={cx(
+                              "!gap-1.5 justify-start",
+                              auth.workspace.image ? "md:pl-0.5" : "md:pl-1",
+                           )}
                            variant={"ghost"}
                            size={"lg"}
                         >
@@ -40,7 +44,7 @@ export function SidebarContent() {
                            <span className="line-clamp-1 py-px">
                               {auth.workspace.name}
                            </span>
-                           <Icons.chevronUpDown className="-mr-1 ml-auto size-4 shrink-0 text-foreground/75" />
+                           <Icons.chevronUpDown className="-mr-2 ml-auto size-4 shrink-0 text-foreground/75" />
                         </Button>
                      }
                   />
