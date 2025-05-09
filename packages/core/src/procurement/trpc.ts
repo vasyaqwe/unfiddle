@@ -1,8 +1,11 @@
-import { procurement } from "@ledgerblocks/core/procurement/schema"
+import {
+   procurement,
+   updateProcurementSchema,
+} from "@ledgerblocks/core/procurement/schema"
 import { t } from "@ledgerblocks/core/trpc/context"
 import { workspaceMemberMiddleware } from "@ledgerblocks/core/workspace/middleware"
 import { eq } from "drizzle-orm"
-import { createInsertSchema, createUpdateSchema } from "drizzle-zod"
+import { createInsertSchema } from "drizzle-zod"
 import { z } from "zod"
 
 export const procurementRouter = t.router({
@@ -14,28 +17,21 @@ export const procurementRouter = t.router({
             .extend({ workspaceId: z.string() }),
       )
       .mutation(async ({ ctx, input }) => {
-         await ctx.db.insert(procurement).values({
-            buyerId: ctx.user.id,
-            orderId: input.orderId,
-            quantity: input.quantity,
-            purchasePrice: input.purchasePrice,
-            note: input.note,
-         })
+         return await ctx.db
+            .insert(procurement)
+            .values({
+               buyerId: ctx.user.id,
+               orderId: input.orderId,
+               quantity: input.quantity,
+               purchasePrice: input.purchasePrice,
+               note: input.note,
+            })
+            .returning()
+            .get()
       }),
    update: t.procedure
       .use(workspaceMemberMiddleware)
-      .input(
-         createUpdateSchema(procurement)
-            .pick({
-               id: true,
-               note: true,
-               quantity: true,
-               status: true,
-               purchasePrice: true,
-            })
-            .required({ id: true })
-            .extend({ workspaceId: z.string() }),
-      )
+      .input(updateProcurementSchema)
       .mutation(async ({ ctx, input }) => {
          await ctx.db
             .update(procurement)

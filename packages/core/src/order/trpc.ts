@@ -2,6 +2,7 @@ import { orderAssigneeRouter } from "@ledgerblocks/core/order/assignee/trpc"
 import { orderFilterSchema } from "@ledgerblocks/core/order/filter"
 import {
    order,
+   orderAssignee,
    orderCounter,
    updateOrderSchema,
 } from "@ledgerblocks/core/order/schema"
@@ -95,6 +96,7 @@ export const orderRouter = t.router({
                         },
                      },
                   },
+                  orderBy: [desc(orderAssignee.createdAt)],
                },
                procurements: {
                   columns: {

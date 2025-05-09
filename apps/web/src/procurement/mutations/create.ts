@@ -1,8 +1,9 @@
 import { useAuth } from "@/auth/hooks"
+import { useOrderQueryOptions } from "@/order/queries"
+import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
-import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
+import type { Procurement } from "@ledgerblocks/core/procurement/types"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useSearch } from "@tanstack/react-router"
 import { toast } from "sonner"
 
 export function useCreateProcurement({
@@ -11,45 +12,23 @@ export function useCreateProcurement({
 }: { onMutate?: () => void; onError?: () => void } = {}) {
    const queryClient = useQueryClient()
    const auth = useAuth()
-   const search = useSearch({ strict: false })
+   const socket = useSocket()
+   const queryOptions = useOrderQueryOptions()
+   const create = useOptimisticCreateProcurement()
 
-   const queryOptions = trpc.order.list.queryOptions({
-      workspaceId: auth.workspace.id,
-      filter: search,
-   })
-
-   const mutateQueryData = ({
-      input,
-   }: {
-      input: RouterOutput["order"]["list"][number]["procurements"][number] & {
-         orderId: string
-      }
-   }) => {
-      queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
-         if (!oldData) return oldData
-         return oldData.map((item) => {
-            if (item.id === input.orderId)
-               return { ...item, procurements: [input, ...item.procurements] }
-            return item
-         })
-      })
-   }
-
-   const mutation = useMutation(
+   return useMutation(
       trpc.procurement.create.mutationOptions({
          onMutate: async (input) => {
-            await queryClient.cancelQueries(queryOptions)
+            await queryClient.cancelQueries(queryOptions.list)
 
-            const data = queryClient.getQueryData(queryOptions.queryKey)
+            const data = queryClient.getQueryData(queryOptions.list.queryKey)
 
-            mutateQueryData({
-               input: {
-                  ...input,
-                  id: crypto.randomUUID(),
-                  status: "pending",
-                  buyer: auth.user,
-                  note: input.note ?? "",
-               },
+            create({
+               ...input,
+               id: crypto.randomUUID(),
+               status: "pending",
+               buyer: auth.user,
+               note: input.note ?? "",
             })
 
             onMutate?.()
@@ -57,12 +36,22 @@ export function useCreateProcurement({
             return { data }
          },
          onError: (error, _data, context) => {
-            queryClient.setQueryData(queryOptions.queryKey, context?.data)
+            queryClient.setQueryData(queryOptions.list.queryKey, context?.data)
             toast.error("Ой-ой!", {
                description: error.message,
             })
 
             onError?.()
+         },
+         onSuccess: (procurement) => {
+            socket.procurement.send({
+               action: "create",
+               senderId: auth.user.id,
+               procurement: {
+                  ...procurement,
+                  buyer: auth.user,
+               },
+            })
          },
          onSettled: () => {
             queryClient.invalidateQueries(
@@ -70,13 +59,28 @@ export function useCreateProcurement({
                   id: auth.workspace.id,
                }),
             )
-            queryClient.invalidateQueries(queryOptions)
+            queryClient.invalidateQueries(queryOptions.list)
          },
       }),
    )
+}
 
-   return {
-      mutateQueryData,
-      ...mutation,
+export function useOptimisticCreateProcurement() {
+   const queryClient = useQueryClient()
+   const queryOptions = useOrderQueryOptions()
+
+   return (
+      input: Procurement & {
+         orderId: string
+      },
+   ) => {
+      queryClient.setQueryData(queryOptions.list.queryKey, (oldData) => {
+         if (!oldData) return oldData
+         return oldData.map((item) => {
+            if (item.id === input.orderId)
+               return { ...item, procurements: [input, ...item.procurements] }
+            return item
+         })
+      })
    }
 }

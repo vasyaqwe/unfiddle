@@ -1,8 +1,9 @@
 import { useAuth } from "@/auth/hooks"
+import { useOrderQueryOptions } from "@/order/queries"
+import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
-import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
+import type { Procurement } from "@ledgerblocks/core/procurement/types"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useSearch } from "@tanstack/react-router"
 import { toast } from "sonner"
 
 export function useUpdateProcurement({
@@ -11,21 +12,56 @@ export function useUpdateProcurement({
 }: { onMutate?: () => void; onError?: () => void } = {}) {
    const queryClient = useQueryClient()
    const auth = useAuth()
-   const search = useSearch({ strict: false })
+   const socket = useSocket()
+   const queryOptions = useOrderQueryOptions()
+   const update = useOptimisticUpdateProcurement()
 
-   const queryOptions = trpc.order.list.queryOptions({
-      workspaceId: auth.workspace.id,
-      filter: search,
-   })
+   return useMutation(
+      trpc.procurement.update.mutationOptions({
+         onMutate: async (input) => {
+            await queryClient.cancelQueries(queryOptions.list)
 
-   const mutateQueryData = ({
-      input,
-   }: {
-      input: Partial<
-         RouterOutput["order"]["list"][number]["procurements"][number]
-      >
-   }) => {
-      queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
+            const data = queryClient.getQueryData(queryOptions.list.queryKey)
+
+            update(input)
+
+            onMutate?.()
+
+            return { data }
+         },
+         onError: (error, _data, context) => {
+            queryClient.setQueryData(queryOptions.list.queryKey, context?.data)
+            toast.error("Ой-ой!", {
+               description: error.message,
+            })
+
+            onError?.()
+         },
+         onSuccess: (_, procurement) => {
+            socket.procurement.send({
+               action: "update",
+               senderId: auth.user.id,
+               procurement,
+            })
+         },
+         onSettled: () => {
+            queryClient.invalidateQueries(
+               trpc.workspace.summary.queryOptions({
+                  id: auth.workspace.id,
+               }),
+            )
+            queryClient.invalidateQueries(queryOptions.list)
+         },
+      }),
+   )
+}
+
+export function useOptimisticUpdateProcurement() {
+   const queryClient = useQueryClient()
+   const queryOptions = useOrderQueryOptions()
+
+   return (input: Partial<Procurement>) => {
+      queryClient.setQueryData(queryOptions.list.queryKey, (oldData) => {
          if (!oldData) return oldData
          return oldData.map((item) => ({
             ...item,
@@ -35,44 +71,5 @@ export function useUpdateProcurement({
             }),
          }))
       })
-   }
-
-   const mutation = useMutation(
-      trpc.procurement.update.mutationOptions({
-         onMutate: async (input) => {
-            await queryClient.cancelQueries(queryOptions)
-
-            const data = queryClient.getQueryData(queryOptions.queryKey)
-
-            mutateQueryData({
-               input,
-            })
-
-            onMutate?.()
-
-            return { data }
-         },
-         onError: (error, _data, context) => {
-            queryClient.setQueryData(queryOptions.queryKey, context?.data)
-            toast.error("Ой-ой!", {
-               description: error.message,
-            })
-
-            onError?.()
-         },
-         onSettled: () => {
-            queryClient.invalidateQueries(
-               trpc.workspace.summary.queryOptions({
-                  id: auth.workspace.id,
-               }),
-            )
-            queryClient.invalidateQueries(queryOptions)
-         },
-      }),
-   )
-
-   return {
-      mutateQueryData,
-      ...mutation,
    }
 }

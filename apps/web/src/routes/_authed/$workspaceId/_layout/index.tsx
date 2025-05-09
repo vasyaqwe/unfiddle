@@ -40,6 +40,7 @@ import {
 } from "@ledgerblocks/core/order/constants"
 import { orderFilterSchema } from "@ledgerblocks/core/order/filter"
 import { PROCUREMENT_STATUSES } from "@ledgerblocks/core/procurement/constants"
+import type { Procurement } from "@ledgerblocks/core/procurement/types"
 import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
 import {
    AvatarStack,
@@ -548,6 +549,97 @@ function OrderRow({
             render={<div />}
             className="container relative grid grid-cols-2 grid-rows-[1fr_auto] gap-x-2.5 gap-y-1 py-2 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-1 lg:flex lg:py-[0.4rem]"
          >
+            <div className="flex items-center gap-2">
+               <CollapsibleTriggerIcon className="left-2.5 lg:absolute lg:mb-px" />
+               <SeverityIcon
+                  severity={item.severity}
+                  className="mr-[2px] opacity-60 transition-opacity duration-75 group-hover/severity:opacity-90 group-data-[popup-open]/severity:opacity-90 lg:mb-[2px]"
+               />
+               <p className="whitespace-nowrap font-medium font-mono text-foreground/75 text-sm">
+                  №{String(item.shortId).padStart(3, "0")}
+               </p>
+               <AlignedColumn
+                  id={`o_creator`}
+                  className="flex items-center gap-[3px] whitespace-nowrap font-medium text-sm"
+               >
+                  <UserAvatar
+                     size={17}
+                     user={item.creator}
+                     className="inline-block"
+                  />
+                  <span className="whitespace-nowrap">{item.creator.name}</span>
+               </AlignedColumn>
+            </div>
+            <p className="lg:!max-w-[80%] col-span-2 col-start-1 row-start-2 mt-px w-[calc(100%-36px)] break-normal font-semibold">
+               {item.name}
+            </p>
+            <div className="ml-auto flex items-center gap-3.5">
+               <AvatarStack className="mt-px max-md:hidden">
+                  {item.assignees.map((assignee) => (
+                     <AvatarStackItem key={assignee.user.id}>
+                        <Tooltip delay={0}>
+                           <TooltipTrigger
+                              render={
+                                 <UserAvatar
+                                    size={24}
+                                    user={assignee.user}
+                                 />
+                              }
+                           />
+                           <TooltipPopup>{assignee.user.name}</TooltipPopup>
+                        </Tooltip>
+                     </AvatarStackItem>
+                  ))}
+               </AvatarStack>
+               <Combobox
+                  value={item.status}
+                  onValueChange={(status) =>
+                     update.mutate({
+                        id: item.id,
+                        workspaceId: params.workspaceId,
+                        status: status as never,
+                     })
+                  }
+               >
+                  <ComboboxTrigger
+                     onClick={(e) => {
+                        e.stopPropagation()
+                     }}
+                     className={" cursor-pointer"}
+                  >
+                     <Badge
+                        style={{
+                           background: `linear-gradient(140deg, ${from}, ${to})`,
+                        }}
+                     >
+                        {ORDER_STATUSES_TRANSLATION[item.status]}{" "}
+                        {item.status === "successful"
+                           ? `(${formatCurrency(totalProfit)})`
+                           : ""}
+                     </Badge>
+                  </ComboboxTrigger>
+                  <ComboboxPopup
+                     align="end"
+                     onClick={(e) => {
+                        e.stopPropagation()
+                     }}
+                  >
+                     <ComboboxInput />
+                     {ORDER_STATUSES.map((s) => (
+                        <ComboboxItem
+                           key={s}
+                           value={s}
+                           keywords={[ORDER_STATUSES_TRANSLATION[s]]}
+                        >
+                           {ORDER_STATUSES_TRANSLATION[s]}
+                        </ComboboxItem>
+                     ))}
+                  </ComboboxPopup>
+               </Combobox>
+            </div>
+            <p className="min-w-[60px] text-foreground/75 max-lg:hidden">
+               {formatOrderDate(item.createdAt)}
+            </p>
             <div
                className="absolute"
                onClick={(e) => e.stopPropagation()}
@@ -640,97 +732,6 @@ function OrderRow({
                   </AlertDialogPopup>
                </AlertDialog>
             </div>
-            <div className="flex items-center gap-2">
-               <CollapsibleTriggerIcon className="left-2.5 lg:absolute lg:mb-px" />
-               <SeverityIcon
-                  severity={item.severity}
-                  className="mr-[2px] opacity-60 transition-opacity duration-75 group-hover/severity:opacity-90 group-data-[popup-open]/severity:opacity-90 lg:mb-[2px]"
-               />
-               <p className="whitespace-nowrap font-medium font-mono text-foreground/75 text-sm">
-                  №{String(item.shortId).padStart(3, "0")}
-               </p>
-               <AlignedColumn
-                  id={`o_creator`}
-                  className="flex items-center gap-[3px] whitespace-nowrap font-medium text-sm"
-               >
-                  <UserAvatar
-                     size={17}
-                     user={item.creator}
-                     className="inline-block"
-                  />
-                  <span className="whitespace-nowrap">{item.creator.name}</span>
-               </AlignedColumn>
-            </div>
-            <p className="lg:!max-w-[80%] col-span-2 col-start-1 row-start-2 mt-px w-[calc(100%-36px)] break-normal font-semibold">
-               {item.name}
-            </p>
-            <div className="ml-auto flex items-center gap-3.5">
-               <AvatarStack className="mt-px max-md:hidden">
-                  {item.assignees.map((assignee) => (
-                     <AvatarStackItem key={assignee.user.id}>
-                        <Tooltip delay={0}>
-                           <TooltipTrigger
-                              render={
-                                 <UserAvatar
-                                    size={24}
-                                    user={assignee.user}
-                                 />
-                              }
-                           />
-                           <TooltipPopup>{assignee.user.name}</TooltipPopup>
-                        </Tooltip>
-                     </AvatarStackItem>
-                  ))}
-               </AvatarStack>
-               <Combobox
-                  value={item.status}
-                  onValueChange={(status) =>
-                     update.mutate({
-                        id: item.id,
-                        workspaceId: params.workspaceId,
-                        status: status as never,
-                     })
-                  }
-               >
-                  <ComboboxTrigger
-                     onClick={(e) => {
-                        e.stopPropagation()
-                     }}
-                     className={" cursor-pointer"}
-                  >
-                     <Badge
-                        style={{
-                           background: `linear-gradient(140deg, ${from}, ${to})`,
-                        }}
-                     >
-                        {ORDER_STATUSES_TRANSLATION[item.status]}{" "}
-                        {item.status === "successful"
-                           ? `(${formatCurrency(totalProfit)})`
-                           : ""}
-                     </Badge>
-                  </ComboboxTrigger>
-                  <ComboboxPopup
-                     align="end"
-                     onClick={(e) => {
-                        e.stopPropagation()
-                     }}
-                  >
-                     <ComboboxInput />
-                     {ORDER_STATUSES.map((s) => (
-                        <ComboboxItem
-                           key={s}
-                           value={s}
-                           keywords={[ORDER_STATUSES_TRANSLATION[s]]}
-                        >
-                           {ORDER_STATUSES_TRANSLATION[s]}
-                        </ComboboxItem>
-                     ))}
-                  </ComboboxPopup>
-               </Combobox>
-            </div>
-            <p className="min-w-[60px] text-foreground/75 max-lg:hidden">
-               {formatOrderDate(item.createdAt)}
-            </p>
             <Menu>
                <MenuTrigger
                   ref={menuTriggerRef}
@@ -897,7 +898,7 @@ function ProcurementRow({
    sellingPrice,
    orderId,
 }: {
-   item: RouterOutput["order"]["list"][number]["procurements"][number]
+   item: Procurement
    sellingPrice: number
    orderId: string
 }) {
@@ -909,6 +910,7 @@ function ProcurementRow({
    const deleteItem = useDeleteProcurement()
 
    const [editOpen, setEditOpen] = React.useState(false)
+   const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false)
    const menuTriggerRef = React.useRef<HTMLButtonElement>(null)
 
    return (
@@ -999,12 +1001,51 @@ function ProcurementRow({
             )}
             {formatCurrency(profit)}{" "}
          </p>
-         <EditProcurement
-            procurement={item}
-            open={editOpen}
-            setOpen={setEditOpen}
-            finalFocus={menuTriggerRef}
-         />
+         <div
+            className="absolute"
+            onClick={(e) => e.stopPropagation()}
+         >
+            <EditProcurement
+               procurement={item}
+               open={editOpen}
+               setOpen={setEditOpen}
+               finalFocus={menuTriggerRef}
+            />
+            <AlertDialog
+               open={confirmDeleteOpen}
+               onOpenChange={setConfirmDeleteOpen}
+            >
+               <AlertDialogPopup
+                  finalFocus={menuTriggerRef}
+                  onClick={(e) => e.stopPropagation()}
+               >
+                  <AlertDialogTitle>Видалити закупівлю?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                     Буде видалена назавжди.
+                  </AlertDialogDescription>
+                  <AlertDialogFooter>
+                     <AlertDialogClose
+                        render={<Button variant="secondary">Відмінити</Button>}
+                     />
+                     <AlertDialogClose
+                        render={
+                           <Button
+                              variant={"destructive"}
+                              onClick={() =>
+                                 deleteItem.mutate({
+                                    id: item.id,
+                                    workspaceId: params.workspaceId,
+                                 })
+                              }
+                           >
+                              Видалити
+                           </Button>
+                        }
+                     />
+                  </AlertDialogFooter>
+               </AlertDialogPopup>
+            </AlertDialog>
+         </div>
          <Menu>
             <MenuTrigger
                ref={menuTriggerRef}
@@ -1034,13 +1075,7 @@ function ProcurementRow({
                </MenuItem>
                <MenuItem
                   destructive
-                  onClick={() => {
-                     if (confirm(`Видалити закупівлю?`))
-                        deleteItem.mutate({
-                           id: item.id,
-                           workspaceId: params.workspaceId,
-                        })
-                  }}
+                  onClick={() => setConfirmDeleteOpen(true)}
                >
                   <Icons.trash />
                   Видалити

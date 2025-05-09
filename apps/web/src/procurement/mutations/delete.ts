@@ -1,8 +1,9 @@
 import { useAuth } from "@/auth/hooks"
+import { useOrderQueryOptions } from "@/order/queries"
+import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import type { RouterInput } from "@ledgerblocks/core/trpc/types"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useSearch } from "@tanstack/react-router"
 import { toast } from "sonner"
 
 export function useDeleteProcurement({
@@ -11,49 +12,37 @@ export function useDeleteProcurement({
 }: { onMutate?: () => void; onError?: () => void } = {}) {
    const queryClient = useQueryClient()
    const auth = useAuth()
-   const search = useSearch({ strict: false })
+   const socket = useSocket()
+   const queryOptions = useOrderQueryOptions()
+   const deleteItem = useOptimisticDeleteProcurement()
 
-   const queryOptions = trpc.order.list.queryOptions({
-      workspaceId: auth.workspace.id,
-      filter: search,
-   })
-
-   const mutateQueryData = ({
-      input,
-   }: {
-      input: RouterInput["procurement"]["delete"]
-   }) => {
-      queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
-         if (!oldData) return oldData
-         return oldData.map((item) => ({
-            ...item,
-            procurements: item.procurements.filter((p) => p.id !== input.id),
-         }))
-      })
-   }
-
-   const mutation = useMutation(
+   return useMutation(
       trpc.procurement.delete.mutationOptions({
          onMutate: async (input) => {
-            await queryClient.cancelQueries(queryOptions)
+            await queryClient.cancelQueries(queryOptions.list)
 
-            const data = queryClient.getQueryData(queryOptions.queryKey)
+            const data = queryClient.getQueryData(queryOptions.list.queryKey)
 
-            mutateQueryData({
-               input,
-            })
+            deleteItem(input)
 
             onMutate?.()
 
             return { data }
          },
          onError: (error, _data, context) => {
-            queryClient.setQueryData(queryOptions.queryKey, context?.data)
+            queryClient.setQueryData(queryOptions.list.queryKey, context?.data)
             toast.error("Ой-ой!", {
                description: error.message,
             })
 
             onError?.()
+         },
+         onSuccess: (_, procurement) => {
+            socket.procurement.send({
+               action: "delete",
+               senderId: auth.user.id,
+               procurementId: procurement.id,
+            })
          },
          onSettled: () => {
             queryClient.invalidateQueries(
@@ -61,13 +50,23 @@ export function useDeleteProcurement({
                   id: auth.workspace.id,
                }),
             )
-            queryClient.invalidateQueries(queryOptions)
+            queryClient.invalidateQueries(queryOptions.list)
          },
       }),
    )
+}
 
-   return {
-      mutateQueryData,
-      ...mutation,
+export function useOptimisticDeleteProcurement() {
+   const queryClient = useQueryClient()
+   const queryOptions = useOrderQueryOptions()
+
+   return (input: RouterInput["procurement"]["delete"]) => {
+      queryClient.setQueryData(queryOptions.list.queryKey, (oldData) => {
+         if (!oldData) return oldData
+         return oldData.map((item) => ({
+            ...item,
+            procurements: item.procurements.filter((p) => p.id !== input.id),
+         }))
+      })
    }
 }

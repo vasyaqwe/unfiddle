@@ -1,5 +1,6 @@
 import invariant from "@ledgerblocks/core/invariant"
 import type { OrderEvent } from "@ledgerblocks/core/order/types"
+import type { ProcurementEvent } from "@ledgerblocks/core/procurement/types"
 import type PartySocket from "partysocket"
 import * as React from "react"
 
@@ -16,6 +17,10 @@ export function useSocket() {
    return {
       order: {
          send: (event: OrderEvent) => socket.order?.send(JSON.stringify(event)),
+      },
+      procurement: {
+         send: (event: ProcurementEvent) =>
+            socket.procurement?.send(JSON.stringify(event)),
       },
    }
 }

@@ -1,5 +1,4 @@
 import { useAuth } from "@/auth/hooks"
-import { useDelayedValue } from "@/interactions/use-delayed-value"
 import { useCreateProcurement } from "@/procurement/mutations/create"
 import { Button } from "@ledgerblocks/ui/components/button"
 import {
@@ -32,8 +31,6 @@ export function CreateProcurement({
       onMutate: () => setOpen(false),
       onError: () => setOpen(true),
    })
-
-   const pending = useDelayedValue(mutation.isPending, 150)
 
    return (
       <Drawer
@@ -106,13 +103,7 @@ export function CreateProcurement({
                      placeholder="Додайте комент"
                   />
                </Field>
-               <Button
-                  pending={pending}
-                  disabled={pending}
-                  className="mt-auto lg:mr-auto"
-               >
-                  Додати
-               </Button>
+               <Button className="mt-auto lg:mr-auto">Додати</Button>
             </form>
          </DrawerPopup>
       </Drawer>

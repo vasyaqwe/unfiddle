@@ -1,6 +1,6 @@
 import { useAuth } from "@/auth/hooks"
 import { useUpdateProcurement } from "@/procurement/mutations/update"
-import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
+import type { Procurement } from "@ledgerblocks/core/procurement/types"
 import { Button } from "@ledgerblocks/ui/components/button"
 import {
    Drawer,
@@ -26,7 +26,7 @@ export function EditProcurement({
    open,
    setOpen,
 }: {
-   procurement: RouterOutput["order"]["list"][number]["procurements"][number]
+   procurement: Procurement
    finalFocus: React.RefObject<HTMLButtonElement | null>
    open: boolean
    setOpen: (open: boolean) => void
