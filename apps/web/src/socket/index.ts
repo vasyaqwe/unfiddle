@@ -1,7 +1,12 @@
-import { SocketContext } from "@/socket/context"
 import invariant from "@ledgerblocks/core/invariant"
 import type { OrderEvent } from "@ledgerblocks/core/order/types"
+import type PartySocket from "partysocket"
 import * as React from "react"
+
+export const SocketContext = React.createContext<Record<
+   string,
+   PartySocket
+> | null>(null)
 
 export function useSocket() {
    const socket = React.use(SocketContext)

@@ -4,7 +4,7 @@ import { PendingComponent } from "@/layout/components/pending-component"
 import { Sidebar } from "@/layout/components/sidebar"
 import { BottomNavigation } from "@/routes/_authed/$workspaceId/-components/bottom-navigation"
 import { SidebarContent } from "@/routes/_authed/$workspaceId/-components/sidebar"
-import { SocketProvider } from "@/socket/context"
+import { SocketProvider } from "@/socket/provider"
 import { trpc } from "@/trpc"
 import {
    Outlet,

@@ -1,6 +1,6 @@
 import { useAuth } from "@/auth/hooks"
 import { useOrderQueryOptions } from "@/order/queries"
-import { useSocket } from "@/socket/hooks"
+import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
