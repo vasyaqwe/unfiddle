@@ -14,6 +14,7 @@ import {
 import { useDeleteOrder } from "@/order/mutations/delete"
 import { useUpdateOrder } from "@/order/mutations/update"
 import { useOrderQueryOptions } from "@/order/queries"
+import { expandedOrderIdsAtom } from "@/order/store"
 import { formatOrderDate, orderStatusGradient } from "@/order/utils"
 import { CreateProcurement } from "@/procurement/components/create-procurement"
 import { EditProcurement } from "@/procurement/components/edit-procurement"
@@ -79,6 +80,7 @@ import {
    MenuSubmenuTrigger,
    MenuTrigger,
 } from "@ledgerblocks/ui/components/menu"
+import { ProfitArrow } from "@ledgerblocks/ui/components/profit-arrow"
 import { Separator } from "@ledgerblocks/ui/components/separator"
 import {
    Tooltip,
@@ -86,21 +88,11 @@ import {
    TooltipTrigger,
 } from "@ledgerblocks/ui/components/tooltip"
 import { cx } from "@ledgerblocks/ui/utils"
-import {
-   keepPreviousData,
-   useQuery,
-   useQueryClient,
-} from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useAtom } from "jotai"
-import { atomWithStorage } from "jotai/utils"
 import * as React from "react"
 import * as R from "remeda"
-
-const collapsiblesStateAtom = atomWithStorage<Record<string, boolean>>(
-   "collapsibles_open_states",
-   {},
-)
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/")({
    component: RouteComponent,
@@ -117,12 +109,147 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/")({
 })
 
 function RouteComponent() {
-   const queryClient = useQueryClient()
+   const auth = useAuth()
+
+   const queryOptions = useOrderQueryOptions()
+   const query = useQuery(queryOptions.list)
+   const data = query.data ?? []
+
+   return (
+      <>
+         <Header>
+            <HeaderWorkspaceMenu />
+            <HeaderTitle className="line-clamp-1">
+               {auth.workspace.name}
+            </HeaderTitle>
+            <HeaderUserMenu />
+         </Header>
+         <MainScrollArea
+            className="pt-0 lg:pt-0"
+            container={false}
+         >
+            <CreateOrder>
+               <DrawerTrigger
+                  render={
+                     <Button className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-[10] overflow-visible shadow-md md:right-8 md:bottom-8 md:h-9 md:px-3">
+                        <Icons.plus className="md:size-6" />
+                        Замовлення
+                     </Button>
+                  }
+               />
+            </CreateOrder>
+            <div className="mb-16">
+               <div className="container sticky top-0 z-[5] flex min-h-[44px] items-center gap-1 border-primary-5 border-b bg-background shadow-xs/4">
+                  <ToggleAll />
+                  <ToggleArchived />
+                  <FilterMenu />
+                  <Search />
+               </div>
+               {query.isPending ? null : query.isError ? (
+                  <ErrorComponent error={query.error} />
+               ) : !data || data.length === 0 ? (
+                  <Empty />
+               ) : (
+                  <div className={"divide-y divide-primary-5"}>
+                     {data.map((item) => (
+                        <OrderRow
+                           key={item.id}
+                           item={item}
+                        />
+                     ))}
+                  </div>
+               )}
+            </div>
+         </MainScrollArea>
+      </>
+   )
+}
+
+function ToggleArchived() {
    const params = Route.useParams()
    const search = Route.useSearch()
    const navigate = useNavigate()
-   const auth = useAuth()
 
+   return (
+      <Tooltip>
+         <TooltipTrigger
+            render={
+               <Toggle
+                  pressed={!!search.archived}
+                  onPressedChange={(archived) => {
+                     navigate({
+                        to: ".",
+                        params,
+                        search: (prev) => ({
+                           ...prev,
+                           archived,
+                        }),
+                     })
+                  }}
+                  render={(props, state) => (
+                     <Button
+                        {...props}
+                        kind={"icon"}
+                        variant={"ghost"}
+                        className="-ml-1.5"
+                     >
+                        {state.pressed ? (
+                           <Icons.arrowLeft className="size-5" />
+                        ) : (
+                           <Icons.archive className="size-5" />
+                        )}
+                     </Button>
+                  )}
+               />
+            }
+         />
+         <TooltipPopup>
+            {search.archived ? "Показати усі" : "Показати архівовані"}
+         </TooltipPopup>
+      </Tooltip>
+   )
+}
+
+function ToggleAll() {
+   const queryOptions = useOrderQueryOptions()
+   const query = useQuery(queryOptions.list)
+   const data = query.data ?? []
+
+   const orderIds = data.map((item) => item.id)
+   const [expandedOrderIds, setExpandedOrderIds] = useAtom(expandedOrderIdsAtom)
+
+   return (
+      <Toggle
+         pressed={
+            expandedOrderIds.filter((id) => orderIds.includes(id)).length > 0
+         }
+         onPressedChange={(pressed) =>
+            !pressed ? setExpandedOrderIds([]) : setExpandedOrderIds(orderIds)
+         }
+         render={(props, state) => (
+            <Button
+               {...props}
+               variant={"ghost"}
+               kind={"icon"}
+               size={"xs"}
+               className="absolute left-[5px] max-lg:hidden"
+            >
+               <Icons.chevronUpDuo
+                  className={cx(
+                     "size-6 shrink-0 text-foreground/75 transition-all duration-150",
+                     state.pressed ? "rotate-180" : "",
+                  )}
+               />
+            </Button>
+         )}
+      />
+   )
+}
+
+function FilterMenu() {
+   const queryClient = useQueryClient()
+   const search = Route.useSearch()
+   const navigate = useNavigate()
    const queryOptions = useOrderQueryOptions()
    const query = useQuery(queryOptions.list)
    const data = query.data ?? []
@@ -150,9 +277,130 @@ function RouteComponent() {
       .filter((value) => Array.isArray(value))
       .reduce((total, arr) => total + arr.length, 0)
 
+   const creators = Array.from(
+      new Map(data.map((item) => [item.creator.id, item.creator])).values(),
+   )
+
+   const removeFilter = () => {
+      navigate({
+         to: ".",
+         search: (prev) => ({
+            ...prev,
+            status: undefined,
+            severity: undefined,
+            creator: undefined,
+         }),
+      }).then(() => queryClient.invalidateQueries(queryOptions.list))
+   }
+
+   return (
+      <>
+         <Menu>
+            <MenuTrigger
+               render={
+                  <Button
+                     variant={"ghost"}
+                     size={"sm"}
+                  >
+                     <Icons.filter className="size-5" />
+                     Фільтр
+                  </Button>
+               }
+            />
+            <MenuPopup align="start">
+               <Menu>
+                  <MenuSubmenuTrigger>
+                     <Icons.circle />
+                     Статус
+                  </MenuSubmenuTrigger>
+                  <MenuPopup className={"max-h-56 overflow-y-auto"}>
+                     {ORDER_STATUSES.map((status) => (
+                        <MenuCheckboxItem
+                           checked={search.status?.includes(status) ?? false}
+                           onCheckedChange={(checked) =>
+                              onFilterChange("status", status, checked)
+                           }
+                           key={status}
+                        >
+                           {ORDER_STATUSES_TRANSLATION[status]}
+                        </MenuCheckboxItem>
+                     ))}
+                  </MenuPopup>
+               </Menu>
+               <Menu>
+                  <MenuSubmenuTrigger>
+                     <SeverityIcon
+                        className="!w-[1.13rem] md:!w-4 !mx-0.5"
+                        severity="high"
+                     />
+                     Пріорітет
+                  </MenuSubmenuTrigger>
+                  <MenuPopup>
+                     {ORDER_SEVERITIES.map((severity) => (
+                        <MenuCheckboxItem
+                           checked={
+                              search.severity?.includes(severity) ?? false
+                           }
+                           onCheckedChange={(checked) =>
+                              onFilterChange("severity", severity, checked)
+                           }
+                           key={severity}
+                        >
+                           {ORDER_SEVERITIES_TRANSLATION[severity]}
+                        </MenuCheckboxItem>
+                     ))}
+                  </MenuPopup>
+               </Menu>
+               <Menu>
+                  <MenuSubmenuTrigger>
+                     <Icons.user />
+                     Менеджер
+                  </MenuSubmenuTrigger>
+                  <MenuPopup>
+                     {creators.map((creator) => (
+                        <MenuCheckboxItem
+                           checked={
+                              search.creator?.includes(creator.id) ?? false
+                           }
+                           onCheckedChange={(checked) =>
+                              onFilterChange("creator", creator.id, checked)
+                           }
+                           key={creator.id}
+                        >
+                           {creator.name}
+                        </MenuCheckboxItem>
+                     ))}
+                  </MenuPopup>
+               </Menu>
+            </MenuPopup>
+         </Menu>
+
+         {selectedLength === 0 ? null : (
+            <Badge className="overflow-hidden pr-0">
+               {selectedLength} обрано
+               <Button
+                  variant={"ghost"}
+                  size={"sm"}
+                  kind={"icon"}
+                  onClick={removeFilter}
+                  className="rounded-none"
+               >
+                  <Icons.xMark className="size-4" />
+               </Button>
+            </Badge>
+         )}
+      </>
+   )
+}
+
+function Search() {
+   const queryClient = useQueryClient()
+   const search = Route.useSearch()
+   const navigate = useNavigate()
+   const queryOptions = useOrderQueryOptions()
    const [searching, setSearching] = React.useState(false)
 
-   const onSearch = R.funnel<[string], void>(
+   const onChange = R.funnel<[string], void>(
       (query) => {
          navigate({
             to: ".",
@@ -166,323 +414,101 @@ function RouteComponent() {
       { minQuietPeriodMs: 350, reducer: (_acc, newQuery) => newQuery },
    )
 
-   const removeFilter = () => {
-      navigate({ to: "." }).then(() =>
-         queryClient.invalidateQueries(
-            trpc.order.list.queryOptions(
-               {
-                  workspaceId: params.workspaceId,
-                  filter: {},
-               },
-               {
-                  placeholderData: keepPreviousData,
-               },
-            ),
-         ),
-      )
-      setSearching(false)
-   }
-
-   const [states, setStates] = useAtom(collapsiblesStateAtom)
-
-   const creators = Array.from(
-      new Map(data.map((item) => [item.creator.id, item.creator])).values(),
-   )
-
    return (
       <>
-         <Header>
-            <HeaderWorkspaceMenu />
-            <HeaderTitle className="line-clamp-1">
-               {auth.workspace.name}
-            </HeaderTitle>
-            <HeaderUserMenu />
-         </Header>
-         <MainScrollArea
-            className="pt-0 lg:pt-0"
-            container={false}
-         >
-            <CreateOrder>
-               <DrawerTrigger
-                  render={
-                     <Button className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-[10] overflow-visible shadow-md md:right-8 md:bottom-8 md:h-9 md:px-3">
-                        <Icons.plus className="md:size-6" />
-                        Замовлення
-                     </Button>
-                  }
+         {searching || (search.q && search.q.length > 0) ? (
+            <div className="lg:-mr-2 relative ml-auto flex max-w-[320px] items-center">
+               <Input
+                  autoFocus
+                  className={"h-9 border-b-0 pt-0 pr-10 md:h-9 md:pt-0"}
+                  defaultValue={search.q}
+                  placeholder="Шукати.."
+                  onChange={(e) => onChange.call(e.target.value)}
                />
-            </CreateOrder>
-            <div className="mb-16">
-               <div className="container sticky top-0 z-[5] flex min-h-[44px] items-center gap-1 border-primary-5 border-b bg-background shadow-xs/4">
-                  <Button
-                     variant={"ghost"}
-                     kind={"icon"}
-                     size={"xs"}
-                     className="absolute left-[5px] max-lg:hidden"
-                     onClick={() =>
-                        Object.keys(states).length === 0 ||
-                        Object.values(states).every((v) => !v)
-                           ? setStates(
-                                data.reduce(
-                                   (acc: Record<string, boolean>, item) => {
-                                      acc[item.id] = true
-                                      return acc
-                                   },
-                                   {},
-                                ),
-                             )
-                           : setStates({})
-                     }
-                  >
-                     <Icons.chevronUpDuo
-                        className={cx(
-                           "size-6 shrink-0 text-foreground/75 transition-all duration-150",
-                           Object.values(states).every((v) => !v)
-                              ? ""
-                              : Object.keys(states).length !== 0
-                                ? "rotate-180"
-                                : "",
-                        )}
-                     />
-                  </Button>
-                  <Tooltip>
-                     <TooltipTrigger
-                        render={
-                           <Toggle
-                              pressed={!!search.archived}
-                              onPressedChange={(pressed) => {
-                                 navigate({
-                                    to: ".",
-                                    params,
-                                    search: (prev) => ({
-                                       ...prev,
-                                       archived: pressed,
-                                    }),
-                                 })
-                              }}
-                              render={(props, state) => (
-                                 <Button
-                                    {...props}
-                                    kind={"icon"}
-                                    variant={"ghost"}
-                                    className="-ml-1.5"
-                                 >
-                                    {state.pressed ? (
-                                       <Icons.arrowLeft className="size-5" />
-                                    ) : (
-                                       <Icons.archive className="size-5" />
-                                    )}
-                                 </Button>
-                              )}
-                           />
-                        }
-                     />
-                     <TooltipPopup>
-                        {search.archived
-                           ? "Показати усі"
-                           : "Показати архівовані"}
-                     </TooltipPopup>
-                  </Tooltip>
-                  <Menu>
-                     <MenuTrigger
-                        render={
-                           <Button
-                              variant={"ghost"}
-                              size={"sm"}
-                           >
-                              <Icons.filter className="size-5" />
-                              Фільтр
-                           </Button>
-                        }
-                     />
-                     <MenuPopup align="start">
-                        <Menu>
-                           <MenuSubmenuTrigger>
-                              <Icons.circle />
-                              Статус
-                           </MenuSubmenuTrigger>
-                           <MenuPopup className={"max-h-56 overflow-y-auto"}>
-                              {ORDER_STATUSES.map((status) => (
-                                 <MenuCheckboxItem
-                                    checked={
-                                       search.status?.includes(status) ?? false
-                                    }
-                                    onCheckedChange={(checked) =>
-                                       onFilterChange("status", status, checked)
-                                    }
-                                    key={status}
-                                 >
-                                    {ORDER_STATUSES_TRANSLATION[status]}
-                                 </MenuCheckboxItem>
-                              ))}
-                           </MenuPopup>
-                        </Menu>
-                        <Menu>
-                           <MenuSubmenuTrigger>
-                              <SeverityIcon
-                                 className="!w-[1.13rem] md:!w-4 !mx-0.5"
-                                 severity="high"
-                              />
-                              Пріорітет
-                           </MenuSubmenuTrigger>
-                           <MenuPopup>
-                              {ORDER_SEVERITIES.map((severity) => (
-                                 <MenuCheckboxItem
-                                    checked={
-                                       search.severity?.includes(severity) ??
-                                       false
-                                    }
-                                    onCheckedChange={(checked) =>
-                                       onFilterChange(
-                                          "severity",
-                                          severity,
-                                          checked,
-                                       )
-                                    }
-                                    key={severity}
-                                 >
-                                    {ORDER_SEVERITIES_TRANSLATION[severity]}
-                                 </MenuCheckboxItem>
-                              ))}
-                           </MenuPopup>
-                        </Menu>
-                        <Menu>
-                           <MenuSubmenuTrigger>
-                              <Icons.user />
-                              Менеджер
-                           </MenuSubmenuTrigger>
-                           <MenuPopup>
-                              {creators.map((creator) => (
-                                 <MenuCheckboxItem
-                                    checked={
-                                       search.creator?.includes(creator.id) ??
-                                       false
-                                    }
-                                    onCheckedChange={(checked) =>
-                                       onFilterChange(
-                                          "creator",
-                                          creator.id,
-                                          checked,
-                                       )
-                                    }
-                                    key={creator.id}
-                                 >
-                                    {creator.name}
-                                 </MenuCheckboxItem>
-                              ))}
-                           </MenuPopup>
-                        </Menu>
-                     </MenuPopup>
-                  </Menu>
-                  {selectedLength === 0 ? null : (
-                     <Badge className="overflow-hidden pr-0">
-                        {selectedLength} обрано
-                        <Button
-                           variant={"ghost"}
-                           size={"sm"}
-                           kind={"icon"}
-                           onClick={removeFilter}
-                           className="rounded-none"
-                        >
-                           <Icons.xMark className="size-4" />
-                        </Button>
-                     </Badge>
-                  )}
-                  {searching || (search.q && search.q.length > 0) ? (
-                     <div className="lg:-mr-2 relative ml-auto flex max-w-[320px] items-center">
-                        <Input
-                           autoFocus
-                           className={
-                              "h-9 border-b-0 pt-0 pr-10 md:h-9 md:pt-0"
-                           }
-                           defaultValue={search.q}
-                           placeholder="Шукати.."
-                           onChange={(e) => onSearch.call(e.target.value)}
-                        />
-                        <Button
-                           variant={"ghost"}
-                           kind={"icon"}
-                           size={"sm"}
-                           className="absolute inset-y-0 right-0 my-auto"
-                           type="button"
-                           onClick={removeFilter}
-                        >
-                           <Icons.xMark className="size-[18px]" />
-                        </Button>
-                     </div>
-                  ) : (
-                     <Button
-                        onClick={() => setSearching(true)}
-                        className="lg:-mr-2 ml-auto"
-                        variant={"ghost"}
-                        kind={"icon"}
-                     >
-                        <Icons.search className="size-[18px]" />
-                     </Button>
-                  )}
-               </div>
-               {query.isPending ? null : query.isError ? (
-                  <ErrorComponent error={query.error} />
-               ) : !data || data.length === 0 ? (
-                  <div className="-translate-y-8 absolute inset-0 m-auto size-fit text-center">
-                     {search.archived ? (
-                        <svg
-                           xmlns="http://www.w3.org/2000/svg"
-                           className="mx-auto mb-5 size-12"
-                           viewBox="0 0 18 18"
-                        >
-                           <g fill="currentColor">
-                              <path
-                                 d="M15.75,8.5c-.414,0-.75-.336-.75-.75v-1.5c0-.689-.561-1.25-1.25-1.25h-5.386c-.228,0-.443-.104-.585-.281l-.603-.752c-.238-.297-.594-.467-.975-.467h-1.951c-.689,0-1.25,.561-1.25,1.25v3c0,.414-.336,.75-.75,.75s-.75-.336-.75-.75v-3c0-1.517,1.233-2.75,2.75-2.75h1.951c.838,0,1.62,.375,2.145,1.029l.378,.471h5.026c1.517,0,2.75,1.233,2.75,2.75v1.5c0,.414-.336,.75-.75,.75Z"
-                                 fill="currentColor"
-                              />
-                              <path
-                                 d="M17.082,7.879c-.43-.559-1.08-.879-1.785-.879H2.703c-.705,0-1.355,.32-1.785,.879-.429,.559-.571,1.27-.39,1.951l1.101,4.128c.32,1.202,1.413,2.042,2.657,2.042H13.713c1.244,0,2.337-.839,2.657-2.042l1.101-4.128c.182-.681,.04-1.392-.39-1.951Z"
-                                 fill="currentColor"
-                              />
-                           </g>
-                        </svg>
-                     ) : (
-                        <svg
-                           className="mx-auto mb-5 size-12"
-                           xmlns="http://www.w3.org/2000/svg"
-                           viewBox="0 0 32 32"
-                        >
-                           <g fill="currentColor">
-                              <path
-                                 d="M2.424,17.977l.068-10.18c.012-1.843,1.301-3.423,3.08-3.775l9.831-1.949c2.362-.468,4.555,1.38,4.539,3.827l-.068,10.182c-.013,1.842-1.302,3.421-3.081,3.774l-9.831,1.949c-2.362,.468-4.555-1.38-4.539-3.828Z"
-                                 opacity=".2"
-                              />
-                              <path
-                                 d="M7.241,22.039l.068-10.182c.011-1.841,1.301-3.42,3.08-3.773l9.831-1.948c2.362-.468,4.555,1.38,4.539,3.827l-.068,10.182c-.012,1.842-1.301,3.421-3.08,3.774l-9.831,1.949c-2.362,.468-4.555-1.38-4.539-3.827v-.002Z"
-                                 opacity=".5"
-                              />
-                              <path
-                                 d="M12.058,26.1l.068-10.182c.012-1.843,1.301-3.421,3.08-3.774l9.831-1.949c2.362-.468,4.555,1.38,4.539,3.827l-.068,10.182c-.012,1.843-1.301,3.422-3.08,3.774l-9.831,1.949c-2.362,.468-4.555-1.38-4.539-3.827h0Z"
-                                 opacity=".8"
-                              />
-                           </g>
-                        </svg>
-                     )}
-                     <p className="mb-2 font-medium text-foreground/90 text-lg">
-                        {search.archived
-                           ? "В архіві нічого немає"
-                           : "Немає замовлень"}
-                     </p>
-                  </div>
-               ) : (
-                  <div className={"divide-y divide-primary-5"}>
-                     {data.map((item) => (
-                        <OrderRow
-                           key={item.id}
-                           item={item}
-                        />
-                     ))}
-                  </div>
-               )}
+               <Button
+                  variant={"ghost"}
+                  kind={"icon"}
+                  size={"sm"}
+                  className="absolute inset-y-0 right-0 my-auto"
+                  type="button"
+                  onClick={() => {
+                     navigate({
+                        to: ".",
+                        search: (prev) => ({
+                           ...prev,
+                           q: undefined,
+                        }),
+                     }).then(() =>
+                        queryClient.invalidateQueries(queryOptions.list),
+                     )
+                     setSearching(false)
+                  }}
+               >
+                  <Icons.xMark className="size-[18px]" />
+               </Button>
             </div>
-         </MainScrollArea>
+         ) : (
+            <Button
+               onClick={() => setSearching(true)}
+               className="lg:-mr-2 ml-auto"
+               variant={"ghost"}
+               kind={"icon"}
+            >
+               <Icons.search className="size-[18px]" />
+            </Button>
+         )}
       </>
+   )
+}
+
+function Empty() {
+   const search = Route.useSearch()
+
+   return (
+      <div className="-translate-y-8 absolute inset-0 m-auto size-fit text-center">
+         {search.archived ? (
+            <svg
+               xmlns="http://www.w3.org/2000/svg"
+               className="mx-auto mb-5 size-12"
+               viewBox="0 0 18 18"
+            >
+               <g fill="currentColor">
+                  <path
+                     d="M15.75,8.5c-.414,0-.75-.336-.75-.75v-1.5c0-.689-.561-1.25-1.25-1.25h-5.386c-.228,0-.443-.104-.585-.281l-.603-.752c-.238-.297-.594-.467-.975-.467h-1.951c-.689,0-1.25,.561-1.25,1.25v3c0,.414-.336,.75-.75,.75s-.75-.336-.75-.75v-3c0-1.517,1.233-2.75,2.75-2.75h1.951c.838,0,1.62,.375,2.145,1.029l.378,.471h5.026c1.517,0,2.75,1.233,2.75,2.75v1.5c0,.414-.336,.75-.75,.75Z"
+                     fill="currentColor"
+                  />
+                  <path
+                     d="M17.082,7.879c-.43-.559-1.08-.879-1.785-.879H2.703c-.705,0-1.355,.32-1.785,.879-.429,.559-.571,1.27-.39,1.951l1.101,4.128c.32,1.202,1.413,2.042,2.657,2.042H13.713c1.244,0,2.337-.839,2.657-2.042l1.101-4.128c.182-.681,.04-1.392-.39-1.951Z"
+                     fill="currentColor"
+                  />
+               </g>
+            </svg>
+         ) : (
+            <svg
+               className="mx-auto mb-5 size-12"
+               xmlns="http://www.w3.org/2000/svg"
+               viewBox="0 0 32 32"
+            >
+               <g fill="currentColor">
+                  <path
+                     d="M2.424,17.977l.068-10.18c.012-1.843,1.301-3.423,3.08-3.775l9.831-1.949c2.362-.468,4.555,1.38,4.539,3.827l-.068,10.182c-.013,1.842-1.302,3.421-3.081,3.774l-9.831,1.949c-2.362,.468-4.555-1.38-4.539-3.828Z"
+                     opacity=".2"
+                  />
+                  <path
+                     d="M7.241,22.039l.068-10.182c.011-1.841,1.301-3.42,3.08-3.773l9.831-1.948c2.362-.468,4.555,1.38,4.539,3.827l-.068,10.182c-.012,1.842-1.301,3.421-3.08,3.774l-9.831,1.949c-2.362,.468-4.555-1.38-4.539-3.827v-.002Z"
+                     opacity=".5"
+                  />
+                  <path
+                     d="M12.058,26.1l.068-10.182c.012-1.843,1.301-3.421,3.08-3.774l9.831-1.949c2.362-.468,4.555,1.38,4.539,3.827l-.068,10.182c-.012,1.843-1.301,3.422-3.08,3.774l-9.831,1.949c-2.362,.468-4.555-1.38-4.539-3.827h0Z"
+                     opacity=".8"
+                  />
+               </g>
+            </svg>
+         )}
+         <p className="mb-2 font-medium text-foreground/90 text-lg">
+            {search.archived ? "В архіві нічого немає" : "Немає замовлень"}
+         </p>
+      </div>
    )
 }
 
@@ -493,16 +519,8 @@ function OrderRow({
 }) {
    const params = Route.useParams()
    const auth = useAuth()
-   const [states, setStates] = useAtom(collapsiblesStateAtom)
+   const [expandedOrderIds, setExpandedOrderIds] = useAtom(expandedOrderIdsAtom)
    const [from, to] = orderStatusGradient(item.status)
-
-   const open = states[item.id] ?? false
-   const setOpen = (open: boolean) => {
-      setStates({
-         ...states,
-         [item.id]: open,
-      })
-   }
 
    const update = useUpdateOrder()
    const deleteItem = useDeleteOrder()
@@ -522,8 +540,14 @@ function OrderRow({
 
    return (
       <Collapsible
-         open={open}
-         onOpenChange={setOpen}
+         open={expandedOrderIds.includes(item.id)}
+         onOpenChange={(open) =>
+            setExpandedOrderIds(
+               open
+                  ? [...expandedOrderIds, item.id]
+                  : expandedOrderIds.filter((id) => id !== item.id),
+            )
+         }
       >
          <CollapsibleTrigger
             render={<div />}
@@ -972,22 +996,12 @@ function ProcurementRow({
             {item.note}
          </p>
          <p className="col-start-1 whitespace-nowrap font-medium font-mono text-[1rem] max-lg:order-3 max-lg:self-center lg:mt-1 lg:ml-auto lg:text-right">
-            <span
-               className={cx(
-                  "mr-1.5 mb-[-0.2rem] inline-block size-4.5 rounded-xs lg:mb-[-0.21rem]",
-                  profit === 0
-                     ? "!hidden"
-                     : profit > 0
-                       ? "bg-green-3"
-                       : "bg-red-3",
-               )}
-            >
-               {profit === 0 ? null : profit > 0 ? (
-                  <Icons.arrowUpRight className="-mt-px -ml-px size-5 text-green-10" />
-               ) : (
-                  <Icons.arrowDownRight className="-mt-px -ml-px size-5 text-red-10" />
-               )}{" "}
-            </span>
+            {profit === 0 ? null : (
+               <ProfitArrow
+                  className="mr-1.5 mb-[-0.2rem] lg:mb-[-0.21rem]"
+                  profit={profit > 0 ? "positive" : "negative"}
+               />
+            )}
             {formatCurrency(profit)}{" "}
          </p>
          <EditProcurement
@@ -1040,49 +1054,4 @@ function ProcurementRow({
          </Menu>
       </div>
    )
-}
-
-{
-   /* <Combobox
-                  value={item.severity}
-                  onValueChange={(severity) =>
-                     update.mutate({
-                        id: item.id,
-                        workspaceId: params.workspaceId,
-                        severity: severity as never,
-                     })
-                  }
-               >
-                  <ComboboxTrigger
-                     onClick={(e) => {
-                        e.stopPropagation()
-                     }}
-                     className={"group/severity flex h-9 w-6 justify-center"}
-                  >
-                     <SeverityIcon
-                        severity={item.severity}
-                        className="mr-[2px] opacity-60 transition-opacity duration-75 group-hover/severity:opacity-90 group-data-[popup-open]/severity:opacity-90 lg:mb-[2px]"
-                     />
-                  </ComboboxTrigger>
-                  <ComboboxPopup
-                     className={"w-40"}
-                     sideOffset={0}
-                     align="start"
-                     onClick={(e) => {
-                        e.stopPropagation()
-                     }}
-                  >
-                     <ComboboxInput placeholder="Пріорітет" />
-                     {ORDER_SEVERITIES.map((s) => (
-                        <ComboboxItem
-                           key={s}
-                           value={s}
-                           keywords={[ORDER_SEVERITIES_TRANSLATION[s]]}
-                        >
-                           {ORDER_SEVERITIES_TRANSLATION[s]}
-                        </ComboboxItem>
-                     ))}
-                  </ComboboxPopup>
-               </Combobox> */
-   // biome-ignore lint/complexity/noUselessLoneBlockStatements: <explanation>
 }

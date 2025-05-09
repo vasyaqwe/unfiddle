@@ -1,5 +1,6 @@
+import { CACHE_SHORT } from "@/api"
+import { formatCurrency } from "@/currency"
 import { MainScrollArea } from "@/layout/components/main"
-import { formatNumber } from "@/number"
 import {
    formatDate,
    hourlyData,
@@ -19,6 +20,7 @@ import {
    ChartTooltip,
    ChartTooltipContent,
 } from "@ledgerblocks/ui/components/chart"
+import { ProfitArrow } from "@ledgerblocks/ui/components/profit-arrow"
 import { useQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import * as React from "react"
@@ -29,9 +31,14 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
       component: RouteComponent,
       loader: async ({ context, params }) => {
          context.queryClient.prefetchQuery(
-            trpc.workspace.summary.queryOptions({
-               id: params.workspaceId,
-            }),
+            trpc.workspace.summary.queryOptions(
+               {
+                  id: params.workspaceId,
+               },
+               {
+                  staleTime: CACHE_SHORT,
+               },
+            ),
          )
       },
    },
@@ -40,7 +47,12 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
 function RouteComponent() {
    const params = Route.useParams()
    const summary = useQuery(
-      trpc.workspace.summary.queryOptions({ id: params.workspaceId }),
+      trpc.workspace.summary.queryOptions(
+         { id: params.workspaceId },
+         {
+            staleTime: CACHE_SHORT,
+         },
+      ),
    )
 
    return (
@@ -55,19 +67,19 @@ function RouteComponent() {
             <div className="grid gap-3 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
                <Card>
                   <p className="font-mono font-semibold text-2xl text-black tracking-tight md:text-3xl">
-                     {formatNumber(summary.data?.weekProfit ?? 0)} ₴
+                     {formatCurrency(summary.data?.weekProfit ?? 0)}
                   </p>
                   <CardFooter>За сьогодні</CardFooter>
                </Card>
                <Card>
                   <p className="font-mono font-semibold text-2xl text-black tracking-tight md:text-3xl">
-                     {formatNumber(summary.data?.monthProfit ?? 0)} ₴
+                     {formatCurrency(summary.data?.monthProfit ?? 0)}
                   </p>
                   <CardFooter>За місяць</CardFooter>
                </Card>
                <Card className="md:col-span-2 lg:col-span-1">
                   <p className="font-mono font-semibold text-2xl tracking-tight md:text-3xl">
-                     {formatNumber(summary.data?.allTimeProfit ?? 0)} ₴
+                     {formatCurrency(summary.data?.allTimeProfit ?? 0)}
                   </p>
                   <CardFooter>За весь час</CardFooter>
                </Card>
@@ -93,8 +105,12 @@ export function ProfitChart() {
    return (
       <Card className="scrollbar-hidden mt-4 overflow-x-auto md:mt-5">
          <CardTitle>
-            <span className="mt-4 font-medium text-emerald-500 text-sm">
-               ↗ $2,849.27 (+4%)
+            <span className="mt-4 font-mono font-semibold text-green-10 text-xl">
+               <ProfitArrow
+                  profit={"positive"}
+                  className="-mb-0.5 mr-0.5"
+               />{" "}
+               {formatCurrency(23200)} <span className="text-base">(+4%)</span>
             </span>
          </CardTitle>
          <ChartContainer
@@ -105,7 +121,7 @@ export function ProfitChart() {
                accessibilityLayer
                key={selectedValue}
                data={chartDataToUse}
-               margin={{ left: 4, right: 32, top: 12 }}
+               margin={{ left: 8, right: 32, top: 12 }}
             >
                <CartesianGrid
                   vertical={false}
@@ -124,8 +140,11 @@ export function ProfitChart() {
                   allowDataOverflow={true}
                   domain={["dataMin - 1000", "dataMax + 1000"]}
                   tickFormatter={(value) => {
-                     if (value === 0) return "$0.00"
-                     return `$${(value / 1000).toLocaleString("en-US", { maximumFractionDigits: 2 })}k`
+                     if (value === 0) return "0 ₴"
+                     return formatCurrency(value, {
+                        notation: "compact",
+                        style: "decimal",
+                     })
                   }}
                />
                <ChartTooltip

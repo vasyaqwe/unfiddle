@@ -166,14 +166,16 @@ function ChartCursor({
    const point = points?.[0]
    if (!point) return null
 
+   const width = 20
+
    return (
       <>
          <RechartsPrimitive.Rectangle
-            x={point.x - 12}
+            x={point.x - width / 2}
             y={point.y}
             fill={fill}
             pointerEvents={pointerEvents}
-            width={24}
+            width={width}
             height={height}
             className={className}
             type="linear"
