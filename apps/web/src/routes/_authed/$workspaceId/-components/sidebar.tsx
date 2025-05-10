@@ -70,6 +70,7 @@ export function SidebarContent() {
                         <Button
                            variant={"secondary"}
                            className="mt-3 w-full"
+                           size={"lg"}
                         >
                            <Icons.pencilLine className="size-5" />
                            Нове замовлення
