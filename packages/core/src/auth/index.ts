@@ -59,7 +59,8 @@ export const authClient = (c: Context<HonoEnv>) => {
             enabled: true,
          },
          defaultCookieAttributes: {
-            secure: true,
+            // TODO: UPDATE THIS IS IMPORTANT
+            secure: false,
             httpOnly: true,
             sameSite: "none", // Allows CORS-based cookie sharing across subdomains
             partitioned: true, // New browser standards will mandate this for foreign cookies
