@@ -62,7 +62,8 @@ export function SidebarContent() {
                   <Icons.search className="size-4" />
                </Link> */}
             </div>
-            {auth.workspace.role === "manager" ? (
+            {auth.workspace.role === "manager" ||
+            auth.workspace.role === "admin" ? (
                <CreateOrder>
                   <DrawerTrigger
                      render={

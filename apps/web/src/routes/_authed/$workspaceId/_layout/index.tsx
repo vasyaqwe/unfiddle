@@ -129,7 +129,8 @@ function RouteComponent() {
             className="pt-0 lg:pt-0"
             container={false}
          >
-            {auth.workspace.role === "manager" ? (
+            {auth.workspace.role === "manager" ||
+            auth.workspace.role === "admin" ? (
                <CreateOrder>
                   <DrawerTrigger
                      render={
@@ -849,7 +850,8 @@ function OrderRow({
                            ))}
                         </div>
                      )}
-                     {auth.workspace.role === "buyer" ? (
+                     {auth.workspace.role === "buyer" ||
+                     auth.workspace.role === "admin" ? (
                         <div className="mt-3 flex grid-cols-2 items-center gap-2 max-sm:grid">
                            <CreateProcurement
                               orderName={item.name}

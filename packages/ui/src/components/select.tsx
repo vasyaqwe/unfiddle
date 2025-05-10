@@ -39,13 +39,18 @@ export function SelectTrigger({ children, className, ...props }: Props) {
          {...props}
       >
          {children}
-         <SelectIcon
-            data-icon
-            className="-mr-[5px] ml-auto flex shrink-0"
-         >
-            <Icons.chevronUpDown className="size-[18px] text-foreground/75 md:size-[16px]" />
-         </SelectIcon>
       </SelectPrimitive.Trigger>
+   )
+}
+
+export function SelectTriggerIcon() {
+   return (
+      <SelectIcon
+         data-icon
+         className="-mr-[5px] ml-auto flex shrink-0"
+      >
+         <Icons.chevronUpDown className="size-[18px] text-foreground/75 md:size-[16px]" />
+      </SelectIcon>
    )
 }
 

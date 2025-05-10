@@ -195,23 +195,38 @@ function MemberRow({
             </div>
          </TableCell>
          <TableCell>{member.user.email}</TableCell>
-         <TableCell>
-            <Select>
-               <SelectTrigger disabled={auth.workspace.role !== "admin"}>
-                  {WORKSPACE_ROLES_TRANSLATION[member.role]}
-               </SelectTrigger>
+         <TableCell className="min-w-[150px]">
+            <Select
+               alignItemToTrigger
+               value={member.role}
+               onValueChange={(role) =>
+                  update.mutate({
+                     userId: member.user.id,
+                     workspaceId: params.workspaceId,
+                     role,
+                  })
+               }
+            >
+               <SelectTrigger
+                  disabled={
+                     (auth.workspace.role === "admin" &&
+                        member.user.id === auth.user.id) ||
+                     auth.workspace.role !== "admin"
+                  }
+                  render={
+                     <Button
+                        variant={"ghost"}
+                        className="-ml-3 disabled:cursor-auto disabled:opacity-100 disabled:hover:bg-transparent"
+                     >
+                        {WORKSPACE_ROLES_TRANSLATION[member.role]}
+                     </Button>
+                  }
+               />
                <SelectPopup>
                   {WORKSPACE_ROLES.map((role) => (
                      <SelectItem
                         key={role}
                         value={role}
-                        onClick={() => {
-                           update.mutate({
-                              userId: member.user.id,
-                              workspaceId: params.workspaceId,
-                              role,
-                           })
-                        }}
                      >
                         {WORKSPACE_ROLES_TRANSLATION[role]}
                      </SelectItem>
