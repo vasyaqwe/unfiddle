@@ -2,25 +2,25 @@ import { useAuth } from "@/auth/hooks"
 import { formatCurrency } from "@/currency"
 import { MainScrollArea } from "@/layout/components/main"
 import { formatNumber } from "@/number"
-import { useCreateOrderAssignee } from "@/order/assignee/mutations/create"
-import { useDeleteOrderAssignee } from "@/order/assignee/mutations/delete"
+import { useCreateOrderAssignee } from "@/order/assignee/mutations/create-order-assignee"
+import { useDeleteOrderAssignee } from "@/order/assignee/mutations/delete-order-assignee"
 import { CreateOrder } from "@/order/components/create-order"
-import { EditOrder } from "@/order/components/edit-order"
 import { SeverityIcon } from "@/order/components/severity-icon"
+import { UpdateOrder } from "@/order/components/update-order"
 import {
    ORDER_SEVERITIES_TRANSLATION,
    ORDER_STATUSES_TRANSLATION,
 } from "@/order/constants"
-import { useDeleteOrder } from "@/order/mutations/delete"
-import { useUpdateOrder } from "@/order/mutations/update"
+import { useDeleteOrder } from "@/order/mutations/delete-order"
+import { useUpdateOrder } from "@/order/mutations/update-order"
 import { useOrderQueryOptions } from "@/order/queries"
 import { expandedOrderIdsAtom } from "@/order/store"
 import { formatOrderDate, orderStatusGradient } from "@/order/utils"
 import { CreateProcurement } from "@/procurement/components/create-procurement"
-import { EditProcurement } from "@/procurement/components/edit-procurement"
+import { UpdateProcurement } from "@/procurement/components/update-procurement"
 import { PROCUREMENT_STATUSES_TRANSLATION } from "@/procurement/constants"
-import { useDeleteProcurement } from "@/procurement/mutations/delete"
-import { useUpdateProcurement } from "@/procurement/mutations/update"
+import { useDeleteProcurement } from "@/procurement/mutations/delete-procurement"
+import { useUpdateProcurement } from "@/procurement/mutations/update-procurement"
 import { procurementStatusGradient } from "@/procurement/utils"
 import {
    Header,
@@ -646,7 +646,7 @@ function OrderRow({
                className="absolute"
                onClick={(e) => e.stopPropagation()}
             >
-               <EditOrder
+               <UpdateOrder
                   open={editOpen}
                   setOpen={setEditOpen}
                   order={item}
@@ -1015,7 +1015,7 @@ function ProcurementRow({
             className="absolute"
             onClick={(e) => e.stopPropagation()}
          >
-            <EditProcurement
+            <UpdateProcurement
                procurement={item}
                open={editOpen}
                setOpen={setEditOpen}

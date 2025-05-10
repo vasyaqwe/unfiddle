@@ -1,6 +1,6 @@
 import { useAuth } from "@/auth/hooks"
 import { ORDER_SEVERITIES_TRANSLATION } from "@/order/constants"
-import { useCreateOrder } from "@/order/mutations/create"
+import { useCreateOrder } from "@/order/mutations/create-order"
 import { ORDER_SEVERITIES } from "@ledgerblocks/core/order/constants"
 import type { OrderSeverity } from "@ledgerblocks/core/order/types"
 import { Button } from "@ledgerblocks/ui/components/button"

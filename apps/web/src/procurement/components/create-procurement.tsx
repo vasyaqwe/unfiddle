@@ -1,5 +1,5 @@
 import { useAuth } from "@/auth/hooks"
-import { useCreateProcurement } from "@/procurement/mutations/create"
+import { useCreateProcurement } from "@/procurement/mutations/create-procurement"
 import { Button } from "@ledgerblocks/ui/components/button"
 import {
    Drawer,

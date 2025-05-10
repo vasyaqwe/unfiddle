@@ -1,5 +1,5 @@
 import { useAuth } from "@/auth/hooks"
-import { useUpdateProcurement } from "@/procurement/mutations/update"
+import { useUpdateProcurement } from "@/procurement/mutations/update-procurement"
 import type { Procurement } from "@ledgerblocks/core/procurement/types"
 import { Button } from "@ledgerblocks/ui/components/button"
 import {
@@ -20,7 +20,7 @@ import {
 import { formData, number } from "@ledgerblocks/ui/utils"
 import type * as React from "react"
 
-export function EditProcurement({
+export function UpdateProcurement({
    procurement,
    finalFocus,
    open,
