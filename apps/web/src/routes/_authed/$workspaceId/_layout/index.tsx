@@ -140,7 +140,7 @@ function RouteComponent() {
                />
             </CreateOrder>
             <div className="mb-16">
-               <div className="container sticky top-0 z-[5] flex min-h-[44px] items-center gap-1 border-primary-5 border-b bg-background shadow-xs/4">
+               <div className="sticky top-0 z-[5] flex min-h-12 items-center gap-1 border-primary-5 border-b bg-background px-1.5 shadow-xs/4 lg:min-h-10">
                   <ToggleAll />
                   <ToggleArchived />
                   <FilterMenu />
@@ -187,8 +187,7 @@ function ToggleAll() {
                {...props}
                variant={"ghost"}
                kind={"icon"}
-               size={"xs"}
-               className="absolute left-[5px] max-lg:hidden"
+               size={"sm"}
             >
                <Icons.chevronUpDuo
                   className={cx(
@@ -228,7 +227,8 @@ function ToggleArchived() {
                         {...props}
                         kind={"icon"}
                         variant={"ghost"}
-                        className="-ml-1.5"
+                        size={"sm"}
+                        className="-ml-0.5"
                      >
                         {state.pressed ? (
                            <Icons.arrowLeft className="size-5" />
@@ -418,7 +418,7 @@ function Search() {
    const active = searching || (search.q && search.q.length > 0)
 
    return (
-      <div className="lg:-mr-2 relative ml-auto flex h-9 max-w-[320px] items-center md:h-9">
+      <div className="relative ml-auto flex h-9 max-w-[320px] items-center md:h-9">
          {active ? (
             <Input
                autoFocus
@@ -547,10 +547,10 @@ function OrderRow({
       >
          <CollapsibleTrigger
             render={<div />}
-            className="container relative grid grid-cols-2 grid-rows-[1fr_auto] gap-x-2.5 gap-y-1 py-2 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-1 lg:flex lg:py-[0.4rem]"
+            className="relative grid grid-cols-2 grid-rows-[1fr_auto] gap-x-2.5 gap-y-1.5 py-2 pr-1.5 pl-2.5 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-1 lg:flex lg:py-[0.4rem]"
          >
             <div className="flex items-center gap-2">
-               <CollapsibleTriggerIcon className="left-2.5 lg:absolute lg:mb-px" />
+               <CollapsibleTriggerIcon className="lg:mr-0.5 lg:mb-px" />
                <SeverityIcon
                   severity={item.severity}
                   className="mr-[2px] opacity-60 transition-opacity duration-75 group-hover/severity:opacity-90 group-data-[popup-open]/severity:opacity-90 lg:mb-[2px]"
@@ -570,7 +570,7 @@ function OrderRow({
                   <span className="whitespace-nowrap">{item.creator.name}</span>
                </AlignedColumn>
             </div>
-            <p className="lg:!max-w-[80%] col-span-2 col-start-1 row-start-2 mt-px w-[calc(100%-36px)] break-normal font-semibold">
+            <p className="lg:!max-w-[80%] col-span-2 col-start-1 row-start-2 mt-px w-[calc(100%-36px)] break-normal font-semibold max-lg:pl-1">
                {item.name}
             </p>
             <div className="ml-auto flex items-center gap-3.5">
@@ -739,7 +739,7 @@ function OrderRow({
                      <Button
                         variant={"ghost"}
                         kind={"icon"}
-                        className="-mr-1 lg:-mr-2 col-start-2 row-start-2 shrink-0 justify-self-end max-lg:self-end"
+                        className="col-start-2 row-start-2 shrink-0 justify-self-end max-lg:self-end"
                      >
                         <Icons.ellipsisHorizontal />
                      </Button>
@@ -914,7 +914,7 @@ function ProcurementRow({
    const menuTriggerRef = React.useRef<HTMLButtonElement>(null)
 
    return (
-      <div className="grid-cols-[1fr_1fr_var(--spacing-9)] items-start gap-3 border-neutral border-t px-4 py-3 text-left first:border-none max-lg:grid lg:flex lg:gap-4 lg:py-2">
+      <div className="grid-cols-[1fr_1fr_var(--spacing-9)] items-start gap-3 border-neutral border-t p-3 text-left first:border-none max-lg:grid lg:flex lg:gap-4 lg:p-2 lg:pl-3">
          <AlignedColumn
             id={`${orderId}_p_buyer`}
             className="flex items-center gap-1.5 whitespace-nowrap font-medium lg:mt-[0.17rem]"
@@ -1053,7 +1053,7 @@ function ProcurementRow({
                   <Button
                      variant={"ghost"}
                      kind={"icon"}
-                     className="lg:-mr-2 col-start-3 shrink-0 justify-self-end max-lg:order-last max-lg:mt-auto"
+                     className="col-start-3 shrink-0 justify-self-end max-lg:order-last max-lg:mt-auto"
                   >
                      <Icons.ellipsisHorizontal />
                   </Button>
