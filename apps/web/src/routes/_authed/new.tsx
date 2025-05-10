@@ -16,8 +16,8 @@ export const Route = createFileRoute("/_authed/new")({
 })
 
 function RouteComponent() {
-   const queryClient = useQueryClient()
    const navigate = useNavigate()
+   const queryClient = useQueryClient()
 
    const create = useMutation(
       trpc.workspace.create.mutationOptions({

@@ -13,8 +13,8 @@ const Layout = getRouteApi("/_authed/$workspaceId/_layout")
 
 export function useAuth() {
    const params = Layout.useParams()
-   const queryClient = useQueryClient()
    const navigate = useNavigate()
+   const queryClient = useQueryClient()
 
    const userQueryOptions = trpc.user.me.queryOptions(undefined, {
       staleTime: CACHE_FOREVER,

@@ -10,6 +10,9 @@ import {
 import { trpc } from "@/trpc"
 import { ErrorComponent } from "@/ui/components/error"
 import { UserAvatar } from "@/user/components/user-avatar"
+import { WORKSPACE_ROLES_TRANSLATION } from "@/workspace/constants"
+import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
+import { WORKSPACE_ROLES } from "@ledgerblocks/core/workspace/constants"
 import { Button } from "@ledgerblocks/ui/components/button"
 import { CopyButton } from "@ledgerblocks/ui/components/copy-button"
 import {
@@ -22,6 +25,12 @@ import {
 import { Icons } from "@ledgerblocks/ui/components/icons"
 import { Input } from "@ledgerblocks/ui/components/input"
 import { Loading } from "@ledgerblocks/ui/components/loading"
+import {
+   Select,
+   SelectItem,
+   SelectPopup,
+   SelectTrigger,
+} from "@ledgerblocks/ui/components/select"
 import {
    Table,
    TableBody,
@@ -38,25 +47,27 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/team")({
    component: RouteComponent,
    loader: async ({ context, params }) => {
       context.queryClient.prefetchQuery(
-         trpc.workspace.members.queryOptions({
-            id: params.workspaceId,
+         trpc.workspace.member.list.queryOptions({
+            workspaceId: params.workspaceId,
          }),
       )
    },
 })
 
 function RouteComponent() {
-   const queryClient = useQueryClient()
    const params = Route.useParams()
+   const queryClient = useQueryClient()
    const auth = useAuth()
    const query = useQuery(
-      trpc.workspace.members.queryOptions({ id: params.workspaceId }),
+      trpc.workspace.member.list.queryOptions({
+         workspaceId: params.workspaceId,
+      }),
    )
 
    const inputRef = React.useRef<HTMLInputElement>(null)
    const joinLink = `${env.WEB_URL}/join/${auth.workspace?.inviteCode}`
 
-   const mutation = useMutation(
+   const createCode = useMutation(
       trpc.workspace.createCode.mutationOptions({
          onSuccess: () => {
             queryClient.invalidateQueries(auth.queryOptions.workspace)
@@ -109,32 +120,12 @@ function RouteComponent() {
                      </TableRow>
                   </TableHeader>
                   <TableBody>
-                     {query.data?.map((member) => {
-                        return (
-                           <TableRow key={member.user.id}>
-                              <TableCell>
-                                 <div className="flex items-center gap-1.5">
-                                    <UserAvatar
-                                       size={24}
-                                       className="-mt-px"
-                                       user={member.user}
-                                    />
-                                    {member.user.name}
-                                 </div>
-                              </TableCell>
-                              <TableCell>{member.user.email}</TableCell>
-                              <TableCell>
-                                 {member.role === "admin" ? "Адмін" : "Член"}
-                              </TableCell>
-                              <TableCell>
-                                 {formatDate(member.createdAt, {
-                                    month: "long",
-                                    day: "numeric",
-                                 })}
-                              </TableCell>
-                           </TableRow>
-                        )
-                     })}
+                     {query.data?.map((member) => (
+                        <MemberRow
+                           key={member.user.id}
+                           member={member}
+                        />
+                     ))}
                   </TableBody>
                </Table>
             )}
@@ -159,8 +150,8 @@ function RouteComponent() {
                   size={"lg"}
                />
                <Button
-                  disabled={mutation.isPending}
-                  onClick={() => mutation.mutate({ id: auth.workspace.id })}
+                  disabled={createCode.isPending}
+                  onClick={() => createCode.mutate({ id: auth.workspace.id })}
                   size={"lg"}
                   kind={"icon"}
                   variant={"ghost"}
@@ -170,5 +161,70 @@ function RouteComponent() {
             </div>
          </DialogPopup>
       </Dialog>
+   )
+}
+
+function MemberRow({
+   member,
+}: { member: RouterOutput["workspace"]["member"]["list"][number] }) {
+   const params = Route.useParams()
+   const queryClient = useQueryClient()
+   const auth = useAuth()
+   const update = useMutation(
+      trpc.workspace.member.update.mutationOptions({
+         onSuccess: () => {
+            queryClient.invalidateQueries(
+               trpc.workspace.member.list.queryOptions({
+                  workspaceId: params.workspaceId,
+               }),
+            )
+         },
+      }),
+   )
+
+   return (
+      <TableRow>
+         <TableCell>
+            <div className="flex items-center gap-1.5">
+               <UserAvatar
+                  size={24}
+                  className="-mt-px"
+                  user={member.user}
+               />
+               {member.user.name}
+            </div>
+         </TableCell>
+         <TableCell>{member.user.email}</TableCell>
+         <TableCell>
+            <Select>
+               <SelectTrigger disabled={auth.workspace.role !== "admin"}>
+                  {WORKSPACE_ROLES_TRANSLATION[member.role]}
+               </SelectTrigger>
+               <SelectPopup>
+                  {WORKSPACE_ROLES.map((role) => (
+                     <SelectItem
+                        key={role}
+                        value={role}
+                        onClick={() => {
+                           update.mutate({
+                              userId: member.user.id,
+                              workspaceId: params.workspaceId,
+                              role,
+                           })
+                        }}
+                     >
+                        {WORKSPACE_ROLES_TRANSLATION[role]}
+                     </SelectItem>
+                  ))}
+               </SelectPopup>
+            </Select>
+         </TableCell>
+         <TableCell>
+            {formatDate(member.createdAt, {
+               month: "long",
+               day: "numeric",
+            })}
+         </TableCell>
+      </TableRow>
    )
 }

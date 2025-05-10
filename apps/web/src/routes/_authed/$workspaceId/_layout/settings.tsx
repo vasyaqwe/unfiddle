@@ -42,9 +42,9 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/settings")({
 })
 
 function RouteComponent() {
-   const queryClient = useQueryClient()
    const search = Route.useSearch()
    const navigate = useNavigate()
+   const queryClient = useQueryClient()
    const auth = useAuth()
    const orderQueryOptions = useOrderQueryOptions()
 
@@ -64,8 +64,8 @@ function RouteComponent() {
             queryClient.invalidateQueries(auth.queryOptions.user)
             queryClient.invalidateQueries(orderQueryOptions.list)
             queryClient.invalidateQueries(
-               trpc.workspace.members.queryOptions({
-                  id: auth.workspace.id,
+               trpc.workspace.member.list.queryOptions({
+                  workspaceId: auth.workspace.id,
                }),
             )
          },

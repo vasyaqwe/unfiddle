@@ -129,16 +129,18 @@ function RouteComponent() {
             className="pt-0 lg:pt-0"
             container={false}
          >
-            <CreateOrder>
-               <DrawerTrigger
-                  render={
-                     <Button className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-[10] overflow-visible shadow-md md:right-8 md:bottom-8 md:h-9 md:px-3">
-                        <Icons.plus className="md:size-6" />
-                        Замовлення
-                     </Button>
-                  }
-               />
-            </CreateOrder>
+            {auth.workspace.role === "manager" ? (
+               <CreateOrder>
+                  <DrawerTrigger
+                     render={
+                        <Button className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-[10] overflow-visible shadow-md md:right-8 md:bottom-8 md:h-9 md:px-3">
+                           <Icons.plus className="md:size-6" />
+                           Замовлення
+                        </Button>
+                     }
+                  />
+               </CreateOrder>
+            ) : null}
             <div className="mb-16">
                <div className="sticky top-0 z-[5] flex min-h-12 items-center gap-1 border-primary-5 border-b bg-background px-1.5 shadow-xs/4 lg:min-h-10">
                   <ToggleAll />
@@ -248,9 +250,9 @@ function ToggleArchived() {
 }
 
 function FilterMenu() {
-   const queryClient = useQueryClient()
    const search = Route.useSearch()
    const navigate = useNavigate()
+   const queryClient = useQueryClient()
    const queryOptions = useOrderQueryOptions()
    const query = useQuery(queryOptions.list)
    const data = query.data ?? []
@@ -395,9 +397,9 @@ function FilterMenu() {
 }
 
 function Search() {
-   const queryClient = useQueryClient()
    const search = Route.useSearch()
    const navigate = useNavigate()
+   const queryClient = useQueryClient()
    const queryOptions = useOrderQueryOptions()
    const [searching, setSearching] = React.useState(false)
 
@@ -847,44 +849,52 @@ function OrderRow({
                            ))}
                         </div>
                      )}
-                     <div className="mt-3 flex grid-cols-2 items-center gap-2 max-sm:grid">
-                        <CreateProcurement
-                           orderName={item.name}
-                           orderId={item.id}
-                           empty={item.procurements.length === 0}
-                        />
-                        {item.assignees.some(
-                           (a) => a.user.id === auth.user.id,
-                        ) ? (
-                           <Button
-                              variant={"secondary"}
-                              onClick={() =>
-                                 deleteAssignee.mutate({
-                                    orderId: item.id,
-                                    userId: auth.user.id,
-                                    workspaceId: auth.workspace.id,
-                                 })
-                              }
-                           >
-                              <Icons.undo className="size-[18px]" />
-                              Залишити
-                           </Button>
-                        ) : (
-                           <Button
-                              variant={"secondary"}
-                              onClick={() =>
-                                 createAssignee.mutate({
-                                    orderId: item.id,
-                                    userId: auth.user.id,
-                                    workspaceId: auth.workspace.id,
-                                 })
-                              }
-                           >
-                              <Icons.pin className="size-5" />
-                              Зайняти
-                           </Button>
-                        )}
-                     </div>
+                     {auth.workspace.role === "buyer" ? (
+                        <div className="mt-3 flex grid-cols-2 items-center gap-2 max-sm:grid">
+                           <CreateProcurement
+                              orderName={item.name}
+                              orderId={item.id}
+                              empty={item.procurements.length === 0}
+                           />
+                           <Toggle
+                              pressed={item.assignees.some(
+                                 (a) => a.user.id === auth.user.id,
+                              )}
+                              render={(props, state) => (
+                                 <Button
+                                    {...props}
+                                    variant={"secondary"}
+                                    onClick={() => {
+                                       if (state.pressed)
+                                          return deleteAssignee.mutate({
+                                             orderId: item.id,
+                                             userId: auth.user.id,
+                                             workspaceId: auth.workspace.id,
+                                          })
+
+                                       createAssignee.mutate({
+                                          orderId: item.id,
+                                          userId: auth.user.id,
+                                          workspaceId: auth.workspace.id,
+                                       })
+                                    }}
+                                 >
+                                    {state.pressed ? (
+                                       <>
+                                          <Icons.undo className="size-[18px]" />
+                                          Залишити
+                                       </>
+                                    ) : (
+                                       <>
+                                          <Icons.pin className="size-5" />
+                                          Зайняти
+                                       </>
+                                    )}
+                                 </Button>
+                              )}
+                           />
+                        </div>
+                     ) : null}
                   </div>
                </div>
             }

@@ -4,6 +4,7 @@ import { order } from "@ledgerblocks/core/order/schema"
 import { procurement } from "@ledgerblocks/core/procurement/schema"
 import { t } from "@ledgerblocks/core/trpc/context"
 import { tryCatch } from "@ledgerblocks/core/try-catch"
+import { workspaceMemberRouter } from "@ledgerblocks/core/workspace/member/trpc"
 import { workspaceMemberMiddleware } from "@ledgerblocks/core/workspace/middleware"
 import {
    updateWorkspaceSchema,
@@ -15,6 +16,7 @@ import { and, desc, eq, gte, or, sql } from "drizzle-orm"
 import { z } from "zod"
 
 export const workspaceRouter = t.router({
+   member: workspaceMemberRouter,
    summary: t.procedure
       .use(workspaceMemberMiddleware)
       .input(z.object({ id: z.string() }))
@@ -127,23 +129,6 @@ export const workspaceRouter = t.router({
          with: { workspace: { columns: { id: true, name: true } } },
       })
    }),
-   members: t.procedure
-      .use(workspaceMemberMiddleware)
-      .input(z.object({ id: z.string() }))
-      .query(async ({ ctx, input }) => {
-         return await ctx.db.query.workspaceMember.findMany({
-            where: eq(workspaceMember.workspaceId, input.id),
-            with: {
-               user: {
-                  columns: { id: true, name: true, email: true, image: true },
-               },
-            },
-            columns: {
-               createdAt: true,
-               role: true,
-            },
-         })
-      }),
    create: t.procedure
       .input(z.object({ name: z.string() }))
       .mutation(async ({ ctx, input }) => {
@@ -260,7 +245,7 @@ export const workspaceRouter = t.router({
                .values({
                   userId: ctx.user.id,
                   workspaceId: foundWorkspace.id,
-                  role: "member",
+                  role: "manager",
                })
                .onConflictDoNothing(),
             ctx.db
@@ -272,7 +257,7 @@ export const workspaceRouter = t.router({
                      ),
                      {
                         workspaceId: foundWorkspace.id,
-                        role: "member",
+                        role: "manager",
                      },
                   ],
                })
