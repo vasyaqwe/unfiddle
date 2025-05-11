@@ -34,7 +34,7 @@
    ],
    "kv_namespaces": [
       {
-         "binding": "LB_KV",
+         "binding": "KV",
          "id": "b4b822b872e7439f8ba8e5d74ba7c162"
       }
    ],
@@ -76,7 +76,7 @@
          ],
          "kv_namespaces": [
             {
-               "binding": "LB_KV",
+               "binding": "KV",
                "id": "b4b822b872e7439f8ba8e5d74ba7c162"
             }
          ],

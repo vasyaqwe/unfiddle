@@ -31,7 +31,7 @@ export type ApiEnv = {
    GOOGLE_CLIENT_ID: string
    GOOGLE_CLIENT_SECRET: string
    RATE_LIMITER: RateLimit
-   LB_KV: KVNamespace
+   KV: KVNamespace
    DATABASE: D1Database
    BETTER_AUTH_SECRET: string
    BUCKET: R2Bucket

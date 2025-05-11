@@ -48,7 +48,7 @@ import {
 } from "@ledgerblocks/ui/components/avatar-stack"
 import { Badge } from "@ledgerblocks/ui/components/badge"
 import { Button } from "@ledgerblocks/ui/components/button"
-import {} from "@ledgerblocks/ui/components/card"
+import { Card } from "@ledgerblocks/ui/components/card"
 import {
    Collapsible,
    CollapsiblePanel,
@@ -143,7 +143,7 @@ function RouteComponent() {
                </CreateOrder>
             ) : null}
             <div className="mb-16">
-               <div className="sticky top-0 z-[5] flex min-h-12 items-center gap-1 border-primary-5 border-b bg-background px-1.5 shadow-xs/4 lg:min-h-10">
+               <div className="sticky top-0 z-[5] flex min-h-12 items-center gap-1 border-primary-12/13 border-b bg-background px-1.5 shadow-xs/4 lg:min-h-10">
                   <ToggleAll />
                   <ToggleArchived />
                   <FilterMenu />
@@ -852,7 +852,7 @@ function OrderRow({
                            Ще немає закупівель.
                         </p>
                      ) : (
-                        <div className="relative z-[2] rounded-lg border border-neutral bg-background shadow-xs/4">
+                        <Card className="relative z-[2] rounded-lg border-primary-12/15 p-0">
                            {item.procurements.map((p) => (
                               <ProcurementRow
                                  key={p.id}
@@ -861,7 +861,7 @@ function OrderRow({
                                  orderId={item.id}
                               />
                            ))}
-                        </div>
+                        </Card>
                      )}
                      {auth.workspace.role === "buyer" ||
                      auth.workspace.role === "admin" ? (
