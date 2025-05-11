@@ -112,14 +112,17 @@ function RouteComponent() {
                </Card>
             </div>
             <div className="mt-5 grid gap-5 lg:grid-cols-2">
-               <ProjectProfitChart />
+               <TotalProfitChart />
             </div>
-            <p className="mt-6 mb-3 font-semibold text-xl md:mb-4">
-               Профіт команди
-            </p>
+            <div className="flex items-center justify-between gap-3">
+               <p className="mt-6 mb-3 font-semibold text-xl md:mb-4">
+                  Профіт команди
+               </p>
+               <PeriodSelect key={"user_profit_period"} />
+            </div>
             <div className="grid gap-5 lg:grid-cols-2">
-               <UserComparisonProfitChart title={"Менеджери"} />
-               <UserComparisonProfitChart title={"Закупівельники"} />
+               <UserProfitComparisonChart title={"Менеджери"} />
+               <UserProfitComparisonChart title={"Закупівельники"} />
                <UserProfitChart />
             </div>
          </MainScrollArea>
@@ -135,7 +138,7 @@ function PeriodSelect({
 
    return (
       <Select
-         value={search.workspace_profit_period}
+         value={search[key]}
          onValueChange={(value) =>
             navigate({
                to: ".",
@@ -163,7 +166,7 @@ function PeriodSelect({
    )
 }
 
-function ProjectProfitChart() {
+function TotalProfitChart() {
    const data = [
       { date: "2024-03-01", value: 11485 },
       { date: "2024-04-01", value: 11458 },
@@ -195,7 +198,7 @@ function ProjectProfitChart() {
                   <span className="text-base">(+4%)</span>
                </span>
             </CardTitle>
-            <PeriodSelect key={"workspace_profit_period"} />
+            <PeriodSelect key={"total_profit_period"} />
          </div>
          <ChartContainer
             config={
@@ -264,7 +267,11 @@ function ProjectProfitChart() {
    )
 }
 
-function UserComparisonProfitChart({ title }: { title: string }) {
+function UserProfitComparisonChart({
+   title,
+}: {
+   title: string
+}) {
    const data = [
       { label: "Ivan", value: 15400 },
       { label: "Oksana", value: 12100 },
@@ -381,7 +388,7 @@ function UserProfitChart() {
                   <span className="text-base">(+4%)</span>
                </span>
             </CardTitle>
-            <PeriodSelect key={"user_profit_period"} />
+            <PeriodSelect key="user_profit_period" />
          </div>
          <ChartContainer
             config={
