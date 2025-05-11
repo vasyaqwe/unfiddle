@@ -24,7 +24,7 @@ export const button = cva(
          size: {
             xs: "h-9 rounded-sm px-1 md:h-6",
             sm: "h-9 rounded-sm px-1.5 md:h-7",
-            md: "h-9 rounded-md px-3 md:h-[1.85rem] md:px-[0.5425rem]",
+            md: "h-9 rounded-md px-3 md:h-[1.925rem] md:px-[0.52rem]",
             lg: "h-10 rounded-lg px-3 md:h-[2.1rem]",
             xl: "h-10 rounded-lg px-3 md:h-10",
          },

@@ -69,7 +69,7 @@ export function SelectItem({
          className={cn(
             MENU_ITEM_STYLES.base,
             destructive ? MENU_ITEM_STYLES.destructive : "",
-            "grid min-w-[calc(var(--anchor-width)+1.05rem)] grid-cols-[1.2rem_1fr] items-center gap-2 pr-4 pl-2 md:min-w-[calc(var(--anchor-width)+1.65rem)]",
+            "grid grid-cols-[1.25rem_1fr] items-center gap-2 group-data-[side=none]:min-w-[calc(var(--anchor-width)+1.4rem)]",
             className,
          )}
          {...props}
@@ -95,13 +95,14 @@ export function SelectPopup({
          <SelectBackdrop />
          <SelectPositioner
             sideOffset={sideOffset}
+            className={"group"}
             {...props}
          >
             <SelectPrimitive.Popup
                className={cn(
                   POPUP_STYLES.base,
                   POPUP_STYLES.transition,
-                  "!scale-100 min-w-36 p-(--padding) transition-none [--padding:0.2rem]",
+                  "!scale-100 p-(--popup-padding) transition-none",
                   className,
                )}
             >

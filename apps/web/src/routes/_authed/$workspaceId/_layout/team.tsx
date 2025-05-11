@@ -30,6 +30,7 @@ import {
    SelectItem,
    SelectPopup,
    SelectTrigger,
+   SelectValue,
 } from "@ledgerblocks/ui/components/select"
 import {
    Table,
@@ -197,7 +198,6 @@ function MemberRow({
          <TableCell>{member.user.email}</TableCell>
          <TableCell className="min-w-[150px]">
             <Select
-               alignItemToTrigger
                value={member.role}
                onValueChange={(role) =>
                   update.mutate({
@@ -218,7 +218,7 @@ function MemberRow({
                         variant={"ghost"}
                         className="-ml-3 disabled:cursor-auto disabled:opacity-100 disabled:hover:bg-transparent"
                      >
-                        {WORKSPACE_ROLES_TRANSLATION[member.role]}
+                        <SelectValue />
                      </Button>
                   }
                />
