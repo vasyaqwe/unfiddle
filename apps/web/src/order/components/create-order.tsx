@@ -4,14 +4,7 @@ import { useCreateOrder } from "@/order/mutations/create-order"
 import { ORDER_SEVERITIES } from "@ledgerblocks/core/order/constants"
 import type { OrderSeverity } from "@ledgerblocks/core/order/types"
 import { Button } from "@ledgerblocks/ui/components/button"
-import {
-   Combobox,
-   ComboboxInput,
-   ComboboxItem,
-   ComboboxPopup,
-   ComboboxTrigger,
-   ComboboxTriggerIcon,
-} from "@ledgerblocks/ui/components/combobox"
+import {} from "@ledgerblocks/ui/components/combobox"
 import {
    Drawer,
    DrawerPopup,
@@ -26,6 +19,14 @@ import {
    NumberField,
    NumberFieldInput,
 } from "@ledgerblocks/ui/components/number-field"
+import {
+   Select,
+   SelectItem,
+   SelectPopup,
+   SelectTrigger,
+   SelectTriggerIcon,
+   SelectValue,
+} from "@ledgerblocks/ui/components/select"
 import { formData, number } from "@ledgerblocks/ui/utils"
 import * as React from "react"
 
@@ -105,34 +106,32 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
                </Field>
                <Field>
                   <FieldLabel className={"mb-2.5"}>Пріорітет</FieldLabel>
-                  <Combobox
+                  <Select
                      value={severity}
                      onValueChange={(s) => setSeverity(s as never)}
                   >
-                     <ComboboxTrigger
+                     <SelectTrigger
                         render={
                            <Button
                               variant={"secondary"}
                               className="w-32 justify-start"
                            >
-                              {ORDER_SEVERITIES_TRANSLATION[severity]}
-                              <ComboboxTriggerIcon />
+                              <SelectValue />
+                              <SelectTriggerIcon />
                            </Button>
                         }
                      />
-                     <ComboboxPopup align="start">
-                        <ComboboxInput placeholder="Пріорітет" />
+                     <SelectPopup align="start">
                         {ORDER_SEVERITIES.map((s) => (
-                           <ComboboxItem
+                           <SelectItem
                               key={s}
                               value={s}
-                              keywords={[ORDER_SEVERITIES_TRANSLATION[s]]}
                            >
                               {ORDER_SEVERITIES_TRANSLATION[s]}
-                           </ComboboxItem>
+                           </SelectItem>
                         ))}
-                     </ComboboxPopup>
-                  </Combobox>
+                     </SelectPopup>
+                  </Select>
                </Field>
                <Button className="mt-auto md:mr-auto">Додати</Button>
             </form>

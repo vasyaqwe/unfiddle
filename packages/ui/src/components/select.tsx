@@ -35,6 +35,9 @@ interface Props extends React.ComponentProps<typeof SelectPrimitive.Trigger> {}
 export function SelectTrigger({ children, className, ...props }: Props) {
    return (
       <SelectPrimitive.Trigger
+         onPointerDown={(e) => {
+            e.stopPropagation()
+         }}
          className={cn("justify-start", className)}
          {...props}
       >
@@ -95,7 +98,7 @@ export function SelectPopup({
          <SelectBackdrop />
          <SelectPositioner
             sideOffset={sideOffset}
-            className={"group"}
+            className={"group z-[999]"}
             {...props}
          >
             <SelectPrimitive.Popup

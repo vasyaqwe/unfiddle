@@ -9,13 +9,14 @@ import {
    HeaderUserMenu,
 } from "@/routes/_authed/$workspaceId/-components/header"
 import { trpc } from "@/trpc"
+import { UserAvatar } from "@/user/components/user-avatar"
 import { validator } from "@/validator"
 import {
    PERIOD_FILTERS,
    PERIOD_FILTERS_TRANSLATION,
    workspaceAnalyticsFilterSchema,
 } from "@ledgerblocks/core/workspace/analytics/filter"
-import { button } from "@ledgerblocks/ui/components/button"
+import { Button } from "@ledgerblocks/ui/components/button"
 import { Card, CardFooter, CardTitle } from "@ledgerblocks/ui/components/card"
 import {
    type ChartConfig,
@@ -24,6 +25,16 @@ import {
    ChartTooltip,
    ChartTooltipContent,
 } from "@ledgerblocks/ui/components/chart"
+import {
+   Combobox,
+   ComboboxEmpty,
+   ComboboxInput,
+   ComboboxItem,
+   ComboboxPopup,
+   ComboboxTrigger,
+   ComboboxTriggerIcon,
+} from "@ledgerblocks/ui/components/combobox"
+import { Icons } from "@ledgerblocks/ui/components/icons"
 import { ProfitArrow } from "@ledgerblocks/ui/components/profit-arrow"
 import {
    Select,
@@ -33,7 +44,6 @@ import {
    SelectTriggerIcon,
    SelectValue,
 } from "@ledgerblocks/ui/components/select"
-import { cx } from "@ledgerblocks/ui/utils"
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { createFileRoute } from "@tanstack/react-router"
@@ -54,6 +64,12 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
    {
       component: RouteComponent,
       loader: async ({ context, params }) => {
+         context.queryClient.prefetchQuery(
+            trpc.workspace.member.list.queryOptions({
+               workspaceId: params.workspaceId,
+            }),
+         )
+
          context.queryClient.prefetchQuery(
             trpc.workspace.summary.queryOptions(
                {
@@ -114,16 +130,15 @@ function RouteComponent() {
             <div className="mt-5 grid gap-5 lg:grid-cols-2">
                <TotalProfitChart />
             </div>
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center justify-between gap-6">
                <p className="mt-6 mb-3 font-semibold text-xl md:mb-4">
-                  Профіт команди
+                  Порівняння
                </p>
-               <PeriodSelect key={"user_profit_period"} />
+               <PeriodSelect searchKey={"profit_comparison_period"} />
             </div>
             <div className="grid gap-5 lg:grid-cols-2">
-               <UserProfitComparisonChart title={"Менеджери"} />
-               <UserProfitComparisonChart title={"Закупівельники"} />
-               <UserProfitChart />
+               <ProfitComparisonChart title={"Менеджери"} />
+               <ProfitComparisonChart title={"Закупівельники"} />
             </div>
          </MainScrollArea>
       </>
@@ -131,27 +146,32 @@ function RouteComponent() {
 }
 
 function PeriodSelect({
-   key,
-}: { key: keyof z.infer<typeof workspaceAnalyticsFilterSchema> }) {
+   searchKey,
+}: { searchKey: keyof z.infer<typeof workspaceAnalyticsFilterSchema> }) {
    const search = Route.useSearch()
    const navigate = useNavigate()
 
    return (
       <Select
-         value={search[key]}
+         value={search[searchKey]}
          onValueChange={(value) =>
             navigate({
                to: ".",
-               search: (prev) => ({ ...prev, [key]: value }),
+               search: (prev) => ({ ...prev, [searchKey]: value }),
             })
          }
       >
          <SelectTrigger
-            className={cx(button({ variant: "secondary" }), "min-w-32")}
-         >
-            <SelectValue />
-            <SelectTriggerIcon />
-         </SelectTrigger>
+            render={
+               <Button
+                  variant={"secondary"}
+                  className={"min-w-32"}
+               >
+                  <SelectValue />
+                  <SelectTriggerIcon />
+               </Button>
+            }
+         />
          <SelectPopup>
             {PERIOD_FILTERS.map((item) => (
                <SelectItem
@@ -167,6 +187,15 @@ function PeriodSelect({
 }
 
 function TotalProfitChart() {
+   const params = Route.useParams()
+   const search = Route.useSearch()
+   const navigate = useNavigate()
+   const members = useQuery(
+      trpc.workspace.member.list.queryOptions({
+         workspaceId: params.workspaceId,
+      }),
+   )
+
    const data = [
       { date: "2024-03-01", value: 11485 },
       { date: "2024-04-01", value: 11458 },
@@ -185,11 +214,16 @@ function TotalProfitChart() {
 
    const [selectedValue] = React.useState("1h")
 
+   const period = search.total_profit_period
+   const selectedMember = members.data?.find(
+      (member) => member.user.id === search.total_profit_by,
+   )
+
    return (
       <Card className="scrollbar-hidden overflow-x-auto lg:col-span-2">
-         <div className="flex items-center justify-between gap-3">
+         <div className="flex items-center justify-between gap-6">
             <CardTitle>
-               <span className="mt-4 font-mono font-semibold text-green-10 text-xl">
+               <span className="mt-4 whitespace-nowrap font-mono font-semibold text-green-10 text-xl">
                   <ProfitArrow
                      profit={"positive"}
                      className="-mb-0.5 mr-0.5"
@@ -198,7 +232,68 @@ function TotalProfitChart() {
                   <span className="text-base">(+4%)</span>
                </span>
             </CardTitle>
-            <PeriodSelect key={"total_profit_period"} />
+            <div className="flex items-center gap-2">
+               <PeriodSelect searchKey={"total_profit_period"} />
+               <Combobox
+                  value={search.total_profit_by}
+                  onValueChange={(value) =>
+                     navigate({
+                        to: ".",
+                        search: (prev) => ({
+                           ...prev,
+                           total_profit_by: value as never,
+                        }),
+                     })
+                  }
+               >
+                  <ComboboxTrigger
+                     render={
+                        <Button
+                           variant={"secondary"}
+                           className={"md:!gap-1.5 min-w-40"}
+                        >
+                           {search.total_profit_by === "all" ? (
+                              <>Усіх разом</>
+                           ) : selectedMember ? (
+                              <>
+                                 <UserAvatar
+                                    size={16}
+                                    user={selectedMember.user}
+                                 />
+                                 <span className="line-clamp-1">
+                                    {selectedMember.user.name}
+                                 </span>
+                              </>
+                           ) : null}
+                           <ComboboxTriggerIcon />
+                        </Button>
+                     }
+                  />
+                  <ComboboxPopup align="end">
+                     <ComboboxInput placeholder="Шукати.." />
+                     <ComboboxEmpty>Нікого не знайдено</ComboboxEmpty>
+                     <ComboboxItem value="all">
+                        <Icons.users />
+                        Усіх разом
+                     </ComboboxItem>
+                     {members.data?.map((member) => (
+                        <ComboboxItem
+                           key={member.user.id}
+                           value={member.user.id}
+                        >
+                           <UserAvatar
+                              size={18}
+                              className="mr-[3px] ml-[2px] md:mr-[2px] md:ml-px"
+                              user={member.user}
+                           />
+                           <span className="line-clamp-1">
+                              {member.user.name}
+                           </span>
+                        </ComboboxItem>
+                     ))}
+                  </ComboboxPopup>
+               </Combobox>
+            </div>
          </div>
          <ChartContainer
             config={
@@ -227,7 +322,20 @@ function TotalProfitChart() {
                   tickMargin={12}
                   minTickGap={32}
                   tickFormatter={(value) =>
-                     formatDate(value, { month: "short" })
+                     formatDate(value, {
+                        month: "short",
+                        year:
+                           period === "all_time" ||
+                           period === "last_year" ||
+                           period === "last_half_year" ||
+                           period === "last_quarter"
+                              ? "2-digit"
+                              : undefined,
+                        day:
+                           period === "last_week" || period === "last_month"
+                              ? "numeric"
+                              : undefined,
+                     })
                   }
                />
                <YAxis
@@ -267,7 +375,7 @@ function TotalProfitChart() {
    )
 }
 
-function UserProfitComparisonChart({
+function ProfitComparisonChart({
    title,
 }: {
    title: string
@@ -356,7 +464,10 @@ function UserProfitComparisonChart({
    )
 }
 
-function UserProfitChart() {
+function _MemberProfitChart() {
+   const _params = Route.useParams()
+   const search = Route.useSearch()
+
    const data = [
       { date: "2024-03-01", value: 11485 },
       { date: "2024-04-01", value: 11458 },
@@ -374,10 +485,11 @@ function UserProfitChart() {
    ]
 
    const maxValue = Math.max(...data.map((item) => item.value))
+   const period = search.profit_comparison_period
 
    return (
       <Card className="scrollbar-hidden overflow-x-auto lg:col-span-2">
-         <div className="flex items-center justify-between gap-3">
+         <div className="flex items-center justify-between gap-6">
             <CardTitle>
                <span className="mt-4 font-mono font-semibold text-green-10 text-xl">
                   <ProfitArrow
@@ -388,7 +500,6 @@ function UserProfitChart() {
                   <span className="text-base">(+4%)</span>
                </span>
             </CardTitle>
-            <PeriodSelect key="user_profit_period" />
          </div>
          <ChartContainer
             config={
@@ -417,7 +528,20 @@ function UserProfitChart() {
                   tickMargin={8}
                   minTickGap={24}
                   tickFormatter={(value) =>
-                     formatDate(value, { month: "short" })
+                     formatDate(value, {
+                        month: "short",
+                        year:
+                           period === "all_time" ||
+                           period === "last_year" ||
+                           period === "last_half_year" ||
+                           period === "last_quarter"
+                              ? "2-digit"
+                              : undefined,
+                        day:
+                           period === "last_week" || period === "last_month"
+                              ? "numeric"
+                              : undefined,
+                     })
                   }
                />
                <YAxis

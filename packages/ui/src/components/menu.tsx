@@ -14,7 +14,7 @@ export const MenuPositioner = MenuPrimitive.Positioner
 export const MenuArrow = MenuPrimitive.Arrow
 
 export const MENU_ITEM_STYLES = {
-   base: "cursor-pointer text-base h-9 md:h-[1.925rem] flex items-center select-none gap-2 md:gap-1.5 rounded-[calc(var(--popup-radius)-var(--popup-padding))] px-[0.525rem] md:px-[0.46rem] data-[highlighted]:border-transparent [&>svg]:size-[22px] md:[&>svg]:size-5 [&>svg]:text-primary-9 data-[highlighted]:[&>svg]:text-white data-[popup-open]:[&>svg]:text-white focus-visible:outline-hidden data-[highlighted]:bg-accent-6 data-[popup-open]:bg-accent-6 data-[selected=true]:bg-accent-6 data-[selected=true]:shadow-sm shadow-black/20 data-[highlighted]:shadow-sm md:text-sm",
+   base: "cursor-pointer text-base h-9 md:h-[1.925rem] flex items-center select-none gap-2 md:gap-1.5 rounded-[calc(var(--popup-radius)-var(--popup-padding))] px-3 md:px-2 data-[highlighted]:border-transparent [&>svg]:size-[22px] md:[&>svg]:size-5 [&>svg]:text-primary-9 data-[highlighted]:[&>svg]:text-white data-[popup-open]:[&>svg]:text-white [&>svg]:shrink-0 focus-visible:outline-hidden data-[highlighted]:bg-accent-6 data-[popup-open]:bg-accent-6 data-[selected=true]:bg-accent-6 data-[selected=true]:shadow-sm data-[selected=true]:[&>svg]:text-white shadow-black/20 data-[highlighted]:shadow-sm md:text-sm",
    destructive: "data-[highlighted]:bg-red-9",
 }
 
@@ -64,20 +64,18 @@ export function MenuCheckboxItem({
 }: React.ComponentProps<typeof MenuPrimitive.CheckboxItem>) {
    return (
       <MenuPrimitive.CheckboxItem
-         className={cn(
-            MENU_ITEM_STYLES.base,
-            "grid min-w-[calc(var(--anchor-width)+1.45rem)] grid-cols-[1.4rem_1fr] items-center md:grid-cols-[21px_1fr]",
-            className,
-         )}
+         className={cn(MENU_ITEM_STYLES.base, "", className)}
          {...props}
       >
-         <MenuPrimitive.CheckboxItemIndicator className="col-start-1">
+         {children}
+         <MenuPrimitive.CheckboxItemIndicator
+            className={"-mr-1 md:-mr-0.5 ml-auto"}
+         >
             <Icons.check
                strokeWidth={2.5}
-               className={"md:-ml-px size-[23px] text-white/90 md:size-[22px]"}
+               className={"size-[25px] text-white/90 md:size-[22px]"}
             />
          </MenuPrimitive.CheckboxItemIndicator>
-         <span className={"col-start-2"}>{children}</span>
       </MenuPrimitive.CheckboxItem>
    )
 }

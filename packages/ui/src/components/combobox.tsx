@@ -109,10 +109,7 @@ export function ComboboxTrigger({ className, children, ...props }: Props) {
 
    return (
       <PopoverTrigger
-         className={cn(
-            "cursor-pointer has-[[data-combobox-icon]]:gap-2",
-            className,
-         )}
+         className={cn("cursor-pointer", className)}
          {...props}
       >
          {multiple ? (
@@ -154,7 +151,7 @@ export function ComboboxPopup({
       <PopoverPopup
          sideOffset={4}
          className={cn(
-            "max-h-56 min-w-(--anchor-width) scroll-py-1 overflow-y-auto p-1",
+            "max-h-56 min-w-[calc(var(--anchor-width)+3rem)] scroll-py-1 overflow-y-auto p-1",
             className,
          )}
          {...props}
@@ -171,17 +168,17 @@ export function ComboboxInput({
    ...props
 }: React.ComponentProps<typeof CommandInput>) {
    return (
-      <div className="relative">
-         <Icons.search className="-translate-y-1/2 absolute top-[48%] left-2 size-5 text-white/55 md:top-[47%] md:size-[18px]" />
+      <div className="relative h-10 md:h-9">
+         {/* <Icons.search className="-translate-y-1/2 absolute top-[calc(50%-3px)] left-2 size-5 text-white/55 md:top-[calc(50%-3px)] md:size-[18px]" /> */}
          <CommandInput
             placeholder="Шукати.."
             className={cn(
-               "h-9 w-full border-transparent bg-transparent pr-2 pl-9 placeholder:text-white/55 focus:outline-hidden md:h-8 md:text-sm",
+               "-top-[3px] absolute h-10 w-full border-transparent bg-transparent px-2 placeholder:text-white/55 focus:outline-hidden md:h-9 md:text-sm",
                className,
             )}
             {...props}
          />
-         <ComboboxSeparator className="mt-0 block" />
+         <ComboboxSeparator className="absolute bottom-0 block" />
       </div>
    )
 }
@@ -217,21 +214,17 @@ export function ComboboxItem({
       <CommandItem
          value={propValue}
          onSelect={onSelect}
-         className={cn(
-            MENU_ITEM_STYLES.base,
-            "grid min-w-[calc(var(--anchor-width)+1.45rem)] grid-cols-[1.4rem_1fr] items-center md:grid-cols-[20px_1fr]",
-            className,
-         )}
+         className={cn(MENU_ITEM_STYLES.base, "items-center", className)}
          {...props}
       >
+         {children}
          <Icons.check
             strokeWidth={2.5}
             className={cx(
-               "!text-white/90 size-[23px] md:size-[22px]",
+               "!text-white/90 -mr-1 md:-mr-0.5 ml-auto size-[25px] md:size-[22px]",
                isSelected ? "" : "invisible",
             )}
          />
-         {children}
       </CommandItem>
    )
 }
@@ -256,7 +249,7 @@ export function ComboboxEmpty({
    return (
       <CommandEmpty
          className={cn(
-            "flex h-10 items-center justify-center text-center text-sm text-white/70 md:h-8",
+            "flex items-center justify-center pt-2 pb-3 text-center text-sm text-white/70",
             className,
          )}
          {...props}

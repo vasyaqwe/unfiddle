@@ -57,8 +57,7 @@ export function WorkspaceMenuPopup() {
                ))}
                <MenuSeparator />
                <MenuItem onClick={() => navigate({ to: "/new" })}>
-                  <Icons.plus className="size-[18px]" />
-                  Новий проєкт
+                  Новий проєкт..
                </MenuItem>
             </MenuPopup>
          </Menu>

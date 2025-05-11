@@ -1,7 +1,6 @@
 import { z } from "zod"
 
 export const PERIOD_FILTERS = [
-   "last_day",
    "last_week",
    "last_month",
    "last_quarter",
@@ -14,7 +13,6 @@ export const PERIOD_FILTERS_TRANSLATION: Record<
    (typeof PERIOD_FILTERS)[number],
    string
 > = {
-   last_day: "За день",
    last_week: "За тиждень",
    last_month: "За місяць",
    last_quarter: "За квартал",
@@ -27,9 +25,6 @@ export const PERIOD_FILTERS_FNS: Record<
    (typeof PERIOD_FILTERS)[number],
    Record<string, Date>
 > = {
-   last_day: {
-      gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
-   },
    last_week: {
       gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
    },
@@ -49,6 +44,7 @@ export const PERIOD_FILTERS_FNS: Record<
 }
 
 export const workspaceAnalyticsFilterSchema = z.object({
+   total_profit_by: z.string().catch("all"),
    total_profit_period: z.enum(PERIOD_FILTERS).catch("last_week"),
-   user_profit_period: z.enum(PERIOD_FILTERS).catch("last_week"),
+   profit_comparison_period: z.enum(PERIOD_FILTERS).catch("last_week"),
 })
