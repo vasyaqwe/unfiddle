@@ -271,6 +271,7 @@ function FilterMenu() {
             ...prev,
             [key]: newValues.length ? newValues : undefined,
          }),
+         replace: true,
       })
    }
 

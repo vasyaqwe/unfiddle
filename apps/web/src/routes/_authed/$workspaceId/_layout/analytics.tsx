@@ -249,6 +249,7 @@ function PeriodSelect({
             navigate({
                to: ".",
                search: (prev) => ({ ...prev, [searchKey]: value }),
+               replace: true,
             })
          }
       >
@@ -302,6 +303,7 @@ function ByCombobox({
                search: (prev) => ({
                   ...prev,
                   [searchKey]: value as never,
+                  replace: true,
                }),
             })
          }
