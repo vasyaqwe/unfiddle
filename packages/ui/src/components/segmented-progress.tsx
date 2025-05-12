@@ -44,7 +44,7 @@ export function SegmentedProgressBars({
    const context = useContext()
    const containerRef = React.useRef<HTMLDivElement>(null)
    const [segments, setSegments] = React.useState(10)
-   console.log(segments)
+
    React.useLayoutEffect(() => {
       const el = containerRef.current
       if (!el) return

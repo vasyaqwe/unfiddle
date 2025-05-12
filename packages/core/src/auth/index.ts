@@ -11,7 +11,8 @@ import { createAuthMiddleware } from "better-auth/api"
 import { eq } from "drizzle-orm"
 import type { Context } from "hono"
 
-export const authClient = (c: Context<HonoEnv>) => {
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+export const authClient: any = (c: Context<HonoEnv>) => {
    const db = d.client(c)
 
    return betterAuth({
@@ -20,6 +21,18 @@ export const authClient = (c: Context<HonoEnv>) => {
       basePath: "/auth",
       trustedOrigins: [c.var.env.WEB_URL],
       database: drizzleAdapter(db, { provider: "sqlite" }),
+      socialProviders: {
+         google: {
+            clientId: c.env.GOOGLE_CLIENT_ID,
+            clientSecret: c.env.GOOGLE_CLIENT_SECRET,
+            mapProfileToUser: (profile) => {
+               return {
+                  name: profile.given_name,
+                  image: profile.picture,
+               }
+            },
+         },
+      },
       emailAndPassword: {
          enabled: true,
          minPasswordLength: MIN_PASSWORD_LENGTH,
@@ -54,13 +67,16 @@ export const authClient = (c: Context<HonoEnv>) => {
             },
          },
       },
+      accountLinking: {
+         enabled: true,
+      },
       advanced: {
          crossSubDomainCookies: {
             enabled: true,
          },
          defaultCookieAttributes: {
             // TODO: UPDATE THIS IS IMPORTANT
-            secure: false,
+            secure: c.env.ENVIRONMENT === "development",
             httpOnly: true,
             sameSite: "none", // Allows CORS-based cookie sharing across subdomains
             partitioned: true, // New browser standards will mandate this for foreign cookies
@@ -78,7 +94,8 @@ export const authClient = (c: Context<HonoEnv>) => {
          after: createAuthMiddleware(async (ctx) => {
             if (
                ctx.path.startsWith("/sign-up") ||
-               ctx.path.startsWith("/sign-in")
+               ctx.path.startsWith("/sign-in") ||
+               ctx.path.includes("/callback")
             ) {
                const newSession = ctx.context.newSession
                if (!newSession) return

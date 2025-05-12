@@ -1,3 +1,4 @@
+import { session } from "@ledgerblocks/core/auth/schema"
 import { t } from "@ledgerblocks/core/trpc/context"
 import { workspaceMemberMiddleware } from "@ledgerblocks/core/workspace/middleware"
 import { workspaceMember } from "@ledgerblocks/core/workspace/schema"
@@ -36,16 +37,34 @@ export const workspaceMemberRouter = t.router({
          if (ctx.membership.role !== "admin")
             throw new TRPCError({ code: "FORBIDDEN" })
 
-         await ctx.db
-            .update(workspaceMember)
-            .set({
-               role: input.role,
-            })
-            .where(
-               and(
-                  eq(workspaceMember.workspaceId, input.workspaceId),
-                  eq(workspaceMember.userId, input.userId),
+         await ctx.db.batch([
+            ctx.db
+               .update(workspaceMember)
+               .set({
+                  role: input.role,
+               })
+               .where(
+                  and(
+                     eq(workspaceMember.workspaceId, input.workspaceId),
+                     eq(workspaceMember.userId, input.userId),
+                  ),
                ),
-            )
+            ctx.db
+               .update(session)
+               .set({
+                  workspaceMemberships: ctx.session.workspaceMemberships.map(
+                     (m) => {
+                        if (m.workspaceId === input.workspaceId)
+                           return {
+                              ...m,
+                              role: input.role,
+                           }
+
+                        return m
+                     },
+                  ),
+               })
+               .where(eq(session.userId, input.userId)),
+         ])
       }),
 })
