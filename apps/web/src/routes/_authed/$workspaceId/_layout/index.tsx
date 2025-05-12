@@ -129,19 +129,16 @@ function RouteComponent() {
             className="pt-0 lg:pt-0"
             container={false}
          >
-            {auth.workspace.role === "manager" ||
-            auth.workspace.role === "admin" ? (
-               <CreateOrder>
-                  <DrawerTrigger
-                     render={
-                        <Button className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-[10] overflow-visible shadow-md md:right-8 md:bottom-8 md:h-9 md:px-3">
-                           <Icons.plus className="md:size-6" />
-                           Замовлення
-                        </Button>
-                     }
-                  />
-               </CreateOrder>
-            ) : null}
+            <CreateOrder>
+               <DrawerTrigger
+                  render={
+                     <Button className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-[10] overflow-visible shadow-md md:right-8 md:bottom-8 md:h-9 md:px-3">
+                        <Icons.plus className="md:size-6" />
+                        Замовлення
+                     </Button>
+                  }
+               />
+            </CreateOrder>
             <div className="mb-16">
                <div className="sticky top-0 z-[5] flex min-h-12 items-center gap-1 border-primary-12/13 border-b bg-background px-1.5 shadow-xs/4 lg:min-h-10">
                   <ToggleAll />
@@ -863,53 +860,50 @@ function OrderRow({
                            ))}
                         </Card>
                      )}
-                     {auth.workspace.role === "buyer" ||
-                     auth.workspace.role === "admin" ? (
-                        <div className="mt-3 flex grid-cols-2 items-center gap-2 max-sm:grid">
-                           <CreateProcurement
-                              orderName={item.name}
-                              orderId={item.id}
-                              empty={item.procurements.length === 0}
-                           />
-                           <Toggle
-                              pressed={item.assignees.some(
-                                 (a) => a.user.id === auth.user.id,
-                              )}
-                              render={(props, state) => (
-                                 <Button
-                                    {...props}
-                                    variant={"secondary"}
-                                    onClick={() => {
-                                       if (state.pressed)
-                                          return deleteAssignee.mutate({
-                                             orderId: item.id,
-                                             userId: auth.user.id,
-                                             workspaceId: auth.workspace.id,
-                                          })
-
-                                       createAssignee.mutate({
+                     <div className="mt-3 flex grid-cols-2 items-center gap-2 max-sm:grid">
+                        <CreateProcurement
+                           orderName={item.name}
+                           orderId={item.id}
+                           empty={item.procurements.length === 0}
+                        />
+                        <Toggle
+                           pressed={item.assignees.some(
+                              (a) => a.user.id === auth.user.id,
+                           )}
+                           render={(props, state) => (
+                              <Button
+                                 {...props}
+                                 variant={"secondary"}
+                                 onClick={() => {
+                                    if (state.pressed)
+                                       return deleteAssignee.mutate({
                                           orderId: item.id,
                                           userId: auth.user.id,
                                           workspaceId: auth.workspace.id,
                                        })
-                                    }}
-                                 >
-                                    {state.pressed ? (
-                                       <>
-                                          <Icons.undo className="size-[18px]" />
-                                          Залишити
-                                       </>
-                                    ) : (
-                                       <>
-                                          <Icons.pin className="size-5" />
-                                          Зайняти
-                                       </>
-                                    )}
-                                 </Button>
-                              )}
-                           />
-                        </div>
-                     ) : null}
+
+                                    createAssignee.mutate({
+                                       orderId: item.id,
+                                       userId: auth.user.id,
+                                       workspaceId: auth.workspace.id,
+                                    })
+                                 }}
+                              >
+                                 {state.pressed ? (
+                                    <>
+                                       <Icons.undo className="size-[18px]" />
+                                       Залишити
+                                    </>
+                                 ) : (
+                                    <>
+                                       <Icons.pin className="size-5" />
+                                       Зайняти
+                                    </>
+                                 )}
+                              </Button>
+                           )}
+                        />
+                     </div>
                   </div>
                </div>
             }

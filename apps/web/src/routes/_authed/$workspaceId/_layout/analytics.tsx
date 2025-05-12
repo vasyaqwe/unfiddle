@@ -87,6 +87,13 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
 
 function RouteComponent() {
    const params = Route.useParams()
+   const search = Route.useSearch()
+   const navigate = useNavigate()
+   const members = useQuery(
+      trpc.workspace.member.list.queryOptions({
+         workspaceId: params.workspaceId,
+      }),
+   )
    const summary = useQuery(
       trpc.workspace.summary.queryOptions(
          { id: params.workspaceId },
@@ -94,6 +101,10 @@ function RouteComponent() {
             staleTime: CACHE_SHORT,
          },
       ),
+   )
+
+   const selectedMember = members.data?.find(
+      (member) => member.user.id === search.profit_by,
    )
 
    return (
@@ -104,9 +115,68 @@ function RouteComponent() {
             <HeaderUserMenu />
          </Header>
          <MainScrollArea>
-            <p className="mb-3 font-semibold text-xl md:mb-4">
-               Загальний профіт
-            </p>
+            <div className="mb-4 flex items-center justify-between gap-6">
+               <p className="font-semibold text-xl">Профіт</p>
+               <Combobox
+                  value={search.profit_by}
+                  onValueChange={(value) =>
+                     navigate({
+                        to: ".",
+                        search: (prev) => ({
+                           ...prev,
+                           profit_by: value as never,
+                        }),
+                     })
+                  }
+               >
+                  <ComboboxTrigger
+                     render={
+                        <Button
+                           variant={"secondary"}
+                           className={"md:!gap-1.5 min-w-40"}
+                        >
+                           {search.profit_by === "all" ? (
+                              <>Загальний</>
+                           ) : selectedMember ? (
+                              <>
+                                 <UserAvatar
+                                    size={16}
+                                    user={selectedMember.user}
+                                 />
+                                 <span className="line-clamp-1">
+                                    {selectedMember.user.name}
+                                 </span>
+                              </>
+                           ) : null}
+                           <ComboboxTriggerIcon />
+                        </Button>
+                     }
+                  />
+                  <ComboboxPopup align="end">
+                     <ComboboxInput placeholder="Шукати.." />
+                     <ComboboxEmpty>Нікого не знайдено</ComboboxEmpty>
+                     <ComboboxItem value="all">
+                        <Icons.users />
+                        Загальний
+                     </ComboboxItem>
+                     {members.data?.map((member) => (
+                        <ComboboxItem
+                           key={member.user.id}
+                           value={member.user.id}
+                        >
+                           <UserAvatar
+                              size={18}
+                              className="mr-[3px] ml-[2px] md:mr-[2px] md:ml-px"
+                              user={member.user}
+                           />
+                           <span className="line-clamp-1">
+                              {member.user.name}
+                           </span>
+                        </ComboboxItem>
+                     ))}
+                  </ComboboxPopup>
+               </Combobox>
+            </div>
             <div className="grid gap-3 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
                <Card>
                   <p className="font-mono font-semibold text-2xl text-black tracking-tight md:text-3xl">
@@ -130,10 +200,8 @@ function RouteComponent() {
             <div className="mt-5 grid gap-5 lg:grid-cols-2">
                <TotalProfitChart />
             </div>
-            <div className="flex items-center justify-between gap-6">
-               <p className="mt-6 mb-3 font-semibold text-xl md:mb-4">
-                  Порівняння
-               </p>
+            <div className="mt-6 mb-4 flex items-center justify-between gap-6">
+               <p className="font-semibold text-xl">Порівняння</p>
                <PeriodSelect searchKey={"profit_comparison_period"} />
             </div>
             <div className="grid gap-5 lg:grid-cols-2">
@@ -187,14 +255,7 @@ function PeriodSelect({
 }
 
 function TotalProfitChart() {
-   const params = Route.useParams()
    const search = Route.useSearch()
-   const navigate = useNavigate()
-   const members = useQuery(
-      trpc.workspace.member.list.queryOptions({
-         workspaceId: params.workspaceId,
-      }),
-   )
 
    const data = [
       { date: "2024-03-01", value: 11485 },
@@ -214,10 +275,7 @@ function TotalProfitChart() {
 
    const [selectedValue] = React.useState("1h")
 
-   const period = search.total_profit_period
-   const selectedMember = members.data?.find(
-      (member) => member.user.id === search.total_profit_by,
-   )
+   const period = search.profit_period
 
    return (
       <Card className="scrollbar-hidden overflow-x-auto lg:col-span-2">
@@ -232,68 +290,7 @@ function TotalProfitChart() {
                   <span className="text-base">(+4%)</span>
                </span>
             </CardTitle>
-            <div className="flex items-center gap-2">
-               <PeriodSelect searchKey={"total_profit_period"} />
-               <Combobox
-                  value={search.total_profit_by}
-                  onValueChange={(value) =>
-                     navigate({
-                        to: ".",
-                        search: (prev) => ({
-                           ...prev,
-                           total_profit_by: value as never,
-                        }),
-                     })
-                  }
-               >
-                  <ComboboxTrigger
-                     render={
-                        <Button
-                           variant={"secondary"}
-                           className={"md:!gap-1.5 min-w-40"}
-                        >
-                           {search.total_profit_by === "all" ? (
-                              <>Усіх разом</>
-                           ) : selectedMember ? (
-                              <>
-                                 <UserAvatar
-                                    size={16}
-                                    user={selectedMember.user}
-                                 />
-                                 <span className="line-clamp-1">
-                                    {selectedMember.user.name}
-                                 </span>
-                              </>
-                           ) : null}
-                           <ComboboxTriggerIcon />
-                        </Button>
-                     }
-                  />
-                  <ComboboxPopup align="end">
-                     <ComboboxInput placeholder="Шукати.." />
-                     <ComboboxEmpty>Нікого не знайдено</ComboboxEmpty>
-                     <ComboboxItem value="all">
-                        <Icons.users />
-                        Усіх разом
-                     </ComboboxItem>
-                     {members.data?.map((member) => (
-                        <ComboboxItem
-                           key={member.user.id}
-                           value={member.user.id}
-                        >
-                           <UserAvatar
-                              size={18}
-                              className="mr-[3px] ml-[2px] md:mr-[2px] md:ml-px"
-                              user={member.user}
-                           />
-                           <span className="line-clamp-1">
-                              {member.user.name}
-                           </span>
-                        </ComboboxItem>
-                     ))}
-                  </ComboboxPopup>
-               </Combobox>
-            </div>
+            <PeriodSelect searchKey={"profit_period"} />
          </div>
          <ChartContainer
             config={

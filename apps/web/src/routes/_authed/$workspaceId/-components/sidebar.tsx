@@ -62,23 +62,20 @@ export function SidebarContent() {
                   <Icons.search className="size-4" />
                </Link> */}
             </div>
-            {auth.workspace.role === "manager" ||
-            auth.workspace.role === "admin" ? (
-               <CreateOrder>
-                  <DrawerTrigger
-                     render={
-                        <Button
-                           variant={"secondary"}
-                           className="mt-3 w-full"
-                           size={"lg"}
-                        >
-                           <Icons.pencilLine className="size-5" />
-                           Нове замовлення
-                        </Button>
-                     }
-                  />
-               </CreateOrder>
-            ) : null}
+            <CreateOrder>
+               <DrawerTrigger
+                  render={
+                     <Button
+                        variant={"secondary"}
+                        className="mt-3 w-full"
+                        size={"lg"}
+                     >
+                        <Icons.pencilLine className="size-5" />
+                        Нове замовлення
+                     </Button>
+                  }
+               />
+            </CreateOrder>
          </div>
          <ScrollArea render={<nav className="p-4" />}>
             <ul className="space-y-1">
