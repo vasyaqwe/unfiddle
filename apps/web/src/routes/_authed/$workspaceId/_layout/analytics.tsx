@@ -1,4 +1,5 @@
 import { CACHE_SHORT } from "@/api"
+import { useAuth } from "@/auth/hooks"
 import { formatCurrency } from "@/currency"
 import { formatDate } from "@/date"
 import { MainScrollArea } from "@/layout/components/main"
@@ -42,7 +43,6 @@ import {
    ComboboxTriggerIcon,
 } from "@ledgerblocks/ui/components/combobox"
 import { Icons } from "@ledgerblocks/ui/components/icons"
-import { ProfitArrow } from "@ledgerblocks/ui/components/profit-arrow"
 import {
    SegmentedProgress,
    SegmentedProgressBars,
@@ -82,7 +82,6 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
                workspaceId: params.workspaceId,
             }),
          )
-
          context.queryClient.prefetchQuery(
             trpc.workspace.summary.queryOptions(
                {
@@ -100,6 +99,7 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
 
 function RouteComponent() {
    const params = Route.useParams()
+   const auth = useAuth()
    const summary = useQuery(
       trpc.workspace.summary.queryOptions(
          { id: params.workspaceId },
@@ -115,81 +115,76 @@ function RouteComponent() {
             <HeaderUserMenu />
          </Header>
          <MainScrollArea containerClassName="space-y-6 md:space-y-10 lg:space-y-12">
-            <section>
-               <div className="mb-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
-                  <p className="font-semibold text-xl">Стати</p>
-                  <div className="flex items-center gap-2">
-                     <PeriodSelect searchKey={"stats_period"} />
-                     <ByCombobox searchKey="stats_of" />
-                  </div>
+            <section className="flex w-full items-center md:mb-7 md:justify-between lg:mb-8">
+               <p className="font-semibold text-xl max-md:hidden">
+                  {auth.workspace.role === "admin"
+                     ? "Аналітика"
+                     : "Ваша аналітика"}
+               </p>
+               <div className="flex grid-cols-2 items-center gap-2 max-md:grid max-md:w-full">
+                  <PeriodSelect searchKey={"period"} />
+                  {auth.workspace.role === "admin" ? (
+                     <ByCombobox searchKey="who" />
+                  ) : null}
                </div>
-               <div className="grid grid-cols-2 gap-3 md:gap-4 xl:grid-cols-4 xl:gap-6">
-                  <Card>
-                     <CardHeader>
-                        <CardTitle>Профіт</CardTitle>
-                     </CardHeader>
-                     <CardContent>
-                        <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-3xl">
-                           {formatCurrency(summary.data?.weekProfit ?? 0)}
-                        </p>
-                     </CardContent>
-                  </Card>
-                  <Card>
-                     <CardHeader>
-                        <CardTitle>Маржинальність</CardTitle>
-                     </CardHeader>
-                     <CardContent>
-                        <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-3xl">
-                           12%{" "}
-                           <span className="text-foreground/90 text-lg sm:text-xl">
-                              — {formatCurrency(250)}
-                           </span>
-                        </p>
-                     </CardContent>
-                  </Card>
-                  <Card>
-                     <CardHeader>
-                        <CardTitle>Успішність</CardTitle>
-                     </CardHeader>
-                     <CardContent>
-                        <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-3xl">
-                           76%
-                        </p>
-                     </CardContent>
-                  </Card>
-                  <Card>
-                     <CardHeader>
-                        <CardTitle>Замовлення</CardTitle>
-                     </CardHeader>
-                     <CardContent>
-                        <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-3xl">
-                           {formatNumber(200)}
-                        </p>
-                     </CardContent>
-                  </Card>
-               </div>
-               {/* <div className="mt-4 grid gap-6 md:mt-6 md:grid-cols-2">
+            </section>
+            <section className="grid grid-cols-2 gap-3 md:gap-4 xl:grid-cols-4 xl:gap-6">
+               <Card>
+                  <CardHeader>
+                     <CardTitle>Профіт</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                     <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-3xl">
+                        {formatCurrency(summary.data?.weekProfit ?? 0)}
+                     </p>
+                  </CardContent>
+               </Card>
+               <Card>
+                  <CardHeader>
+                     <CardTitle>Маржинальність</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                     <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-3xl">
+                        12%{" "}
+                        <span className="text-foreground/90 text-lg sm:text-xl">
+                           — {formatCurrency(250)}
+                        </span>
+                     </p>
+                  </CardContent>
+               </Card>
+               <Card>
+                  <CardHeader>
+                     <CardTitle>Успішність</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                     <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-3xl">
+                        76%
+                     </p>
+                  </CardContent>
+               </Card>
+               <Card>
+                  <CardHeader>
+                     <CardTitle>Замовлення</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                     <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-3xl">
+                        {formatNumber(200)}
+                     </p>
+                  </CardContent>
+               </Card>
+            </section>
+            {/* <div className="mt-4 grid gap-6 md:mt-6 md:grid-cols-2">
                   <StatsChart />
                </div> */}
-            </section>
             <section>
-               <div className="mb-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
-                  <p className="font-semibold text-xl">Профіт</p>
-                  <div className="flex items-center gap-2">
-                     <PeriodSelect searchKey={"profit_period"} />
-                     <ByCombobox searchKey="profit_of" />
-                  </div>
+               <div className="mb-2 flex items-center justify-between">
+                  <p className="font-semibold text-xl">Динаміка профіту</p>
+                  <Button variant={"tertiary"}>Скинути</Button>
                </div>
                <ProfitChart />
             </section>
             <section>
-               <div className="mb-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
-                  <p className="font-semibold text-xl">Замовлення</p>
-                  <div className="flex items-center gap-2">
-                     <PeriodSelect searchKey={"orders_period"} />
-                     <ByCombobox searchKey="orders_of" />
-                  </div>
-               </div>
+               <p className="mb-2 font-semibold text-xl">Динаміка замовлень</p>
                <OrdersChart />
             </section>
          </MainScrollArea>
@@ -336,11 +331,11 @@ function ProfitChart() {
 
    const [selectedValue] = React.useState("1h")
 
-   const period = search.profit_period
+   const period = search.period
 
    return (
-      <Card className="scrollbar-hidden overflow-x-auto lg:col-span-2">
-         <CardTitle>
+      <div className="scrollbar-hidden overflow-x-auto">
+         {/* <CardTitle>
             <span className="mt-4 whitespace-nowrap font-mono font-semibold text-green-10 text-xl">
                <ProfitArrow
                   profit={"positive"}
@@ -348,7 +343,7 @@ function ProfitChart() {
                />{" "}
                {formatCurrency(23200)} <span className="text-base">(+4%)</span>
             </span>
-         </CardTitle>
+         </CardTitle> */}
          <ChartContainer
             config={
                {
@@ -358,7 +353,7 @@ function ProfitChart() {
                   },
                } satisfies ChartConfig
             }
-            className="mt-5 h-60 w-full min-w-[500px] [--color-chart-1:var(--color-accent-6)] md:h-72"
+            className="mt-5 h-60 w-full min-w-[500px] [--color-chart-1:var(--color-accent-6)] md:h-72 xl:h-96"
          >
             <LineChart
                accessibilityLayer
@@ -426,7 +421,7 @@ function ProfitChart() {
                />
             </LineChart>
          </ChartContainer>
-      </Card>
+      </div>
    )
 }
 
@@ -483,22 +478,10 @@ function OrdersChart() {
    ]
 
    const maxValue = Math.max(...data.map((item) => item.value))
-   const period = search.orders_period
+   const period = search.period
 
    return (
-      <Card className="scrollbar-hidden overflow-x-auto lg:col-span-2">
-         <div className="flex items-center justify-between gap-6">
-            <CardTitle>
-               <span className="mt-4 font-mono font-semibold text-green-10 text-xl">
-                  <ProfitArrow
-                     profit={"positive"}
-                     className="-mb-0.5 mr-0.5"
-                  />{" "}
-                  {formatCurrency(23200)}{" "}
-                  <span className="text-base">(+4%)</span>
-               </span>
-            </CardTitle>
-         </div>
+      <div className="scrollbar-hidden overflow-x-auto">
          <ChartContainer
             config={
                {
@@ -509,7 +492,7 @@ function OrdersChart() {
                } satisfies ChartConfig
             }
             style={{ minWidth: data.length * 16 }}
-            className="mt-4 h-60 w-full [--color-chart-1:var(--color-accent-6)] md:h-72"
+            className="mt-4 h-60 w-full [--color-chart-1:var(--color-accent-6)] md:h-72 xl:h-96"
          >
             <BarChart
                data={data}
@@ -568,7 +551,7 @@ function OrdersChart() {
                />
             </BarChart>
          </ChartContainer>
-      </Card>
+      </div>
    )
 }
 
@@ -615,7 +598,7 @@ function _ProfitComparisonChart({
                   },
                } satisfies ChartConfig
             }
-            className="mt-5 h-60 w-full [--color-chart-1:var(--color-accent-6)] md:h-72"
+            className="mt-5 h-60 w-full [--color-chart-1:var(--color-accent-6)] md:h-72 xl:h-96"
          >
             <BarChart
                data={data}
