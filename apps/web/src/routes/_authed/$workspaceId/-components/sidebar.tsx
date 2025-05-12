@@ -56,7 +56,7 @@ export function SidebarContent() {
                   search={search}
                   className={cx(
                      button({ kind: "icon", variant: "ghost" }),
-                     "text-foreground/75 hover:text-foreground/90",
+                     "text-foreground/75 hover:text-foreground/90 aria-[current=page]:text-foreground/90",
                   )}
                >
                   <Icons.gear className="size-5" />

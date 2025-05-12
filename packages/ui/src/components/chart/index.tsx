@@ -1,7 +1,7 @@
 import * as React from "react"
 import * as RechartsPrimitive from "recharts"
 import type { ValueType } from "recharts/types/component/DefaultTooltipContent"
-import { cn } from "../utils"
+import { cn } from "../../utils"
 
 const THEMES = { light: "", dark: ".dark" } as const
 

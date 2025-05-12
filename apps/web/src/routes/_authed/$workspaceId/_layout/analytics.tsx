@@ -155,17 +155,7 @@ function RouteComponent() {
                   <CardContent>
                      <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-[1.7rem] xl:leading-tight">
                         {formatNumber(120)}{" "}
-                        <span className="text-foreground/90 text-lg">
-                           -{" "}
-                           <span
-                              className={cx(
-                                 // biome-ignore lint/correctness/noConstantCondition: <explanation>
-                                 false ? "text-green-9" : "text-red-9",
-                              )}
-                           >
-                              70%
-                           </span>
-                        </span>
+                        <sup className="text-lg text-red-9">70%</sup>
                      </p>
                   </CardContent>
                </Card>
@@ -175,18 +165,8 @@ function RouteComponent() {
                   </CardHeader>
                   <CardContent>
                      <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-[1.7rem] xl:leading-tight">
-                        {formatNumber(40)}{" "}
-                        <span className="text-foreground/90 text-lg">
-                           -{" "}
-                           <span
-                              className={cx(
-                                 // biome-ignore lint/correctness/noConstantCondition: <explanation>
-                                 false ? "text-green-9" : "text-red-9",
-                              )}
-                           >
-                              30%
-                           </span>
-                        </span>
+                        {formatNumber(40)}
+                        <sup className="text-lg text-red-9">30%</sup>
                      </p>
                   </CardContent>
                </Card>
