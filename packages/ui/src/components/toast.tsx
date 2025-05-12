@@ -1,8 +1,12 @@
+import { isMobileAtom } from "@ledgerblocks/ui/store"
+import { useAtomValue } from "jotai"
 import type * as React from "react"
 import { createPortal } from "react-dom"
 import { Toaster as Sonner } from "sonner"
 
 export function Toaster(props: React.ComponentProps<typeof Sonner>) {
+   const isMobile = useAtomValue(isMobileAtom)
+
    return createPortal(
       <Sonner
          icons={{
@@ -95,7 +99,7 @@ export function Toaster(props: React.ComponentProps<typeof Sonner>) {
             className:
                "font-primary px-3 py-3 items-center gap-2 w-full shadow-[inset_0_-1px_2px_0_rgb(0_0_0_/_0.12)] flex select-none border border-neutral bg-background pointer-events-auto rounded-2xl",
          }}
-         position="bottom-right"
+         position={isMobile ? "top-right" : "bottom-right"}
          {...props}
       />,
       document.body,

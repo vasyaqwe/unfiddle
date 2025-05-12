@@ -672,7 +672,7 @@ function OrderRow({
                      onClick={(e) => e.stopPropagation()}
                   >
                      <AlertDialogTitle>
-                        Архівувати {item.name}?,{" "}
+                        Архівувати {item.name}?
                      </AlertDialogTitle>
                      <AlertDialogDescription>
                         Замовлення не буде повністю видалене, лише{" "}

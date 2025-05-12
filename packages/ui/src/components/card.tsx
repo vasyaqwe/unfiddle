@@ -2,7 +2,7 @@ import { cn } from "../utils"
 
 export const CARD_STYLES = {
    base: "rounded-xl border relative before:absolute before:inset-0 has-[[data-card-header]]:before:bg-primary-2 before:rounded-xl before:z-[-1] isolate border-primary-12/12 bg-background p-4 shadow-md/4 has-[[data-card-header]]:border-none has-[[data-card-header]]:p-0",
-   title: "font-semibold text-base leading-none",
+   title: "font-semibold text-[0.9rem] sm:text-base leading-none",
    description: "mt-2 text-foreground/80 text-sm",
    header: "px-4 py-3 bg-primary-2 rounded-t-xl",
    content: "p-4 xl:p-5 border border-primary-12/12 bg-background rounded-xl",
