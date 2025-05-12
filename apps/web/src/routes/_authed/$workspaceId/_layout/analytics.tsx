@@ -112,11 +112,19 @@ function RouteComponent() {
       <>
          <Header>
             <HeaderBackButton />
-            <HeaderTitle>Аналітика</HeaderTitle>
+            <HeaderTitle>
+               {auth.workspace.role === "admin"
+                  ? "Аналітика"
+                  : "Ваша аналітика"}
+            </HeaderTitle>
             <HeaderUserMenu />
          </Header>
          <MainScrollArea containerClassName="space-y-6 md:space-y-10 lg:space-y-12">
-            <section className="flex w-full items-center md:mb-7 md:justify-between lg:mb-8">
+            <section
+               className={
+                  "flex w-full items-center md:mb-7 md:justify-between lg:mb-8"
+               }
+            >
                <p className="font-semibold text-xl max-md:hidden">
                   {auth.workspace.role === "admin"
                      ? "Аналітика"
@@ -130,7 +138,7 @@ function RouteComponent() {
                </div>
             </section>
             <section className="grid grid-cols-2 gap-3 md:gap-4 xl:gap-6 2xl:grid-cols-5">
-               <Card>
+               <Card className="max-2xl:order-1">
                   <CardHeader>
                      <CardTitle>Всього замовлень</CardTitle>
                   </CardHeader>
@@ -140,15 +148,15 @@ function RouteComponent() {
                      </p>
                   </CardContent>
                </Card>
-               <Card>
+               <Card className="max-2xl:order-3">
                   <CardHeader>
                      <CardTitle>Успішно</CardTitle>
                   </CardHeader>
                   <CardContent>
                      <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-[1.7rem] xl:leading-tight">
                         {formatNumber(120)}{" "}
-                        <span className="text-foreground/90 text-lg sm:text-xl">
-                           —{" "}
+                        <span className="text-foreground/90 text-lg">
+                           -{" "}
                            <span
                               className={cx(
                                  // biome-ignore lint/correctness/noConstantCondition: <explanation>
@@ -161,15 +169,15 @@ function RouteComponent() {
                      </p>
                   </CardContent>
                </Card>
-               <Card>
+               <Card className="max-2xl:order-4">
                   <CardHeader>
                      <CardTitle>Неуспішно</CardTitle>
                   </CardHeader>
                   <CardContent>
                      <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-[1.7rem] xl:leading-tight">
                         {formatNumber(40)}{" "}
-                        <span className="text-foreground/90 text-lg sm:text-xl">
-                           —{" "}
+                        <span className="text-foreground/90 text-lg">
+                           -{" "}
                            <span
                               className={cx(
                                  // biome-ignore lint/correctness/noConstantCondition: <explanation>
@@ -182,7 +190,7 @@ function RouteComponent() {
                      </p>
                   </CardContent>
                </Card>
-               <Card>
+               <Card className="max-2xl:order-2">
                   <CardHeader>
                      <CardTitle>Маржинальність</CardTitle>
                   </CardHeader>
@@ -198,7 +206,7 @@ function RouteComponent() {
                      </p>
                   </CardContent>
                </Card>
-               <Card>
+               <Card className="order-last max-2xl:col-span-2">
                   <CardHeader>
                      <CardTitle>Загальний Прибуток</CardTitle>
                   </CardHeader>
