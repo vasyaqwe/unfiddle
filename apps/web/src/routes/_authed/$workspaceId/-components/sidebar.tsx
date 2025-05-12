@@ -4,7 +4,7 @@ import { CreateOrder } from "@/order/components/create-order"
 import { WorkspaceMenuPopup } from "@/routes/_authed/$workspaceId/-components/workspace-menu"
 import { UserAvatar } from "@/user/components/user-avatar"
 import { WorkspaceLogo } from "@/workspace/components/workspace-logo"
-import { Button } from "@ledgerblocks/ui/components/button"
+import { Button, button } from "@ledgerblocks/ui/components/button"
 import { DrawerTrigger } from "@ledgerblocks/ui/components/drawer"
 import { Icons } from "@ledgerblocks/ui/components/icons"
 import {
@@ -25,7 +25,7 @@ export function SidebarContent() {
    return (
       <Sidebar>
          <div className="px-4 pt-4">
-            <div className="flex">
+            <div className="flex items-center justify-between gap-3">
                <Menu>
                   <MenuTrigger
                      render={
@@ -50,6 +50,17 @@ export function SidebarContent() {
                   />
                   <WorkspaceMenuPopup />
                </Menu>
+               <Link
+                  to={"/$workspaceId/settings"}
+                  params={params}
+                  search={search}
+                  className={cx(
+                     button({ kind: "icon", variant: "ghost" }),
+                     "text-foreground/75 hover:text-foreground/90",
+                  )}
+               >
+                  <Icons.gear className="size-5" />
+               </Link>
                {/* <Link
                   to="/$workspaceId/search"
                   params={params}
@@ -117,19 +128,6 @@ export function SidebarContent() {
                   >
                      <Icons.users className="size-5" />
                      <span className="pt-px"> Команда</span>
-                  </Link>
-               </li>
-               <li>
-                  <Link
-                     to={"/$workspaceId/settings"}
-                     params={params}
-                     search={search}
-                     className={
-                        "group flex h-8 items-center justify-start gap-2 rounded-md px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:bg-primary-3 hover:text-foreground aria-[current=page]:bg-primary-4/75 aria-[current=page]:text-foreground"
-                     }
-                  >
-                     <Icons.gear className="size-5" />
-                     <span className="pt-px"> Налаштування</span>
                   </Link>
                </li>
             </ul>

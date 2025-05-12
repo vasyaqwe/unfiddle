@@ -46,5 +46,6 @@ export const PERIOD_FILTERS_FNS: Record<
 export const workspaceAnalyticsFilterSchema = z.object({
    profit_by: z.string().catch("all"),
    profit_period: z.enum(PERIOD_FILTERS).catch("last_week"),
-   profit_comparison_period: z.enum(PERIOD_FILTERS).catch("last_week"),
+   orders_by: z.string().catch("all"),
+   orders_period: z.enum(PERIOD_FILTERS).catch("last_week"),
 })
