@@ -31,16 +31,20 @@ type ComboboxProps = {
    children: React.ReactNode
 } & (ComboboxSingleProps | ComboboxMultipleProps)
 
-type ComboboxContextType = {
+type ContextType = {
    isOpen: boolean
    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
    internalValue: string | string[]
    setInternalValue: React.Dispatch<React.SetStateAction<string | string[]>>
 } & (ComboboxSingleProps | ComboboxMultipleProps)
 
-const ComboboxContext = React.createContext<ComboboxContextType | undefined>(
-   undefined,
-)
+const Context = React.createContext<ContextType | undefined>(undefined)
+
+function useContext() {
+   const context = React.use(Context)
+   if (!context) throw new Error("useContext must be used within a Combobox")
+   return context
+}
 
 export function Combobox(props: ComboboxProps) {
    const {
@@ -74,7 +78,7 @@ export function Combobox(props: ComboboxProps) {
    }
 
    return (
-      <ComboboxContext.Provider
+      <Context
          value={
             {
                multiple,
@@ -85,7 +89,7 @@ export function Combobox(props: ComboboxProps) {
                setIsOpen,
                internalValue,
                setInternalValue,
-            } as ComboboxContextType
+            } as ContextType
          }
       >
          <Popover
@@ -94,18 +98,14 @@ export function Combobox(props: ComboboxProps) {
          >
             {children}
          </Popover>
-      </ComboboxContext.Provider>
+      </Context>
    )
 }
 
 interface Props extends React.ComponentProps<typeof PopoverTrigger> {}
 
 export function ComboboxTrigger({ className, children, ...props }: Props) {
-   const context = React.useContext(ComboboxContext)
-   if (!context)
-      throw new Error("ComboboxTrigger must be used within a Combobox")
-
-   const { internalValue: value, multiple } = context
+   const { internalValue: value, multiple } = useContext()
 
    return (
       <PopoverTrigger
@@ -189,10 +189,7 @@ export function ComboboxItem({
    className,
    ...props
 }: { value: string } & React.ComponentProps<typeof CommandItem>) {
-   const context = React.useContext(ComboboxContext)
-   if (!context) throw new Error("ComboboxItem must be used within a Combobox")
-
-   const { multiple, internalValue, onValueChange, setIsOpen } = context
+   const { multiple, internalValue, onValueChange, setIsOpen } = useContext()
 
    const isSelected = multiple
       ? (internalValue as string[]).includes(propValue)

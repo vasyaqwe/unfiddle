@@ -2,12 +2,11 @@ import { cn } from "../utils"
 
 export const CARD_STYLES = {
    base: "rounded-xl border relative before:absolute before:inset-0 has-[[data-card-header]]:before:bg-primary-2 before:rounded-xl before:z-[-1] isolate border-primary-12/12 bg-background p-4 shadow-md/4 has-[[data-card-header]]:border-none has-[[data-card-header]]:p-0",
-   title: "font-semibold text-lg leading-none",
+   title: "font-semibold text-base leading-none",
    description: "mt-2 text-foreground/80 text-sm",
    header: "px-4 py-3 bg-primary-2 rounded-t-xl",
-   content:
-      "px-4 pt-4 md:pt-5 pb-3 border border-neutral bg-background rounded-xl",
-   footer: "border-t mt-4 md:mt-5 text-foreground/60 pt-3 border-neutral",
+   content: "p-4 xl:p-5 border border-primary-12/12 bg-background rounded-xl",
+   footer: "border-t mt-4 text-foreground/60 pt-3 border-neutral",
 }
 
 export function Card({ className, ...props }: React.ComponentProps<"div">) {

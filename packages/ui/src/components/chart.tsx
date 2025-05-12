@@ -15,18 +15,14 @@ export type ChartConfig = {
    )
 }
 
-type ChartContextProps = {
+const Context = React.createContext<{
    config: ChartConfig
-}
+} | null>(null)
 
-const ChartContext = React.createContext<ChartContextProps | null>(null)
-
-function useChart() {
-   const context = React.useContext(ChartContext)
-
+function useContext() {
+   const context = React.use(Context)
    if (!context)
-      throw new Error("useChart must be used within a <ChartContainer />")
-
+      throw new Error("useContext must be used within a <ChartContainer />")
    return context
 }
 
@@ -48,7 +44,7 @@ function ChartContainer({
    const chartId = `chart-${id || uniqueId.replace(/:/g, "")}`
 
    return (
-      <ChartContext.Provider value={{ config }}>
+      <Context value={{ config }}>
          <div
             data-chart={chartId}
             className={cn(
@@ -65,7 +61,7 @@ function ChartContainer({
                {children}
             </RechartsPrimitive.ResponsiveContainer>
          </div>
-      </ChartContext.Provider>
+      </Context>
    )
 }
 
@@ -224,7 +220,7 @@ function ChartTooltipContent({
    labelKey,
    valueFormatter,
 }: ChartTooltipContentProps) {
-   const { config } = useChart()
+   const { config } = useContext()
 
    const tooltipLabel = React.useMemo(() => {
       if (hideLabel || !payload?.length) {
@@ -241,7 +237,7 @@ function ChartTooltipContent({
 
       if (labelFormatter) {
          return (
-            <div className={cn("font-medium", labelClassName)}>
+            <div className={cn("font-semibold", labelClassName)}>
                {labelFormatter(value, payload)}
             </div>
          )
@@ -249,7 +245,7 @@ function ChartTooltipContent({
 
       if (!value) return null
 
-      return <div className={cn("font-medium", labelClassName)}>{value}</div>
+      return <div className={cn("font-semibold", labelClassName)}>{value}</div>
    }, [
       label,
       labelFormatter,
@@ -373,7 +369,7 @@ function ChartLegendContent({
    verticalAlign = "bottom",
    nameKey,
 }: ChartLegendContentProps) {
-   const { config } = useChart()
+   const { config } = useContext()
 
    if (!payload?.length) {
       return null

@@ -2,6 +2,8 @@ import { CACHE_SHORT } from "@/api"
 import { formatCurrency } from "@/currency"
 import { formatDate } from "@/date"
 import { MainScrollArea } from "@/layout/components/main"
+import { formatNumber } from "@/number"
+import { formatOrderDate } from "@/order/utils"
 import {
    Header,
    HeaderBackButton,
@@ -17,7 +19,12 @@ import {
    workspaceAnalyticsFilterSchema,
 } from "@ledgerblocks/core/workspace/analytics/filter"
 import { Button } from "@ledgerblocks/ui/components/button"
-import { Card, CardTitle } from "@ledgerblocks/ui/components/card"
+import {
+   Card,
+   CardContent,
+   CardHeader,
+   CardTitle,
+} from "@ledgerblocks/ui/components/card"
 import {
    type ChartConfig,
    ChartContainer,
@@ -36,6 +43,12 @@ import {
 } from "@ledgerblocks/ui/components/combobox"
 import { Icons } from "@ledgerblocks/ui/components/icons"
 import { ProfitArrow } from "@ledgerblocks/ui/components/profit-arrow"
+import {
+   SegmentedProgress,
+   SegmentedProgressBars,
+   SegmentedProgressLabel,
+   SegmentedProgressValue,
+} from "@ledgerblocks/ui/components/segmented-progress"
 import {
    Select,
    SelectItem,
@@ -86,6 +99,14 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
 )
 
 function RouteComponent() {
+   const params = Route.useParams()
+   const summary = useQuery(
+      trpc.workspace.summary.queryOptions(
+         { id: params.workspaceId },
+         { staleTime: CACHE_SHORT },
+      ),
+   )
+
    return (
       <>
          <Header>
@@ -93,47 +114,84 @@ function RouteComponent() {
             <HeaderTitle>Аналітика</HeaderTitle>
             <HeaderUserMenu />
          </Header>
-         <MainScrollArea>
-            {/* <div className="grid gap-3 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8">
-               <Card>
-                  <p className="font-mono font-semibold text-2xl text-black tracking-tight md:text-3xl">
-                     {formatCurrency(summary.data?.weekProfit ?? 0)}
-                  </p>
-                  <CardFooter>За сьогодні</CardFooter>
-               </Card>
-               <Card>
-                  <p className="font-mono font-semibold text-2xl text-black tracking-tight md:text-3xl">
-                     {formatCurrency(summary.data?.monthProfit ?? 0)}
-                  </p>
-                  <CardFooter>За місяць</CardFooter>
-               </Card>
-               <Card className="md:col-span-2 lg:col-span-1">
-                  <p className="font-mono font-semibold text-2xl tracking-tight md:text-3xl">
-                     {formatCurrency(summary.data?.allTimeProfit ?? 0)}
-                  </p>
-                  <CardFooter>За весь час</CardFooter>
-               </Card>
-            </div> */}
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
-               <p className="font-semibold text-xl">Профіт</p>
-               <div className="flex items-center gap-2">
-                  <PeriodSelect searchKey={"profit_period"} />
-                  <ByCombobox searchKey="profit_by" />
+         <MainScrollArea containerClassName="space-y-6 md:space-y-10 lg:space-y-12">
+            <section>
+               <div className="mb-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+                  <p className="font-semibold text-xl">Стати</p>
+                  <div className="flex items-center gap-2">
+                     <PeriodSelect searchKey={"stats_period"} />
+                     <ByCombobox searchKey="stats_of" />
+                  </div>
                </div>
-            </div>
-            <TotalProfitChart />
-            <div className="mt-6 mb-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
-               <p className="font-semibold text-xl">Замовлення</p>
-               <div className="flex items-center gap-2">
-                  <PeriodSelect searchKey={"orders_period"} />
-                  <ByCombobox searchKey="orders_by" />
+               <div className="grid grid-cols-2 gap-3 md:gap-4 xl:grid-cols-4 xl:gap-6">
+                  <Card>
+                     <CardHeader>
+                        <CardTitle>Профіт</CardTitle>
+                     </CardHeader>
+                     <CardContent>
+                        <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-3xl">
+                           {formatCurrency(summary.data?.weekProfit ?? 0)}
+                        </p>
+                     </CardContent>
+                  </Card>
+                  <Card>
+                     <CardHeader>
+                        <CardTitle>Маржинальність</CardTitle>
+                     </CardHeader>
+                     <CardContent>
+                        <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-3xl">
+                           12%{" "}
+                           <span className="text-foreground/90 text-lg sm:text-xl">
+                              — {formatCurrency(250)}
+                           </span>
+                        </p>
+                     </CardContent>
+                  </Card>
+                  <Card>
+                     <CardHeader>
+                        <CardTitle>Успішність</CardTitle>
+                     </CardHeader>
+                     <CardContent>
+                        <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-3xl">
+                           76%
+                        </p>
+                     </CardContent>
+                  </Card>
+                  <Card>
+                     <CardHeader>
+                        <CardTitle>Замовлення</CardTitle>
+                     </CardHeader>
+                     <CardContent>
+                        <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-3xl">
+                           {formatNumber(200)}
+                        </p>
+                     </CardContent>
+                  </Card>
                </div>
-            </div>
-            <OrdersChart />
-            {/* <div className="grid gap-5 lg:grid-cols-2">
-               <ProfitComparisonChart title={"Менеджери"} />
-               <ProfitComparisonChart title={"Закупівельники"} />
-            </div> */}
+               {/* <div className="mt-4 grid gap-6 md:mt-6 md:grid-cols-2">
+                  <StatsChart />
+               </div> */}
+            </section>
+            <section>
+               <div className="mb-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+                  <p className="font-semibold text-xl">Профіт</p>
+                  <div className="flex items-center gap-2">
+                     <PeriodSelect searchKey={"profit_period"} />
+                     <ByCombobox searchKey="profit_of" />
+                  </div>
+               </div>
+               <ProfitChart />
+            </section>
+            <section>
+               <div className="mb-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+                  <p className="font-semibold text-xl">Замовлення</p>
+                  <div className="flex items-center gap-2">
+                     <PeriodSelect searchKey={"orders_period"} />
+                     <ByCombobox searchKey="orders_of" />
+                  </div>
+               </div>
+               <OrdersChart />
+            </section>
          </MainScrollArea>
       </>
    )
@@ -216,7 +274,7 @@ function ByCombobox({
                   className={"md:!gap-1.5 min-w-40"}
                >
                   {search[searchKey] === "all" ? (
-                     <>Від усіх</>
+                     <>Усіх</>
                   ) : selectedMember ? (
                      <>
                         <UserAvatar
@@ -237,7 +295,7 @@ function ByCombobox({
             <ComboboxEmpty>Нікого не знайдено</ComboboxEmpty>
             <ComboboxItem value="all">
                <Icons.users />
-               Від усіх
+               Усіх
             </ComboboxItem>
             {members.data?.map((member) => (
                <ComboboxItem
@@ -257,7 +315,7 @@ function ByCombobox({
    )
 }
 
-function TotalProfitChart() {
+function ProfitChart() {
    const search = Route.useSearch()
 
    const data = [
@@ -351,6 +409,7 @@ function TotalProfitChart() {
                <ChartTooltip
                   content={<ChartTooltipContent hideIndicator />}
                   cursor={<ChartCursor fill="var(--color-chart-1)" />}
+                  labelFormatter={(value) => formatOrderDate(value)}
                   formatter={(value) => formatCurrency(+value)}
                />
                <Line
@@ -499,7 +558,8 @@ function OrdersChart() {
                />
                <ChartTooltip
                   content={<ChartTooltipContent hideIndicator />}
-                  formatter={(value) => formatCurrency(+value)}
+                  labelFormatter={(value) => formatOrderDate(value)}
+                  formatter={(value) => `${formatNumber(+value)} замовлень`}
                />
                <Bar
                   dataKey="value"
@@ -508,6 +568,20 @@ function OrdersChart() {
                />
             </BarChart>
          </ChartContainer>
+      </Card>
+   )
+}
+
+function _StatsChart() {
+   const _search = Route.useSearch()
+
+   return (
+      <Card className="">
+         <SegmentedProgress value={50}>
+            <SegmentedProgressLabel>Успішність</SegmentedProgressLabel>
+            <SegmentedProgressBars />
+            <SegmentedProgressValue />
+         </SegmentedProgress>
       </Card>
    )
 }
@@ -569,6 +643,7 @@ function _ProfitComparisonChart({
                />
                <ChartTooltip
                   content={<ChartTooltipContent hideIndicator />}
+                  labelFormatter={(value) => formatOrderDate(value)}
                   formatter={(value) => formatCurrency(+value)}
                />
                <Bar
