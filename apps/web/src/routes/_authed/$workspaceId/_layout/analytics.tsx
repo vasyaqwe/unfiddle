@@ -57,6 +57,7 @@ import {
    SelectTriggerIcon,
    SelectValue,
 } from "@ledgerblocks/ui/components/select"
+import { cx } from "@ledgerblocks/ui/utils"
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { createFileRoute } from "@tanstack/react-router"
@@ -128,14 +129,56 @@ function RouteComponent() {
                   ) : null}
                </div>
             </section>
-            <section className="grid grid-cols-2 gap-3 md:gap-4 xl:grid-cols-4 xl:gap-6">
+            <section className="grid grid-cols-2 gap-3 md:gap-4 xl:gap-6 2xl:grid-cols-5">
                <Card>
                   <CardHeader>
-                     <CardTitle>Профіт</CardTitle>
+                     <CardTitle>Всього замовлень</CardTitle>
                   </CardHeader>
                   <CardContent>
-                     <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-3xl">
-                        {formatCurrency(summary.data?.weekProfit ?? 0)}
+                     <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-[1.7rem] xl:leading-tight">
+                        {formatNumber(200)}
+                     </p>
+                  </CardContent>
+               </Card>
+               <Card>
+                  <CardHeader>
+                     <CardTitle>Успішно</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                     <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-[1.7rem] xl:leading-tight">
+                        {formatNumber(120)}{" "}
+                        <span className="text-foreground/90 text-lg sm:text-xl">
+                           —{" "}
+                           <span
+                              className={cx(
+                                 // biome-ignore lint/correctness/noConstantCondition: <explanation>
+                                 false ? "text-green-9" : "text-red-9",
+                              )}
+                           >
+                              70%
+                           </span>
+                        </span>
+                     </p>
+                  </CardContent>
+               </Card>
+               <Card>
+                  <CardHeader>
+                     <CardTitle>Неуспішно</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                     <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-[1.7rem] xl:leading-tight">
+                        {formatNumber(40)}{" "}
+                        <span className="text-foreground/90 text-lg sm:text-xl">
+                           —{" "}
+                           <span
+                              className={cx(
+                                 // biome-ignore lint/correctness/noConstantCondition: <explanation>
+                                 false ? "text-green-9" : "text-red-9",
+                              )}
+                           >
+                              30%
+                           </span>
+                        </span>
                      </p>
                   </CardContent>
                </Card>
@@ -144,31 +187,24 @@ function RouteComponent() {
                      <CardTitle>Маржинальність</CardTitle>
                   </CardHeader>
                   <CardContent>
-                     <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-3xl">
-                        12%{" "}
-                        <span className="text-foreground/90 text-lg sm:text-xl">
-                           — {formatCurrency(250)}
-                        </span>
+                     <p
+                        className={cx(
+                           "font-mono font-semibold text-xl sm:text-2xl xl:text-[1.7rem] xl:leading-tight",
+                           // biome-ignore lint/correctness/noConstantCondition: <explanation>
+                           true ? "text-green-9" : "text-red-9",
+                        )}
+                     >
+                        10%
                      </p>
                   </CardContent>
                </Card>
                <Card>
                   <CardHeader>
-                     <CardTitle>Успішність</CardTitle>
+                     <CardTitle>Загальний Прибуток</CardTitle>
                   </CardHeader>
                   <CardContent>
-                     <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-3xl">
-                        76%
-                     </p>
-                  </CardContent>
-               </Card>
-               <Card>
-                  <CardHeader>
-                     <CardTitle>Замовлення</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                     <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-3xl">
-                        {formatNumber(200)}
+                     <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-[1.7rem] xl:leading-tight">
+                        {formatCurrency(summary.data?.weekProfit ?? 0)}
                      </p>
                   </CardContent>
                </Card>
@@ -178,7 +214,7 @@ function RouteComponent() {
                </div> */}
             <section>
                <div className="mb-2 flex items-center justify-between">
-                  <p className="font-semibold text-xl">Динаміка профіту</p>
+                  <p className="font-semibold text-xl">Динаміка прибутку</p>
                   <Button variant={"tertiary"}>Скинути</Button>
                </div>
                <ProfitChart />
