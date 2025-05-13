@@ -18,6 +18,34 @@ export function useChartZoom({ initialData }: { initialData: DataPoint[] }) {
    const chartRef = React.useRef<HTMLDivElement>(null)
 
    React.useEffect(() => {
+      let frame: number
+
+      const check = () => {
+         const container = chartRef.current
+         if (!container) {
+            frame = requestAnimationFrame(check)
+            return
+         }
+
+         const controller = new AbortController()
+
+         container.addEventListener(
+            "wheel",
+            (e) => {
+               e.preventDefault()
+            },
+            { passive: false, signal: controller.signal },
+         )
+
+         return () => controller.abort()
+      }
+
+      frame = requestAnimationFrame(check)
+
+      return () => cancelAnimationFrame(frame)
+   }, [])
+
+   React.useEffect(() => {
       if (initialData?.length) {
          setData(initialData)
          setOriginalData(initialData)
@@ -72,7 +100,7 @@ export function useChartZoom({ initialData }: { initialData: DataPoint[] }) {
       setIsSelecting(false)
    }
 
-   const onReset = () => {
+   const reset = () => {
       const date = originalData[0]?.label
       const endDate = originalData[originalData.length - 1]?.label
       if (!date || !endDate) return
@@ -80,10 +108,9 @@ export function useChartZoom({ initialData }: { initialData: DataPoint[] }) {
       setEndTime(endDate)
    }
 
-   const onZoom = (
+   const handle = (
       e: React.WheelEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>,
    ) => {
-      e.preventDefault()
       if (!originalData.length || !chartRef.current) return
 
       const zoomFactor = 0.1
@@ -145,13 +172,15 @@ export function useChartZoom({ initialData }: { initialData: DataPoint[] }) {
    }
 
    return {
-      data,
       zoomedData,
       total,
       onMouseDown,
       onMouseMove,
       onMouseUp,
-      onReset,
-      onZoom,
+      reset,
+      handle,
+      chartRef,
+      refAreaLeft,
+      refAreaRight,
    }
 }

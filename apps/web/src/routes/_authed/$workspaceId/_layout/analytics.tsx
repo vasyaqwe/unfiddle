@@ -33,6 +33,7 @@ import {
    ChartTooltip,
    ChartTooltipContent,
 } from "@ledgerblocks/ui/components/chart"
+import { useChartZoom } from "@ledgerblocks/ui/components/chart/use-chart-zoom"
 import {
    Combobox,
    ComboboxEmpty,
@@ -61,7 +62,6 @@ import { cx } from "@ledgerblocks/ui/utils"
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { createFileRoute } from "@tanstack/react-router"
-import * as React from "react"
 import {
    Bar,
    BarChart,
@@ -69,6 +69,8 @@ import {
    LabelList,
    Line,
    LineChart,
+   ReferenceArea,
+   ResponsiveContainer,
    XAxis,
    YAxis,
 } from "recharts"
@@ -143,7 +145,7 @@ function RouteComponent() {
                      <CardTitle>Всього замовлень</CardTitle>
                   </CardHeader>
                   <CardContent>
-                     <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-[1.7rem] xl:leading-tight">
+                     <p className="font-mono font-semibold text-[1.35rem]/7 sm:text-2xl xl:text-[1.7rem]/9">
                         {formatNumber(200)}
                      </p>
                   </CardContent>
@@ -153,9 +155,11 @@ function RouteComponent() {
                      <CardTitle>Успішно</CardTitle>
                   </CardHeader>
                   <CardContent>
-                     <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-[1.7rem] xl:leading-tight">
+                     <p className="font-mono font-semibold text-[1.35rem]/7 sm:text-2xl xl:text-[1.7rem]/9">
                         {formatNumber(120)}{" "}
-                        <sup className="text-lg text-red-9">70%</sup>
+                        <sup className="-top-1 xl:-top-2 text-base text-red-9">
+                           70%
+                        </sup>
                      </p>
                   </CardContent>
                </Card>
@@ -164,9 +168,11 @@ function RouteComponent() {
                      <CardTitle>Неуспішно</CardTitle>
                   </CardHeader>
                   <CardContent>
-                     <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-[1.7rem] xl:leading-tight">
-                        {formatNumber(40)}
-                        <sup className="text-lg text-red-9">30%</sup>
+                     <p className="font-mono font-semibold text-[1.35rem]/7 sm:text-2xl xl:text-[1.7rem]/9">
+                        {formatNumber(40)}{" "}
+                        <sup className="-top-1 xl:-top-2 text-base text-red-9">
+                           30%
+                        </sup>
                      </p>
                   </CardContent>
                </Card>
@@ -177,7 +183,7 @@ function RouteComponent() {
                   <CardContent>
                      <p
                         className={cx(
-                           "font-mono font-semibold text-xl sm:text-2xl xl:text-[1.7rem] xl:leading-tight",
+                           "font-mono font-semibold text-[1.35rem]/7 sm:text-2xl xl:text-[1.7rem]/9",
                            // biome-ignore lint/correctness/noConstantCondition: <explanation>
                            true ? "text-green-9" : "text-red-9",
                         )}
@@ -188,10 +194,10 @@ function RouteComponent() {
                </Card>
                <Card className="order-last max-2xl:col-span-2">
                   <CardHeader>
-                     <CardTitle>Загальний Прибуток</CardTitle>
+                     <CardTitle>Загальний прибуток</CardTitle>
                   </CardHeader>
                   <CardContent>
-                     <p className="font-mono font-semibold text-xl sm:text-2xl xl:text-[1.7rem] xl:leading-tight">
+                     <p className="font-mono font-semibold text-[1.35rem]/7 sm:text-2xl xl:text-[1.7rem]/9">
                         {formatCurrency(summary.data?.weekProfit ?? 0)}
                      </p>
                   </CardContent>
@@ -201,10 +207,6 @@ function RouteComponent() {
                   <StatsChart />
                </div> */}
             <section>
-               <div className="mb-2 flex items-center justify-between">
-                  <p className="font-semibold text-xl">Динаміка прибутку</p>
-                  <Button variant={"tertiary"}>Скинути</Button>
-               </div>
                <ProfitChart />
             </section>
             <section>
@@ -340,27 +342,36 @@ function ProfitChart() {
    const search = Route.useSearch()
 
    const data = [
-      { date: "2024-03-01", value: 11485 },
-      { date: "2024-04-01", value: 11458 },
-      { date: "2024-05-01", value: 11382 },
-      { date: "2024-06-01", value: 11389 },
-      { date: "2024-07-01", value: 11326 },
-      { date: "2024-08-01", value: 11367 },
-      { date: "2024-09-01", value: 11383 },
-      { date: "2024-10-01", value: 11328 },
-      { date: "2024-11-01", value: 11484 },
-      { date: "2024-12-01", value: 11429 },
-      { date: "2025-01-01", value: 11579 },
-      { date: "2025-02-01", value: 11623 },
-      { date: "2025-03-01", value: 11692 },
+      { label: "2024-03-01", value: 11485 },
+      { label: "2024-04-01", value: 11458 },
+      { label: "2024-05-01", value: 11382 },
+      { label: "2024-06-01", value: 11389 },
+      { label: "2024-07-01", value: 11326 },
+      { label: "2024-08-01", value: 11367 },
+      { label: "2024-09-01", value: 11383 },
+      { label: "2024-10-01", value: 11328 },
+      { label: "2024-11-01", value: 11484 },
+      { label: "2024-12-01", value: 11429 },
+      { label: "2025-01-01", value: 11579 },
+      { label: "2025-02-01", value: 11623 },
+      { label: "2025-03-01", value: 11692 },
    ]
-
-   const [selectedValue] = React.useState("1h")
 
    const period = search.period
 
+   const zoom = useChartZoom({ initialData: data })
+
    return (
-      <div className="scrollbar-hidden overflow-x-auto">
+      <>
+         <div className="mb-2 flex items-center justify-between">
+            <p className="font-semibold text-xl">Динаміка прибутку</p>
+            <Button
+               onClick={() => zoom.reset()}
+               variant={"tertiary"}
+            >
+               Скинути
+            </Button>
+         </div>
          {/* <CardTitle>
             <span className="mt-4 whitespace-nowrap font-mono font-semibold text-green-10 text-xl">
                <ProfitArrow
@@ -379,75 +390,97 @@ function ProfitChart() {
                   },
                } satisfies ChartConfig
             }
-            className="mt-5 h-60 w-full min-w-[500px] [--color-chart-1:var(--color-accent-6)] md:h-72 xl:h-96"
+            className="mt-5 h-60 w-full [--color-chart-1:var(--color-accent-6)] md:h-72 xl:h-96"
          >
-            <LineChart
-               accessibilityLayer
-               key={selectedValue}
-               data={data}
-               margin={{ top: 12, right: 32, bottom: 4, left: 8 }}
+            <div
+               onWheel={zoom.handle}
+               onTouchMove={zoom.handle}
+               ref={zoom.chartRef}
+               className="size-full touch-none"
             >
-               <CartesianGrid
-                  vertical={false}
-                  strokeDasharray="2 2"
-               />
-               <XAxis
-                  dataKey={"date"}
-                  tickLine={false}
-                  tickMargin={12}
-                  minTickGap={32}
-                  tickFormatter={(value) =>
-                     formatDate(value, {
-                        month: "short",
-                        year:
-                           period === "all_time" ||
-                           period === "last_year" ||
-                           period === "last_half_year" ||
-                           period === "last_quarter"
-                              ? "2-digit"
-                              : undefined,
-                        day:
-                           period === "last_week" || period === "last_month"
-                              ? "numeric"
-                              : undefined,
-                     })
-                  }
-               />
-               <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tickMargin={12}
-                  allowDataOverflow={true}
-                  domain={["dataMin", "dataMax"]}
-                  tickFormatter={(value) => {
-                     if (value === 0) return "0 ₴"
-                     return formatCurrency(value, {
-                        notation: "compact",
-                        style: "decimal",
-                     })
-                  }}
-               />
-               <ChartTooltip
-                  content={<ChartTooltipContent hideIndicator />}
-                  cursor={<ChartCursor fill="var(--color-chart-1)" />}
-                  labelFormatter={(value) => formatOrderDate(value)}
-                  formatter={(value) => formatCurrency(+value)}
-               />
-               <Line
-                  type="linear"
-                  dataKey="value"
-                  strokeWidth={2}
-                  dot={false}
-                  activeDot={{
-                     r: 5,
-                     fill: "var(--color-profit)",
-                     stroke: "var(--background)",
-                     strokeWidth: 2,
-                  }}
-               />
-            </LineChart>
+               <ResponsiveContainer>
+                  <LineChart
+                     accessibilityLayer
+                     data={zoom.zoomedData()}
+                     margin={{ top: 12, right: 32, bottom: 4, left: 8 }}
+                     onMouseDown={zoom.onMouseDown}
+                     onMouseMove={zoom.onMouseMove}
+                     onMouseUp={zoom.onMouseUp}
+                     onMouseLeave={zoom.onMouseUp}
+                  >
+                     <CartesianGrid
+                        vertical={false}
+                        strokeDasharray="2 2"
+                     />
+                     <XAxis
+                        dataKey={"label"}
+                        tickLine={false}
+                        tickMargin={12}
+                        minTickGap={32}
+                        tickFormatter={(value) =>
+                           formatDate(value, {
+                              month: "short",
+                              year:
+                                 period === "all_time" ||
+                                 period === "last_year" ||
+                                 period === "last_half_year" ||
+                                 period === "last_quarter"
+                                    ? "2-digit"
+                                    : undefined,
+                              day:
+                                 period === "last_week" ||
+                                 period === "last_month"
+                                    ? "numeric"
+                                    : undefined,
+                           })
+                        }
+                     />
+                     <YAxis
+                        axisLine={false}
+                        tickLine={false}
+                        tickMargin={12}
+                        allowDataOverflow={true}
+                        domain={["dataMin", "dataMax"]}
+                        tickFormatter={(value) => {
+                           if (value === 0) return "0 ₴"
+                           return formatCurrency(value, {
+                              notation: "compact",
+                              style: "decimal",
+                           })
+                        }}
+                     />
+                     <ChartTooltip
+                        content={<ChartTooltipContent hideIndicator />}
+                        cursor={<ChartCursor fill="var(--color-chart-1)" />}
+                        labelFormatter={(value) => formatOrderDate(value)}
+                        formatter={(value) => formatCurrency(+value)}
+                     />
+                     <Line
+                        type="linear"
+                        dataKey="value"
+                        strokeWidth={2}
+                        dot={false}
+                        activeDot={{
+                           r: 5,
+                           fill: "var(--color-profit)",
+                           stroke: "var(--background)",
+                           strokeWidth: 2,
+                        }}
+                     />
+                     {zoom.refAreaLeft && zoom.refAreaRight && (
+                        <ReferenceArea
+                           x1={zoom.refAreaLeft}
+                           x2={zoom.refAreaRight}
+                           strokeOpacity={0.3}
+                           fill="var(--color-chart-1)"
+                           fillOpacity={0.05}
+                        />
+                     )}
+                  </LineChart>
+               </ResponsiveContainer>
+            </div>
          </ChartContainer>
-      </div>
+      </>
    )
 }
 
