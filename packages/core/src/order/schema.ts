@@ -37,7 +37,7 @@ export const order = d.table(
       nameLower: d.text().notNull().default(""),
       name: d.text().notNull(),
       quantity: d.integer().notNull(),
-      sellingPrice: d.integer(),
+      sellingPrice: d.numeric({ mode: "number" }).notNull(),
       severity: d.text({ enum: ORDER_SEVERITIES }).notNull().default("low"),
       note: d.text().notNull().default(""),
       status: d.text({ enum: ORDER_STATUSES }).notNull().default("pending"),

@@ -19,7 +19,7 @@ export const procurement = d.table(
          .notNull()
          .references(() => user.id, { onDelete: "cascade" }),
       quantity: d.integer().notNull(),
-      purchasePrice: d.integer().notNull(),
+      purchasePrice: d.numeric({ mode: "number" }).notNull(),
       status: d
          .text({ enum: PROCUREMENT_STATUSES })
          .notNull()

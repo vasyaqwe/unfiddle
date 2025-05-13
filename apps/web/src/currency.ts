@@ -10,4 +10,5 @@ export const formatCurrency = (
    })
       .format(Number(price))
       .replace(",00", "")
+      .replaceAll(",", ".")
 }

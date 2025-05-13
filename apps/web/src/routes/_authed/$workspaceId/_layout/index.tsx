@@ -541,7 +541,7 @@ function OrderRow({
    const [confirmArchiveOpen, setConfirmArchiveOpen] = React.useState(false)
    const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false)
    const menuTriggerRef = React.useRef<HTMLButtonElement>(null)
-
+   console.log(item.sellingPrice)
    const totalProfit = item.procurements.reduce(
       (acc, p) =>
          acc + ((item.sellingPrice ?? 0) - p.purchasePrice) * p.quantity,
@@ -892,7 +892,7 @@ function OrderRow({
                               >
                                  {state.pressed ? (
                                     <>
-                                       <Icons.undo className="size-[18px]" />
+                                       <Icons.undo className="!-ml-0.5 mr-px size-[18px]" />
                                        Залишити
                                     </>
                                  ) : (
