@@ -315,7 +315,7 @@ function ChartTooltipContent({
                            )}
                            <div className={cn("flex grow gap-4 leading-none")}>
                               {payload.length === 1 ? null : (
-                                 <span className="mb-0.5 text-foreground/75 leading-none">
+                                 <span className="mb-0.5 font-medium text-foreground/75 leading-none">
                                     {itemConfig?.label?.toString() ?? item.name}
                                  </span>
                               )}
