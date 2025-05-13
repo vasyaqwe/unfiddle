@@ -52,7 +52,7 @@ export function Combobox(props: ComboboxProps) {
       multiple,
       value: externalValue,
       onValueChange,
-      canBeEmpty,
+      canBeEmpty = false,
    } = props
    const [isOpen, setIsOpen] = React.useState(false)
    const [internalValue, setInternalValue] = React.useState<string | string[]>(
@@ -189,28 +189,39 @@ export function ComboboxItem({
    className,
    ...props
 }: { value: string } & React.ComponentProps<typeof CommandItem>) {
-   const { multiple, internalValue, onValueChange, setIsOpen } = useContext()
+   const { multiple, internalValue, onValueChange, setIsOpen, canBeEmpty } =
+      useContext()
 
    const isSelected = multiple
       ? (internalValue as string[]).includes(propValue)
       : internalValue === propValue
 
-   const onSelect = () => {
-      if (multiple) {
-         const newValue = isSelected
-            ? (internalValue as string[]).filter((v) => v !== propValue)
-            : [...(internalValue as string[]), propValue]
-         onValueChange?.(newValue)
-      } else {
-         onValueChange?.(propValue)
-         setIsOpen(false)
-      }
-   }
-
    return (
       <CommandItem
          value={propValue}
-         onSelect={onSelect}
+         onSelect={() => {
+            if (multiple) {
+               if (propValue === "all") {
+                  onValueChange?.(["all"])
+               } else {
+                  const currentValues = internalValue as string[]
+                  if (currentValues.includes("all")) {
+                     onValueChange?.([propValue])
+                  } else {
+                     const newValue = isSelected
+                        ? currentValues.filter((v) => v !== propValue)
+                        : [...currentValues, propValue]
+
+                     if (!canBeEmpty && newValue.length === 0) return
+
+                     onValueChange?.(newValue)
+                  }
+               }
+            } else {
+               onValueChange?.(propValue)
+               setIsOpen(false)
+            }
+         }}
          className={cn(MENU_ITEM_STYLES.base, "items-center", className)}
          {...props}
       >

@@ -4,15 +4,16 @@ import * as React from "react"
 export function AvatarStack({
    className,
    children,
+   size = 24,
    ...props
-}: React.ComponentProps<"span">) {
+}: React.ComponentProps<"span"> & { size?: number }) {
    const length = React.Children.count(children)
 
    return (
       <span
-         style={{ "--length": length } as never}
+         style={{ "--length": length, "--size": `${size}px` } as never}
          className={cn(
-            "grid h-(--size) grid-cols-[repeat(var(--length),var(--column))] content-end [--border:2px] [--column:17px] [--size:24px]",
+            "grid h-(--size) grid-cols-[repeat(var(--length),var(--column))] content-end [--border:2px] [--column:17px]",
             className,
          )}
          {...props}

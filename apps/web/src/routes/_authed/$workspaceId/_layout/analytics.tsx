@@ -19,6 +19,10 @@ import {
    PERIOD_FILTERS_TRANSLATION,
    workspaceAnalyticsFilterSchema,
 } from "@ledgerblocks/core/workspace/analytics/filter"
+import {
+   AvatarStack,
+   AvatarStackItem,
+} from "@ledgerblocks/ui/components/avatar-stack"
 import { Button } from "@ledgerblocks/ui/components/button"
 import {
    Card,
@@ -100,6 +104,13 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
    },
 )
 
+const COLORS: Record<number, string> = {
+   0: "var(--color-accent-6)",
+   1: "#22c55e",
+   2: "#C084FC",
+   3: "#F87171",
+} as const
+
 function RouteComponent() {
    const params = Route.useParams()
    const auth = useAuth()
@@ -134,9 +145,7 @@ function RouteComponent() {
                </p>
                <div className="flex grid-cols-2 items-center gap-2 max-md:grid max-md:w-full">
                   <PeriodSelect searchKey={"period"} />
-                  {auth.workspace.role === "admin" ? (
-                     <ByCombobox searchKey="who" />
-                  ) : null}
+                  {auth.workspace.role === "admin" ? <WhoCombobox /> : null}
                </div>
             </section>
             <section className="grid grid-cols-2 gap-3 md:gap-4 xl:gap-6 2xl:grid-cols-5">
@@ -260,9 +269,7 @@ function PeriodSelect({
    )
 }
 
-function ByCombobox({
-   searchKey,
-}: { searchKey: keyof z.infer<typeof workspaceAnalyticsFilterSchema> }) {
+function WhoCombobox() {
    const params = Route.useParams()
    const search = Route.useSearch()
    const navigate = useNavigate()
@@ -272,19 +279,23 @@ function ByCombobox({
       }),
    )
 
-   const selectedMember = members.data?.find(
-      (member) => member.user.id === search[searchKey],
+   const userIds = search.who
+
+   const selectedMembers = members.data?.filter((member) =>
+      userIds.includes(member.user.id),
    )
+   const selectedMember = selectedMembers?.[0]
 
    return (
       <Combobox
-         value={search[searchKey]}
+         multiple
+         value={userIds}
          onValueChange={(value) =>
             navigate({
                to: ".",
                search: (prev) => ({
                   ...prev,
-                  [searchKey]: value as never,
+                  who: value,
                   replace: true,
                }),
             })
@@ -296,9 +307,9 @@ function ByCombobox({
                   variant={"secondary"}
                   className={"md:!gap-1.5 min-w-40"}
                >
-                  {search[searchKey] === "all" ? (
-                     <>Усіх</>
-                  ) : selectedMember ? (
+                  {search.who.includes("all") ? (
+                     <>Загальна</>
+                  ) : userIds.length === 1 && selectedMember ? (
                      <>
                         <UserAvatar
                            size={16}
@@ -308,7 +319,18 @@ function ByCombobox({
                            {selectedMember.user.name}
                         </span>
                      </>
-                  ) : null}
+                  ) : (
+                     <AvatarStack size={18}>
+                        {selectedMembers?.map((m) => (
+                           <AvatarStackItem key={m.user.id}>
+                              <UserAvatar
+                                 size={18}
+                                 user={m.user}
+                              />
+                           </AvatarStackItem>
+                        ))}
+                     </AvatarStack>
+                  )}
                   <ComboboxTriggerIcon />
                </Button>
             }
@@ -318,7 +340,7 @@ function ByCombobox({
             <ComboboxEmpty>Нікого не знайдено</ComboboxEmpty>
             <ComboboxItem value="all">
                <Icons.users />
-               Усіх
+               Загальна
             </ComboboxItem>
             {members.data?.map((member) => (
                <ComboboxItem
@@ -340,24 +362,45 @@ function ByCombobox({
 
 function ProfitChart() {
    const search = Route.useSearch()
+   const period = search.period
 
    const data = [
-      { label: "2024-03-01", value: 11485 },
-      { label: "2024-04-01", value: 11458 },
-      { label: "2024-05-01", value: 11382 },
-      { label: "2024-06-01", value: 11389 },
-      { label: "2024-07-01", value: 11326 },
-      { label: "2024-08-01", value: 11367 },
-      { label: "2024-09-01", value: 11383 },
-      { label: "2024-10-01", value: 11328 },
-      { label: "2024-11-01", value: 11484 },
-      { label: "2024-12-01", value: 11429 },
-      { label: "2025-01-01", value: 11579 },
-      { label: "2025-02-01", value: 11623 },
-      { label: "2025-03-01", value: 11692 },
+      { date: "2024-03-01", "123": 5500, "321": 3000, "322": 4000 },
+      { date: "2024-04-01", "123": 5400, "321": 3100, "322": 4100 },
+      { date: "2024-05-01", "123": 5300, "321": 3050, "322": 4200 },
+      { date: "2024-06-01", "123": 5350, "321": 3120, "322": 4300 },
+      { date: "2024-07-01", "123": 5250, "321": 3180, "322": 4350 },
+      { date: "2024-08-01", "123": 5320, "321": 3200, "322": 4400 },
+      { date: "2024-09-01", "123": 5380, "321": 3250, "322": 4450 },
+      { date: "2024-10-01", "123": 5300, "321": 3300, "322": 4500 },
+      { date: "2024-11-01", "123": 5450, "321": 3350, "322": 4550 },
+      { date: "2024-12-01", "123": 5400, "321": 3400, "322": 4600 },
+      { date: "2025-01-01", "123": 5550, "321": 3450, "322": 4700 },
+      { date: "2025-02-01", "123": 5600, "321": 3500, "322": 4750 },
+      { date: "2025-03-01", "123": 5650, "321": 3550, "322": 4800 },
+      { date: "2025-04-01", "123": 5700, "321": 3600, "322": 4850 },
+      { date: "2025-05-01", "123": 5750, "321": 3650, "322": 4900 },
+      { date: "2025-06-01", "123": 5800, "321": 3700, "322": 4950 },
+      { date: "2025-07-01", "123": 5850, "321": 3750, "322": 5000 },
+      { date: "2025-08-01", "123": 5900, "321": 3800, "322": 5050 },
+      { date: "2025-09-01", "123": 5950, "321": 3850, "322": 5100 },
+      { date: "2025-10-01", "123": 6000, "321": 3900, "322": 5150 },
    ]
+   const firstDataPoint = data[0]
 
-   const period = search.period
+   const userIds = firstDataPoint
+      ? Object.keys(firstDataPoint).filter((key) => key !== "date")
+      : []
+
+   const config = Object.fromEntries(
+      userIds.map((id, idx) => [
+         id,
+         {
+            label: `User ${id}`,
+            color: COLORS[idx],
+         },
+      ]),
+   ) satisfies ChartConfig
 
    const zoom = useChartZoom({ initialData: data })
 
@@ -382,15 +425,13 @@ function ProfitChart() {
             </span>
          </CardTitle> */}
          <ChartContainer
-            config={
-               {
-                  profit: {
-                     label: "Profit",
-                     color: "var(--color-chart-1)",
-                  },
-               } satisfies ChartConfig
-            }
-            className="mt-5 h-60 w-full [--color-chart-1:var(--color-accent-6)] md:h-72 xl:h-96"
+            config={config}
+            className={cx(
+               "mt-5 h-60 w-full md:h-72 xl:h-96",
+               userIds.length === 1
+                  ? "[--color-chart-1:var(--color-accent-6)]"
+                  : "[--color-chart-1:var(--color-primary-9)]",
+            )}
          >
             <div
                onWheel={zoom.handle}
@@ -413,7 +454,7 @@ function ProfitChart() {
                         strokeDasharray="2 2"
                      />
                      <XAxis
-                        dataKey={"label"}
+                        dataKey={"date"}
                         tickLine={false}
                         tickMargin={12}
                         minTickGap={32}
@@ -450,23 +491,26 @@ function ProfitChart() {
                         }}
                      />
                      <ChartTooltip
-                        content={<ChartTooltipContent hideIndicator />}
-                        cursor={<ChartCursor fill="var(--color-chart-1)" />}
-                        labelFormatter={(value) => formatOrderDate(value)}
-                        formatter={(value) => formatCurrency(+value)}
+                        content={
+                           <ChartTooltipContent
+                              labelFormatter={(value) =>
+                                 `За ${formatOrderDate(value)}`
+                              }
+                              valueFormatter={(value) => formatCurrency(+value)}
+                           />
+                        }
+                        cursor={<ChartCursor fill={"var(--color-chart-1)"} />}
                      />
-                     <Line
-                        type="linear"
-                        dataKey="value"
-                        strokeWidth={2}
-                        dot={false}
-                        activeDot={{
-                           r: 5,
-                           fill: "var(--color-profit)",
-                           stroke: "var(--background)",
-                           strokeWidth: 2,
-                        }}
-                     />
+                     {Object.entries(config).map(([key, value]) => (
+                        <Line
+                           key={key}
+                           dataKey={key}
+                           type="linear"
+                           stroke={value.color}
+                           strokeWidth={2}
+                           dot={false}
+                        />
+                     ))}
                      {zoom.refAreaLeft && zoom.refAreaRight && (
                         <ReferenceArea
                            x1={zoom.refAreaLeft}
@@ -599,9 +643,16 @@ function OrdersChart() {
                   }}
                />
                <ChartTooltip
-                  content={<ChartTooltipContent hideIndicator />}
-                  labelFormatter={(value) => formatOrderDate(value)}
-                  formatter={(value) => `${formatNumber(+value)} замовлень`}
+                  content={
+                     <ChartTooltipContent
+                        valueFormatter={(value) =>
+                           `${formatNumber(+value)} замовлень`
+                        }
+                        labelFormatter={(value) =>
+                           `За ${formatOrderDate(value)}`
+                        }
+                     />
+                  }
                />
                <Bar
                   dataKey="value"
@@ -634,14 +685,14 @@ function _ProfitComparisonChart({
    title: string
 }) {
    const data = [
-      { label: "Ivan", value: 15400 },
-      { label: "Oksana", value: 12100 },
-      { label: "Dmytro", value: 9800 },
-      { label: "Kateryna", value: 8700 },
-      { label: "Ivan", value: 15400 },
-      { label: "Oksana", value: 12100 },
-      { label: "Dmytro", value: 9800 },
-      { label: "Kateryna", value: 8700 },
+      { date: "Ivan", value: 15400 },
+      { date: "Oksana", value: 12100 },
+      { date: "Dmytro", value: 9800 },
+      { date: "Kateryna", value: 8700 },
+      { date: "Ivan", value: 15400 },
+      { date: "Oksana", value: 12100 },
+      { date: "Dmytro", value: 9800 },
+      { date: "Kateryna", value: 8700 },
    ]
    const maxValue = Math.max(...data.map((item) => item.value))
 
@@ -697,7 +748,7 @@ function _ProfitComparisonChart({
                   minPointSize={80}
                >
                   <LabelList
-                     dataKey="label"
+                     dataKey="date"
                      position="insideLeft"
                      offset={8}
                      className="fill-white"

@@ -1,8 +1,7 @@
 import * as React from "react"
 
 type DataPoint = {
-   label: string
-   value: number
+   date: string
 }
 
 export function useChartZoom({ initialData }: { initialData: DataPoint[] }) {
@@ -49,8 +48,8 @@ export function useChartZoom({ initialData }: { initialData: DataPoint[] }) {
       if (initialData?.length) {
          setData(initialData)
          setOriginalData(initialData)
-         const startTime = initialData[0]?.label
-         const endTime = initialData[initialData.length - 1]?.label
+         const startTime = initialData[0]?.date
+         const endTime = initialData[initialData.length - 1]?.date
          if (!startTime || !endTime) return
          setStartTime(startTime)
          setEndTime(endTime)
@@ -64,7 +63,7 @@ export function useChartZoom({ initialData }: { initialData: DataPoint[] }) {
 
       const dataPointsInRange = originalData.filter(
          (dataPoint) =>
-            dataPoint.label >= startTime && dataPoint.label <= endTime,
+            dataPoint.date >= startTime && dataPoint.date <= endTime,
       )
 
       // Ensure we have at least two data points for the chart to prevent rendering a single dot
@@ -73,7 +72,7 @@ export function useChartZoom({ initialData }: { initialData: DataPoint[] }) {
          : originalData.slice(0, 2)
    }
 
-   const total = zoomedData().reduce((acc, curr) => acc + curr.value, 0)
+   // const total = zoomedData().reduce((acc, curr) => acc + curr.value, 0)
 
    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
    const onMouseDown = (e: any) => {
@@ -101,8 +100,8 @@ export function useChartZoom({ initialData }: { initialData: DataPoint[] }) {
    }
 
    const reset = () => {
-      const date = originalData[0]?.label
-      const endDate = originalData[originalData.length - 1]?.label
+      const date = originalData[0]?.date
+      const endDate = originalData[originalData.length - 1]?.date
       if (!date || !endDate) return
       setStartTime(date)
       setEndTime(endDate)
@@ -143,8 +142,8 @@ export function useChartZoom({ initialData }: { initialData: DataPoint[] }) {
       } else {
          return
       }
-      const date = originalData[0]?.label ?? 0
-      const endDate = originalData[originalData.length - 1]?.label ?? 0
+      const date = originalData[0]?.date ?? 0
+      const endDate = originalData[originalData.length - 1]?.date ?? 0
 
       const currentRange =
          new Date(endTime || endDate).getTime() -
@@ -173,7 +172,6 @@ export function useChartZoom({ initialData }: { initialData: DataPoint[] }) {
 
    return {
       zoomedData,
-      total,
       onMouseDown,
       onMouseMove,
       onMouseUp,

@@ -208,7 +208,7 @@ function ChartTooltipContent({
    active,
    payload,
    className,
-   indicator = "dot",
+   indicator = "line",
    hideLabel = false,
    hideIndicator = false,
    label,
@@ -258,17 +258,15 @@ function ChartTooltipContent({
 
    if (!active || !payload?.length) return null
 
-   const nestLabel = payload.length === 1 && indicator !== "dot"
-
    return (
       <div
          className={cn(
-            "grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-primary-12/13 bg-background px-2.5 py-1.5 text-sm shadow-xl",
+            "grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-primary-12/13 bg-background p-2.5 pt-1.5 text-sm shadow-xl",
             className,
          )}
       >
-         {!nestLabel ? tooltipLabel : null}
-         <div className="grid gap-1.5">
+         {tooltipLabel}
+         <div className="mt-1 space-y-2">
             {payload.map((item, index) => {
                const key = `${nameKey || item.name || item.dataKey || "value"}`
                const itemConfig = getPayloadConfigFromPayload(config, item, key)
@@ -298,43 +296,34 @@ function ChartTooltipContent({
                               !hideIndicator && (
                                  <div
                                     className={cn(
-                                       "shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg)",
+                                       "shrink-0 rounded-[2px] border-(--color-indicator) bg-(--color-indicator)",
                                        {
                                           "size-3": indicator === "dot",
                                           "w-1": indicator === "line",
                                           "w-0 border-[1.5px] border-dashed bg-transparent":
                                              indicator === "dashed",
-                                          "my-0.5":
-                                             nestLabel &&
-                                             indicator === "dashed",
+                                          "my-0.5": indicator === "dashed",
                                        },
                                     )}
                                     style={
                                        {
-                                          "--color-bg": indicatorColor,
-                                          "--color-border": indicatorColor,
+                                          "--color-indicator": indicatorColor,
                                        } as React.CSSProperties
                                     }
                                  />
                               )
                            )}
-                           <div
-                              className={cn(
-                                 "flex grow justify-between gap-2 leading-none",
-                                 nestLabel ? "items-end" : "items-center",
-                              )}
-                           >
-                              <div className="grid gap-1.5">
-                                 {nestLabel ? tooltipLabel : null}
+                           <div className={cn("flex grow gap-4 leading-none")}>
+                              {payload.length === 1 ? null : (
                                  <span className="mb-0.5 text-foreground/75 leading-none">
                                     {itemConfig?.label?.toString() ?? item.name}
                                  </span>
-                              </div>
+                              )}
                               {item.value && (
                                  <span
                                     className={cn(
-                                       "block font-mono font-semibold text-foreground tabular-nums",
-                                       nestLabel ? "mb-px" : "",
+                                       "block font-mono font-semibold text-foreground",
+                                       payload.length === 1 ? "" : "ml-auto",
                                     )}
                                  >
                                     {valueFormatter
