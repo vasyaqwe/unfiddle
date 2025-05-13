@@ -55,7 +55,7 @@ export function useCreateProcurement({
          },
          onSettled: () => {
             queryClient.invalidateQueries(
-               trpc.workspace.summary.queryOptions({
+               trpc.workspace.analytics.stats.queryOptions({
                   id: auth.workspace.id,
                }),
             )

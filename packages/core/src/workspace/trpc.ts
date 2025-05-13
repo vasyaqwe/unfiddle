@@ -1,9 +1,9 @@
 import { session } from "@ledgerblocks/core/auth/schema"
 import { createCode } from "@ledgerblocks/core/id"
 import { order } from "@ledgerblocks/core/order/schema"
-import { procurement } from "@ledgerblocks/core/procurement/schema"
 import { t } from "@ledgerblocks/core/trpc/context"
 import { tryCatch } from "@ledgerblocks/core/try-catch"
+import { workspaceAnalyticsRouter } from "@ledgerblocks/core/workspace/analytics/trpc"
 import { workspaceMemberRouter } from "@ledgerblocks/core/workspace/member/trpc"
 import { workspaceMemberMiddleware } from "@ledgerblocks/core/workspace/middleware"
 import {
@@ -12,53 +12,12 @@ import {
    workspaceMember,
 } from "@ledgerblocks/core/workspace/schema"
 import { TRPCError } from "@trpc/server"
-import { and, desc, eq, gte, or, sql } from "drizzle-orm"
+import { and, desc, eq, or, sql } from "drizzle-orm"
 import { z } from "zod"
 
 export const workspaceRouter = t.router({
    member: workspaceMemberRouter,
-   summary: t.procedure
-      .use(workspaceMemberMiddleware)
-      .input(z.object({ id: z.string() }))
-      .query(async ({ ctx, input }) => {
-         const now = new Date()
-         const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
-         const lastMonth = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
-
-         const getProfit = async (fromDate?: Date): Promise<number> => {
-            const whereCondition = [
-               eq(order.status, "successful"),
-               eq(order.workspaceId, input.id),
-            ]
-            if (fromDate)
-               whereCondition.push(gte(procurement.createdAt, fromDate))
-
-            const [result] = await ctx.db
-               .select({
-                  profit:
-                     sql<number>`SUM(${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice}))`.as(
-                        "profit",
-                     ),
-               })
-               .from(procurement)
-               .innerJoin(order, eq(procurement.orderId, order.id))
-               .where(and(...whereCondition))
-
-            return result?.profit ?? 0
-         }
-
-         const [weekProfit, monthProfit, allTimeProfit] = await Promise.all([
-            getProfit(lastWeek),
-            getProfit(lastMonth),
-            getProfit(),
-         ])
-
-         return {
-            weekProfit: weekProfit ?? 0,
-            monthProfit: monthProfit ?? 0,
-            allTimeProfit: allTimeProfit ?? 0,
-         }
-      }),
+   analytics: workspaceAnalyticsRouter,
    search: t.procedure
       .use(workspaceMemberMiddleware)
       .input(z.object({ id: z.string(), query: z.string() }))

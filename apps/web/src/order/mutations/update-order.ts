@@ -46,7 +46,7 @@ export function useUpdateOrder({
          },
          onSettled: (_, _2, input) => {
             queryClient.invalidateQueries(
-               trpc.workspace.summary.queryOptions({
+               trpc.workspace.analytics.stats.queryOptions({
                   id: auth.workspace.id,
                }),
             )

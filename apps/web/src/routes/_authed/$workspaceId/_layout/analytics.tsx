@@ -44,7 +44,7 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
             }),
          )
          context.queryClient.prefetchQuery(
-            trpc.workspace.summary.queryOptions(
+            trpc.workspace.analytics.stats.queryOptions(
                {
                   id: params.workspaceId,
                },
