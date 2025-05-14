@@ -67,6 +67,29 @@ export function ProfitChart() {
    )
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+const areNonStringPropertiesZeroOrNull = (arr: any[]) => {
+   // Handle empty array case - vacuously true
+   if (arr.length === 0) {
+      return true
+   }
+
+   for (const obj of arr) {
+      for (const key in obj) {
+         if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            const value = obj[key]
+            if (typeof value !== "string") {
+               if (value !== 0 && value !== null) {
+                  return false
+               }
+            }
+         }
+      }
+   }
+
+   return true
+}
+
 function ChartContent() {
    const params = useParams({ from: "/_authed/$workspaceId/_layout/analytics" })
    const search = useSearch({ from: "/_authed/$workspaceId/_layout/analytics" })
@@ -169,87 +192,113 @@ function ChartContent() {
                   : "[--color-chart-1:var(--color-primary-9)]",
             )}
          >
-            <div
-               onWheel={zoom.handle}
-               onTouchMove={zoom.handle}
-               ref={zoom.chartRef}
-               className="size-full touch-none"
-            >
-               <ResponsiveContainer>
-                  <LineChart
-                     accessibilityLayer
-                     data={zoom.zoomedData()}
-                     margin={{ top: 12, right: 32, bottom: 4, left: 12 }}
-                     onMouseDown={zoom.onMouseDown}
-                     onMouseMove={zoom.onMouseMove}
-                     onMouseUp={zoom.onMouseUp}
-                     onMouseLeave={zoom.onMouseUp}
+            {areNonStringPropertiesZeroOrNull(profit.data) ? (
+               <div className="absolute inset-0 m-auto flex size-fit flex-col items-center gap-5 font-medium text-foreground/75 text-lg">
+                  <svg
+                     className="size-12"
+                     xmlns="http://www.w3.org/2000/svg"
+                     viewBox="0 0 18 18"
                   >
-                     <CartesianGrid
-                        vertical={false}
-                        strokeDasharray="2 2"
-                     />
-                     <XAxis
-                        dataKey={"date"}
-                        tickLine={false}
-                        tickMargin={12}
-                        minTickGap={32}
-                        // domain={["dataMin - 1000", "dataMax + 1000"]}
-                        tickFormatter={(value) =>
-                           formatDate(new Date(value), {
-                              month: "short",
-                              year: "2-digit",
-                           })
-                        }
-                     />
-                     <YAxis
-                        axisLine={false}
-                        tickLine={false}
-                        tickMargin={12}
-                        allowDataOverflow={true}
-                        // domain={domain}
-                        tickFormatter={(value) => {
-                           if (value === 0) return "0 ₴"
-                           return formatCurrency(value, {
-                              notation: "compact",
-                              style: "decimal",
-                           })
-                        }}
-                     />
-                     <ChartTooltip
-                        content={
-                           <ChartTooltipContent
-                              labelFormatter={(value) =>
-                                 `За ${new Date(value).getDate() === new Date().getDate() ? "сьогодні" : formatOrderDate(value)}`
-                              }
-                              valueFormatter={(value) => formatCurrency(+value)}
+                     <g fill="currentColor">
+                        <path
+                           d="M1.75 9.881C1.75 9.881 5.824 5.674 8.142 3.85C9.692 2.631 10.605 2.511 11.167 3.072C12.192 4.093 10.76 5.99 8.809 8.584C6.858 11.178 5.446 12.666 6.515 13.675C7.57 14.671 9.752 12.443 10.565 11.535C11.378 10.627 13.234 8.613 14.143 9.46C14.948 10.21 13.753 12.022 13.33 12.832C12.907 13.642 12.387 14.478 13.005 15.037C13.879 15.828 15.25 14.161 15.25 14.161"
+                           stroke="currentColor"
+                           strokeWidth="1.5"
+                           strokeLinecap="round"
+                           strokeLinejoin="round"
+                           fill="none"
+                        />
+                     </g>
+                  </svg>
+                  Даних не знайдено
+               </div>
+            ) : (
+               <div
+                  onWheel={zoom.handle}
+                  onTouchMove={zoom.handle}
+                  ref={zoom.chartRef}
+                  className="size-full touch-none"
+               >
+                  <ResponsiveContainer>
+                     <LineChart
+                        accessibilityLayer
+                        data={zoom.zoomedData()}
+                        margin={{ top: 12, right: 32, bottom: 4, left: 12 }}
+                        onMouseDown={zoom.onMouseDown}
+                        onMouseMove={zoom.onMouseMove}
+                        onMouseUp={zoom.onMouseUp}
+                        onMouseLeave={zoom.onMouseUp}
+                     >
+                        <CartesianGrid
+                           vertical={false}
+                           strokeDasharray="2 2"
+                        />
+                        <XAxis
+                           dataKey={"date"}
+                           tickLine={false}
+                           tickMargin={12}
+                           minTickGap={32}
+                           // domain={["dataMin - 1000", "dataMax + 1000"]}
+                           tickFormatter={(value) =>
+                              formatDate(new Date(value), {
+                                 month: "short",
+                                 year: "2-digit",
+                              })
+                           }
+                        />
+                        <YAxis
+                           axisLine={false}
+                           tickLine={false}
+                           tickMargin={12}
+                           allowDataOverflow={true}
+                           // domain={domain}
+                           tickFormatter={(value) => {
+                              if (value === 0) return "0 ₴"
+                              return formatCurrency(value, {
+                                 notation: "compact",
+                                 style: "decimal",
+                              })
+                           }}
+                        />
+                        <ChartTooltip
+                           content={
+                              <ChartTooltipContent
+                                 labelFormatter={(value) =>
+                                    `За ${new Date(value).getDate() === new Date().getDate() ? "сьогодні" : formatOrderDate(value)}`
+                                 }
+                                 valueFormatter={(value) =>
+                                    formatCurrency(+value)
+                                 }
+                              />
+                           }
+                           cursor={
+                              <ChartCursor fill={"var(--color-chart-1)"} />
+                           }
+                        />
+                        {lines.map((key) => (
+                           <Line
+                              key={key}
+                              dataKey={key}
+                              type="linear"
+                              stroke={config[key]?.color}
+                              strokeWidth={2}
+                              dot={false}
+                              isAnimationActive={false}
                            />
-                        }
-                        cursor={<ChartCursor fill={"var(--color-chart-1)"} />}
-                     />
-                     {lines.map((key) => (
-                        <Line
-                           key={key}
-                           dataKey={key}
-                           type="linear"
-                           stroke={config[key]?.color}
-                           strokeWidth={2}
-                           dot={false}
-                           isAnimationActive={false}
-                        />
-                     ))}
-                     {zoom.refAreaLeft && zoom.refAreaRight && (
-                        <ReferenceArea
-                           x1={zoom.refAreaLeft}
-                           x2={zoom.refAreaRight}
-                           strokeOpacity={0.3}
-                           fill="var(--color-chart-1)"
-                           fillOpacity={0.05}
-                        />
-                     )}
-                  </LineChart>
-               </ResponsiveContainer>
-            </div>
+                        ))}
+                        {zoom.refAreaLeft && zoom.refAreaRight && (
+                           <ReferenceArea
+                              x1={zoom.refAreaLeft}
+                              x2={zoom.refAreaRight}
+                              strokeOpacity={0.3}
+                              fill="var(--color-chart-1)"
+                              fillOpacity={0.05}
+                           />
+                        )}
+                     </LineChart>
+                  </ResponsiveContainer>
+               </div>
+            )}
          </ChartContainer>
       </>
    )
