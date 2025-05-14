@@ -3,8 +3,8 @@ import { createFileRoute, redirect } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/_authed/")({
    component: () => null,
-   beforeLoad: async ({ context }) => {
-      const memberships = await context.queryClient
+   beforeLoad: async (opts) => {
+      const memberships = await opts.context.queryClient
          .ensureQueryData(trpc.workspace.memberships.queryOptions())
          .catch(() => {
             throw redirect({ to: "/login" })

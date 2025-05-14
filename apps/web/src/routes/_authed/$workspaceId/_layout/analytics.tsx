@@ -31,13 +31,21 @@ import {
    SegmentedProgressLabel,
    SegmentedProgressValue,
 } from "@ledgerblocks/ui/components/segmented-progress"
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, redirect } from "@tanstack/react-router"
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
    {
       component: RouteComponent,
-      loader: async ({ context, params }) => {
+      beforeLoad: (opts) => {
+         if (
+            opts.context.workspace.role !== "admin" &&
+            !opts.search.who.includes(opts.context.user.id)
+         )
+            throw redirect({ to: ".", search: { who: [opts.context.user.id] } })
+      },
+      loaderDeps: (opts) => ({ search: opts.search }),
+      loader: async ({ context, params, deps }) => {
          context.queryClient.prefetchQuery(
             trpc.workspace.member.list.queryOptions({
                workspaceId: params.workspaceId,
@@ -47,6 +55,7 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
             trpc.workspace.analytics.stats.queryOptions(
                {
                   id: params.workspaceId,
+                  ...deps.search,
                },
                {
                   staleTime: CACHE_SHORT,
@@ -54,7 +63,13 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
             ),
          )
       },
-      validateSearch: validator(workspaceAnalyticsFilterSchema),
+      validateSearch: validator(
+         workspaceAnalyticsFilterSchema.extend({
+            who: workspaceAnalyticsFilterSchema.shape.who.catch(["all"]),
+            period:
+               workspaceAnalyticsFilterSchema.shape.period.catch("last_week"),
+         }),
+      ),
    },
 )
 

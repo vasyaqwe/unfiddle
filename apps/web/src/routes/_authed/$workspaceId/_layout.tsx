@@ -15,11 +15,11 @@ import {
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout")({
    component: RouteComponent,
-   beforeLoad: async ({ context, params }) => {
-      const workspace = await context.queryClient
+   beforeLoad: async (opts) => {
+      const workspace = await opts.context.queryClient
          .ensureQueryData(
             trpc.workspace.one.queryOptions(
-               { id: params.workspaceId },
+               { id: opts.params.workspaceId },
                { staleTime: CACHE_FOREVER },
             ),
          )
@@ -28,6 +28,10 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout")({
          })
 
       if (!workspace) throw notFound()
+
+      return {
+         workspace,
+      }
    },
    pendingComponent: () => (
       <>

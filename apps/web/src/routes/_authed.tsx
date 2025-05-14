@@ -6,8 +6,8 @@ import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/_authed")({
    component: RouteComponent,
-   beforeLoad: async ({ context }) => {
-      const user = await context.queryClient
+   beforeLoad: async (opts) => {
+      const user = await opts.context.queryClient
          .ensureQueryData(
             trpc.user.me.queryOptions(undefined, {
                staleTime: CACHE_FOREVER,
@@ -19,6 +19,10 @@ export const Route = createFileRoute("/_authed")({
          })
 
       if (!user) throw redirect({ to: "/login" })
+
+      return {
+         user,
+      }
    },
    pendingComponent: () => (
       <>

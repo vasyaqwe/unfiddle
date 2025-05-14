@@ -248,7 +248,13 @@ function ToggleArchived() {
 }
 
 function FilterMenu() {
-   const search = Route.useSearch()
+   const search = Route.useSearch({
+      select: (search) => ({
+         status: search.status,
+         severity: search.severity,
+         creator: search.creator,
+      }),
+   })
    const navigate = useNavigate()
    const queryClient = useQueryClient()
    const queryOptions = useOrderQueryOptions()

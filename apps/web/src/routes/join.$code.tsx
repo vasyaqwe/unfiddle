@@ -15,8 +15,8 @@ import {
 
 export const Route = createFileRoute("/join/$code")({
    component: RouteComponent,
-   beforeLoad: async ({ params, context }) => {
-      const user = await context.queryClient
+   beforeLoad: async (opts) => {
+      const user = await opts.context.queryClient
          .ensureQueryData(
             trpc.user.me.queryOptions(undefined, {
                staleTime: CACHE_FOREVER,
@@ -26,12 +26,15 @@ export const Route = createFileRoute("/join/$code")({
          .catch(() => {
             throw redirect({
                to: "/login",
-               search: { invite_code: params.code },
+               search: { invite_code: opts.params.code },
             })
          })
 
       if (!user)
-         throw redirect({ to: "/login", search: { invite_code: params.code } })
+         throw redirect({
+            to: "/login",
+            search: { invite_code: opts.params.code },
+         })
    },
    loader: async ({ params }) => {
       const res = await api.workspace[":code"].$get({
