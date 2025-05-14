@@ -14,7 +14,7 @@ export const procurement = d.table(
          .text()
          .notNull()
          .references(() => order.id, { onDelete: "cascade" }),
-      buyerId: d
+      creatorId: d
          .text()
          .notNull()
          .references(() => user.id, { onDelete: "cascade" }),
@@ -27,12 +27,12 @@ export const procurement = d.table(
       note: d.text().default(""),
       ...d.timestamps,
    },
-   (table) => [d.index("procurement_buyer_id_idx").on(table.buyerId)],
+   (table) => [d.index("procurement_creator_id_idx").on(table.creatorId)],
 )
 
 export const procurementRelations = relations(procurement, ({ one }) => ({
-   buyer: one(user, {
-      fields: [procurement.buyerId],
+   creator: one(user, {
+      fields: [procurement.creatorId],
       references: [user.id],
    }),
    order: one(order, {

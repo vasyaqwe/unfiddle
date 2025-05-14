@@ -936,15 +936,15 @@ function ProcurementRow({
    return (
       <div className="grid-cols-[1fr_1fr_var(--spacing-9)] items-start gap-3 border-neutral border-t p-3 text-left first:border-none max-lg:grid lg:flex lg:gap-4 lg:p-2 lg:pl-3">
          <AlignedColumn
-            id={`${orderId}_p_buyer`}
+            id={`${orderId}_p_creator`}
             className="flex items-center gap-1.5 whitespace-nowrap font-medium lg:mt-[0.17rem]"
          >
             <UserAvatar
                size={16}
-               user={item.buyer}
+               user={item.creator}
                className="inline-block"
             />
-            {item.buyer.name}
+            {item.creator.name}
          </AlignedColumn>
          <span className="col-end-4 flex items-center justify-end gap-2 lg:gap-4">
             <AlignedColumn

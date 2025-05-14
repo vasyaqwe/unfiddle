@@ -107,7 +107,7 @@ export const orderRouter = t.router({
                      note: true,
                   },
                   with: {
-                     buyer: {
+                     creator: {
                         columns: {
                            id: true,
                            name: true,

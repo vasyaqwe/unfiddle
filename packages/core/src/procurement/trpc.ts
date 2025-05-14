@@ -13,14 +13,14 @@ export const procurementRouter = t.router({
       .use(workspaceMemberMiddleware)
       .input(
          createInsertSchema(procurement)
-            .omit({ buyerId: true })
+            .omit({ creatorId: true })
             .extend({ workspaceId: z.string() }),
       )
       .mutation(async ({ ctx, input }) => {
          return await ctx.db
             .insert(procurement)
             .values({
-               buyerId: ctx.user.id,
+               creatorId: ctx.user.id,
                orderId: input.orderId,
                quantity: input.quantity,
                purchasePrice: input.purchasePrice,

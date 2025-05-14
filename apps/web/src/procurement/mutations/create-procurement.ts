@@ -27,7 +27,7 @@ export function useCreateProcurement({
                ...input,
                id: crypto.randomUUID(),
                status: "pending",
-               buyer: auth.user,
+               creator: auth.user,
                note: input.note ?? "",
             })
 
@@ -49,7 +49,7 @@ export function useCreateProcurement({
                senderId: auth.user.id,
                procurement: {
                   ...procurement,
-                  buyer: auth.user,
+                  creator: auth.user,
                },
             })
          },

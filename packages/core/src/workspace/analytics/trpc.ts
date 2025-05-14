@@ -57,7 +57,10 @@ export const workspaceAnalyticsRouter = t.router({
          const userQueries = input.who.map((userId) => {
             const userConditions: (SQL | undefined)[] = [
                eq(order.workspaceId, input.id),
-               or(eq(order.creatorId, userId), eq(procurement.buyerId, userId)),
+               or(
+                  eq(order.creatorId, userId),
+                  eq(procurement.creatorId, userId),
+               ),
             ]
 
             return ctx.db
