@@ -3,6 +3,7 @@ import { formatDate } from "@/date"
 import { formatOrderDate } from "@/order/utils"
 import { trpc } from "@/trpc"
 import { ErrorComponent } from "@/ui/components/error"
+import { isChartDataEmpty } from "@/workspace/analytics/utils"
 import { Button } from "@ledgerblocks/ui/components/button"
 import {
    type ChartConfig,
@@ -65,29 +66,6 @@ export function ProfitChart() {
          </CatchBoundary>
       </section>
    )
-}
-
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-const areNonStringPropertiesZeroOrNull = (arr: any[]) => {
-   // Handle empty array case - vacuously true
-   if (arr.length === 0) {
-      return true
-   }
-
-   for (const obj of arr) {
-      for (const key in obj) {
-         if (Object.prototype.hasOwnProperty.call(obj, key)) {
-            const value = obj[key]
-            if (typeof value !== "string") {
-               if (value !== 0 && value !== null) {
-                  return false
-               }
-            }
-         }
-      }
-   }
-
-   return true
 }
 
 function ChartContent() {
@@ -192,7 +170,7 @@ function ChartContent() {
                   : "[--color-chart-1:var(--color-primary-9)]",
             )}
          >
-            {areNonStringPropertiesZeroOrNull(profit.data) ? (
+            {isChartDataEmpty(profit.data) ? (
                <div className="absolute inset-0 m-auto flex size-fit flex-col items-center gap-5 font-medium text-foreground/75 text-lg">
                   <svg
                      className="size-12"
@@ -240,9 +218,20 @@ function ChartContent() {
                            minTickGap={32}
                            // domain={["dataMin - 1000", "dataMax + 1000"]}
                            tickFormatter={(value) =>
-                              formatDate(new Date(value), {
+                              formatDate(value, {
                                  month: "short",
-                                 year: "2-digit",
+                                 year:
+                                    search.period === "all_time" ||
+                                    search.period === "last_year" ||
+                                    search.period === "last_half_year" ||
+                                    search.period === "last_quarter"
+                                       ? "2-digit"
+                                       : undefined,
+                                 day:
+                                    search.period === "last_week" ||
+                                    search.period === "last_month"
+                                       ? "numeric"
+                                       : undefined,
                               })
                            }
                         />

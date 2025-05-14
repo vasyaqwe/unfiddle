@@ -62,6 +62,28 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
                },
             ),
          )
+         context.queryClient.prefetchQuery(
+            trpc.workspace.analytics.profit.queryOptions(
+               {
+                  id: params.workspaceId,
+                  ...deps.search,
+               },
+               {
+                  staleTime: CACHE_SHORT,
+               },
+            ),
+         )
+         context.queryClient.prefetchQuery(
+            trpc.workspace.analytics.orders.queryOptions(
+               {
+                  id: params.workspaceId,
+                  ...deps.search,
+               },
+               {
+                  staleTime: CACHE_SHORT,
+               },
+            ),
+         )
       },
       validateSearch: validator(
          workspaceAnalyticsFilterSchema.extend({

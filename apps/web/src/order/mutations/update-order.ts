@@ -50,6 +50,11 @@ export function useUpdateOrder({
                   id: auth.workspace.id,
                }),
             )
+            queryClient.invalidateQueries(
+               trpc.workspace.analytics.profit.queryOptions({
+                  id: auth.workspace.id,
+               }),
+            )
             queryClient.invalidateQueries(queryOptions.list)
             if (input.deletedAt)
                return queryClient.invalidateQueries(queryOptions.listArchived)

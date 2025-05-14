@@ -32,29 +32,25 @@ export const workspaceAnalyticsRouter = t.router({
       .input(workspaceAnalyticsFilterSchema.extend({ id: z.string() }))
       .query(async ({ ctx, input }) => {
          const selectFields = {
-            totalOrders: count(order.id).as("totalOrders"),
+            totalOrders: count(order.id),
             successfulOrders: count(
                sql`CASE WHEN ${order.status} = 'successful' THEN ${order.id} END`,
-            ).as("successfulOrders"),
+            ),
             failedOrders: count(
                sql`CASE WHEN ${order.status} != 'successful' THEN ${order.id} END`,
-            ).as("failedOrders"),
+            ),
             averageProfitPercentage: sql<
                number | null
-            >`(sum(CASE WHEN ${order.status} = 'successful' THEN ${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice}) ELSE 0 END) * 100.0) / nullif(sum(CASE WHEN ${order.status} = 'successful' THEN ${procurement.quantity} * ${procurement.purchasePrice} ELSE 0 END), 0)`
-               .mapWith(Number)
-               .as("averageProfitPercentage"),
+            >`(sum(CASE WHEN ${order.status} = 'successful' THEN ${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice}) ELSE 0 END) * 100.0) / nullif(sum(CASE WHEN ${order.status} = 'successful' THEN ${procurement.quantity} * ${procurement.purchasePrice} ELSE 0 END), 0)`.mapWith(
+               Number,
+            ),
             totalProfit: sum(
                sql`CASE WHEN ${order.status} = 'successful' THEN ${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice}) ELSE 0 END`,
-            )
-               .mapWith(Number)
-               .as("totalProfit"),
+            ).mapWith(Number),
          }
 
          if (input.who[0] === "all") {
-            const conditions: (SQL | undefined)[] = [
-               eq(order.workspaceId, input.id),
-            ]
+            const conditions = [eq(order.workspaceId, input.id)]
 
             const results = (await ctx.db
                .select(selectFields)
@@ -102,13 +98,13 @@ export const workspaceAnalyticsRouter = t.router({
             {}
          const whereConditions: (SQL | undefined)[] = []
 
-         selectFields.date = formattedDateExpr.as("date")
+         selectFields.date = formattedDateExpr
 
          // Filter by workspace ID - NO date range filter for all-time data
          whereConditions.push(eq(order.workspaceId, input.id))
 
          if (input.who[0] === "all") {
-            selectFields.all = sum(profitExpr).mapWith(Number).as("all")
+            selectFields.all = sum(profitExpr).mapWith(Number)
          } else {
             whereConditions.push(
                or(
@@ -141,5 +137,29 @@ export const workspaceAnalyticsRouter = t.router({
             date: string
             [key: string]: number | string | null
          }[]
+      }),
+   orders: t.procedure
+      .use(workspaceMemberMiddleware)
+      .input(workspaceAnalyticsFilterSchema.extend({ id: z.string() }))
+      .query(async ({ ctx, input }) => {
+         const formattedDateExpr = sql<string>`strftime('%Y-%m-%d', ${order.createdAt}, 'unixepoch')`
+
+         const selectFields = {
+            date: formattedDateExpr,
+            value: count(order.id).mapWith(Number),
+         }
+
+         const whereConditions = [eq(order.workspaceId, input.id)]
+
+         if (input.who.length > 0 && input.who[0] !== "all") {
+            whereConditions.push(inArray(order.creatorId, input.who))
+         }
+
+         return await ctx.db
+            .select(selectFields)
+            .from(order)
+            .where(and(...whereConditions))
+            .groupBy(formattedDateExpr)
+            .orderBy(asc(formattedDateExpr))
       }),
 })

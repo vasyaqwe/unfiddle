@@ -50,6 +50,11 @@ export function useDeleteProcurement({
                   id: auth.workspace.id,
                }),
             )
+            queryClient.invalidateQueries(
+               trpc.workspace.analytics.profit.queryOptions({
+                  id: auth.workspace.id,
+               }),
+            )
             queryClient.invalidateQueries(queryOptions.list)
          },
       }),
