@@ -65,6 +65,11 @@ export function useCreateOrder({
             })
          },
          onSettled: () => {
+            queryClient.invalidateQueries(
+               trpc.workspace.analytics.stats.queryOptions({
+                  id: auth.workspace.id,
+               }),
+            )
             queryClient.invalidateQueries(queryOptions.list)
          },
       }),

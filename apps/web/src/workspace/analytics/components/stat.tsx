@@ -6,7 +6,7 @@ export function Stat({ className, ...props }: React.ComponentProps<"p">) {
    const multipleSelected = search.who.length > 1
 
    return (
-      <p
+      <div
          className={cn(
             "first:!pt-0 last:!pb-0 flex items-center gap-1 py-3 lg:py-4",
             multipleSelected ? "xl:min-h-[42px]" : "",

@@ -27,12 +27,6 @@ const router = createRouter({
          className="pt-20 md:pt-40"
          error={{
             message: error.message,
-            data: { code: "INTERNAL_SERVER_ERROR", httpStatus: 500 },
-            shape: {
-               code: -32603,
-               data: { code: "INTERNAL_SERVER_ERROR", httpStatus: 500 },
-               message: "Unknown error",
-            },
          }}
       />
    ),

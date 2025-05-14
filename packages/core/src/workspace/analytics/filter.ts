@@ -44,6 +44,6 @@ export const PERIOD_FILTERS_FNS: Record<
 }
 
 export const workspaceAnalyticsFilterSchema = z.object({
-   who: z.array(z.string()),
-   period: z.enum(PERIOD_FILTERS),
+   who: z.array(z.string()).default(["all"]),
+   period: z.enum(PERIOD_FILTERS).default("last_week"),
 })

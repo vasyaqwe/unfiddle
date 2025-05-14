@@ -1,7 +1,7 @@
 import { type VariantProps, cva } from "class-variance-authority"
 import { cn } from "../utils"
 
-const loading = cva("!relative sonner-loading-wrapper", {
+const loading = cva("sonner-loading-wrapper", {
    variants: {
       size: {
          xs: "![--size:19px] md:![--size:15px]",

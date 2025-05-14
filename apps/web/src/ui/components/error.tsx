@@ -2,6 +2,7 @@ import { env } from "@/env"
 import type { TRPCError } from "@/trpc"
 import { Button } from "@ledgerblocks/ui/components/button"
 import { cn } from "@ledgerblocks/ui/utils"
+import { useQueryErrorResetBoundary } from "@tanstack/react-query"
 import {
    type ErrorComponentProps,
    ErrorComponent as RouterErrorComponent,
@@ -9,12 +10,13 @@ import {
    useMatch,
    useRouter,
 } from "@tanstack/react-router"
+import React from "react"
 
 interface Props
    extends Omit<ErrorComponentProps, "reset" | "error">,
       React.ComponentProps<"div"> {
    reset?: () => void
-   error?: TRPCError
+   error?: Pick<TRPCError, "message">
 }
 
 export function ErrorComponent({ error, reset, className, ...props }: Props) {
@@ -23,6 +25,11 @@ export function ErrorComponent({ error, reset, className, ...props }: Props) {
       strict: false,
       select: (state) => state.id === rootRouteId,
    })
+   const queryErrorResetBoundary = useQueryErrorResetBoundary()
+
+   React.useEffect(() => {
+      queryErrorResetBoundary.reset()
+   }, [queryErrorResetBoundary])
 
    return (
       <div

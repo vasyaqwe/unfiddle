@@ -3,7 +3,18 @@ import { procurement } from "@ledgerblocks/core/procurement/schema"
 import { t } from "@ledgerblocks/core/trpc/context"
 import { workspaceAnalyticsFilterSchema } from "@ledgerblocks/core/workspace/analytics/filter"
 import { workspaceMemberMiddleware } from "@ledgerblocks/core/workspace/middleware"
-import { type SQL, and, count, eq, or, sql, sum } from "drizzle-orm"
+import {
+   type Column,
+   type SQL,
+   and,
+   asc,
+   count,
+   eq,
+   inArray,
+   or,
+   sql,
+   sum,
+} from "drizzle-orm"
 import { z } from "zod"
 
 type StatsResult = {
@@ -28,16 +39,16 @@ export const workspaceAnalyticsRouter = t.router({
             failedOrders: count(
                sql`CASE WHEN ${order.status} != 'successful' THEN ${order.id} END`,
             ).as("failedOrders"),
-            totalProfit: sum(
-               sql`CASE WHEN ${order.status} = 'successful' THEN ${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice}) ELSE 0 END`,
-            )
-               .mapWith(Number)
-               .as("totalProfit"),
             averageProfitPercentage: sql<
                number | null
             >`(sum(CASE WHEN ${order.status} = 'successful' THEN ${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice}) ELSE 0 END) * 100.0) / nullif(sum(CASE WHEN ${order.status} = 'successful' THEN ${procurement.quantity} * ${procurement.purchasePrice} ELSE 0 END), 0)`
                .mapWith(Number)
                .as("averageProfitPercentage"),
+            totalProfit: sum(
+               sql`CASE WHEN ${order.status} = 'successful' THEN ${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice}) ELSE 0 END`,
+            )
+               .mapWith(Number)
+               .as("totalProfit"),
          }
 
          if (input.who[0] === "all") {
@@ -78,5 +89,57 @@ export const workspaceAnalyticsRouter = t.router({
          }, {} as UserSpecificStatsResult)
 
          return userResults
+      }),
+   profit: t.procedure
+      .use(workspaceMemberMiddleware)
+      .input(workspaceAnalyticsFilterSchema.extend({ id: z.string() }))
+      .query(async ({ ctx, input }) => {
+         const profitExpr = sql`${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice})`
+         const formattedDateExpr = sql<string>`strftime('%Y-%m-%d', ${order.createdAt}, 'unixepoch')`
+
+         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+         const selectFields: Record<string, SQL.Aliased | SQL<any> | Column> =
+            {}
+         const whereConditions: (SQL | undefined)[] = []
+
+         selectFields.date = formattedDateExpr.as("date")
+
+         // Filter by workspace ID - NO date range filter for all-time data
+         whereConditions.push(eq(order.workspaceId, input.id))
+
+         if (input.who[0] === "all") {
+            selectFields.all = sum(profitExpr).mapWith(Number).as("all")
+         } else {
+            whereConditions.push(
+               or(
+                  inArray(order.creatorId, input.who),
+                  inArray(procurement.creatorId, input.who),
+               ),
+            )
+
+            for (const userId of input.who) {
+               const userProfitSumExpr = sum(
+                  sql`CASE WHEN ${order.creatorId} = ${userId} OR ${procurement.creatorId} = ${userId} THEN ${profitExpr} ELSE 0 END`,
+               )
+                  .mapWith(Number)
+                  .as(userId)
+
+               selectFields[userId] = userProfitSumExpr
+            }
+         }
+
+         const dailyProfitResults = await ctx.db
+            // @ts-expect-error ...
+            .select(selectFields)
+            .from(order)
+            .leftJoin(procurement, eq(order.id, procurement.orderId))
+            .where(and(...whereConditions))
+            .groupBy(formattedDateExpr)
+            .orderBy(asc(formattedDateExpr))
+
+         return dailyProfitResults as {
+            date: string
+            [key: string]: number | string | null
+         }[]
       }),
 })

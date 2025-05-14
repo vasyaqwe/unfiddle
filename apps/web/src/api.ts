@@ -29,6 +29,6 @@ export type ApiClientError = {
 }
 
 export const CACHE_NONE = 0
-export const CACHE_SHORT = 15 * 1000 // 15 sec
+export const CACHE_SHORT = 30 * 1000 // 30 sec
 export const CACHE_AWHILE = 300 * 1000 // 5 min
 export const CACHE_FOREVER = Infinity
