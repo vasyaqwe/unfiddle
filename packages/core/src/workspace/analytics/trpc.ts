@@ -24,7 +24,7 @@ type StatsResult = {
    totalProfit: number
    averageProfitPercentage: number
 }
-type UserSpecificStatsResult = Record<string, StatsResult>
+type StatsResultGroup = Record<string, StatsResult>
 
 export const workspaceAnalyticsRouter = t.router({
    stats: t.procedure
@@ -49,42 +49,95 @@ export const workspaceAnalyticsRouter = t.router({
             ).mapWith(Number),
          }
 
-         if (input.who[0] === "all") {
-            const conditions = [eq(order.workspaceId, input.id)]
+         const whereConditions: (SQL | undefined)[] = [
+            eq(order.workspaceId, input.id),
+         ]
 
-            const results = (await ctx.db
-               .select(selectFields)
-               .from(order)
-               .leftJoin(procurement, eq(order.id, procurement.orderId))
-               .where(and(...conditions))) satisfies StatsResult[]
+         const formattedMonthlyDateExpr = sql<string>`strftime('%Y-%m', ${order.createdAt}, 'unixepoch')`
 
-            return { all: results[0] } as Record<string, StatsResult>
+         if (input.period_comparison.length > 0) {
+            if (input.who.length > 0 && !input.who.includes("all")) {
+               whereConditions.push(
+                  or(
+                     inArray(order.creatorId, input.who),
+                     inArray(procurement.creatorId, input.who),
+                  ),
+               )
+            }
+
+            const monthQueries = input.period_comparison.map((month) => {
+               const monthConditions: (SQL | undefined)[] = [
+                  ...whereConditions,
+                  eq(formattedMonthlyDateExpr, month),
+               ]
+
+               if (input.who.length > 0 && !input.who.includes("all")) {
+                  monthConditions.push(
+                     or(
+                        inArray(order.creatorId, input.who),
+                        inArray(procurement.creatorId, input.who),
+                     ),
+                  )
+               }
+
+               return ctx.db
+                  .select(selectFields)
+                  .from(order)
+                  .leftJoin(procurement, eq(order.id, procurement.orderId))
+                  .where(and(...monthConditions))
+            })
+
+            const batchResults = await ctx.db.batch(monthQueries as never)
+
+            const monthResults = input.period_comparison.reduce(
+               (acc, month, index) => {
+                  const result = batchResults[index]?.[0]
+                  if (!result) return acc
+                  acc[month] = result
+                  return acc
+               },
+               {} as StatsResultGroup,
+            )
+
+            return monthResults
          }
 
-         const userQueries = input.who.map((userId) => {
-            const userConditions: (SQL | undefined)[] = [
-               eq(order.workspaceId, input.id),
-               or(
-                  eq(order.creatorId, userId),
-                  eq(procurement.creatorId, userId),
-               ),
-            ]
+         if (input.who.length > 0 && !input.who.includes("all")) {
+            const userQueries = input.who.map((userId) => {
+               const userConditions: (SQL | undefined)[] = [
+                  ...whereConditions,
+                  or(
+                     eq(order.creatorId, userId),
+                     eq(procurement.creatorId, userId),
+                  ),
+               ]
 
-            return ctx.db
-               .select(selectFields)
-               .from(order)
-               .leftJoin(procurement, eq(order.id, procurement.orderId))
-               .where(and(...userConditions))
-         })
+               return ctx.db
+                  .select(selectFields)
+                  .from(order)
+                  .leftJoin(procurement, eq(order.id, procurement.orderId))
+                  .where(and(...userConditions))
+            })
 
-         const batchResults = await ctx.db.batch(userQueries as never)
+            const batchResults = await ctx.db.batch(userQueries as never)
 
-         const userResults = input.who.reduce((acc, userId, index) => {
-            acc[userId] = batchResults[index][0]
-            return acc
-         }, {} as UserSpecificStatsResult)
+            const userResults = input.who.reduce((acc, userId, index) => {
+               const result = batchResults[index]?.[0]
+               if (!result) return acc
+               acc[userId] = result
+               return acc
+            }, {} as StatsResultGroup)
 
-         return userResults
+            return userResults
+         }
+
+         const results = await ctx.db
+            .select(selectFields)
+            .from(order)
+            .leftJoin(procurement, eq(order.id, procurement.orderId))
+            .where(and(...whereConditions))
+
+         return { all: results[0] } as StatsResultGroup
       }),
    profit: t.procedure
       .use(workspaceMemberMiddleware)
@@ -92,27 +145,42 @@ export const workspaceAnalyticsRouter = t.router({
       .query(async ({ ctx, input }) => {
          const profitExpr = sql`${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice})`
          const formattedDateExpr = sql<string>`strftime('%Y-%m-%d', ${order.createdAt}, 'unixepoch')`
+         const formattedMonthlyDateExpr = sql<string>`strftime('%Y-%m', ${order.createdAt}, 'unixepoch')`
 
          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
          const selectFields: Record<string, SQL.Aliased | SQL<any> | Column> =
             {}
-         const whereConditions: (SQL | undefined)[] = []
+         const whereConditions: (SQL | undefined)[] = [
+            eq(order.workspaceId, input.id),
+         ]
 
          selectFields.date = formattedDateExpr
 
-         // Filter by workspace ID - NO date range filter for all-time data
-         whereConditions.push(eq(order.workspaceId, input.id))
-
-         if (input.who[0] === "all") {
-            selectFields.all = sum(profitExpr).mapWith(Number)
-         } else {
+         if (input.who.length > 0 && !input.who.includes("all")) {
             whereConditions.push(
                or(
                   inArray(order.creatorId, input.who),
                   inArray(procurement.creatorId, input.who),
                ),
             )
+         }
 
+         if (input.period_comparison.length > 0) {
+            whereConditions.push(
+               inArray(formattedMonthlyDateExpr, input.period_comparison),
+            )
+            for (const month of input.period_comparison) {
+               const monthProfitSumExpr = sum(
+                  sql`CASE WHEN ${formattedMonthlyDateExpr} = ${month} THEN ${profitExpr} ELSE 0 END`,
+               )
+                  .mapWith(Number)
+                  .as(month)
+
+               selectFields[month] = monthProfitSumExpr
+            }
+         } else if (input.who[0] === "all") {
+            selectFields.all = sum(profitExpr).mapWith(Number)
+         } else {
             for (const userId of input.who) {
                const userProfitSumExpr = sum(
                   sql`CASE WHEN ${order.creatorId} = ${userId} OR ${procurement.creatorId} = ${userId} THEN ${profitExpr} ELSE 0 END`,
@@ -124,7 +192,7 @@ export const workspaceAnalyticsRouter = t.router({
             }
          }
 
-         const dailyProfitResults = await ctx.db
+         const result = await ctx.db
             // @ts-expect-error ...
             .select(selectFields)
             .from(order)
@@ -133,7 +201,7 @@ export const workspaceAnalyticsRouter = t.router({
             .groupBy(formattedDateExpr)
             .orderBy(asc(formattedDateExpr))
 
-         return dailyProfitResults as {
+         return result as {
             date: string
             [key: string]: number | string | null
          }[]

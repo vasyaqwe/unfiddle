@@ -1,5 +1,6 @@
 import { CACHE_SHORT } from "@/api"
 import { formatCurrency } from "@/currency"
+import { formatDate } from "@/date"
 import { formatNumber } from "@/number"
 import { trpc } from "@/trpc"
 import {
@@ -43,61 +44,92 @@ export function QuickStats() {
       }),
    )
 
-   const sortedTotalOrders = selectedMembers
-      ?.map((m) => ({
-         ...m,
-         totalOrders: stats.data?.[m.user.id]?.totalOrders ?? 0,
-      }))
-      .sort((a, b) => b.totalOrders - a.totalOrders)
+   const sourceArray =
+      search.period_comparison.length > 0
+         ? search.period_comparison
+         : selectedMembers
 
-   const sortedSuccessfulOrders = selectedMembers
-      ?.map((m) => {
-         const userStats = stats.data?.[m.user.id]
-         const totalOrders = userStats?.totalOrders ?? 0
-         const orders = userStats?.successfulOrders ?? 0
-         const percentage = totalOrders > 0 ? (orders / totalOrders) * 100 : 0
+   const sortedTotalOrders = sourceArray
+      ?.map((item) => ({
+         id: typeof item === "string" ? item : item.user.id,
+         label:
+            typeof item === "string"
+               ? formatDate(item, { month: "short" })
+               : item.user.name,
+         orders:
+            stats.data?.[typeof item === "string" ? item : item.user.id]
+               ?.totalOrders ?? 0,
+      }))
+      .sort((a, b) => b.orders - a.orders)
+
+   const sortedSuccessfulOrders = sourceArray
+      ?.map((item) => {
+         const id = typeof item === "string" ? item : item.user.id
+         const totalOrders = stats.data?.[id]?.totalOrders ?? 0
+         const orders = stats.data?.[id]?.successfulOrders ?? 0
+
          return {
-            ...m,
+            id,
+            label:
+               typeof item === "string"
+                  ? formatDate(item, { month: "short" })
+                  : item.user.name,
             orders,
-            percentage,
-            totalOrders,
+            percentage: totalOrders > 0 ? (orders / totalOrders) * 100 : 0,
          }
       })
       .sort((a, b) => b.orders - a.orders)
 
-   const sortedFailedOrders = selectedMembers
-      ?.map((m) => {
-         const userStats = stats.data?.[m.user.id]
-         const totalOrders = userStats?.totalOrders ?? 0
-         const orders = userStats?.failedOrders ?? 0
-         const percentage = totalOrders > 0 ? (orders / totalOrders) * 100 : 0
+   const sortedFailedOrders = (sourceArray || [])
+      ?.map((item) => {
+         const id = typeof item === "string" ? item : item.user.id
+         const itemStats = stats.data?.[id]
+         const totalOrders = itemStats?.totalOrders ?? 0
+         const orders = itemStats?.failedOrders ?? 0
          return {
-            ...m,
+            id: id,
+            label:
+               typeof item === "string"
+                  ? formatDate(item, { month: "short" })
+                  : item.user.name,
             orders,
-            percentage,
-            totalOrders,
+            percentage: totalOrders > 0 ? (orders / totalOrders) * 100 : 0,
          }
       })
       .sort((a, b) => b.orders - a.orders)
 
-   const sortedAverageProfitPercentage = selectedMembers
-      ?.map((m) => ({
-         ...m,
-         averageProfitPercentage:
-            stats.data?.[m.user.id]?.averageProfitPercentage ?? null,
-      }))
+   const sortedAverageProfitPercentage = (sourceArray || [])
+      ?.map((item) => {
+         const id = typeof item === "string" ? item : item.user.id
+         return {
+            id: id,
+            label:
+               typeof item === "string"
+                  ? formatDate(item, { month: "short" })
+                  : item.user.name,
+            averageProfitPercentage:
+               stats.data?.[id]?.averageProfitPercentage ?? null,
+         }
+      })
       .sort(
          (a, b) =>
             (b.averageProfitPercentage ?? -Infinity) -
             (a.averageProfitPercentage ?? -Infinity),
       )
 
-   const sortedTotalProfit = selectedMembers
-      ?.map((m) => ({
-         ...m,
-         totalProfit: stats.data?.[m.user.id]?.totalProfit ?? 0,
-      }))
-      .sort((a, b) => b.totalProfit - a.totalProfit)
+   const sortedTotalProfit = (sourceArray || [])
+      ?.map((item) => {
+         const id = typeof item === "string" ? item : item.user.id
+         return {
+            id: id,
+            label:
+               typeof item === "string"
+                  ? formatDate(item, { month: "short" })
+                  : item.user.name,
+            profit: stats.data?.[id]?.totalProfit ?? 0,
+         }
+      })
+      .sort((a, b) => (b.profit ?? -Infinity) - (a.profit ?? -Infinity))
 
    return (
       <section className="grid grid-cols-2 gap-3 md:gap-4 xl:gap-6 2xl:grid-cols-5">
@@ -107,9 +139,9 @@ export function QuickStats() {
             </CardHeader>
             <CardContent className="divide-y divide-neutral">
                {sortedTotalOrders?.map((m) => (
-                  <Stat key={m.user.id}>
-                     <StatLabel>{m.user.name}</StatLabel>
-                     <StatValue>{formatNumber(m.totalOrders)}</StatValue>
+                  <Stat key={m.id}>
+                     <StatLabel>{m.label}</StatLabel>
+                     <StatValue>{formatNumber(m.orders)}</StatValue>
                   </Stat>
                ))}
             </CardContent>
@@ -120,8 +152,8 @@ export function QuickStats() {
             </CardHeader>
             <CardContent className="divide-y divide-neutral">
                {sortedSuccessfulOrders?.map((m) => (
-                  <Stat key={m.user.id}>
-                     <StatLabel>{m.user.name}</StatLabel>
+                  <Stat key={m.id}>
+                     <StatLabel>{m.label}</StatLabel>
                      <StatValue>
                         {formatNumber(m.orders)}{" "}
                         {m.percentage > 0 && (
@@ -147,8 +179,8 @@ export function QuickStats() {
             </CardHeader>
             <CardContent className="divide-y divide-neutral">
                {sortedFailedOrders?.map((m) => (
-                  <Stat key={m.user.id}>
-                     <StatLabel>{m.user.name}</StatLabel>
+                  <Stat key={m.id}>
+                     <StatLabel>{m.label}</StatLabel>
                      <StatValue>
                         {formatNumber(m.orders)}{" "}
                         {m.percentage > 0 && (
@@ -174,8 +206,8 @@ export function QuickStats() {
             </CardHeader>
             <CardContent className="divide-y divide-neutral">
                {sortedAverageProfitPercentage?.map((m) => (
-                  <Stat key={m.user.id}>
-                     <StatLabel>{m.user.name}</StatLabel>
+                  <Stat key={m.id}>
+                     <StatLabel>{m.label}</StatLabel>
                      <StatValue
                         className={
                            m.averageProfitPercentage === null
@@ -202,10 +234,10 @@ export function QuickStats() {
             </CardHeader>
             <CardContent className="divide-y divide-neutral">
                {sortedTotalProfit?.map((m) => (
-                  <Stat key={m.user.id}>
-                     <StatLabel>{m.user.name}</StatLabel>
+                  <Stat key={m.id}>
+                     <StatLabel>{m.label}</StatLabel>
                      <StatValue>
-                        {formatCurrency(m.totalProfit, { notation: "compact" })}
+                        {formatCurrency(m.profit, { notation: "compact" })}
                      </StatValue>
                   </Stat>
                ))}

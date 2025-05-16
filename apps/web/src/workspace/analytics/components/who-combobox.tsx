@@ -37,12 +37,12 @@ export function WhoCombobox() {
       <Combobox
          multiple
          value={search.who}
-         onValueChange={(value) =>
+         onValueChange={(who) =>
             navigate({
                to: ".",
                search: (prev) => ({
                   ...prev,
-                  who: value,
+                  who,
                   replace: true,
                }),
             })

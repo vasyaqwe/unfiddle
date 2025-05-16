@@ -106,10 +106,12 @@ function ChartContent() {
          id,
          {
             label:
-               id === "all"
-                  ? ""
-                  : (selectedMembers.find((m) => m.user.id === id)?.user.name ??
-                    ""),
+               search.period_comparison.length > 0
+                  ? formatDate(id, { month: "long" })
+                  : id === "all"
+                    ? ""
+                    : (selectedMembers.find((m) => m.user.id === id)?.user
+                         .name ?? ""),
             color: COLORS[idx],
          },
       ]),

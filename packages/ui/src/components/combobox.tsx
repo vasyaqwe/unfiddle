@@ -89,6 +89,7 @@ export function Combobox(props: ComboboxProps) {
                setIsOpen,
                internalValue,
                setInternalValue,
+               canBeEmpty,
             } as ContextType
          }
       >

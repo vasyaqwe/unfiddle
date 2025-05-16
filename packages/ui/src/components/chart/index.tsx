@@ -319,7 +319,7 @@ function ChartTooltipContent({
                                     {itemConfig?.label?.toString() ?? item.name}
                                  </span>
                               )}
-                              {item.value && (
+                              {item.value || item.value === 0 ? (
                                  <span
                                     className={cn(
                                        "block font-mono font-semibold text-foreground",
@@ -328,9 +328,9 @@ function ChartTooltipContent({
                                  >
                                     {valueFormatter
                                        ? valueFormatter(item.value)
-                                       : item.value.toLocaleString()}
+                                       : item.value}
                                  </span>
-                              )}
+                              ) : null}
                            </div>
                         </>
                      )}

@@ -17,7 +17,12 @@ import { ProfitChart } from "@/workspace/analytics/components/profit-chart"
 import { QuickStats } from "@/workspace/analytics/components/quick-stats"
 import {} from "@/workspace/analytics/components/stat"
 import { WhoCombobox } from "@/workspace/analytics/components/who-combobox"
-import { workspaceAnalyticsFilterSchema } from "@ledgerblocks/core/workspace/analytics/filter"
+import {
+   PERIOD_COMPARISON_FILTERS,
+   PERIOD_COMPARISON_FILTERS_TRANSLATION,
+   workspaceAnalyticsFilterSchema,
+} from "@ledgerblocks/core/workspace/analytics/filter"
+import { Button } from "@ledgerblocks/ui/components/button"
 import { Card, CardTitle } from "@ledgerblocks/ui/components/card"
 import {
    type ChartConfig,
@@ -26,12 +31,22 @@ import {
    ChartTooltipContent,
 } from "@ledgerblocks/ui/components/chart"
 import {
+   Combobox,
+   ComboboxEmpty,
+   ComboboxInput,
+   ComboboxItem,
+   ComboboxPopup,
+   ComboboxTrigger,
+   ComboboxTriggerIcon,
+} from "@ledgerblocks/ui/components/combobox"
+import {} from "@ledgerblocks/ui/components/popover"
+import {
    SegmentedProgress,
    SegmentedProgressBars,
    SegmentedProgressLabel,
    SegmentedProgressValue,
 } from "@ledgerblocks/ui/components/segmented-progress"
-import { createFileRoute, redirect } from "@tanstack/react-router"
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router"
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
@@ -90,12 +105,16 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
             who: workspaceAnalyticsFilterSchema.shape.who.catch(["all"]),
             period:
                workspaceAnalyticsFilterSchema.shape.period.catch("last_week"),
+            period_comparison:
+               workspaceAnalyticsFilterSchema.shape.period_comparison.catch([]),
          }),
       ),
    },
 )
 
 function RouteComponent() {
+   const search = Route.useSearch()
+   const navigate = useNavigate()
    const auth = useAuth()
 
    return (
@@ -121,8 +140,54 @@ function RouteComponent() {
                      : "Ваша аналітика"}
                </p>
                <div className="flex grid-cols-2 items-center gap-2 max-md:grid max-md:w-full">
-                  <PeriodSelect searchKey={"period"} />
+                  {auth.workspace.role === "admin" ? (
+                     <Combobox
+                        multiple
+                        canBeEmpty
+                        value={search.period_comparison}
+                        onValueChange={(period_comparison) => {
+                           navigate({
+                              to: ".",
+                              search: (prev) => ({
+                                 ...prev,
+                                 period_comparison,
+                                 replace: true,
+                              }),
+                           })
+                        }}
+                     >
+                        <ComboboxTrigger
+                           render={
+                              <Button
+                                 className="min-w-[170px]"
+                                 variant={"secondary"}
+                              >
+                                 {search.period_comparison.length === 0
+                                    ? "Порівняти місяці.."
+                                    : `${search.period_comparison.length} ${search.period_comparison.length === 1 ? "місяць" : "місяці"} обрано`}
+                                 <ComboboxTriggerIcon />
+                              </Button>
+                           }
+                        />
+                        <ComboboxPopup align="end">
+                           <ComboboxInput placeholder="Шукати.." />
+                           <ComboboxEmpty>Нічого не знайдено</ComboboxEmpty>
+                           {PERIOD_COMPARISON_FILTERS.map((item) => (
+                              <ComboboxItem
+                                 key={item}
+                                 value={item}
+                                 keywords={[
+                                    PERIOD_COMPARISON_FILTERS_TRANSLATION[item],
+                                 ]}
+                              >
+                                 {PERIOD_COMPARISON_FILTERS_TRANSLATION[item]}
+                              </ComboboxItem>
+                           ))}
+                        </ComboboxPopup>
+                     </Combobox>
+                  ) : null}
                   {auth.workspace.role === "admin" ? <WhoCombobox /> : null}
+                  <PeriodSelect searchKey={"period"} />
                </div>
             </header>
             <QuickStats />

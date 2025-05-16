@@ -3,7 +3,9 @@ import { useSearch } from "@tanstack/react-router"
 
 export function Stat({ className, ...props }: React.ComponentProps<"p">) {
    const search = useSearch({ from: "/_authed/$workspaceId/_layout/analytics" })
-   const multipleSelected = search.who.length > 1
+   const multipleSelected =
+      (search.who.length > 1 && search.period_comparison.length === 0) ||
+      search.period_comparison.length > 1
 
    return (
       <div
@@ -22,7 +24,9 @@ export function StatLabel({
    ...props
 }: React.ComponentProps<"span">) {
    const search = useSearch({ from: "/_authed/$workspaceId/_layout/analytics" })
-   const multipleSelected = search.who.length > 1
+   const multipleSelected =
+      (search.who.length > 1 && search.period_comparison.length === 0) ||
+      search.period_comparison.length > 1
    if (!multipleSelected) return null
 
    return (
@@ -41,7 +45,9 @@ export function StatValue({
    ...props
 }: React.ComponentProps<"span">) {
    const search = useSearch({ from: "/_authed/$workspaceId/_layout/analytics" })
-   const multipleSelected = search.who.length > 1
+   const multipleSelected =
+      (search.who.length > 1 && search.period_comparison.length === 0) ||
+      search.period_comparison.length > 1
 
    return (
       <span
@@ -62,7 +68,9 @@ export function StatValueSup({
    ...props
 }: React.ComponentProps<"sup">) {
    const search = useSearch({ from: "/_authed/$workspaceId/_layout/analytics" })
-   const multipleSelected = search.who.length > 1
+   const multipleSelected =
+      (search.who.length > 1 && search.period_comparison.length === 0) ||
+      search.period_comparison.length > 1
 
    return (
       <sup
