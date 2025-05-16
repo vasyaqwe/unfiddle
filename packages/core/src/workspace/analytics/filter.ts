@@ -58,24 +58,6 @@ export const PERIOD_COMPARISON_FILTERS = [
    "2025-12",
 ] as const
 
-export const PERIOD_COMPARISON_FILTERS_TRANSLATION: Record<
-   (typeof PERIOD_COMPARISON_FILTERS)[number],
-   string
-> = {
-   "2025-01": "Січень",
-   "2025-02": "Лютий",
-   "2025-03": "Березень",
-   "2025-04": "Квітень",
-   "2025-05": "Травень",
-   "2025-06": "Червень",
-   "2025-07": "Липень",
-   "2025-08": "Серпень",
-   "2025-09": "Вересень",
-   "2025-10": "Жовтень",
-   "2025-11": "Листопад",
-   "2025-12": "Грудень",
-} as const
-
 export const workspaceAnalyticsFilterSchema = z.object({
    who: z.array(z.string()).default(["all"]),
    period: z.enum(PERIOD_FILTERS).default("last_week"),

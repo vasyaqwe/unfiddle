@@ -1,11 +1,7 @@
 export const PROCUREMENT_STATUSES = [
-   "pending", // Купили, куплено
-   "purchased", // Купили, куплено
-   "reserved", // В броні
-   "canceled", // Скасовано, скасовано
-   "awaiting_customer_reply", // Чекаємо відповідь від клієнта
-   "not_found", // Не знайшли
-   "client_declined", // Клієнт відмовився
-   "awaiting_shipping", // Відправляють, відправляють
-   "shipped", // Відправили, відправлено
+   "pending",
+   "successful",
+   "canceled",
+   "price_not_accepted",
+   "not_found",
 ] as const

@@ -1,6 +1,7 @@
 import { CACHE_SHORT } from "@/api"
 import { useAuth } from "@/auth/hooks"
 import { formatCurrency } from "@/currency"
+import { formatDate } from "@/date"
 import { MainScrollArea } from "@/layout/components/main"
 import { formatOrderDate } from "@/order/utils"
 import {
@@ -19,7 +20,6 @@ import {} from "@/workspace/analytics/components/stat"
 import { WhoCombobox } from "@/workspace/analytics/components/who-combobox"
 import {
    PERIOD_COMPARISON_FILTERS,
-   PERIOD_COMPARISON_FILTERS_TRANSLATION,
    workspaceAnalyticsFilterSchema,
 } from "@ledgerblocks/core/workspace/analytics/filter"
 import { Button } from "@ledgerblocks/ui/components/button"
@@ -177,10 +177,10 @@ function RouteComponent() {
                                  key={item}
                                  value={item}
                                  keywords={[
-                                    PERIOD_COMPARISON_FILTERS_TRANSLATION[item],
+                                    formatDate(item, { month: "long" }),
                                  ]}
                               >
-                                 {PERIOD_COMPARISON_FILTERS_TRANSLATION[item]}
+                                 {formatDate(item, { month: "long" })}
                               </ComboboxItem>
                            ))}
                         </ComboboxPopup>

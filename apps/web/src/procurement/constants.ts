@@ -8,14 +8,10 @@ export const PROCUREMENT_STATUSES_COLORS: Record<
    TailwindColor
 > = {
    pending: "stone",
-   reserved: "purple",
-   purchased: "green",
-   awaiting_customer_reply: "yellow",
+   successful: "green",
+   price_not_accepted: "orange",
+   not_found: "blue",
    canceled: "red",
-   not_found: "gray",
-   client_declined: "rose",
-   awaiting_shipping: "blue",
-   shipped: "emerald",
 }
 
 export const PROCUREMENT_STATUSES_TRANSLATION: Record<
@@ -23,12 +19,8 @@ export const PROCUREMENT_STATUSES_TRANSLATION: Record<
    string
 > = {
    pending: "Чекаємо",
-   reserved: "В броні",
-   purchased: "Куплено",
-   awaiting_customer_reply: "Очікуємо відповідь клієнта",
-   canceled: "Скасовано",
+   successful: "Успішно",
+   price_not_accepted: "Ціна не підійшла",
    not_found: "Не знайдено",
-   client_declined: "Клієнт відмовився",
-   awaiting_shipping: "Відправляється",
-   shipped: "Відправлено",
+   canceled: "Скасовано",
 }
