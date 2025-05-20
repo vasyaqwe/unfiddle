@@ -318,7 +318,7 @@ function FilterMenu() {
             <MenuPopup align="start">
                <Menu>
                   <MenuSubmenuTrigger>
-                     <Icons.circle />
+                     <Icons.circleCheckDotted />
                      Статус
                   </MenuSubmenuTrigger>
                   <MenuPopup className={"max-h-56 overflow-y-auto"}>
@@ -337,10 +337,7 @@ function FilterMenu() {
                </Menu>
                <Menu>
                   <MenuSubmenuTrigger>
-                     <SeverityIcon
-                        className="!w-[1.13rem] md:!w-4 !mx-0.5"
-                        severity="high"
-                     />
+                     <SeverityIcon severity="high" />
                      Пріорітет
                   </MenuSubmenuTrigger>
                   <MenuPopup>
@@ -478,7 +475,6 @@ function Empty() {
                />
             ) : (
                <>
-                  {" "}
                   {search.archived ? (
                      <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -573,7 +569,7 @@ function OrderRow({
                <CollapsibleTriggerIcon className="lg:mr-0.5 lg:mb-px" />
                <SeverityIcon
                   severity={item.severity}
-                  className="mr-[2px] opacity-60 transition-opacity duration-75 group-hover/severity:opacity-90 group-data-[popup-open]/severity:opacity-90 lg:mb-[2px]"
+                  className="mr-[2px]"
                />
                <p className="whitespace-nowrap font-medium font-mono text-foreground/75 text-sm">
                   №{String(item.shortId).padStart(3, "0")}

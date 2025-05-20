@@ -1,3 +1,5 @@
+import { cva } from "class-variance-authority"
+
 export const DIALOG_STYLES = {
    transition:
       "transition-all duration-150 data-[ending-style]:scale-[98%] data-[starting-style]:scale-[102%] data-[ending-style]:opacity-0 data-[starting-style]:opacity-0",
@@ -10,3 +12,16 @@ export const DIALOG_STYLES = {
    description: "mb-6 text-foreground/75 text-sm",
    footer: "flex justify-end gap-3 pt-3",
 }
+
+export const dialog = cva("", {
+   variants: {
+      size: {
+         sm: "w-96",
+         md: "w-116",
+         lg: "w-132",
+      },
+   },
+   defaultVariants: {
+      size: "md",
+   },
+})

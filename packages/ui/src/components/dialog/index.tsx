@@ -1,28 +1,15 @@
 import { Dialog as DialogPrimitive } from "@base-ui-components/react/dialog"
 import { Button } from "@ledgerblocks/ui/components/button"
 import { Icons } from "@ledgerblocks/ui/components/icons"
-import { type VariantProps, cva } from "class-variance-authority"
+import type { VariantProps, } from "class-variance-authority"
 import { cn, cx } from "../../utils"
-import { DIALOG_STYLES } from "./constants"
+import { DIALOG_STYLES, dialog } from "./constants"
 
 export const Dialog = DialogPrimitive.Root
 export const DialogTrigger = DialogPrimitive.Trigger
 export const DialogClose = DialogPrimitive.Close
 export const DialogPortal = DialogPrimitive.Portal
 export const DialogBackdrop = DialogPrimitive.Backdrop
-
-export const dialog = cva("", {
-   variants: {
-      size: {
-         sm: "w-96",
-         md: "w-116",
-         lg: "w-132",
-      },
-   },
-   defaultVariants: {
-      size: "md",
-   },
-})
 
 export function DialogPopup({
    className,

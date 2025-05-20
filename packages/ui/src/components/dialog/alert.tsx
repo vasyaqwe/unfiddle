@@ -1,26 +1,13 @@
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui-components/react/alert-dialog"
-import { type VariantProps, cva } from "class-variance-authority"
+import type { VariantProps, } from "class-variance-authority"
 import { cn, cx } from "../../utils"
-import { DIALOG_STYLES } from "./constants"
+import { DIALOG_STYLES, dialog } from "./constants"
 
 export const AlertDialog = AlertDialogPrimitive.Root
 export const AlertDialogTrigger = AlertDialogPrimitive.Trigger
 export const AlertDialogClose = AlertDialogPrimitive.Close
 export const AlertDialogPortal = AlertDialogPrimitive.Portal
 export const AlertDialogBackdrop = AlertDialogPrimitive.Backdrop
-
-export const dialog = cva("", {
-   variants: {
-      size: {
-         sm: "w-96",
-         md: "w-116",
-         lg: "w-132",
-      },
-   },
-   defaultVariants: {
-      size: "md",
-   },
-})
 
 export function AlertDialogPopup({
    className,

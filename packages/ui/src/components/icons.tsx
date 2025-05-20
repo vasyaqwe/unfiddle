@@ -180,6 +180,19 @@ export const Icons = {
          </g>
       </svg>
    ),
+   alert: (props: IconProps) => (
+      <svg
+         {...props}
+         viewBox="0 0 24 24"
+         fill="none"
+         xmlns="http://www.w3.org/2000/svg"
+      >
+         <path
+            d="M20.5734 14.8L14.8578 4.9C14.2616 3.8671 13.1924 3.25 12 3.25C10.8076 3.25 9.73837 3.8671 9.14217 4.9L3.42657 14.8C2.83037 15.8318 2.82927 17.0671 3.42657 18.1C4.02277 19.1329 5.09197 19.75 6.28437 19.75H17.7167C18.9091 19.75 19.9783 19.1329 20.5745 18.1C21.1707 17.0671 21.1696 15.8318 20.5734 14.8ZM10.9 8.75C10.9 8.1428 11.3917 7.65 12 7.65C12.6083 7.65 13.1 8.1428 13.1 8.75V12.6C13.1 13.2072 12.6083 13.7 12 13.7C11.3917 13.7 10.9 13.2072 10.9 12.6V8.75ZM12 17.55C11.2421 17.55 10.625 16.9329 10.625 16.175C10.625 15.4171 11.2421 14.8 12 14.8C12.7579 14.8 13.375 15.4171 13.375 16.175C13.375 16.9329 12.7579 17.55 12 17.55Z"
+            fill="currentColor"
+         />
+      </svg>
+   ),
    pin: (props: IconProps) => (
       <svg
          viewBox="0 0 34 34"
@@ -288,6 +301,81 @@ export const Icons = {
             strokeLinecap="round"
             strokeLinejoin="round"
          />
+      </svg>
+   ),
+   circleCheckDotted: ({ ...props }: IconProps) => (
+      <svg
+         {...props}
+         xmlns="http://www.w3.org/2000/svg"
+         viewBox="0 0 18 18"
+      >
+         <g fill="currentColor">
+            <path
+               d="M9,1.75c4.004,0,7.25,3.246,7.25,7.25s-3.246,7.25-7.25,7.25"
+               fill="none"
+               stroke="currentColor"
+               strokeLinecap="round"
+               strokeLinejoin="round"
+               strokeWidth="1.5"
+            />
+            <polyline
+               points="5.75 9.25 8 11.75 12.25 6.25"
+               fill="none"
+               stroke="currentColor"
+               strokeLinecap="round"
+               strokeLinejoin="round"
+               strokeWidth="1.5"
+            />
+            <circle
+               cx="3.873"
+               cy="14.127"
+               r=".75"
+               fill="currentColor"
+               stroke="none"
+            />
+            <circle
+               cx="1.75"
+               cy="9"
+               r=".75"
+               fill="currentColor"
+               stroke="none"
+            />
+            <circle
+               cx="3.873"
+               cy="3.873"
+               r=".75"
+               fill="currentColor"
+               stroke="none"
+            />
+            <circle
+               cx="6.226"
+               cy="15.698"
+               r=".75"
+               fill="currentColor"
+               stroke="none"
+            />
+            <circle
+               cx="2.302"
+               cy="11.774"
+               r=".75"
+               fill="currentColor"
+               stroke="none"
+            />
+            <circle
+               cx="2.302"
+               cy="6.226"
+               r=".75"
+               fill="currentColor"
+               stroke="none"
+            />
+            <circle
+               cx="6.226"
+               cy="2.302"
+               r=".75"
+               fill="currentColor"
+               stroke="none"
+            />
+         </g>
       </svg>
    ),
    undo: ({ className, ...props }: IconProps) => (
