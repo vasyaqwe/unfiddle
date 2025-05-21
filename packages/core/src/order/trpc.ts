@@ -58,13 +58,19 @@ export const orderRouter = t.router({
 
          if (filter.start_date) {
             whereConditions.push(
-               gte(order.createdAt, new Date(filter.start_date)),
+               gte(
+                  order.createdAt,
+                  new Date(new Date(filter.start_date).setHours(0, 0, 0, 0)),
+               ),
             )
          }
          if (filter.end_date) {
-            const endOfDay = new Date(filter.end_date)
-            endOfDay.setDate(endOfDay.getDate() + 1)
-            whereConditions.push(lt(order.createdAt, endOfDay))
+            whereConditions.push(
+               lt(
+                  order.createdAt,
+                  new Date(new Date(filter.end_date).setHours(23, 59, 59, 999)),
+               ),
+            )
          }
 
          if (filter.q?.length) {
