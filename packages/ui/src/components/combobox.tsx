@@ -150,6 +150,7 @@ export function ComboboxPopup({
 }: React.ComponentProps<typeof PopoverPopup>) {
    return (
       <PopoverPopup
+         light={false}
          sideOffset={4}
          className={cn(
             "max-h-56 min-w-[calc(var(--anchor-width)+3rem)] scroll-py-1 overflow-y-auto p-1",

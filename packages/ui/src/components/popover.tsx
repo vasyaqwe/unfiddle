@@ -11,9 +11,12 @@ export const PopoverArrow = PopoverPrimitive.Arrow
 export function PopoverPopup({
    className,
    children,
-   sideOffset = 7,
+   sideOffset = 4,
+   light = true,
    ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Positioner>) {
+}: React.ComponentProps<typeof PopoverPrimitive.Positioner> & {
+   light?: boolean
+}) {
    return (
       <PopoverPortal>
          <PopoverPositioner
@@ -25,7 +28,9 @@ export function PopoverPopup({
                className={cn(
                   POPUP_STYLES.base,
                   POPUP_STYLES.transition,
-                  "border border-primary-12/12 bg-background px-3 py-2.5 text-foreground shadow-xl",
+                  light
+                     ? "border border-primary-12/12 bg-background px-3 py-2.5 text-foreground shadow-xl"
+                     : "",
                   className,
                )}
             >
