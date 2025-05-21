@@ -25,6 +25,9 @@ export function Loading({
       <div
          data-visible={true}
          className={cn(loading({ size, className }))}
+         style={{
+            position: "relative",
+         }}
          {...props}
       >
          <div className="sonner-spinner">

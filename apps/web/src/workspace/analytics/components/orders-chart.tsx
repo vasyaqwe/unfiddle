@@ -21,6 +21,9 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 export function OrdersChart() {
    return (
       <section className="relative flex h-72 w-full flex-col md:h-86 xl:h-100">
+         <div className="mb-2 flex items-center justify-between">
+            <p className="font-semibold text-xl">Динаміка замовлень</p>
+         </div>
          <CatchBoundary
             getResetKey={() => "reset"}
             errorComponent={(props) => (
@@ -34,7 +37,7 @@ export function OrdersChart() {
                fallback={
                   <Loading
                      size={"xl"}
-                     className="absolute inset-0 m-auto"
+                     className="inset-0 m-auto"
                   />
                }
             >
@@ -58,132 +61,125 @@ function ChartContent() {
 
    const maxValue = Math.max(...orders.data.map((item) => item.value))
 
-   return (
-      <>
-         <div className="mb-2 flex items-center justify-between">
-            <p className="font-semibold text-xl">Динаміка замовлень</p>
-         </div>
-         {isChartDataEmpty(orders.data) ? (
-            <div className="absolute inset-0 m-auto flex size-fit flex-col items-center gap-5 font-medium text-foreground/75 text-lg">
-               <svg
-                  className="size-12"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 18 18"
-               >
-                  <g fill="currentColor">
-                     <rect
-                        x="2.75"
-                        y="2.75"
-                        width="4.5"
-                        height="12.5"
-                        rx="1.5"
-                        ry="1.5"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="1.5"
-                     />
-                     <rect
-                        x="10.75"
-                        y="8.75"
-                        width="4.5"
-                        height="6.5"
-                        rx="1.5"
-                        ry="1.5"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="1.5"
-                     />
-                  </g>
-               </svg>
-               Даних не знайдено
-            </div>
-         ) : (
-            <div className="scrollbar-hidden flex grow flex-col overflow-x-auto">
-               <ChartContainer
-                  config={
-                     {
-                        quantity: {
-                           label: "Quantity",
-                           color: "var(--color-chart-1)",
-                        },
-                     } satisfies ChartConfig
+   return isChartDataEmpty(orders.data) ? (
+      <div className="absolute inset-0 m-auto flex size-fit flex-col items-center gap-5 font-medium text-foreground/75 text-lg">
+         <svg
+            className="size-12"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 18 18"
+         >
+            <g fill="currentColor">
+               <rect
+                  x="2.75"
+                  y="2.75"
+                  width="4.5"
+                  height="12.5"
+                  rx="1.5"
+                  ry="1.5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="1.5"
+               />
+               <rect
+                  x="10.75"
+                  y="8.75"
+                  width="4.5"
+                  height="6.5"
+                  rx="1.5"
+                  ry="1.5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="1.5"
+               />
+            </g>
+         </svg>
+         Даних не знайдено
+      </div>
+   ) : (
+      <div className="scrollbar-hidden flex grow flex-col overflow-x-auto">
+         <ChartContainer
+            config={
+               {
+                  quantity: {
+                     label: "Quantity",
+                     color: "var(--color-chart-1)",
+                  },
+               } satisfies ChartConfig
+            }
+            style={{ minWidth: orders.data.length * 16 }}
+            className="mt-5 h-0 grow [--color-chart-1:var(--color-accent-6)] "
+         >
+            <BarChart
+               data={orders.data}
+               margin={{ top: 24, right: 32, left: 8 }}
+            >
+               <CartesianGrid
+                  vertical={false}
+                  strokeDasharray="2 2"
+               />
+               <XAxis
+                  dataKey="date"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  minTickGap={24}
+                  tickFormatter={(value) =>
+                     formatDate(value, {
+                        month: "short",
+                        year:
+                           search.period === "all_time" ||
+                           search.period === "last_year" ||
+                           search.period === "last_half_year" ||
+                           search.period === "last_quarter"
+                              ? "2-digit"
+                              : undefined,
+                        day:
+                           search.period === "last_week" ||
+                           search.period === "last_month"
+                              ? "numeric"
+                              : undefined,
+                     })
                   }
-                  style={{ minWidth: orders.data.length * 16 }}
-                  className="mt-5 h-0 grow [--color-chart-1:var(--color-accent-6)] "
-               >
-                  <BarChart
-                     data={orders.data}
-                     margin={{ top: 24, right: 32, left: 8 }}
-                  >
-                     <CartesianGrid
-                        vertical={false}
-                        strokeDasharray="2 2"
-                     />
-                     <XAxis
-                        dataKey="date"
-                        tickLine={false}
-                        axisLine={false}
-                        tickMargin={8}
-                        minTickGap={24}
-                        tickFormatter={(value) =>
-                           formatDate(value, {
-                              month: "short",
-                              year:
-                                 search.period === "all_time" ||
-                                 search.period === "last_year" ||
-                                 search.period === "last_half_year" ||
-                                 search.period === "last_quarter"
-                                    ? "2-digit"
-                                    : undefined,
-                              day:
-                                 search.period === "last_week" ||
-                                 search.period === "last_month"
-                                    ? "numeric"
-                                    : undefined,
-                           })
+               />
+               <YAxis
+                  allowDecimals={false}
+                  axisLine={false}
+                  tickLine={false}
+                  tickMargin={12}
+                  allowDataOverflow={true}
+                  domain={[`dataMin - ${maxValue / 100}`, "dataMax"]}
+                  tickFormatter={(value) => {
+                     if (value === 0) return "0 ₴"
+                     return formatCurrency(Math.floor(value), {
+                        notation: "compact",
+                        style: "decimal",
+                     })
+                  }}
+               />
+               <ChartTooltip
+                  content={
+                     <ChartTooltipContent
+                        labelFormatter={(value) =>
+                           `За ${new Date(value).getDate() === new Date().getDate() ? "сьогодні" : formatOrderDate(value)}`
+                        }
+                        valueFormatter={(value) =>
+                           `${formatNumber(+value)} замовлень`
                         }
                      />
-                     <YAxis
-                        allowDecimals={false}
-                        axisLine={false}
-                        tickLine={false}
-                        tickMargin={12}
-                        allowDataOverflow={true}
-                        domain={[`dataMin - ${maxValue / 100}`, "dataMax"]}
-                        tickFormatter={(value) => {
-                           if (value === 0) return "0 ₴"
-                           return formatCurrency(Math.floor(value), {
-                              notation: "compact",
-                              style: "decimal",
-                           })
-                        }}
-                     />
-                     <ChartTooltip
-                        content={
-                           <ChartTooltipContent
-                              labelFormatter={(value) =>
-                                 `За ${new Date(value).getDate() === new Date().getDate() ? "сьогодні" : formatOrderDate(value)}`
-                              }
-                              valueFormatter={(value) =>
-                                 `${formatNumber(+value)} замовлень`
-                              }
-                           />
-                        }
-                     />
-                     <Bar
-                        maxBarSize={32}
-                        dataKey="value"
-                        fill="var(--color-quantity)"
-                        radius={[3, 3, 0, 0]}
-                     />
-                  </BarChart>
-               </ChartContainer>
-            </div>
-         )}
-      </>
+                  }
+               />
+               <Bar
+                  maxBarSize={32}
+                  dataKey="value"
+                  fill="var(--color-quantity)"
+                  radius={[3, 3, 0, 0]}
+               />
+            </BarChart>
+         </ChartContainer>
+      </div>
    )
 }

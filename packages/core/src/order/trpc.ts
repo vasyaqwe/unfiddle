@@ -11,7 +11,17 @@ import { t } from "@ledgerblocks/core/trpc/context"
 import { tryCatch } from "@ledgerblocks/core/try-catch"
 import { workspaceMemberMiddleware } from "@ledgerblocks/core/workspace/middleware"
 import { TRPCError } from "@trpc/server"
-import { and, desc, eq, inArray, isNotNull, isNull, sql } from "drizzle-orm"
+import {
+   and,
+   desc,
+   eq,
+   gte,
+   inArray,
+   isNotNull,
+   isNull,
+   lt,
+   sql,
+} from "drizzle-orm"
 import type { BatchItem } from "drizzle-orm/batch"
 import { createInsertSchema } from "drizzle-zod"
 import { z } from "zod"
@@ -44,6 +54,17 @@ export const orderRouter = t.router({
             whereConditions.push(isNotNull(order.deletedAt))
          } else {
             whereConditions.push(isNull(order.deletedAt))
+         }
+
+         if (filter.start_date) {
+            whereConditions.push(
+               gte(order.createdAt, new Date(filter.start_date)),
+            )
+         }
+         if (filter.end_date) {
+            const endOfDay = new Date(filter.end_date)
+            endOfDay.setDate(endOfDay.getDate() + 1)
+            whereConditions.push(lt(order.createdAt, endOfDay))
          }
 
          if (filter.q?.length) {

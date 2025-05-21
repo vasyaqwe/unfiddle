@@ -62,6 +62,7 @@ import {
    ComboboxPopup,
    ComboboxTrigger,
 } from "@ledgerblocks/ui/components/combobox"
+import { DateInput } from "@ledgerblocks/ui/components/date-input"
 import {
    AlertDialog,
    AlertDialogClose,
@@ -81,6 +82,11 @@ import {
    MenuSubmenuTrigger,
    MenuTrigger,
 } from "@ledgerblocks/ui/components/menu"
+import {
+   Popover,
+   PopoverPopup,
+   PopoverTrigger,
+} from "@ledgerblocks/ui/components/popover"
 import { ProfitArrow } from "@ledgerblocks/ui/components/profit-arrow"
 import { Separator } from "@ledgerblocks/ui/components/separator"
 import {
@@ -143,6 +149,7 @@ function RouteComponent() {
                <div className="sticky top-0 z-[5] flex min-h-12 items-center gap-1 border-primary-12/13 border-b bg-background px-1.5 shadow-xs/4 lg:min-h-10">
                   <ToggleAll />
                   <ToggleArchived />
+                  <DateFilter />
                   <FilterMenu />
                   <Search />
                </div>
@@ -379,7 +386,6 @@ function FilterMenu() {
                </Menu>
             </MenuPopup>
          </Menu>
-
          {selectedLength === 0 ? null : (
             <Badge className="overflow-hidden pr-0">
                {selectedLength} обрано
@@ -395,6 +401,94 @@ function FilterMenu() {
             </Badge>
          )}
       </>
+   )
+}
+
+function DateFilter() {
+   const search = Route.useSearch()
+   const navigate = useNavigate()
+   const [startDate, setStartDate] = React.useState(search.start_date)
+   const [endDate, setEndDate] = React.useState(search.end_date)
+   const [open, setOpen] = React.useState(false)
+
+   return (
+      <Popover
+         open={open}
+         onOpenChange={setOpen}
+      >
+         <PopoverTrigger
+            render={
+               <Button
+                  variant={"ghost"}
+                  kind={"icon"}
+                  size={"sm"}
+                  className="relative"
+               >
+                  <Icons.calendar className="size-[18px]" />
+                  {search.start_date || search.end_date ? (
+                     <span className="absolute top-[3px] right-[3px] size-[5px] rounded-full bg-accent-7" />
+                  ) : null}
+               </Button>
+            }
+         />
+         <PopoverPopup align="start">
+            <p className="mb-2 font-medium">Фільтрувати за датою</p>
+            <div className="grid grid-cols-2 items-center gap-2">
+               <DateInput
+                  value={startDate ? new Date(startDate) : null}
+                  onValueChange={(date) => {
+                     setStartDate(date ? date.toISOString() : undefined)
+                  }}
+                  placeholder="Початок"
+                  className="max-w-[170px]"
+               />
+               <DateInput
+                  value={endDate ? new Date(endDate) : null}
+                  onValueChange={(date) => {
+                     setEndDate(date ? date.toISOString() : undefined)
+                  }}
+                  placeholder="Кінець"
+                  className="max-w-[170px]"
+               />
+            </div>
+            <div className="mt-4 grid grid-cols-2 items-center gap-2">
+               <Button
+                  className=""
+                  variant={"tertiary"}
+                  onClick={() => {
+                     navigate({
+                        to: ".",
+                        search: (prev) => ({
+                           ...prev,
+                           start_date: undefined,
+                           end_date: undefined,
+                        }),
+                     })
+                     setStartDate(undefined)
+                     setEndDate(undefined)
+                  }}
+               >
+                  Скинути
+               </Button>
+               <Button
+                  className="md:h-[1.85rem]"
+                  onClick={() => {
+                     navigate({
+                        to: ".",
+                        search: (prev) => ({
+                           ...prev,
+                           start_date: startDate,
+                           end_date: endDate,
+                        }),
+                     })
+                     setOpen(false)
+                  }}
+               >
+                  Застосувати
+               </Button>
+            </div>
+         </PopoverPopup>
+      </Popover>
    )
 }
 
@@ -543,7 +637,7 @@ function OrderRow({
    const [confirmArchiveOpen, setConfirmArchiveOpen] = React.useState(false)
    const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false)
    const menuTriggerRef = React.useRef<HTMLButtonElement>(null)
-   console.log(item.sellingPrice)
+
    const totalProfit = item.procurements.reduce(
       (acc, p) =>
          acc + ((item.sellingPrice ?? 0) - p.purchasePrice) * p.quantity,
@@ -569,7 +663,7 @@ function OrderRow({
                <CollapsibleTriggerIcon className="lg:mr-0.5 lg:mb-px" />
                <SeverityIcon
                   severity={item.severity}
-                  className="mr-[2px]"
+                  className="mr-[2px] shrink-0"
                />
                <p className="whitespace-nowrap font-medium font-mono text-foreground/75 text-sm">
                   №{String(item.shortId).padStart(3, "0")}

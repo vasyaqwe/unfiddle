@@ -50,7 +50,7 @@ export const Route = createFileRoute("/join/$code")({
          <main className="grid h-svh w-full place-items-center bg-background text-center">
             <Loading
                size={"xl"}
-               className="-translate-y-8 absolute inset-0 m-auto"
+               className="-translate-y-8 inset-0 m-auto"
             />
          </main>
       )

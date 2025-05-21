@@ -47,18 +47,30 @@ export function ProfitChart() {
          <CatchBoundary
             getResetKey={() => "reset"}
             errorComponent={(props) => (
-               <ErrorComponent
-                  error={props.error}
-                  reset={props.reset}
-               />
+               <>
+                  <div className="mb-2 flex min-h-[31px] items-center justify-between">
+                     <p className="font-semibold text-xl">Динаміка прибутку</p>
+                  </div>
+                  <ErrorComponent
+                     error={props.error}
+                     reset={props.reset}
+                  />
+               </>
             )}
          >
             <React.Suspense
                fallback={
-                  <Loading
-                     size={"xl"}
-                     className="absolute inset-0 m-auto"
-                  />
+                  <>
+                     <div className="mb-2 flex min-h-[31px] items-center justify-between">
+                        <p className="font-semibold text-xl">
+                           Динаміка прибутку
+                        </p>
+                     </div>
+                     <Loading
+                        size={"xl"}
+                        className="inset-0 m-auto"
+                     />
+                  </>
                }
             >
                <ChartContent />
@@ -154,7 +166,7 @@ function ChartContent() {
 
    return (
       <>
-         <div className="mb-2 flex items-center justify-between">
+         <div className="mb-2 flex min-h-[31px] items-center justify-between">
             <p className="font-semibold text-xl">Динаміка прибутку</p>
             <Button
                onClick={() => zoom.reset()}

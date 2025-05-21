@@ -25,7 +25,7 @@ export function PopoverPopup({
                className={cn(
                   POPUP_STYLES.base,
                   POPUP_STYLES.transition,
-                  "px-3 py-2.5",
+                  "border border-primary-12/12 bg-background px-3 py-2.5 text-foreground shadow-xl",
                   className,
                )}
             >
