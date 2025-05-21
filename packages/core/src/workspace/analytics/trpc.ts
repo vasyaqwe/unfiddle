@@ -1,7 +1,10 @@
 import { order } from "@ledgerblocks/core/order/schema"
 import { procurement } from "@ledgerblocks/core/procurement/schema"
 import { t } from "@ledgerblocks/core/trpc/context"
-import { workspaceAnalyticsFilterSchema } from "@ledgerblocks/core/workspace/analytics/filter"
+import {
+   PERIOD_FILTERS_FNS,
+   workspaceAnalyticsFilterSchema,
+} from "@ledgerblocks/core/workspace/analytics/filter"
 import { workspaceMemberMiddleware } from "@ledgerblocks/core/workspace/middleware"
 import {
    type Column,
@@ -10,6 +13,7 @@ import {
    asc,
    count,
    eq,
+   gte,
    inArray,
    or,
    sql,
@@ -54,6 +58,16 @@ export const workspaceAnalyticsRouter = t.router({
          ]
 
          const formattedMonthlyDateExpr = sql<string>`strftime('%Y-%m', ${order.createdAt}, 'unixepoch')`
+
+         if (
+            input.period_comparison.length === 0 &&
+            input.period !== "all_time"
+         ) {
+            const periodFilter = PERIOD_FILTERS_FNS[input.period].gte
+            if (!periodFilter) return
+
+            whereConditions.push(gte(order.createdAt, periodFilter))
+         }
 
          if (input.period_comparison.length > 0) {
             if (input.who.length > 0 && !input.who.includes("all")) {
@@ -156,6 +170,16 @@ export const workspaceAnalyticsRouter = t.router({
 
          selectFields.date = formattedDateExpr
 
+         if (
+            input.period_comparison.length === 0 &&
+            input.period !== "all_time"
+         ) {
+            const periodFilter = PERIOD_FILTERS_FNS[input.period].gte
+            if (!periodFilter) return
+
+            whereConditions.push(gte(order.createdAt, periodFilter))
+         }
+
          if (input.who.length > 0 && !input.who.includes("all")) {
             whereConditions.push(
                or(
@@ -218,6 +242,13 @@ export const workspaceAnalyticsRouter = t.router({
          }
 
          const whereConditions = [eq(order.workspaceId, input.id)]
+
+         if (input.period !== "all_time") {
+            const periodFilter = PERIOD_FILTERS_FNS[input.period].gte
+            if (!periodFilter) return
+
+            whereConditions.push(gte(order.createdAt, periodFilter))
+         }
 
          if (input.who.length > 0 && input.who[0] !== "all") {
             whereConditions.push(inArray(order.creatorId, input.who))

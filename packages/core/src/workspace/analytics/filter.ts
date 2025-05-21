@@ -21,24 +21,31 @@ export const PERIOD_FILTERS_TRANSLATION: Record<
    all_time: "Увесь час",
 }
 
+const getStartOfDay = (days: number): Date => {
+   const d = new Date()
+   d.setHours(0, 0, 0, 0)
+   d.setDate(d.getDate() - days)
+   return d
+}
+
 export const PERIOD_FILTERS_FNS: Record<
    (typeof PERIOD_FILTERS)[number],
    Record<string, Date>
 > = {
    last_week: {
-      gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      gte: getStartOfDay(7),
    },
    last_month: {
-      gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      gte: getStartOfDay(30),
    },
    last_quarter: {
-      gte: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
+      gte: getStartOfDay(90),
    },
    last_half_year: {
-      gte: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000),
+      gte: getStartOfDay(180),
    },
    last_year: {
-      gte: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000),
+      gte: getStartOfDay(365),
    },
    all_time: {},
 } as const

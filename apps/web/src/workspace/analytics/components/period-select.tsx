@@ -35,8 +35,11 @@ export function PeriodSelect({
          <SelectTrigger
             render={
                <Button
+                  disabled={search.period_comparison.length > 0}
                   variant={"secondary"}
-                  className={"min-w-32"}
+                  className={
+                     "min-w-32 disabled:cursor-default disabled:bg-primary-3"
+                  }
                >
                   <SelectValue />
                   <SelectTriggerIcon />

@@ -51,8 +51,11 @@ export function WhoCombobox() {
          <ComboboxTrigger
             render={
                <Button
+                  disabled={search.period_comparison.length > 0}
                   variant={"secondary"}
-                  className={"md:!gap-1.5 min-w-40"}
+                  className={
+                     "md:!gap-1.5 min-w-40 disabled:cursor-default disabled:bg-primary-3"
+                  }
                >
                   {search.who.includes("all") ? (
                      <>Загальна</>
