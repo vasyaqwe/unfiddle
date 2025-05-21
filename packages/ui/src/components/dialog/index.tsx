@@ -1,7 +1,7 @@
 import { Dialog as DialogPrimitive } from "@base-ui-components/react/dialog"
 import { Button } from "@ledgerblocks/ui/components/button"
 import { Icons } from "@ledgerblocks/ui/components/icons"
-import type { VariantProps, } from "class-variance-authority"
+import type { VariantProps } from "class-variance-authority"
 import { cn, cx } from "../../utils"
 import { DIALOG_STYLES, dialog } from "./constants"
 
