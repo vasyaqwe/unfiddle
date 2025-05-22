@@ -6,7 +6,7 @@ export const badge = cva(
    {
       variants: {
          variant: {
-            primary: "border-primary-12/11 bg-background text-foreground/80",
+            primary: "border-surface-12/11 bg-background text-foreground/80",
          },
          size: {
             sm: "h-[1.5rem] rounded-[0.3rem] px-1.5 text-xs",

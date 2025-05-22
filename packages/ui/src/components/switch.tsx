@@ -14,7 +14,7 @@ function Switch({
             onCheckedChange?.(checked, e)
          }}
          className={cn(
-            "inline-flex h-[28px] w-[47px] cursor-pointer items-center rounded-full bg-primary-7 shadow-xs hover:bg-primary-8 data-checked:bg-accent-8 data-checked:hover:bg-accent-8/90 md:h-[23px] md:w-[38px]",
+            "inline-flex h-[28px] w-[47px] cursor-pointer items-center rounded-full bg-surface-7 shadow-xs hover:bg-surface-8 data-checked:bg-primary-8 data-checked:hover:bg-primary-8/90 md:h-[23px] md:w-[38px]",
             FOCUS_STYLES,
             className,
          )}

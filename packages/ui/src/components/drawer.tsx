@@ -40,7 +40,7 @@ function DrawerPopup({
             )}
             {...props}
          >
-            <div className="mx-auto mt-0.5 mb-5 h-[5px] w-8 shrink-0 rounded-full bg-primary-8 md:hidden" />
+            <div className="mx-auto mt-0.5 mb-5 h-[5px] w-8 shrink-0 rounded-full bg-surface-8 md:hidden" />
             {children}
          </DrawerPrimitive.Content>
       </DrawerPortal>
@@ -50,7 +50,7 @@ function DrawerPopup({
 function DrawerSeparator({ className, ...props }: React.ComponentProps<"div">) {
    return (
       <Separator
-         className={cn("-mx-4 md:-mx-5 my-5 bg-primary-4", className)}
+         className={cn("-mx-4 md:-mx-5 my-5 bg-surface-4", className)}
          {...props}
       />
    )

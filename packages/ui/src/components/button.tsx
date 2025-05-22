@@ -12,12 +12,12 @@ export const button = cva(
       variants: {
          variant: {
             primary:
-               "bg-accent-6 font-[400] text-shadow-md/7 shadow-[inset_0_-2.5px_1px_0_rgb(0_0_0_/_0.2),0_1px_3px_0_rgb(0_0_0_/_0.1),_0_1px_2px_-1px_rgb(0_0_0_/_0.1)] hover:bg-accent-5 active:bg-accent-6 [&>svg]:drop-shadow-md",
+               "bg-primary-6 font-[400] text-shadow-md/7 shadow-[inset_0_-2.5px_1px_0_rgb(0_0_0_/_0.2),0_1px_3px_0_rgb(0_0_0_/_0.1),_0_1px_2px_-1px_rgb(0_0_0_/_0.1)] hover:bg-primary-5 active:bg-primary-6 [&>svg]:drop-shadow-md",
             secondary:
-               "border border-primary-5 bg-background shadow-[inset_0_-1px_0.5px_rgb(0_0_0_/_0.15)] hover:bg-primary-1 active:bg-primary-2 data-[popup-open]:bg-primary-2",
+               "border border-surface-5 bg-background shadow-[inset_0_-1px_0.5px_rgb(0_0_0_/_0.15)] hover:bg-surface-1 active:bg-surface-2 data-[popup-open]:bg-surface-2",
             tertiary:
-               "border border-primary-2 bg-background bg-primary-3 hover:bg-primary-4 active:bg-primary-3",
-            ghost: "bg-transparent [--active-color:var(--color-primary-3)] hover:bg-(--active-color) aria-[current=page]:bg-(--active-color) data-[popup-open]:bg-(--active-color)",
+               "border border-surface-2 bg-background bg-surface-3 hover:bg-surface-4 active:bg-surface-3",
+            ghost: "bg-transparent [--active-color:var(--color-surface-3)] hover:bg-(--active-color) aria-[current=page]:bg-(--active-color) data-[popup-open]:bg-(--active-color)",
             destructive:
                "bg-red-9 font-[400] text-shadow-md/7 shadow-[inset_0_-2.5px_1px_0_rgb(0_0_0_/_0.2),0_1px_3px_0_rgb(0_0_0_/_0.1),_0_1px_2px_-1px_rgb(0_0_0_/_0.1)] hover:bg-red-9/90 active:bg-red-9 [&>svg]:drop-shadow-md",
          },
@@ -75,7 +75,7 @@ export function Button({
             button({ variant, size, kind, className }),
             FOCUS_STYLES,
             !variant || variant === "primary"
-               ? "focus-visible:ring-primary-7"
+               ? "focus-visible:ring-surface-7"
                : "",
          )}
          style={{

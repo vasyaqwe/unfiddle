@@ -32,14 +32,14 @@ export function ScrollAreaScrollbar({
    return (
       <ScrollAreaPrimitive.Scrollbar
          className={cn(
-            "flex w-1.5 justify-center rounded-md bg-primary-3 opacity-0 transition-opacity delay-300",
+            "flex w-1.5 justify-center rounded-md bg-surface-3 opacity-0 transition-opacity delay-300",
             "data-[hovering]:opacity-100 data-[scrolling]:opacity-100 data-[hovering]:delay-100 data-[scrolling]:delay-100 data-[hovering]:duration-75 data-[scrolling]:duration-75",
             className,
          )}
          {...props}
       >
          <ScrollAreaPrimitive.Thumb
-            className={"w-full rounded-[inherit] bg-primary-7"}
+            className={"w-full rounded-[inherit] bg-surface-7"}
          />
       </ScrollAreaPrimitive.Scrollbar>
    )

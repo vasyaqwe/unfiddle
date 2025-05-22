@@ -241,7 +241,7 @@ function _ProfitComparisonChart({
                   },
                } satisfies ChartConfig
             }
-            className="mt-5 h-60 w-full [--color-chart-1:var(--color-accent-6)] md:h-72 xl:h-96"
+            className="mt-5 h-60 w-full [--color-chart-1:var(--color-primary-6)] md:h-72 xl:h-96"
          >
             <BarChart
                data={data}

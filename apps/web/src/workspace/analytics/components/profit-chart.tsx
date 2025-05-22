@@ -29,7 +29,7 @@ import {
 } from "recharts"
 
 const COLORS: Record<number, string> = {
-   0: "var(--color-accent-6)",
+   0: "var(--color-primary-6)",
    1: "#22c55e",
    2: "#C084FC",
    3: "#F87171",
@@ -90,6 +90,7 @@ function ChartContent() {
          ...search,
       }),
    )
+   const data = profit.data ?? []
 
    const members = useQuery(
       trpc.workspace.member.list.queryOptions({
@@ -105,9 +106,7 @@ function ChartContent() {
       [members.data, search.who],
    )
 
-   const firstDataPoint = profit.data.find(
-      (point) => Object.keys(point).length > 1,
-   )
+   const firstDataPoint = data.find((point) => Object.keys(point).length > 1)
 
    const dataKeys = !firstDataPoint
       ? []
@@ -133,7 +132,7 @@ function ChartContent() {
       let min = Infinity
       let max = -Infinity
 
-      for (const dataPoint of profit.data) {
+      for (const dataPoint of data) {
          for (const key of Object.keys(dataPoint)) {
             if (key !== "date") {
                const value = dataPoint[key]
@@ -158,11 +157,11 @@ function ChartContent() {
       }
 
       return [lowerBound, upperBound]
-   }, [profit.data])
+   }, [data])
 
    const lines = Object.keys(config)
 
-   const zoom = useChartZoom({ initialData: profit.data })
+   const zoom = useChartZoom({ initialData: data })
 
    return (
       <>
@@ -180,11 +179,11 @@ function ChartContent() {
             className={cx(
                "mt-5 h-0 grow",
                lines.length === 1
-                  ? "[--color-chart-1:var(--color-accent-6)]"
-                  : "[--color-chart-1:var(--color-primary-9)]",
+                  ? "[--color-chart-1:var(--color-primary-6)]"
+                  : "[--color-chart-1:var(--color-surface-9)]",
             )}
          >
-            {isChartDataEmpty(profit.data) ? (
+            {isChartDataEmpty(data) ? (
                <div className="absolute inset-0 m-auto flex size-fit flex-col items-center gap-5 font-medium text-foreground/75 text-lg">
                   <svg
                      className="size-12"

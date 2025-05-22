@@ -146,7 +146,7 @@ function RouteComponent() {
                />
             </CreateOrder>
             <div className="mb-16">
-               <div className="sticky top-0 z-[5] flex min-h-12 items-center gap-1 border-primary-12/13 border-b bg-background px-1.5 shadow-xs/4 lg:min-h-10">
+               <div className="sticky top-0 z-[5] flex min-h-12 items-center gap-1 border-surface-12/13 border-b bg-background px-1.5 shadow-xs/4 lg:min-h-10">
                   <ToggleAll />
                   <ToggleArchived />
                   <DateFilter />
@@ -158,7 +158,7 @@ function RouteComponent() {
                ) : !data || data.length === 0 ? (
                   <Empty />
                ) : (
-                  <div className={"divide-y divide-primary-5"}>
+                  <div className={"divide-y divide-surface-5"}>
                      {data.map((item) => (
                         <OrderRow
                            key={item.id}
@@ -426,7 +426,7 @@ function DateFilter() {
                >
                   <Icons.calendar className="size-[18px]" />
                   {search.start_date || search.end_date ? (
-                     <span className="absolute top-[3px] right-[3px] size-[5px] rounded-full bg-accent-7" />
+                     <span className="absolute top-[3px] right-[3px] size-[5px] rounded-full bg-primary-7" />
                   ) : null}
                </Button>
             }
@@ -657,7 +657,7 @@ function OrderRow({
       >
          <CollapsibleTrigger
             render={<div />}
-            className="relative grid grid-cols-2 grid-rows-[1fr_auto] gap-x-2.5 gap-y-1.5 py-2 pr-1.5 pl-2.5 text-left transition-colors duration-50 first:border-none hover:bg-primary-1 has-data-[popup-open]:bg-primary-1 aria-expanded:bg-primary-1 lg:flex lg:py-[0.4rem]"
+            className="relative grid grid-cols-2 grid-rows-[1fr_auto] gap-x-2.5 gap-y-1.5 py-2 pr-1.5 pl-2.5 text-left transition-colors duration-50 first:border-none hover:bg-surface-1 has-data-[popup-open]:bg-surface-1 aria-expanded:bg-surface-1 lg:flex lg:py-[0.4rem]"
          >
             <div className="flex items-center gap-2">
                <CollapsibleTriggerIcon className="lg:mr-0.5 lg:mb-px" />
@@ -906,13 +906,13 @@ function OrderRow({
          <CollapsiblePanel
             key={item.procurements.length}
             render={
-               <div className="border-neutral border-t bg-primary-3/60 pt-4 lg:pt-3">
+               <div className="border-neutral border-t bg-surface-3/60 pt-4 lg:pt-3">
                   <div className="container mb-4">
                      <div className="mb-4 flex items-center gap-3">
                         <p className="whitespace-nowrap font-medium font-mono text-black text-lg leading-tight lg:text-[1rem]">
                            {formatNumber(item.quantity)} шт.
                         </p>
-                        <Separator className={"h-6 w-px bg-primary-7"} />
+                        <Separator className={"h-6 w-px bg-surface-7"} />
                         <p className="whitespace-nowrap font-medium font-mono text-black text-lg leading-tight lg:text-[1rem]">
                            {item.sellingPrice
                               ? formatCurrency(item.sellingPrice)
@@ -946,7 +946,7 @@ function OrderRow({
                            Ще немає закупівель.
                         </p>
                      ) : (
-                        <Card className="relative z-[2] rounded-lg border-primary-12/15 p-0">
+                        <Card className="relative z-[2] rounded-lg border-surface-12/15 p-0">
                            {item.procurements.map((p) => (
                               <ProcurementRow
                                  key={p.id}
@@ -1049,7 +1049,7 @@ function ProcurementRow({
             >
                {formatNumber(item.quantity)} шт.
             </AlignedColumn>
-            <Separator className={"h-4 w-px bg-primary-7 lg:hidden"} />
+            <Separator className={"h-4 w-px bg-surface-7 lg:hidden"} />
             <AlignedColumn
                id={`${orderId}_p_price`}
                className="whitespace-nowrap font-medium font-mono lg:mt-1 lg:text-sm"

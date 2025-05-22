@@ -143,7 +143,7 @@ function RouteComponent() {
                               setQuery(q)
                            }}
                            className={
-                              "group flex h-[34px] items-center justify-between rounded-none px-4 transition-none hover:bg-primary-2"
+                              "group flex h-[34px] items-center justify-between rounded-none px-4 transition-none hover:bg-surface-2"
                            }
                            key={q}
                            to="/$workspaceId/search"

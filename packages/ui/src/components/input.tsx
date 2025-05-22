@@ -6,7 +6,7 @@ export const input = cva(
    {
       variants: {
          variant: {
-            default: "border-primary-4 border-b focus:border-primary-6",
+            default: "border-surface-4 border-b focus:border-surface-6",
          },
          size: {
             md: "h-12 pt-2 text-base md:h-10 md:pt-1",

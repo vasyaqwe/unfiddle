@@ -97,7 +97,7 @@ export function SidebarContent() {
                      search={search}
                      activeOptions={{ exact: true, includeSearch: false }}
                      className={
-                        "group flex h-8 items-center justify-start gap-2 rounded-md px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:bg-primary-3 hover:text-foreground aria-[current=page]:bg-primary-4/75 aria-[current=page]:text-foreground"
+                        "group flex h-8 items-center justify-start gap-2 rounded-md px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:bg-surface-3 hover:text-foreground aria-[current=page]:bg-surface-4/75 aria-[current=page]:text-foreground"
                      }
                   >
                      <Icons.home className="size-5" />
@@ -110,7 +110,7 @@ export function SidebarContent() {
                      params={params}
                      search={search}
                      className={
-                        "group flex h-8 items-center justify-start gap-2 rounded-md px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:bg-primary-3 hover:text-foreground aria-[current=page]:bg-primary-4/75 aria-[current=page]:text-foreground"
+                        "group flex h-8 items-center justify-start gap-2 rounded-md px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:bg-surface-3 hover:text-foreground aria-[current=page]:bg-surface-4/75 aria-[current=page]:text-foreground"
                      }
                   >
                      <Icons.lineChart className="size-5" />
@@ -123,7 +123,7 @@ export function SidebarContent() {
                      params={params}
                      search={search}
                      className={
-                        "group flex h-8 items-center justify-start gap-2 rounded-md px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:bg-primary-3 hover:text-foreground aria-[current=page]:bg-primary-4/75 aria-[current=page]:text-foreground"
+                        "group flex h-8 items-center justify-start gap-2 rounded-md px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:bg-surface-3 hover:text-foreground aria-[current=page]:bg-surface-4/75 aria-[current=page]:text-foreground"
                      }
                   >
                      <Icons.users className="size-5" />
@@ -137,7 +137,7 @@ export function SidebarContent() {
                <MenuTrigger
                   render={
                      <Button
-                        className="!gap-2 w-full justify-start [--active-color:var(--color-primary-3)] md:pl-1.5"
+                        className="!gap-2 w-full justify-start [--active-color:var(--color-surface-3)] md:pl-1.5"
                         variant={"ghost"}
                      >
                         <UserAvatar user={auth.user} />

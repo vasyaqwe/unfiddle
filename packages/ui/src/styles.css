@@ -6,35 +6,35 @@
 @theme default {
    --sab: env(safe-area-inset-bottom);
 
-   --color-primary-1: var(--color-gray-1);
-   --color-primary-2: var(--color-gray-2);
-   --color-primary-3: var(--color-gray-3);
-   --color-primary-4: var(--color-gray-4);
-   --color-primary-5: var(--color-gray-5);
-   --color-primary-6: var(--color-gray-6);
-   --color-primary-7: var(--color-gray-7);
-   --color-primary-8: var(--color-gray-8);
-   --color-primary-9: var(--color-gray-9);
-   --color-primary-10: var(--color-gray-10);
-   --color-primary-11: var(--color-gray-11);
-   --color-primary-12: var(--color-gray-12);
+   --color-surface-1: var(--color-gray-1);
+   --color-surface-2: var(--color-gray-2);
+   --color-surface-3: var(--color-gray-3);
+   --color-surface-4: var(--color-gray-4);
+   --color-surface-5: var(--color-gray-5);
+   --color-surface-6: var(--color-gray-6);
+   --color-surface-7: var(--color-gray-7);
+   --color-surface-8: var(--color-gray-8);
+   --color-surface-9: var(--color-gray-9);
+   --color-surface-10: var(--color-gray-10);
+   --color-surface-11: var(--color-gray-11);
+   --color-surface-12: var(--color-gray-12);
 
-   --color-accent-1: hsl(217, 91%, 90%);
-   --color-accent-2: hsl(217, 91%, 80%);
-   --color-accent-3: hsl(217, 91%, 75%);
-   --color-accent-4: hsl(217, 91%, 70%);
-   --color-accent-5: hsl(217, 91%, 65%);
-   --color-accent-6: hsl(217, 91%, 60%);
-   --color-accent-7: hsl(217, 91%, 55%);
-   --color-accent-8: hsl(217, 91%, 50%);
-   --color-accent-9: hsl(217, 91%, 45%);
-   --color-accent-10: hsl(217, 91%, 40%);
-   --color-accent-11: hsl(217, 91%, 30%);
-   --color-accent-12: hsl(217, 91%, 20%);
+   --color-primary-1: hsl(217, 91%, 90%);
+   --color-primary-2: hsl(217, 91%, 80%);
+   --color-primary-3: hsl(217, 91%, 75%);
+   --color-primary-4: hsl(217, 91%, 70%);
+   --color-primary-5: hsl(217, 91%, 65%);
+   --color-primary-6: hsl(217, 91%, 60%);
+   --color-primary-7: hsl(217, 91%, 55%);
+   --color-primary-8: hsl(217, 91%, 50%);
+   --color-primary-9: hsl(217, 91%, 45%);
+   --color-primary-10: hsl(217, 91%, 40%);
+   --color-primary-11: hsl(217, 91%, 30%);
+   --color-primary-12: hsl(217, 91%, 20%);
 
    --color-background: #ffffff;
-   --color-foreground: var(--color-primary-12);
-   --color-neutral: var(--color-primary-4);
+   --color-foreground: var(--color-surface-12);
+   --color-neutral: var(--color-surface-4);
    --color-highlight-foreground: hsl(28, 60%, 28%);
    --color-highlight-background: hsl(44, 90%, 88%);
 

@@ -58,10 +58,11 @@ function ChartContent() {
          ...search,
       }),
    )
+   const data = orders.data ?? []
 
-   const maxValue = Math.max(...orders.data.map((item) => item.value))
+   const maxValue = Math.max(...data.map((item) => item.value))
 
-   return isChartDataEmpty(orders.data) ? (
+   return isChartDataEmpty(data) ? (
       <div className="absolute inset-0 m-auto flex size-fit flex-col items-center gap-5 font-medium text-foreground/75 text-lg">
          <svg
             className="size-12"
@@ -110,8 +111,8 @@ function ChartContent() {
                   },
                } satisfies ChartConfig
             }
-            style={{ minWidth: orders.data.length * 16 }}
-            className="mt-5 h-0 grow [--color-chart-1:var(--color-accent-6)] "
+            style={{ minWidth: data.length * 16 }}
+            className="mt-5 h-0 grow [--color-chart-1:var(--color-primary-6)] "
          >
             <BarChart
                data={orders.data}

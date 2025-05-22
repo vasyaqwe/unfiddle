@@ -45,7 +45,7 @@ export function DateInput({
    return (
       <div
          className={cn(
-            "flex w-full items-center focus-within:border-primary-6",
+            "flex w-full items-center focus-within:border-surface-6",
             input(),
             className,
          )}

@@ -3,28 +3,28 @@
    --prose-heading-color: var(--color-foreground);
    --prose-strong-color: var(--color-foreground);
    --prose-link-color: var(--color-foreground);
-   --prose-code-background: var(--color-primary-3);
-   --prose-code-border: var(--color-primary-6);
+   --prose-code-background: var(--color-surface-3);
+   --prose-code-border: var(--color-surface-6);
    --prose-code-color: var(--color-foreground);
    --prose-marker-color: color-mix(
       in oklab,
-      var(--color-primary-12) 60%,
+      var(--color-surface-12) 60%,
       transparent
    );
    --prose-link-underline-color: var(--color-foreground);
-   --prose-th-borders: var(--color-primary-7);
-   --prose-td-borders: var(--color-primary-7);
-   --prose-hr-color: var(--color-primary-7);
-   --prose-blockquote-border-color: var(--color-gray-primary-7);
+   --prose-th-borders: var(--color-surface-7);
+   --prose-td-borders: var(--color-surface-7);
+   --prose-hr-color: var(--color-surface-7);
+   --prose-blockquote-border-color: var(--color-gray-surface-7);
 
    &:where(.dark, .dark *) {
-      --prose-code-background: var(--color-primary-2);
-      --prose-code-border: var(--color-primary-6);
+      --prose-code-background: var(--color-surface-2);
+      --prose-code-border: var(--color-surface-6);
    }
    @media (prefers-color-scheme: dark) {
       &:where(.system, .system *) {
-         --prose-code-background: var(--color-primary-2);
-         --prose-code-border: var(--color-primary-6);
+         --prose-code-background: var(--color-surface-2);
+         --prose-code-border: var(--color-surface-6);
       }
    }
 

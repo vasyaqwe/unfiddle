@@ -29,7 +29,7 @@ export function PopoverPopup({
                   POPUP_STYLES.base,
                   POPUP_STYLES.transition,
                   light
-                     ? "border border-primary-12/12 bg-background px-3 py-2.5 text-foreground shadow-xl"
+                     ? "border border-surface-12/12 bg-background px-3 py-2.5 text-foreground shadow-xl"
                      : "",
                   className,
                )}
