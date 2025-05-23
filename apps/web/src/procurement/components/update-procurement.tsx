@@ -1,5 +1,5 @@
 import { useAuth } from "@/auth/hooks"
-import { useUpdateProcurement } from "@/procurement/mutations/update-procurement"
+import { useUpdateProcurement } from "@/procurement/mutations/use-update-procurement"
 import type { Procurement } from "@ledgerblocks/core/procurement/types"
 import { Button } from "@ledgerblocks/ui/components/button"
 import {

@@ -1,6 +1,6 @@
 import { useAuth } from "@/auth/hooks"
 import { ORDER_SEVERITIES_TRANSLATION } from "@/order/constants"
-import { useUpdateOrder } from "@/order/mutations/update-order"
+import { useUpdateOrder } from "@/order/mutations/use-update-order"
 import { ORDER_SEVERITIES } from "@ledgerblocks/core/order/constants"
 import type { OrderSeverity } from "@ledgerblocks/core/order/types"
 import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
