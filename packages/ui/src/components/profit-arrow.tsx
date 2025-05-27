@@ -1,5 +1,5 @@
-import { Icons } from "@ledgerblocks/ui/components/icons"
-import { cn } from "@ledgerblocks/ui/utils"
+import { Icons } from "@unfiddle/ui/components/icons"
+import { cn } from "@unfiddle/ui/utils"
 
 interface Props extends React.ComponentProps<"span"> {
    profit: "positive" | "negative"

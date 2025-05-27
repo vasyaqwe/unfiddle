@@ -1,16 +1,12 @@
 import { authClient } from "@/auth"
 import { validator } from "@/validator"
-import { MIN_PASSWORD_LENGTH } from "@ledgerblocks/core/auth/constants"
-import { Button } from "@ledgerblocks/ui/components/button"
-import {
-   Field,
-   FieldControl,
-   FieldLabel,
-} from "@ledgerblocks/ui/components/field"
-import { Logo } from "@ledgerblocks/ui/components/logo"
-import { formData } from "@ledgerblocks/ui/utils"
 import { useMutation } from "@tanstack/react-query"
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router"
+import { MIN_PASSWORD_LENGTH } from "@unfiddle/core/auth/constants"
+import { Button } from "@unfiddle/ui/components/button"
+import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
+import { Logo } from "@unfiddle/ui/components/logo"
+import { formData } from "@unfiddle/ui/utils"
 import { toast } from "sonner"
 import { z } from "zod"
 

@@ -1,10 +1,10 @@
 {
-   "extends": "@ledgerblocks/tsconfig/base.json",
+   "extends": "@unfiddle/tsconfig/base.json",
    "compilerOptions": {
       "types": ["@cloudflare/workers-types", "node"],
       "baseUrl": ".",
       "paths": {
-         "@ledgerblocks/core/*": ["../../packages/core/src/*"]
+         "@unfiddle/core/*": ["../../packages/core/src/*"]
       }
    },
    "include": ["src"]

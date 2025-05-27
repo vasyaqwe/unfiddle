@@ -4,18 +4,18 @@ import { CreateOrder } from "@/order/components/create-order"
 import { WorkspaceMenuPopup } from "@/routes/_authed/$workspaceId/-components/workspace-menu"
 import { UserAvatar } from "@/user/components/user-avatar"
 import { WorkspaceLogo } from "@/workspace/components/workspace-logo"
-import { Button, button } from "@ledgerblocks/ui/components/button"
-import { DrawerTrigger } from "@ledgerblocks/ui/components/drawer"
-import { Icons } from "@ledgerblocks/ui/components/icons"
+import { Link, useParams, useSearch } from "@tanstack/react-router"
+import { Button, button } from "@unfiddle/ui/components/button"
+import { DrawerTrigger } from "@unfiddle/ui/components/drawer"
+import { Icons } from "@unfiddle/ui/components/icons"
 import {
    Menu,
    MenuItem,
    MenuPopup,
    MenuTrigger,
-} from "@ledgerblocks/ui/components/menu"
-import { ScrollArea } from "@ledgerblocks/ui/components/scroll-area"
-import { cx } from "@ledgerblocks/ui/utils"
-import { Link, useParams, useSearch } from "@tanstack/react-router"
+} from "@unfiddle/ui/components/menu"
+import { ScrollArea } from "@unfiddle/ui/components/scroll-area"
+import { cx } from "@unfiddle/ui/utils"
 
 export function SidebarContent() {
    const auth = useAuth()

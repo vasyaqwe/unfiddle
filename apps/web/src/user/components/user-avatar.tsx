@@ -1,5 +1,5 @@
-import type { User } from "@ledgerblocks/core/auth/types"
-import { cn } from "@ledgerblocks/ui/utils"
+import type { User } from "@unfiddle/core/auth/types"
+import { cn } from "@unfiddle/ui/utils"
 
 interface Props extends React.ComponentProps<"div"> {
    user: Omit<User, "createdAt" | "updatedAt" | "emailVerified" | "email">

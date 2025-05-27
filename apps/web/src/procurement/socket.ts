@@ -3,7 +3,7 @@ import { env } from "@/env"
 import { useOptimisticCreateProcurement } from "@/procurement/mutations/use-create-procurement"
 import { useOptimisticDeleteProcurement } from "@/procurement/mutations/use-delete-procurement"
 import { useOptimisticUpdateProcurement } from "@/procurement/mutations/use-update-procurement"
-import type { ProcurementEvent } from "@ledgerblocks/core/procurement/types"
+import type { ProcurementEvent } from "@unfiddle/core/procurement/types"
 import usePartySocket from "partysocket/react"
 
 export function useProcurementSocket() {

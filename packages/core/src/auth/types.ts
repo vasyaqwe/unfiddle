@@ -1,5 +1,5 @@
-import type { authClient } from "@ledgerblocks/core/auth"
-import type { session } from "@ledgerblocks/core/auth/schema"
+import type { authClient } from "@unfiddle/core/auth"
+import type { session } from "@unfiddle/core/auth/schema"
 import type { InferSelectModel } from "drizzle-orm"
 
 type DatabaseSession = InferSelectModel<typeof session>

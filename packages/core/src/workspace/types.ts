@@ -1,5 +1,5 @@
-import type { WORKSPACE_ROLES } from "@ledgerblocks/core/workspace/constants"
-import type { workspace } from "@ledgerblocks/core/workspace/schema"
+import type { WORKSPACE_ROLES } from "@unfiddle/core/workspace/constants"
+import type { workspace } from "@unfiddle/core/workspace/schema"
 import type { InferSelectModel } from "drizzle-orm"
 
 export type Workspace = InferSelectModel<typeof workspace>

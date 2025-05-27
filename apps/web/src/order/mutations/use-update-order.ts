@@ -2,8 +2,8 @@ import { useAuth } from "@/auth/hooks"
 import { useOrderQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
-import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import { toast } from "sonner"
 
 export function useUpdateOrder({

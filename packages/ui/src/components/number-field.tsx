@@ -1,5 +1,5 @@
 import { NumberField as NumberFieldPrimitive } from "@base-ui-components/react/number-field"
-import { cn } from "@ledgerblocks/ui/utils"
+import { cn } from "@unfiddle/ui/utils"
 import { type Input, input } from "./input"
 
 export function NumberField({

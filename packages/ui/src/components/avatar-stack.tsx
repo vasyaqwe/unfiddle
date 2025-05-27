@@ -1,4 +1,4 @@
-import { cn } from "@ledgerblocks/ui/utils"
+import { cn } from "@unfiddle/ui/utils"
 import * as React from "react"
 
 export function AvatarStack({

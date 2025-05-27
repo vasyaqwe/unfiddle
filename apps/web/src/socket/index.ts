@@ -1,6 +1,6 @@
-import invariant from "@ledgerblocks/core/invariant"
-import type { OrderEvent } from "@ledgerblocks/core/order/types"
-import type { ProcurementEvent } from "@ledgerblocks/core/procurement/types"
+import invariant from "@unfiddle/core/invariant"
+import type { OrderEvent } from "@unfiddle/core/order/types"
+import type { ProcurementEvent } from "@unfiddle/core/procurement/types"
 import type PartySocket from "partysocket"
 import * as React from "react"
 

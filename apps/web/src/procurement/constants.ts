@@ -1,4 +1,4 @@
-import type { ProcurementStatus } from "@ledgerblocks/core/procurement/types"
+import type { ProcurementStatus } from "@unfiddle/core/procurement/types"
 import type tailwindColors from "tailwindcss/colors"
 
 type TailwindColor = keyof typeof tailwindColors

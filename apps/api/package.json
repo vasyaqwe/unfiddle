@@ -1,17 +1,17 @@
 {
-   "name": "@ledgerblocks/api",
+   "name": "@unfiddle/api",
    "scripts": {
       "dev": "wrangler dev --local src/index.ts --port 8787",
-      "db:migrate": "wrangler d1 migrations apply ledgerblocks --local",
+      "db:migrate": "wrangler d1 migrations apply unfiddle --local",
       "deploy": "wrangler deploy --minify src/index.ts --env production",
       "typecheck": "tsc --noEmit"
    },
    "dependencies": {
-      "@ledgerblocks/infra": "workspace:*",
-      "@ledgerblocks/core": "workspace:*"
+      "@unfiddle/infra": "workspace:*",
+      "@unfiddle/core": "workspace:*"
    },
    "devDependencies": {
-      "@ledgerblocks/tsconfig": "workspace:*",
+      "@unfiddle/tsconfig": "workspace:*",
       "@types/bun": "latest",
       "wrangler": "^4.12.0"
    }

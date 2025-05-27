@@ -4,19 +4,19 @@ import { formatOrderDate } from "@/order/utils"
 import { trpc } from "@/trpc"
 import { ErrorComponent } from "@/ui/components/error"
 import { isChartDataEmpty } from "@/workspace/analytics/utils"
-import { Button } from "@ledgerblocks/ui/components/button"
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
+import { CatchBoundary, useParams, useSearch } from "@tanstack/react-router"
+import { Button } from "@unfiddle/ui/components/button"
 import {
    type ChartConfig,
    ChartContainer,
    ChartCursor,
    ChartTooltip,
    ChartTooltipContent,
-} from "@ledgerblocks/ui/components/chart"
-import { useChartZoom } from "@ledgerblocks/ui/components/chart/use-chart-zoom"
-import { Loading } from "@ledgerblocks/ui/components/loading"
-import { cx } from "@ledgerblocks/ui/utils"
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
-import { CatchBoundary, useParams, useSearch } from "@tanstack/react-router"
+} from "@unfiddle/ui/components/chart"
+import { useChartZoom } from "@unfiddle/ui/components/chart/use-chart-zoom"
+import { Loading } from "@unfiddle/ui/components/loading"
+import { cx } from "@unfiddle/ui/utils"
 import * as React from "react"
 import {
    CartesianGrid,

@@ -5,16 +5,16 @@ import { formatOrderDate } from "@/order/utils"
 import { trpc } from "@/trpc"
 import { ErrorComponent } from "@/ui/components/error"
 import { isChartDataEmpty } from "@/workspace/analytics/utils"
+import { useSuspenseQuery } from "@tanstack/react-query"
+import { CatchBoundary } from "@tanstack/react-router"
+import { useParams, useSearch } from "@tanstack/react-router"
 import {
    type ChartConfig,
    ChartContainer,
    ChartTooltip,
    ChartTooltipContent,
-} from "@ledgerblocks/ui/components/chart"
-import { Loading } from "@ledgerblocks/ui/components/loading"
-import { useSuspenseQuery } from "@tanstack/react-query"
-import { CatchBoundary } from "@tanstack/react-router"
-import { useParams, useSearch } from "@tanstack/react-router"
+} from "@unfiddle/ui/components/chart"
+import { Loading } from "@unfiddle/ui/components/loading"
 import * as React from "react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 

@@ -1,4 +1,4 @@
-import { Logo } from "@ledgerblocks/ui/components/logo"
+import { Logo } from "@unfiddle/ui/components/logo"
 
 export function PendingComponent() {
    return (

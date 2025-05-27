@@ -1,4 +1,4 @@
-import type { AuthedHonoEnv } from "@ledgerblocks/core/api/types"
+import type { AuthedHonoEnv } from "@unfiddle/core/api/types"
 import { createMiddleware } from "hono/factory"
 import { HTTPException } from "hono/http-exception"
 

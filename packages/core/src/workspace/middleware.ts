@@ -1,6 +1,6 @@
-import { parseZodErrorIssues } from "@ledgerblocks/core/api/error"
-import { t } from "@ledgerblocks/core/trpc/context"
 import { TRPCError } from "@trpc/server"
+import { parseZodErrorIssues } from "@unfiddle/core/api/error"
+import { t } from "@unfiddle/core/trpc/context"
 import { z } from "zod"
 
 export const workspaceMemberMiddleware = t.middleware(async (opts) => {

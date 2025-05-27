@@ -1,6 +1,6 @@
-import type { OrderSeverity } from "@ledgerblocks/core/order/types"
-import { Icons } from "@ledgerblocks/ui/components/icons"
-import { cn } from "@ledgerblocks/ui/utils"
+import type { OrderSeverity } from "@unfiddle/core/order/types"
+import { Icons } from "@unfiddle/ui/components/icons"
+import { cn } from "@unfiddle/ui/utils"
 
 export function SeverityIcon({
    severity,

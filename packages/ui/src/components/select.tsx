@@ -1,7 +1,7 @@
 import { Select as SelectPrimitive } from "@base-ui-components/react/select"
-import { Icons } from "@ledgerblocks/ui/components/icons"
-import { MENU_ITEM_STYLES } from "@ledgerblocks/ui/components/menu"
-import { POPUP_STYLES } from "@ledgerblocks/ui/constants"
+import { Icons } from "@unfiddle/ui/components/icons"
+import { MENU_ITEM_STYLES } from "@unfiddle/ui/components/menu"
+import { POPUP_STYLES } from "@unfiddle/ui/constants"
 import { cn } from "../utils"
 
 export const Select = SelectPrimitive.Root

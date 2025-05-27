@@ -1,4 +1,4 @@
-import { clientEnv } from "@ledgerblocks/infra/env"
+import { clientEnv } from "@unfiddle/infra/env"
 
 const metaEnv = import.meta.env
 

@@ -1,5 +1,5 @@
 import { PROCUREMENT_STATUSES_COLORS } from "@/procurement/constants"
-import type { ProcurementStatus } from "@ledgerblocks/core/procurement/types"
+import type { ProcurementStatus } from "@unfiddle/core/procurement/types"
 import tailwindColors from "tailwindcss/colors"
 
 export const procurementStatusGradient = (status: ProcurementStatus) => {

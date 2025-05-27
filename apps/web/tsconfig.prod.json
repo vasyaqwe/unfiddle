@@ -1,4 +1,4 @@
 {
-   "extends": ["@ledgerblocks/tsconfig/base.json", "./tsconfig.json"],
+   "extends": ["@unfiddle/tsconfig/base.json", "./tsconfig.json"],
    "include": ["src"]
 }

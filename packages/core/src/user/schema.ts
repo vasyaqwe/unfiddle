@@ -1,4 +1,4 @@
-import { user } from "@ledgerblocks/core/auth/schema"
+import { user } from "@unfiddle/core/auth/schema"
 import { createUpdateSchema } from "drizzle-zod"
 
 export const updateUserSchema = createUpdateSchema(user).pick({

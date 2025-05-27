@@ -1,12 +1,12 @@
 {
-   "extends": "@ledgerblocks/tsconfig/base.json",
+   "extends": "@unfiddle/tsconfig/base.json",
    "compilerOptions": {
       "types": ["@cloudflare/workers-types", "node"],
       "lib": ["ESNext", "DOM", "DOM.iterable"],
       "baseUrl": ".",
       "paths": {
-         "@ledgerblocks/core/*": ["../../packages/core/src/*"],
-         "@ledgerblocks/ui/*": ["../../packages/ui/src/*"],
+         "@unfiddle/core/*": ["../../packages/core/src/*"],
+         "@unfiddle/ui/*": ["../../packages/ui/src/*"],
          "@/*": ["./src/*"]
       },
       "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json"

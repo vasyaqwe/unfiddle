@@ -1,6 +1,6 @@
-import type { PROCUREMENT_STATUSES } from "@ledgerblocks/core/procurement/constants"
-import type { updateProcurementSchema } from "@ledgerblocks/core/procurement/schema"
-import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
+import type { PROCUREMENT_STATUSES } from "@unfiddle/core/procurement/constants"
+import type { updateProcurementSchema } from "@unfiddle/core/procurement/schema"
+import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import type { z } from "zod"
 
 export type ProcurementStatus = (typeof PROCUREMENT_STATUSES)[number]

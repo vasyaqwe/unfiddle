@@ -1,7 +1,7 @@
-import { user } from "@ledgerblocks/core/auth/schema"
-import { d } from "@ledgerblocks/core/database"
-import { createCode } from "@ledgerblocks/core/id"
-import { WORKSPACE_ROLES } from "@ledgerblocks/core/workspace/constants"
+import { user } from "@unfiddle/core/auth/schema"
+import { d } from "@unfiddle/core/database"
+import { createCode } from "@unfiddle/core/id"
+import { WORKSPACE_ROLES } from "@unfiddle/core/workspace/constants"
 import { relations } from "drizzle-orm"
 import { createUpdateSchema } from "drizzle-zod"
 

@@ -1,5 +1,5 @@
-import { ScrollArea } from "@ledgerblocks/ui/components/scroll-area"
-import { cn, cx } from "@ledgerblocks/ui/utils"
+import { ScrollArea } from "@unfiddle/ui/components/scroll-area"
+import { cn, cx } from "@unfiddle/ui/utils"
 
 export function Main({
    children,

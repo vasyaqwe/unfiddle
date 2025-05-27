@@ -1,13 +1,13 @@
 import { CACHE_FOREVER } from "@/api"
 import { authClient } from "@/auth"
 import { trpc } from "@/trpc"
-import invariant from "@ledgerblocks/core/invariant"
 import {
    useMutation,
    useQueryClient,
    useSuspenseQuery,
 } from "@tanstack/react-query"
 import { getRouteApi, useNavigate } from "@tanstack/react-router"
+import invariant from "@unfiddle/core/invariant"
 
 const Layout = getRouteApi("/_authed/$workspaceId/_layout")
 

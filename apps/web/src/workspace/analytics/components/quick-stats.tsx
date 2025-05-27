@@ -9,15 +9,15 @@ import {
    StatValue,
    StatValueSup,
 } from "@/workspace/analytics/components/stat"
+import { useQuery } from "@tanstack/react-query"
+import { useParams, useSearch } from "@tanstack/react-router"
 import {
    Card,
    CardContent,
    CardHeader,
    CardTitle,
-} from "@ledgerblocks/ui/components/card"
-import { cx } from "@ledgerblocks/ui/utils"
-import { useQuery } from "@tanstack/react-query"
-import { useParams, useSearch } from "@tanstack/react-router"
+} from "@unfiddle/ui/components/card"
+import { cx } from "@unfiddle/ui/utils"
 
 export function QuickStats() {
    const params = useParams({ from: "/_authed/$workspaceId/_layout/analytics" })

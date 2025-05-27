@@ -18,18 +18,19 @@ import { ProfitChart } from "@/workspace/analytics/components/profit-chart"
 import { QuickStats } from "@/workspace/analytics/components/quick-stats"
 import {} from "@/workspace/analytics/components/stat"
 import { WhoCombobox } from "@/workspace/analytics/components/who-combobox"
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router"
 import {
    PERIOD_COMPARISON_FILTERS,
    workspaceAnalyticsFilterSchema,
-} from "@ledgerblocks/core/workspace/analytics/filter"
-import { Button } from "@ledgerblocks/ui/components/button"
-import { Card, CardTitle } from "@ledgerblocks/ui/components/card"
+} from "@unfiddle/core/workspace/analytics/filter"
+import { Button } from "@unfiddle/ui/components/button"
+import { Card, CardTitle } from "@unfiddle/ui/components/card"
 import {
    type ChartConfig,
    ChartContainer,
    ChartTooltip,
    ChartTooltipContent,
-} from "@ledgerblocks/ui/components/chart"
+} from "@unfiddle/ui/components/chart"
 import {
    Combobox,
    ComboboxEmpty,
@@ -38,15 +39,14 @@ import {
    ComboboxPopup,
    ComboboxTrigger,
    ComboboxTriggerIcon,
-} from "@ledgerblocks/ui/components/combobox"
-import {} from "@ledgerblocks/ui/components/popover"
+} from "@unfiddle/ui/components/combobox"
+import {} from "@unfiddle/ui/components/popover"
 import {
    SegmentedProgress,
    SegmentedProgressBars,
    SegmentedProgressLabel,
    SegmentedProgressValue,
-} from "@ledgerblocks/ui/components/segmented-progress"
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router"
+} from "@unfiddle/ui/components/segmented-progress"
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(

@@ -2,8 +2,8 @@ import { useAuth } from "@/auth/hooks"
 import { useOrderQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
-import type { Procurement } from "@ledgerblocks/core/procurement/types"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import type { Procurement } from "@unfiddle/core/procurement/types"
 import { toast } from "sonner"
 
 export function useUpdateProcurement({

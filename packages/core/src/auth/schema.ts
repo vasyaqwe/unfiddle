@@ -1,5 +1,5 @@
-import { d } from "@ledgerblocks/core/database"
-import { WORKSPACE_ROLES } from "@ledgerblocks/core/workspace/constants"
+import { d } from "@unfiddle/core/database"
+import { WORKSPACE_ROLES } from "@unfiddle/core/workspace/constants"
 import { z } from "zod"
 
 export const user = d.table(

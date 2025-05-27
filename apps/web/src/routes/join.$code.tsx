@@ -1,9 +1,6 @@
 import { CACHE_FOREVER, api } from "@/api"
 import { trpc } from "@/trpc"
 import { WorkspaceLogo } from "@/workspace/components/workspace-logo"
-import { Button } from "@ledgerblocks/ui/components/button"
-import { Loading } from "@ledgerblocks/ui/components/loading"
-import { Logo } from "@ledgerblocks/ui/components/logo"
 import { useMutation } from "@tanstack/react-query"
 import {
    Link,
@@ -12,6 +9,9 @@ import {
    redirect,
    useNavigate,
 } from "@tanstack/react-router"
+import { Button } from "@unfiddle/ui/components/button"
+import { Loading } from "@unfiddle/ui/components/loading"
+import { Logo } from "@unfiddle/ui/components/logo"
 
 export const Route = createFileRoute("/join/$code")({
    component: RouteComponent,

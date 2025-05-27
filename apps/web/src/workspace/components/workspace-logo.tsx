@@ -1,5 +1,5 @@
-import type { Workspace } from "@ledgerblocks/core/workspace/types"
-import { cn } from "@ledgerblocks/ui/utils"
+import type { Workspace } from "@unfiddle/core/workspace/types"
+import { cn } from "@unfiddle/ui/utils"
 import Avatar from "boring-avatars"
 
 interface Props extends React.ComponentProps<"div"> {

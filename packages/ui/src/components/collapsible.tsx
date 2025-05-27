@@ -1,5 +1,5 @@
 import { Collapsible as CollapsiblePrimitive } from "@base-ui-components/react/collapsible"
-import { Icons } from "@ledgerblocks/ui/components/icons"
+import { Icons } from "@unfiddle/ui/components/icons"
 import { cn } from "../utils"
 
 export function Collapsible({

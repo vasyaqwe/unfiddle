@@ -1,4 +1,4 @@
-import type { OrderSeverity, OrderStatus } from "@ledgerblocks/core/order/types"
+import type { OrderSeverity, OrderStatus } from "@unfiddle/core/order/types"
 import type tailwindColors from "tailwindcss/colors"
 
 type TailwindColor = keyof typeof tailwindColors

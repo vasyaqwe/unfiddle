@@ -1,6 +1,6 @@
-import { user } from "@ledgerblocks/core/auth/schema"
-import { t } from "@ledgerblocks/core/trpc/context"
-import { updateUserSchema } from "@ledgerblocks/core/user/schema"
+import { user } from "@unfiddle/core/auth/schema"
+import { t } from "@unfiddle/core/trpc/context"
+import { updateUserSchema } from "@unfiddle/core/user/schema"
 import { eq } from "drizzle-orm"
 
 export const userRouter = t.router({

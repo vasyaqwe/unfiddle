@@ -1,10 +1,10 @@
 import crypto from "node:crypto"
-import type { HonoEnv } from "@ledgerblocks/core/api/types"
-import { MIN_PASSWORD_LENGTH } from "@ledgerblocks/core/auth/constants"
-import { session } from "@ledgerblocks/core/auth/schema"
-import { d } from "@ledgerblocks/core/database"
-import invariant from "@ledgerblocks/core/invariant"
-import { workspaceMember } from "@ledgerblocks/core/workspace/schema"
+import type { HonoEnv } from "@unfiddle/core/api/types"
+import { MIN_PASSWORD_LENGTH } from "@unfiddle/core/auth/constants"
+import { session } from "@unfiddle/core/auth/schema"
+import { d } from "@unfiddle/core/database"
+import invariant from "@unfiddle/core/invariant"
+import { workspaceMember } from "@unfiddle/core/workspace/schema"
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { createAuthMiddleware } from "better-auth/api"
@@ -16,7 +16,7 @@ export const authClient: any = (c: Context<HonoEnv>) => {
    const db = d.client(c)
 
    return betterAuth({
-      appName: "ledgerblocks",
+      appName: "unfiddle",
       baseURL: c.var.env.API_URL,
       basePath: "/auth",
       trustedOrigins: [c.var.env.WEB_URL],

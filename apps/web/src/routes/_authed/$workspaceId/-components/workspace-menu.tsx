@@ -1,6 +1,8 @@
 import { CACHE_FOREVER } from "@/api"
 import { trpc } from "@/trpc"
-import { Icons } from "@ledgerblocks/ui/components/icons"
+import { useQuery } from "@tanstack/react-query"
+import { useNavigate, useParams } from "@tanstack/react-router"
+import { Icons } from "@unfiddle/ui/components/icons"
 import {
    Menu,
    MenuCheckboxItem,
@@ -8,9 +10,7 @@ import {
    MenuPopup,
    MenuSeparator,
    MenuSubmenuTrigger,
-} from "@ledgerblocks/ui/components/menu"
-import { useQuery } from "@tanstack/react-query"
-import { useNavigate, useParams } from "@tanstack/react-router"
+} from "@unfiddle/ui/components/menu"
 
 export function WorkspaceMenuPopup() {
    const params = useParams({ from: "/_authed/$workspaceId/_layout" })

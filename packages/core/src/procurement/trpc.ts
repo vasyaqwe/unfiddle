@@ -1,9 +1,9 @@
 import {
    procurement,
    updateProcurementSchema,
-} from "@ledgerblocks/core/procurement/schema"
-import { t } from "@ledgerblocks/core/trpc/context"
-import { workspaceMemberMiddleware } from "@ledgerblocks/core/workspace/middleware"
+} from "@unfiddle/core/procurement/schema"
+import { t } from "@unfiddle/core/trpc/context"
+import { workspaceMemberMiddleware } from "@unfiddle/core/workspace/middleware"
 import { eq } from "drizzle-orm"
 import { createInsertSchema } from "drizzle-zod"
 import { z } from "zod"

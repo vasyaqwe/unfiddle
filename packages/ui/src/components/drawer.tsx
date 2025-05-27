@@ -1,4 +1,4 @@
-import { DIALOG_STYLES } from "@ledgerblocks/ui/components/dialog/constants"
+import { DIALOG_STYLES } from "@unfiddle/ui/components/dialog/constants"
 import { useAtomValue } from "jotai"
 import { Drawer as DrawerPrimitive } from "vaul-base"
 import { isMobileAtom } from "../store"

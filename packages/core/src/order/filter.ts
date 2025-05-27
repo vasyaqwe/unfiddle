@@ -1,7 +1,7 @@
 import {
    ORDER_SEVERITIES,
    ORDER_STATUSES,
-} from "@ledgerblocks/core/order/constants"
+} from "@unfiddle/core/order/constants"
 import { z } from "zod"
 
 export const orderFilterSchema = z.object({

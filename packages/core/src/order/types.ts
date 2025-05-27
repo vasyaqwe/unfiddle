@@ -1,9 +1,9 @@
 import type {
    ORDER_SEVERITIES,
    ORDER_STATUSES,
-} from "@ledgerblocks/core/order/constants"
-import type { updateOrderSchema } from "@ledgerblocks/core/order/schema"
-import type { RouterOutput } from "@ledgerblocks/core/trpc/types"
+} from "@unfiddle/core/order/constants"
+import type { updateOrderSchema } from "@unfiddle/core/order/schema"
+import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import type { z } from "zod"
 
 export type OrderStatus = (typeof ORDER_STATUSES)[number]

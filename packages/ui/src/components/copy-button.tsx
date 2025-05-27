@@ -1,6 +1,6 @@
-import { Button } from "@ledgerblocks/ui/components/button"
-import { Icons } from "@ledgerblocks/ui/components/icons"
-import { cn } from "@ledgerblocks/ui/utils"
+import { Button } from "@unfiddle/ui/components/button"
+import { Icons } from "@unfiddle/ui/components/icons"
+import { cn } from "@unfiddle/ui/utils"
 import * as React from "react"
 
 interface CopyButtonProps extends React.ComponentProps<typeof Button> {

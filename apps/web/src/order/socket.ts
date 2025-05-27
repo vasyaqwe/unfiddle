@@ -5,7 +5,7 @@ import { useOptimisticDeleteOrderAssignee } from "@/order/assignee/mutations/use
 import { useOptimisticCreateOrder } from "@/order/mutations/use-create-order"
 import { useOptimisticDeleteOrder } from "@/order/mutations/use-delete-order"
 import { useOptimisticUpdateOrder } from "@/order/mutations/use-update-order"
-import type { OrderEvent } from "@ledgerblocks/core/order/types"
+import type { OrderEvent } from "@unfiddle/core/order/types"
 import usePartySocket from "partysocket/react"
 
 export function useOrderSocket() {

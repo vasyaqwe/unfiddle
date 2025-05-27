@@ -1,5 +1,5 @@
-import { cn } from "@ledgerblocks/ui/utils"
 import { useSearch } from "@tanstack/react-router"
+import { cn } from "@unfiddle/ui/utils"
 
 export function Stat({ className, ...props }: React.ComponentProps<"p">) {
    const search = useSearch({ from: "/_authed/$workspaceId/_layout/analytics" })

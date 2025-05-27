@@ -1,1 +1,0 @@
-SELECT id, created_at, strftime('%Y-%m-%d', created_at) AS formatted_date FROM "order" LIMIT 10;
