@@ -16,7 +16,7 @@ export const clientEnv = {
       API_URL: API_URL.production,
       WEB_URL: "https://unfiddle.com",
       COLLABORATION_URL: "unfiddle.vasyaqwe.partykit.dev",
-      STORAGE_URL: "https://pub-895ae2cc585140758f6a1aea105c66e5.r2.dev",
+      STORAGE_URL: "https://bucket.unfiddle.com",
       CLOUDFLARE_ACCOUNT_ID: "bfef1e994f1aac7e7a42dc4ba75197a0",
       CLOUDFLARE_DATABASE_ID: "0c2d4aab-cf2f-4c14-aa7e-89f11ef8daee",
    },
