@@ -10,7 +10,7 @@ export const clientEnv = {
       COLLABORATION_URL: "unfiddle.vasyaqwe.partykit.dev",
       STORAGE_URL: `${API_URL.development}/r2`,
       CLOUDFLARE_ACCOUNT_ID: "bfef1e994f1aac7e7a42dc4ba75197a0",
-      CLOUDFLARE_DATABASE_ID: "0c2d4aab-cf2f-4c14-aa7e-89f11ef8daee",
+      CLOUDFLARE_DATABASE_ID: "b3c5c658-0eec-4ad5-95b2-63948fd304dd",
    },
    production: {
       API_URL: API_URL.production,
@@ -18,7 +18,7 @@ export const clientEnv = {
       COLLABORATION_URL: "unfiddle.vasyaqwe.partykit.dev",
       STORAGE_URL: "https://bucket.unfiddle.com",
       CLOUDFLARE_ACCOUNT_ID: "bfef1e994f1aac7e7a42dc4ba75197a0",
-      CLOUDFLARE_DATABASE_ID: "0c2d4aab-cf2f-4c14-aa7e-89f11ef8daee",
+      CLOUDFLARE_DATABASE_ID: "b3c5c658-0eec-4ad5-95b2-63948fd304dd",
    },
 } as const
 
