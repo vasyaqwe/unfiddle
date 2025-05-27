@@ -9,7 +9,6 @@ import {
 import * as React from "react"
 import { POPUP_STYLES } from "../constants"
 import { cn, cx } from "../utils"
-import {} from "./button"
 import { Icons } from "./icons"
 import { Popover, PopoverPopup, PopoverTrigger } from "./popover"
 

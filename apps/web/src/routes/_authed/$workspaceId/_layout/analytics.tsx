@@ -16,7 +16,6 @@ import { OrdersChart } from "@/workspace/analytics/components/orders-chart"
 import { PeriodSelect } from "@/workspace/analytics/components/period-select"
 import { ProfitChart } from "@/workspace/analytics/components/profit-chart"
 import { QuickStats } from "@/workspace/analytics/components/quick-stats"
-import {} from "@/workspace/analytics/components/stat"
 import { WhoCombobox } from "@/workspace/analytics/components/who-combobox"
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router"
 import {
@@ -40,7 +39,6 @@ import {
    ComboboxTrigger,
    ComboboxTriggerIcon,
 } from "@unfiddle/ui/components/combobox"
-import {} from "@unfiddle/ui/components/popover"
 import {
    SegmentedProgress,
    SegmentedProgressBars,

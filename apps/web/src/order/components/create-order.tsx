@@ -4,7 +4,6 @@ import { useCreateOrder } from "@/order/mutations/use-create-order"
 import { ORDER_SEVERITIES } from "@unfiddle/core/order/constants"
 import type { OrderSeverity } from "@unfiddle/core/order/types"
 import { Button } from "@unfiddle/ui/components/button"
-import {} from "@unfiddle/ui/components/combobox"
 import {
    Drawer,
    DrawerPopup,

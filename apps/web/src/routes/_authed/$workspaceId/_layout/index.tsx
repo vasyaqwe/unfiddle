@@ -363,27 +363,29 @@ function FilterMenu() {
                      ))}
                   </MenuPopup>
                </Menu>
-               <Menu>
-                  <MenuSubmenuTrigger>
-                     <Icons.user />
-                     Менеджер
-                  </MenuSubmenuTrigger>
-                  <MenuPopup>
-                     {creators.map((creator) => (
-                        <MenuCheckboxItem
-                           checked={
-                              search.creator?.includes(creator.id) ?? false
-                           }
-                           onCheckedChange={(checked) =>
-                              onFilterChange("creator", creator.id, checked)
-                           }
-                           key={creator.id}
-                        >
-                           {creator.name}
-                        </MenuCheckboxItem>
-                     ))}
-                  </MenuPopup>
-               </Menu>
+               {creators.length === 0 ? null : (
+                  <Menu>
+                     <MenuSubmenuTrigger>
+                        <Icons.user />
+                        Менеджер
+                     </MenuSubmenuTrigger>
+                     <MenuPopup>
+                        {creators.map((creator) => (
+                           <MenuCheckboxItem
+                              checked={
+                                 search.creator?.includes(creator.id) ?? false
+                              }
+                              onCheckedChange={(checked) =>
+                                 onFilterChange("creator", creator.id, checked)
+                              }
+                              key={creator.id}
+                           >
+                              {creator.name}
+                           </MenuCheckboxItem>
+                        ))}
+                     </MenuPopup>
+                  </Menu>
+               )}
             </MenuPopup>
          </Menu>
          {selectedLength === 0 ? null : (
