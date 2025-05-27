@@ -6,6 +6,7 @@ import { MIN_PASSWORD_LENGTH } from "@unfiddle/core/auth/constants"
 import { Button } from "@unfiddle/ui/components/button"
 import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
 import { Icons } from "@unfiddle/ui/components/icons"
+import { PasswordInput } from "@unfiddle/ui/components/input"
 import { Logo } from "@unfiddle/ui/components/logo"
 import { formData } from "@unfiddle/ui/utils"
 import { toast } from "sonner"
@@ -142,15 +143,9 @@ function RouteComponent() {
                   </Field>
                   <Field>
                      <FieldLabel className={"mt-5"}>Пароль</FieldLabel>
-                     <FieldControl
+                     <PasswordInput
                         name="password"
-                        type="password"
-                        required
-                        placeholder="••••••••••••"
                         minLength={MIN_PASSWORD_LENGTH}
-                        className={
-                           "font-[Verdana] tracking-[10%] placeholder:text-base"
-                        }
                      />
                   </Field>
                   <Button

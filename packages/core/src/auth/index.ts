@@ -41,6 +41,14 @@ export const authClient: any = (c: Context<HonoEnv>) => {
          enabled: true,
          minPasswordLength: MIN_PASSWORD_LENGTH,
          requireEmailVerification: true,
+         sendResetPassword: async (input) => {
+            await c.var.email.emails.send({
+               from: EMAIL_FROM,
+               to: input.user.email,
+               subject: "Скинути пароль",
+               html: `Перейдіть за посиланням щоб скинути пароль: <a style="margin-top:8px; display:inline-block;" href="${input.url}">Скинути пароль</a>`,
+            })
+         },
          password: {
             hash: async (password) => {
                const salt = crypto.randomBytes(16).toString("hex")
@@ -78,13 +86,12 @@ export const authClient: any = (c: Context<HonoEnv>) => {
          sendVerificationEmail: async (input, req) => {
             //  because sendOnSignUp: false doesn't work
             if (req?.url.includes("/sign-up/email")) return
-            logger.info(req?.url)
 
             const res = await c.var.email.emails.send({
                from: EMAIL_FROM,
                to: input.user.email,
                subject: "Підтвердіть ваш аккаунт",
-               html: `Перейдіть за посиланням щоб підтвердити ваш аккаунт: <a style="margin-top:8px; display:inline-block;" href="${input.url}">Підтвердити</a>`,
+               html: `Перейдіть за посиланням щоб підтвердити аккаунт: <a style="margin-top:8px; display:inline-block;" href="${input.url}">Підтвердити</a>`,
             })
             if (res.error) {
                logger.error(res.error)

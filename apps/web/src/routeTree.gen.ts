@@ -14,7 +14,9 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as SignupImport } from './routes/signup'
+import { Route as ResetPasswordImport } from './routes/reset-password'
 import { Route as LoginImport } from './routes/login'
+import { Route as ForgotPasswordImport } from './routes/forgot-password'
 import { Route as AuthedImport } from './routes/_authed'
 import { Route as AuthedIndexImport } from './routes/_authed/index'
 import { Route as JoinCodeImport } from './routes/join.$code'
@@ -38,9 +40,21 @@ const SignupRoute = SignupImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const ResetPasswordRoute = ResetPasswordImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const LoginRoute = LoginImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ForgotPasswordRoute = ForgotPasswordImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -124,11 +138,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedImport
       parentRoute: typeof rootRoute
     }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordImport
+      parentRoute: typeof rootRoute
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginImport
+      parentRoute: typeof rootRoute
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordImport
       parentRoute: typeof rootRoute
     }
     '/signup': {
@@ -264,7 +292,9 @@ const AuthedRouteWithChildren =
 
 export interface FileRoutesByFullPath {
   '': typeof AuthedRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/new': typeof AuthedNewRoute
   '/join/$code': typeof JoinCodeRoute
@@ -278,7 +308,9 @@ export interface FileRoutesByFullPath {
 }
 
 export interface FileRoutesByTo {
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/new': typeof AuthedNewRoute
   '/join/$code': typeof JoinCodeRoute
@@ -293,7 +325,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_authed': typeof AuthedRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/_authed/new': typeof AuthedNewRoute
   '/join/$code': typeof JoinCodeRoute
@@ -311,7 +345,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | ''
+    | '/forgot-password'
     | '/login'
+    | '/reset-password'
     | '/signup'
     | '/new'
     | '/join/$code'
@@ -324,7 +360,9 @@ export interface FileRouteTypes {
     | '/$workspaceId/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/forgot-password'
     | '/login'
+    | '/reset-password'
     | '/signup'
     | '/new'
     | '/join/$code'
@@ -337,7 +375,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_authed'
+    | '/forgot-password'
     | '/login'
+    | '/reset-password'
     | '/signup'
     | '/_authed/new'
     | '/join/$code'
@@ -354,14 +394,18 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   AuthedRoute: typeof AuthedRouteWithChildren
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   JoinCodeRoute: typeof JoinCodeRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   AuthedRoute: AuthedRouteWithChildren,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   JoinCodeRoute: JoinCodeRoute,
 }
@@ -377,7 +421,9 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/_authed",
+        "/forgot-password",
         "/login",
+        "/reset-password",
         "/signup",
         "/join/$code"
       ]
@@ -390,8 +436,14 @@ export const routeTree = rootRoute
         "/_authed/$workspaceId"
       ]
     },
+    "/forgot-password": {
+      "filePath": "forgot-password.tsx"
+    },
     "/login": {
       "filePath": "login.tsx"
+    },
+    "/reset-password": {
+      "filePath": "reset-password.tsx"
     },
     "/signup": {
       "filePath": "signup.tsx"

@@ -52,13 +52,17 @@ export function FieldLabel({
    )
 }
 
+export type FieldControlProps = React.ComponentProps<
+   typeof FieldPrimitive.Control
+> &
+   VariantProps<typeof input>
+
 export function FieldControl({
    className,
    variant,
    size,
    ...props
-}: React.ComponentProps<typeof FieldPrimitive.Control> &
-   VariantProps<typeof input>) {
+}: FieldControlProps) {
    return (
       <FieldPrimitive.Control
          className={cn(input({ variant, size, className }))}

@@ -5,6 +5,7 @@ import { Link, createFileRoute, useNavigate } from "@tanstack/react-router"
 import { MIN_PASSWORD_LENGTH } from "@unfiddle/core/auth/constants"
 import { Button } from "@unfiddle/ui/components/button"
 import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
+import { PasswordInput } from "@unfiddle/ui/components/input"
 import { Logo } from "@unfiddle/ui/components/logo"
 import { formData } from "@unfiddle/ui/utils"
 import { toast } from "sonner"
@@ -117,17 +118,20 @@ function RouteComponent() {
                </Field>
                <Field>
                   <FieldLabel className={"mt-5"}>Пароль</FieldLabel>
-                  <FieldControl
+                  <PasswordInput
                      name="password"
-                     type="password"
-                     required
-                     placeholder="••••••••••••"
                      minLength={MIN_PASSWORD_LENGTH}
-                     className={
-                        "font-[Verdana] tracking-[10%] placeholder:text-base"
-                     }
                   />
                </Field>
+               <p className="mt-5 text-foreground/75 text-sm">
+                  <Link
+                     to={"/forgot-password"}
+                     search={search}
+                     className="transition-colors duration-75 hover:text-foreground"
+                  >
+                     <u> Забули пароль?</u>
+                  </Link>
+               </p>
                <Button
                   disabled={email.isPending || email.isSuccess}
                   pending={email.isPending || email.isSuccess}
