@@ -1,12 +1,14 @@
 import type { routes } from "@unfiddle/core/api"
-import type { authClient } from "@unfiddle/core/auth"
+import type { AuthClient, } from "@unfiddle/core/auth"
 import type { Session, User } from "@unfiddle/core/auth/types"
 import type { DatabaseClient } from "@unfiddle/core/database/core"
+import type { EmailClient } from "@unfiddle/infra/email"
 import type { ApiEnv, Env } from "@unfiddle/infra/env"
 
 type Variables = {
    db: DatabaseClient
-   auth: ReturnType<typeof authClient>
+   auth: AuthClient
+   email: EmailClient
    env: Env
 }
 

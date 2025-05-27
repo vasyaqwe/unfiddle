@@ -34,7 +34,7 @@ export const order = d.table(
          .text()
          .notNull()
          .references(() => workspace.id, { onDelete: "cascade" }),
-      nameLower: d.text().notNull().default(""),
+      normalizedName: d.text().notNull().default(""),
       name: d.text().notNull(),
       quantity: d.integer().notNull(),
       sellingPrice: d.numeric({ mode: "number" }).notNull(),
@@ -46,7 +46,7 @@ export const order = d.table(
    },
    (table) => [
       d.index("order_short_id_idx").on(table.shortId),
-      d.index("order_name_idx").on(table.nameLower),
+      d.index("order_name_idx").on(table.normalizedName),
       d.index("order_status_idx").on(table.status),
       d.index("order_creator_id_idx").on(table.creatorId),
       d

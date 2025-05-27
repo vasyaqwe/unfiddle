@@ -78,7 +78,7 @@ export const orderRouter = t.router({
 
             whereConditions.push(
                sql`(
-                ${order.nameLower} LIKE ${searchTerm}
+                ${order.normalizedName} LIKE ${searchTerm}
                 OR
                 ${order.shortId} LIKE ${searchTerm}
                 OR
@@ -158,7 +158,9 @@ export const orderRouter = t.router({
          const lastId = existingCounter?.lastId ?? 0
          const nextId = lastId + 1
 
-         const nameLower = input.name.normalize("NFC").toLocaleLowerCase("uk")
+         const normalizedName = input.name
+            .normalize("NFC")
+            .toLocaleLowerCase("uk")
 
          const createdOrder = await ctx.db
             .insert(order)
@@ -168,7 +170,7 @@ export const orderRouter = t.router({
                workspaceId: input.workspaceId,
                severity: input.severity,
                name: input.name,
-               nameLower,
+               normalizedName,
                quantity: input.quantity,
                sellingPrice: input.sellingPrice,
                note: input.note,
@@ -214,13 +216,15 @@ export const orderRouter = t.router({
       .use(workspaceMemberMiddleware)
       .input(updateOrderSchema)
       .mutation(async ({ ctx, input }) => {
-         const nameLower = input.name?.normalize("NFC").toLocaleLowerCase("uk")
+         const normalizedName = input.name
+            ?.normalize("NFC")
+            .toLocaleLowerCase("uk")
 
          await ctx.db
             .update(order)
             .set({
                name: input.name,
-               nameLower,
+               normalizedName,
                quantity: input.quantity,
                sellingPrice: input.sellingPrice,
                note: input.note,

@@ -9,6 +9,7 @@ import { appRouter } from "@unfiddle/core/trpc"
 import type { TRPCContext } from "@unfiddle/core/trpc/context"
 import { workspaceRouter } from "@unfiddle/core/workspace/api"
 import { clientEnv } from "@unfiddle/infra/env"
+import {emailClient} from "@unfiddle/infra/email"
 import { logger } from "@unfiddle/infra/logger"
 import { cors } from "hono/cors"
 import { logger as honoLogger } from "hono/logger"
@@ -19,6 +20,7 @@ const app = createRouter()
       c.set("env", { ...c.env, ...clientEnv[c.env.ENVIRONMENT] })
       c.set("db", d.client(c))
       c.set("auth", authClient(c))
+      c.set("email", emailClient(c))
       await next()
    })
    .get("/r2/*", async (c) => {
@@ -93,6 +95,7 @@ export const routes = app
             return {
                vars: c.var.env,
                db: c.var.db,
+               email: c.var.email,
                auth: c.var.auth,
                user: c.var.user,
                session: c.var.session,

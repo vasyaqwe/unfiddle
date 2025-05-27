@@ -1,1 +1,0 @@
-ALTER TABLE `session` ADD `workspace_memberships` text DEFAULT '[]' NOT NULL;

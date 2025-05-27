@@ -5,11 +5,15 @@ import { session } from "@unfiddle/core/auth/schema"
 import { d } from "@unfiddle/core/database"
 import invariant from "@unfiddle/core/invariant"
 import { workspaceMember } from "@unfiddle/core/workspace/schema"
+import { EMAIL_FROM } from "@unfiddle/infra/email"
+import { logger } from "@unfiddle/infra/logger"
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { createAuthMiddleware } from "better-auth/api"
 import { eq } from "drizzle-orm"
 import type { Context } from "hono"
+
+export type AuthClient = ReturnType<typeof authClient>
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export const authClient: any = (c: Context<HonoEnv>) => {
@@ -36,6 +40,7 @@ export const authClient: any = (c: Context<HonoEnv>) => {
       emailAndPassword: {
          enabled: true,
          minPasswordLength: MIN_PASSWORD_LENGTH,
+         requireEmailVerification: true,
          password: {
             hash: async (password) => {
                const salt = crypto.randomBytes(16).toString("hex")
@@ -65,6 +70,26 @@ export const authClient: any = (c: Context<HonoEnv>) => {
                     crypto.subtle.timingSafeEqual(keyBuffer, hashBuffer)
                   : keyBuffer.equals(hashBuffer)
             },
+         },
+      },
+      emailVerification: {
+         autoSignInAfterVerification: true,
+         sendOnSignUp: false,
+         sendVerificationEmail: async (input, req) => {
+            //  because sendOnSignUp: false doesn't work
+            if (req?.url.includes("/sign-up/email")) return
+            logger.info(req?.url)
+
+            const res = await c.var.email.emails.send({
+               from: EMAIL_FROM,
+               to: input.user.email,
+               subject: "Підтвердіть ваш аккаунт",
+               html: `Перейдіть за посиланням щоб підтвердити ваш аккаунт: <a style="margin-top:8px; display:inline-block;" href="${input.url}">Підтвердити</a>`,
+            })
+            if (res.error) {
+               logger.error(res.error)
+               throw new Error(res.error.message)
+            }
          },
       },
       accountLinking: {

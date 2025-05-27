@@ -1,1 +1,0 @@
-ALTER TABLE `order` ADD `name_lower` text DEFAULT '' NOT NULL;

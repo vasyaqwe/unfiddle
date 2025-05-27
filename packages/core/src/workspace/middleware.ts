@@ -13,7 +13,7 @@ export const workspaceMemberMiddleware = t.middleware(async (opts) => {
          code: "BAD_REQUEST",
          message: parseZodErrorIssues(input.error.issues),
       })
-
+   console.log(opts.ctx.session.workspaceMemberships)
    const membership = opts.ctx.session.workspaceMemberships.find(
       (membership) =>
          membership.workspaceId === (input.data.workspaceId ?? input.data.id),

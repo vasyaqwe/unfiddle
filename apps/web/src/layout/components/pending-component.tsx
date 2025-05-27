@@ -8,7 +8,7 @@ export function PendingComponent() {
             className="font-medium text-foreground/75 text-lg"
             data-loading-ellipsis
          >
-            now ledgerblocking
+            зачекайте
          </p>
       </main>
    )

@@ -28,6 +28,7 @@ export type ApiEnv = {
    ENVIRONMENT: Environment
    GOOGLE_CLIENT_ID: string
    GOOGLE_CLIENT_SECRET: string
+   RESEND_API_KEY: string
    RATE_LIMITER: RateLimit
    KV: KVNamespace
    DATABASE: D1Database

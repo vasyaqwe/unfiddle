@@ -37,11 +37,20 @@ function RouteComponent() {
          navigate({ to: "/" })
       },
       onError: (error: {
-         code?: "INVALID_EMAIL" | "INVALID_EMAIL_OR_PASSWORD"
+         code?:
+            | "INVALID_EMAIL"
+            | "INVALID_EMAIL_OR_PASSWORD"
+            | "EMAIL_NOT_VERIFIED"
          message?: string | undefined
          status: number
          statusText: string
       }) => {
+         if (error.code === "EMAIL_NOT_VERIFIED")
+            return toast.info("Підтвердіть аккаунт", {
+               description:
+                  "Перейдіть за посиланням у пошті щоб підтвердити аккаунт.",
+            })
+
          if (error.code === "INVALID_EMAIL")
             return toast.error("Ой-ой!", { description: "Неправильна пошта" })
          if (error.code === "INVALID_EMAIL_OR_PASSWORD")
@@ -50,7 +59,7 @@ function RouteComponent() {
             })
 
          toast.error("Ой-ой!", {
-            description: "Сталася помилка. Спробуйте пізніше.",
+            description: "Сталася помилка. Спробуйте ще раз.",
          })
       },
    })
