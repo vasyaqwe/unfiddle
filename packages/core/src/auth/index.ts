@@ -71,14 +71,10 @@ export const authClient: any = (c: Context<HonoEnv>) => {
          enabled: true,
       },
       advanced: {
-         crossSubDomainCookies: {
-            enabled: true,
-         },
          defaultCookieAttributes: {
-            // TODO: UPDATE THIS IS IMPORTANT
-            secure: c.env.ENVIRONMENT === "development",
+            secure: true,
             httpOnly: true,
-            sameSite: "none", // Allows CORS-based cookie sharing across subdomains
+            sameSite: "lax",
             partitioned: true, // New browser standards will mandate this for foreign cookies
          },
       },
