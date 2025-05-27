@@ -2,7 +2,6 @@ import crypto from "node:crypto"
 import type { HonoEnv } from "@unfiddle/core/api/types"
 import { MIN_PASSWORD_LENGTH } from "@unfiddle/core/auth/constants"
 import { session } from "@unfiddle/core/auth/schema"
-import { d } from "@unfiddle/core/database"
 import invariant from "@unfiddle/core/invariant"
 import { workspaceMember } from "@unfiddle/core/workspace/schema"
 import { EMAIL_FROM } from "@unfiddle/infra/email"
@@ -17,14 +16,12 @@ export type AuthClient = ReturnType<typeof authClient>
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export const authClient: any = (c: Context<HonoEnv>) => {
-   const db = d.client(c)
-
    return betterAuth({
       appName: "unfiddle",
       baseURL: c.var.env.API_URL,
       basePath: "/auth",
       trustedOrigins: [c.var.env.WEB_URL],
-      database: drizzleAdapter(db, { provider: "sqlite" }),
+      database: drizzleAdapter(c.var.db, { provider: "sqlite" }),
       socialProviders: {
          google: {
             clientId: c.env.GOOGLE_CLIENT_ID,
@@ -129,7 +126,7 @@ export const authClient: any = (c: Context<HonoEnv>) => {
                if (!newSession) return
 
                const workspaceMemberships =
-                  await db.query.workspaceMember.findMany({
+                  await c.var.db.query.workspaceMember.findMany({
                      where: eq(workspaceMember.userId, newSession.user.id),
                      columns: {
                         workspaceId: true,
@@ -137,7 +134,7 @@ export const authClient: any = (c: Context<HonoEnv>) => {
                      },
                   })
 
-               await db
+               await c.var.db
                   .update(session)
                   .set({
                      workspaceMemberships,

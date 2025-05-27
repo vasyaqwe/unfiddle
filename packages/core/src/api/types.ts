@@ -1,5 +1,5 @@
 import type { routes } from "@unfiddle/core/api"
-import type { AuthClient, } from "@unfiddle/core/auth"
+import type { AuthClient } from "@unfiddle/core/auth"
 import type { Session, User } from "@unfiddle/core/auth/types"
 import type { DatabaseClient } from "@unfiddle/core/database/core"
 import type { EmailClient } from "@unfiddle/infra/email"
