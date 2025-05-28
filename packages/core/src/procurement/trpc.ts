@@ -20,11 +20,8 @@ export const procurementRouter = t.router({
          return await ctx.db
             .insert(procurement)
             .values({
+               ...input,
                creatorId: ctx.user.id,
-               orderId: input.orderId,
-               quantity: input.quantity,
-               purchasePrice: input.purchasePrice,
-               note: input.note,
             })
             .returning()
             .get()

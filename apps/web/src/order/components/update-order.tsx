@@ -1,18 +1,12 @@
 import { useAuth } from "@/auth/hooks"
+import { GoodCombobox } from "@/good/components/good-combobox"
 import { ORDER_SEVERITIES_TRANSLATION } from "@/order/constants"
 import { useUpdateOrder } from "@/order/mutations/use-update-order"
 import { ORDER_SEVERITIES } from "@unfiddle/core/order/constants"
 import type { OrderSeverity } from "@unfiddle/core/order/types"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import { Button } from "@unfiddle/ui/components/button"
-import {
-   Combobox,
-   ComboboxInput,
-   ComboboxItem,
-   ComboboxPopup,
-   ComboboxTrigger,
-   ComboboxTriggerIcon,
-} from "@unfiddle/ui/components/combobox"
+
 import {
    Drawer,
    DrawerClose,
@@ -24,6 +18,14 @@ import {
    NumberField,
    NumberFieldInput,
 } from "@unfiddle/ui/components/number-field"
+import {
+   Select,
+   SelectItem,
+   SelectPopup,
+   SelectTrigger,
+   SelectTriggerIcon,
+   SelectValue,
+} from "@unfiddle/ui/components/select"
 import { formData, number } from "@unfiddle/ui/utils"
 import * as React from "react"
 
@@ -44,6 +46,7 @@ export function UpdateOrder({
       onMutate: () => setOpen(false),
       onError: () => setOpen(true),
    })
+   const [goodId, setGoodId] = React.useState(order.goodId ?? "noop")
 
    return (
       <Drawer
@@ -71,6 +74,7 @@ export function UpdateOrder({
                   mutation.mutate({
                      id: order.id,
                      workspaceId: auth.workspace.id,
+                     goodId: goodId === "noop" ? undefined : goodId,
                      name: form.name,
                      quantity: number(form.quantity),
                      sellingPrice: number(form.sellingPrice),
@@ -88,7 +92,7 @@ export function UpdateOrder({
                      defaultValue={order.name}
                   />
                </Field>
-               <div className="grid grid-cols-2 gap-3">
+               <div className="grid grid-cols-2 gap-3 md:gap-8">
                   <Field>
                      <FieldLabel>Кількість</FieldLabel>
                      <NumberField
@@ -120,37 +124,49 @@ export function UpdateOrder({
                      defaultValue={order.note}
                   />
                </Field>
-               <Field>
-                  <FieldLabel className={"mb-2.5"}>Пріорітет</FieldLabel>
-                  <Combobox
-                     value={severity}
-                     onValueChange={(s) => setSeverity(s as never)}
-                  >
-                     <ComboboxTrigger
-                        render={
-                           <Button
-                              variant={"secondary"}
-                              className="w-32 justify-start"
-                           >
-                              {ORDER_SEVERITIES_TRANSLATION[severity]}
-                              <ComboboxTriggerIcon />
-                           </Button>
-                        }
+               <div className="grid gap-3 md:grid-cols-2 md:gap-8">
+                  <div>
+                     <label
+                        className={"mb-2.5 inline-block font-medium text-sm"}
+                        htmlFor="good"
+                     >
+                        Товар
+                     </label>
+                     <GoodCombobox
+                        goodId={goodId}
+                        setGoodId={setGoodId}
                      />
-                     <ComboboxPopup align="start">
-                        <ComboboxInput placeholder="Пріорітет" />
-                        {ORDER_SEVERITIES.map((s) => (
-                           <ComboboxItem
-                              key={s}
-                              value={s}
-                              keywords={[ORDER_SEVERITIES_TRANSLATION[s]]}
-                           >
-                              {ORDER_SEVERITIES_TRANSLATION[s]}
-                           </ComboboxItem>
-                        ))}
-                     </ComboboxPopup>
-                  </Combobox>
-               </Field>
+                  </div>
+                  <Field>
+                     <FieldLabel className={"mb-2.5"}>Пріорітет</FieldLabel>
+                     <Select
+                        value={severity}
+                        onValueChange={(s) => setSeverity(s)}
+                     >
+                        <SelectTrigger
+                           render={
+                              <Button
+                                 variant={"secondary"}
+                                 className="w-full justify-start"
+                              >
+                                 <SelectValue />
+                                 <SelectTriggerIcon />
+                              </Button>
+                           }
+                        />
+                        <SelectPopup align="start">
+                           {ORDER_SEVERITIES.map((s) => (
+                              <SelectItem
+                                 key={s}
+                                 value={s}
+                              >
+                                 {ORDER_SEVERITIES_TRANSLATION[s]}
+                              </SelectItem>
+                           ))}
+                        </SelectPopup>
+                     </Select>
+                  </Field>
+               </div>
                <div className="mt-auto flex justify-between">
                   <Button>Зберегти</Button>
                   <DrawerClose

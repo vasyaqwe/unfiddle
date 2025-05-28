@@ -101,6 +101,7 @@ export const orderRouter = t.router({
                status: true,
                note: true,
                creatorId: true,
+               goodId: true,
                deletedAt: true,
                createdAt: true,
             },
@@ -144,6 +145,7 @@ export const orderRouter = t.router({
                   },
                   orderBy: [desc(procurement.createdAt)],
                },
+               good: { columns: { id: true, name: true } },
             },
             orderBy: [desc(order.createdAt)],
          })
@@ -165,15 +167,10 @@ export const orderRouter = t.router({
          const createdOrder = await ctx.db
             .insert(order)
             .values({
+               ...input,
                shortId: nextId,
                creatorId: ctx.user.id,
-               workspaceId: input.workspaceId,
-               severity: input.severity,
-               name: input.name,
                normalizedName,
-               quantity: input.quantity,
-               sellingPrice: input.sellingPrice,
-               note: input.note,
             })
             .returning()
             .get()

@@ -152,7 +152,7 @@ export function ComboboxPopup({
          light={false}
          sideOffset={4}
          className={cn(
-            "max-h-56 min-w-[calc(var(--anchor-width)+3rem)] scroll-py-1 overflow-y-auto p-1",
+            "scrollbar-hidden max-h-56 min-w-[calc(var(--anchor-width)+3rem)] scroll-py-1 overflow-y-auto p-1",
             className,
          )}
          {...props}
@@ -223,7 +223,11 @@ export function ComboboxItem({
                setIsOpen(false)
             }
          }}
-         className={cn(MENU_ITEM_STYLES.base, "items-center", className)}
+         className={cn(
+            MENU_ITEM_STYLES.base,
+            "items-center data-[disabled=true]:opacity-70",
+            className,
+         )}
          {...props}
       >
          {children}

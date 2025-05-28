@@ -2,7 +2,7 @@ import { useAuth } from "@/auth/hooks"
 import { useOrderQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useSearch } from "@tanstack/react-router"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import { toast } from "sonner"
@@ -17,12 +17,19 @@ export function useCreateOrder({
    const queryOptions = useOrderQueryOptions()
    const create = useOptimisticCreateOrder()
 
+   const goods = useQuery(
+      trpc.good.list.queryOptions({ workspaceId: auth.workspace.id }),
+   )
+
    return useMutation(
       trpc.order.create.mutationOptions({
          onMutate: async (input) => {
             await queryClient.cancelQueries(queryOptions.list)
 
             const data = queryClient.getQueryData(queryOptions.list.queryKey)
+
+            const good =
+               goods.data?.find((item) => item.id === input.goodId) ?? null
 
             create({
                ...input,
@@ -33,6 +40,7 @@ export function useCreateOrder({
                status: "pending",
                creatorId: auth.user.id,
                creator: auth.user,
+               good,
                note: input.note ?? "",
                procurements: [],
                assignees: [],
@@ -53,11 +61,15 @@ export function useCreateOrder({
             onError?.()
          },
          onSuccess: (order) => {
+            const good =
+               goods.data?.find((item) => item.id === order.goodId) ?? null
+
             socket.order.send({
                action: "create",
                senderId: auth.user.id,
                order: {
                   ...order,
+                  good,
                   creator: auth.user,
                   procurements: [],
                   assignees: [],

@@ -1,5 +1,6 @@
 import { user } from "@unfiddle/core/auth/schema"
 import { d } from "@unfiddle/core/database"
+import { good } from "@unfiddle/core/good/schema"
 import {
    ORDER_SEVERITIES,
    ORDER_STATUSES,
@@ -34,6 +35,7 @@ export const order = d.table(
          .text()
          .notNull()
          .references(() => workspace.id, { onDelete: "cascade" }),
+      goodId: d.text().references(() => good.id, { onDelete: "set null" }),
       normalizedName: d.text().notNull().default(""),
       name: d.text().notNull(),
       quantity: d.integer().notNull(),
@@ -45,10 +47,14 @@ export const order = d.table(
       ...d.timestamps,
    },
    (table) => [
-      d.index("order_short_id_idx").on(table.shortId),
-      d.index("order_name_idx").on(table.normalizedName),
-      d.index("order_status_idx").on(table.status),
-      d.index("order_creator_id_idx").on(table.creatorId),
+      // Main for most common filter combinations
+      d
+         .index("order_workspace_id_deleted_at_created_at_idx")
+         .on(table.workspaceId, table.deletedAt, table.createdAt),
+      // For text search
+      d
+         .index("order_workspace_id_name_idx")
+         .on(table.workspaceId, table.normalizedName),
       d
          .uniqueIndex("order_workspace_id_short_id_unique_idx")
          .on(table.workspaceId, table.shortId),
@@ -84,6 +90,10 @@ export const orderRelations = relations(order, ({ one, many }) => ({
       fields: [order.creatorId],
       references: [user.id],
    }),
+   good: one(good, {
+      fields: [order.goodId],
+      references: [good.id],
+   }),
    procurements: many(procurement),
    assignees: many(orderAssignee),
 }))
@@ -98,6 +108,7 @@ export const updateOrderSchema = createUpdateSchema(order)
       sellingPrice: true,
       status: true,
       severity: true,
+      goodId: true,
    })
    .required({ id: true, workspaceId: true })
    .extend({ deletedAt: z.string().nullable().optional() })

@@ -1,3 +1,4 @@
+import { goodRouter } from "@unfiddle/core/good/trpc"
 import { orderRouter } from "@unfiddle/core/order/trpc"
 import { procurementRouter } from "@unfiddle/core/procurement/trpc"
 import { t } from "@unfiddle/core/trpc/context"
@@ -6,8 +7,8 @@ import { workspaceRouter } from "@unfiddle/core/workspace/trpc"
 
 export const appRouter = t.router({
    user: userRouter,
-   // subscription: billingRouter,
    workspace: workspaceRouter,
    procurement: procurementRouter,
    order: orderRouter,
+   good: goodRouter,
 })

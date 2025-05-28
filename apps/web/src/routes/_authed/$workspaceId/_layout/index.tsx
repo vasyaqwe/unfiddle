@@ -122,6 +122,11 @@ function RouteComponent() {
    const query = useQuery(queryOptions.list)
    const data = query.data ?? []
 
+   const groupedData = R.pipe(
+      query.data ?? [],
+      R.groupBy((item) => R.prop(item, "goodId") ?? "noop"),
+   )
+
    return (
       <>
          <Header>
@@ -158,14 +163,51 @@ function RouteComponent() {
                ) : !data || data.length === 0 ? (
                   <Empty />
                ) : (
-                  <div className={"divide-y divide-surface-5"}>
-                     {data.map((item) => (
-                        <OrderRow
-                           key={item.id}
-                           item={item}
-                        />
-                     ))}
-                  </div>
+                  Object.entries(groupedData).map(([key, data], idx) => {
+                     const name =
+                        data.find((item) => item.goodId === key)?.good?.name ??
+                        "Без товару"
+
+                     const profit = data
+                        .filter((item) => item.status === "successful")
+                        .reduce((acc, item) => {
+                           const itemProfit = item.procurements.reduce(
+                              (procAcc, p) =>
+                                 procAcc +
+                                 ((item.sellingPrice ?? 0) - p.purchasePrice) *
+                                    p.quantity,
+                              0,
+                           )
+                           return acc + itemProfit
+                        }, 0)
+
+                     return (
+                        <div
+                           key={key}
+                           className="group"
+                           data-first={idx === 0 ? "" : undefined}
+                        >
+                           <div className="flex h-10 items-center gap-3 border-surface-5 border-y bg-surface-2 px-4 group-data-first:border-t-transparent lg:pr-29 lg:pl-[37px]">
+                              <p className="flex items-center gap-2 font-medium text-sm">
+                                 <span className="line-clamp-1">{name}</span>
+                                 {profit < 1 ? null : (
+                                    <span className="font-semibold text-green-700">
+                                       {formatCurrency(profit)}
+                                    </span>
+                                 )}
+                              </p>
+                           </div>
+                           <div className={"divide-y divide-surface-5"}>
+                              {data.map((item) => (
+                                 <OrderRow
+                                    key={item.id}
+                                    item={item}
+                                 />
+                              ))}
+                           </div>
+                        </div>
+                     )
+                  })
                )}
             </div>
          </MainScrollArea>

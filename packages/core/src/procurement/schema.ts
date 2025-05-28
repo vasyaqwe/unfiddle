@@ -27,7 +27,11 @@ export const procurement = d.table(
       note: d.text().default(""),
       ...d.timestamps,
    },
-   (table) => [d.index("procurement_creator_id_idx").on(table.creatorId)],
+   (table) => [
+      d
+         .index("procurement_order_id_created_at_idx")
+         .on(table.orderId, table.createdAt),
+   ],
 )
 
 export const procurementRelations = relations(procurement, ({ one }) => ({

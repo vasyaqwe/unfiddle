@@ -4,10 +4,14 @@ import { type Input, input } from "./input"
 
 export function NumberField({
    children,
+   className,
    ...props
 }: React.ComponentProps<typeof NumberFieldPrimitive.Root>) {
    return (
-      <NumberFieldPrimitive.Root {...props}>
+      <NumberFieldPrimitive.Root
+         className={cn("w-full", className)}
+         {...props}
+      >
          <NumberFieldPrimitive.ScrubArea>
             <NumberFieldPrimitive.ScrubAreaCursor />
          </NumberFieldPrimitive.ScrubArea>

@@ -1,4 +1,5 @@
 import { useAuth } from "@/auth/hooks"
+import { GoodCombobox } from "@/good/components/good-combobox"
 import { ORDER_SEVERITIES_TRANSLATION } from "@/order/constants"
 import { useCreateOrder } from "@/order/mutations/use-create-order"
 import { ORDER_SEVERITIES } from "@unfiddle/core/order/constants"
@@ -34,6 +35,8 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
       onError: () => setOpen(true),
    })
 
+   const [goodId, setGoodId] = React.useState("noop")
+
    return (
       <Drawer
          open={open}
@@ -55,6 +58,7 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
 
                   mutation.mutate({
                      workspaceId: auth.workspace.id,
+                     goodId: goodId === "noop" ? undefined : goodId,
                      name: form.name,
                      quantity: number(form.quantity),
                      sellingPrice: number(form.sellingPrice),
@@ -71,7 +75,7 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
                      name="name"
                   />
                </Field>
-               <div className="grid grid-cols-2 gap-3">
+               <div className="grid grid-cols-2 gap-3 md:gap-8">
                   <Field>
                      <FieldLabel>Кількість</FieldLabel>
                      <NumberField
@@ -99,35 +103,49 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
                      placeholder="Додайте комент"
                   />
                </Field>
-               <Field>
-                  <FieldLabel className={"mb-2.5"}>Пріорітет</FieldLabel>
-                  <Select
-                     value={severity}
-                     onValueChange={(s) => setSeverity(s)}
-                  >
-                     <SelectTrigger
-                        render={
-                           <Button
-                              variant={"secondary"}
-                              className="w-32 justify-start"
-                           >
-                              <SelectValue />
-                              <SelectTriggerIcon />
-                           </Button>
-                        }
+               <div className="grid gap-3 md:grid-cols-2 md:gap-8">
+                  <div>
+                     <label
+                        className={"mb-2.5 inline-block font-medium text-sm"}
+                        htmlFor="good"
+                     >
+                        Товар
+                     </label>
+                     <GoodCombobox
+                        goodId={goodId}
+                        setGoodId={setGoodId}
                      />
-                     <SelectPopup align="start">
-                        {ORDER_SEVERITIES.map((s) => (
-                           <SelectItem
-                              key={s}
-                              value={s}
-                           >
-                              {ORDER_SEVERITIES_TRANSLATION[s]}
-                           </SelectItem>
-                        ))}
-                     </SelectPopup>
-                  </Select>
-               </Field>
+                  </div>
+                  <Field>
+                     <FieldLabel className={"mb-2.5"}>Пріорітет</FieldLabel>
+                     <Select
+                        value={severity}
+                        onValueChange={(s) => setSeverity(s)}
+                     >
+                        <SelectTrigger
+                           render={
+                              <Button
+                                 variant={"secondary"}
+                                 className="w-full justify-start"
+                              >
+                                 <SelectValue />
+                                 <SelectTriggerIcon />
+                              </Button>
+                           }
+                        />
+                        <SelectPopup align="start">
+                           {ORDER_SEVERITIES.map((s) => (
+                              <SelectItem
+                                 key={s}
+                                 value={s}
+                              >
+                                 {ORDER_SEVERITIES_TRANSLATION[s]}
+                              </SelectItem>
+                           ))}
+                        </SelectPopup>
+                     </Select>
+                  </Field>
+               </div>
                <Button className="mt-auto md:mr-auto">Додати</Button>
             </form>
          </DrawerPopup>
