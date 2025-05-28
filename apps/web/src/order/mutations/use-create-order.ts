@@ -40,6 +40,7 @@ export function useCreateOrder({
                status: "pending",
                creatorId: auth.user.id,
                creator: auth.user,
+               goodId: input.goodId ?? null,
                good,
                note: input.note ?? "",
                procurements: [],
