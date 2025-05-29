@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tailwix";
 @import "./typography.css";
+@source "./**/*.{ts,tsx}";
 @plugin "tailwindcss-motion";
 
 @theme default {
