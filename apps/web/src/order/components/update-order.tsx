@@ -73,7 +73,7 @@ export function UpdateOrder({
                   mutation.mutate({
                      id: order.id,
                      workspaceId: auth.workspace.id,
-                     groupId: form.groupId === "" ? undefined : form.groupId,
+                     groupId: form.groupId === "" ? null : form.groupId,
                      name: form.name,
                      quantity: number(form.quantity),
                      sellingPrice: number(form.sellingPrice),

@@ -165,23 +165,25 @@ function RouteComponent() {
                   <Empty />
                ) : (
                   Object.entries(groupedData).map(([key, data], idx) => {
-                     const _profit = data
-                        .filter((item) => item.status === "successful")
-                        .reduce((acc, item) => {
-                           const itemProfit = item.procurements.reduce(
-                              (procAcc, p) =>
-                                 procAcc +
-                                 ((item.sellingPrice ?? 0) - p.purchasePrice) *
-                                    p.quantity,
-                              0,
-                           )
-                           return acc + itemProfit
-                        }, 0)
+                     // const _profit = data
+                     //    .filter((item) => item.status === "successful")
+                     //    .reduce((acc, item) => {
+                     //       const itemProfit = item.procurements.reduce(
+                     //          (procAcc, p) =>
+                     //             procAcc +
+                     //             ((item.sellingPrice ?? 0) - p.purchasePrice) *
+                     //                p.quantity,
+                     //          0,
+                     //       )
+                     //       return acc + itemProfit
+                     //    }, 0)
 
                      const groupShortId =
                         key === "noop"
                            ? null
-                           : String(data[0]?.shortId).padStart(3, "0")
+                           : String(
+                                data[data.length - 1]?.shortId ?? 1,
+                             ).padStart(3, "0")
 
                      return (
                         <div

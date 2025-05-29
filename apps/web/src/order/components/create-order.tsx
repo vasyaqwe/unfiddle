@@ -56,7 +56,7 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
 
                   mutation.mutate({
                      workspaceId: auth.workspace.id,
-                     groupId: form.groupId === "" ? undefined : form.groupId,
+                     groupId: form.groupId === "" ? null : form.groupId,
                      name: form.name,
                      quantity: number(form.quantity),
                      sellingPrice: number(form.sellingPrice),
