@@ -5,7 +5,8 @@ export const CARD_STYLES = {
    title: "font-semibold text-[0.9rem] sm:text-base leading-none",
    description: "mt-2 text-foreground/80 text-sm",
    header: "px-4 py-3 bg-surface-2 rounded-t-xl",
-   content: "p-4 xl:p-5 border border-surface-12/12 bg-background rounded-xl",
+   content:
+      "p-4 xl:p-5 border border-surface-12/12 bg-background dark:bg-surface-2 dark:border-surface-4 rounded-xl",
    footer: "border-t mt-4 text-foreground/60 pt-3 border-neutral",
 }
 

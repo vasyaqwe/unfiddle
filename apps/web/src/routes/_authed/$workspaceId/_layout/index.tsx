@@ -98,6 +98,7 @@ import {
 } from "@unfiddle/ui/components/tooltip"
 import { cx } from "@unfiddle/ui/utils"
 import { useAtom } from "jotai"
+import { useTheme } from "next-themes"
 import * as React from "react"
 import * as R from "remeda"
 
@@ -669,8 +670,12 @@ function OrderRow({
 }) {
    const params = Route.useParams()
    const auth = useAuth()
+   const theme = useTheme()
    const [expandedOrderIds, setExpandedOrderIds] = useAtom(expandedOrderIdsAtom)
-   const [from, to] = orderStatusGradient(item.status)
+   const [from, to] = orderStatusGradient(
+      item.status,
+      theme.resolvedTheme ?? "light",
+   )
 
    const update = useUpdateOrder()
    const deleteItem = useDeleteOrder()
@@ -714,10 +719,10 @@ function OrderRow({
                </p>
                <AlignedColumn
                   id={`o_creator`}
-                  className="flex items-center gap-[3px] whitespace-nowrap font-medium text-sm"
+                  className="flex items-center gap-1 whitespace-nowrap font-medium text-sm"
                >
                   <UserAvatar
-                     size={17}
+                     size={22}
                      user={item.creator}
                      className="inline-block"
                   />
@@ -953,11 +958,11 @@ function OrderRow({
                <div className="border-neutral border-t bg-surface-3/60 pt-4 lg:pt-3">
                   <div className="container mb-4">
                      <div className="mb-4 flex items-center gap-3">
-                        <p className="whitespace-nowrap font-medium font-mono text-black text-lg leading-tight lg:text-[1rem]">
+                        <p className="whitespace-nowrap font-medium font-mono text-black text-lg leading-tight lg:text-[1rem] dark:text-foreground">
                            {formatNumber(item.quantity)} шт.
                         </p>
                         <Separator className={"h-6 w-px bg-surface-7"} />
-                        <p className="whitespace-nowrap font-medium font-mono text-black text-lg leading-tight lg:text-[1rem]">
+                        <p className="whitespace-nowrap font-medium font-mono text-black text-lg leading-tight lg:text-[1rem] dark:text-foreground">
                            {item.sellingPrice
                               ? formatCurrency(item.sellingPrice)
                               : "Без ціни"}
@@ -1063,7 +1068,11 @@ function ProcurementRow({
    orderId: string
 }) {
    const params = Route.useParams()
-   const [from, to] = procurementStatusGradient(item.status)
+   const theme = useTheme()
+   const [from, to] = procurementStatusGradient(
+      item.status,
+      theme.resolvedTheme ?? "light",
+   )
    const profit = (sellingPrice - item.purchasePrice) * item.quantity
 
    const update = useUpdateProcurement()

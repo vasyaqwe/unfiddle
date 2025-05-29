@@ -38,7 +38,7 @@ export function SelectTrigger({ children, className, ...props }: Props) {
          onPointerDown={(e) => {
             e.stopPropagation()
          }}
-         className={cn("justify-start", className)}
+         className={cn("justify-start text-sm", className)}
          {...props}
       >
          {children}

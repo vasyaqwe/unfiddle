@@ -8,6 +8,7 @@ import { button } from "@unfiddle/ui/components/button"
 import { Logo } from "@unfiddle/ui/components/logo"
 import { TooltipProvider } from "@unfiddle/ui/components/tooltip"
 import { cx } from "@unfiddle/ui/utils"
+import { ThemeProvider } from "next-themes"
 import * as React from "react"
 import ReactDOM from "react-dom/client"
 import { routeTree } from "./routeTree.gen"
@@ -69,9 +70,16 @@ if (!rootElement.innerHTML || rootElement.innerHTML.trim().length === 0) {
    root.render(
       <React.StrictMode>
          <QueryClientProvider client={queryClient}>
-            <TooltipProvider>
-               <RouterProvider router={router} />
-            </TooltipProvider>
+            <ThemeProvider
+               defaultTheme="light"
+               attribute="class"
+               enableSystem
+               disableTransitionOnChange
+            >
+               <TooltipProvider>
+                  <RouterProvider router={router} />
+               </TooltipProvider>
+            </ThemeProvider>
          </QueryClientProvider>
       </React.StrictMode>,
    )
