@@ -125,7 +125,7 @@ function RouteComponent() {
 
    const groupedData = R.pipe(
       query.data ?? [],
-      R.groupBy((item) => R.prop(item, "goodId") ?? "noop"),
+      R.groupBy((item) => R.prop(item, "groupId") ?? "noop"),
    )
 
    return (
@@ -165,11 +165,7 @@ function RouteComponent() {
                   <Empty />
                ) : (
                   Object.entries(groupedData).map(([key, data], idx) => {
-                     const name =
-                        data.find((item) => item.goodId === key)?.good?.name ??
-                        "Без товару"
-
-                     const profit = data
+                     const _profit = data
                         .filter((item) => item.status === "successful")
                         .reduce((acc, item) => {
                            const itemProfit = item.procurements.reduce(
@@ -182,27 +178,34 @@ function RouteComponent() {
                            return acc + itemProfit
                         }, 0)
 
+                     const groupShortId =
+                        key === "noop"
+                           ? null
+                           : String(data[0]?.shortId).padStart(3, "0")
+
                      return (
                         <div
                            key={key}
-                           className="group"
+                           className="group relative border-surface-5 border-b before:absolute before:inset-y-0 before:left-0 before:z-[2] before:my-auto before:h-[calc(100%-1.5rem)] before:w-[3px] before:rounded-e-md before:bg-primary-6 data-noop:before:hidden"
+                           data-noop={key === "noop" ? "" : undefined}
                            data-first={idx === 0 ? "" : undefined}
                         >
-                           <div className="flex h-10 items-center gap-3 border-surface-5 border-y bg-surface-2 px-4 group-data-first:border-t-transparent lg:pr-29 lg:pl-[37px]">
+                           {/* <div className="flex h-10 items-center gap-3 border-surface-5 border-y bg-surface-2 px-4 group-data-first:border-t-transparent lg:pr-29 lg:pl-[37px]">
                               <p className="flex items-center gap-2 font-medium text-sm">
-                                 <span className="line-clamp-1">{name}</span>
+                                 <span className="line-clamp-1">{key}</span>
                                  {profit < 1 ? null : (
                                     <span className="font-semibold text-green-700">
                                        {formatCurrency(profit)}
                                     </span>
                                  )}
                               </p>
-                           </div>
+                           </div> */}
                            <div className={"divide-y divide-surface-5"}>
                               {data.map((item) => (
                                  <OrderRow
                                     key={item.id}
                                     item={item}
+                                    groupShortId={groupShortId}
                                  />
                               ))}
                            </div>
@@ -665,8 +668,10 @@ function Empty() {
 
 function OrderRow({
    item,
+   groupShortId,
 }: {
    item: RouterOutput["order"]["list"][number]
+   groupShortId: string | null
 }) {
    const params = Route.useParams()
    const auth = useAuth()
@@ -715,7 +720,7 @@ function OrderRow({
                   className="mr-[2px] shrink-0"
                />
                <p className="whitespace-nowrap font-medium font-mono text-foreground/75 text-sm">
-                  №{String(item.shortId).padStart(3, "0")}
+                  №{groupShortId ?? String(item.shortId).padStart(3, "0")}
                </p>
                <AlignedColumn
                   id={`o_creator`}

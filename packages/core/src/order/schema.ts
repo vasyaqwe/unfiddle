@@ -36,6 +36,7 @@ export const order = d.table(
          .notNull()
          .references(() => workspace.id, { onDelete: "cascade" }),
       goodId: d.text().references(() => good.id, { onDelete: "set null" }),
+      groupId: d.text(),
       normalizedName: d.text().notNull().default(""),
       name: d.text().notNull(),
       quantity: d.integer().notNull(),
@@ -108,7 +109,7 @@ export const updateOrderSchema = createUpdateSchema(order)
       sellingPrice: true,
       status: true,
       severity: true,
-      goodId: true,
+      groupId: true,
    })
    .required({ id: true, workspaceId: true })
    .extend({ deletedAt: z.string().nullable().optional() })

@@ -1,5 +1,4 @@
 import { useAuth } from "@/auth/hooks"
-import { GoodCombobox } from "@/good/components/good-combobox"
 import { ORDER_SEVERITIES_TRANSLATION } from "@/order/constants"
 import { useUpdateOrder } from "@/order/mutations/use-update-order"
 import { ORDER_SEVERITIES } from "@unfiddle/core/order/constants"
@@ -46,7 +45,6 @@ export function UpdateOrder({
       onMutate: () => setOpen(false),
       onError: () => setOpen(true),
    })
-   const [goodId, setGoodId] = React.useState(order.goodId ?? "noop")
 
    return (
       <Drawer
@@ -69,12 +67,13 @@ export function UpdateOrder({
                      quantity: string
                      sellingPrice: string
                      note: string
+                     groupId: string
                   }>(e.target)
 
                   mutation.mutate({
                      id: order.id,
                      workspaceId: auth.workspace.id,
-                     goodId: goodId === "noop" ? undefined : goodId,
+                     groupId: form.groupId === "" ? undefined : form.groupId,
                      name: form.name,
                      quantity: number(form.quantity),
                      sellingPrice: number(form.sellingPrice),
@@ -125,18 +124,21 @@ export function UpdateOrder({
                   />
                </Field>
                <div className="grid gap-3 md:grid-cols-2 md:gap-8">
-                  <div>
-                     <label
-                        className={"mb-2.5 inline-block font-medium text-sm"}
-                        htmlFor="good"
-                     >
-                        До замовлення
-                     </label>
-                     <GoodCombobox
-                        goodId={goodId}
-                        setGoodId={setGoodId}
-                     />
-                  </div>
+                  <Field>
+                     <FieldLabel>До замовлення</FieldLabel>
+                     <div className="relative">
+                        <span className="absolute bottom-[7px] left-0 mt-2 text-[1rem]">
+                           №
+                        </span>
+                        <FieldControl
+                           placeholder="000"
+                           name="groupId"
+                           inputMode="numeric"
+                           className={"pl-6"}
+                           defaultValue={order.groupId ?? ""}
+                        />
+                     </div>
+                  </Field>
                   <Field>
                      <FieldLabel className={"mb-2.5"}>Пріорітет</FieldLabel>
                      <Select

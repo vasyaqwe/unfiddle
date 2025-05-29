@@ -1,0 +1,1 @@
+ALTER TABLE `order` ADD `group_id` text;

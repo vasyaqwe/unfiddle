@@ -101,7 +101,7 @@ export const orderRouter = t.router({
                status: true,
                note: true,
                creatorId: true,
-               goodId: true,
+               groupId: true,
                deletedAt: true,
                createdAt: true,
             },
@@ -145,7 +145,6 @@ export const orderRouter = t.router({
                   },
                   orderBy: [desc(procurement.createdAt)],
                },
-               good: { columns: { id: true, name: true } },
             },
             orderBy: [desc(order.createdAt)],
          })
