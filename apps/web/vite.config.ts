@@ -10,13 +10,13 @@ export default defineConfig(({ mode }) => {
 
    return {
       plugins: [
+         TanStackRouterVite({ target: "react", autoCodeSplitting: true }),
          react({
             babel: {
                plugins: [["babel-plugin-react-compiler", {}]],
             },
          }),
          tailwindcss(),
-         TanStackRouterVite(),
          tsconfigPaths(),
       ],
       preview: {

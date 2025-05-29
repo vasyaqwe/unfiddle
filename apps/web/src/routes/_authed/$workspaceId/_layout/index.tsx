@@ -188,7 +188,7 @@ function RouteComponent() {
                      return (
                         <div
                            key={key}
-                           className="group relative border-surface-5 border-b before:absolute before:inset-y-0 before:left-0 before:z-[2] before:my-auto before:h-[calc(100%-1.5rem)] before:w-[3px] before:rounded-e-md before:bg-primary-6 data-noop:before:hidden"
+                           className="group relative border-surface-5 border-b before:absolute before:inset-y-0 before:left-0 before:z-[2] before:my-auto before:h-[calc(100%-0.5rem)] before:w-1 before:rounded-e-md before:bg-primary-6 data-noop:before:hidden"
                            data-noop={key === "noop" ? "" : undefined}
                            data-first={idx === 0 ? "" : undefined}
                         >
