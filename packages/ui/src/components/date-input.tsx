@@ -80,10 +80,7 @@ export function DateInput({
                const value = new Date(e.target.value)
                if (!Number.isNaN(value.getTime())) {
                   onValueChange(value)
-                  if (inputRef.current) {
-                     inputRef.current.value = format(value)
-                     console.log(format(value))
-                  }
+                  if (inputRef.current) inputRef.current.value = format(value)
                } else {
                   onValueChange(null)
                   if (inputRef.current) {

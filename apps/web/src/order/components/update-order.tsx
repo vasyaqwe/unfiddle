@@ -130,7 +130,7 @@ export function UpdateOrder({
                         className={"mb-2.5 inline-block font-medium text-sm"}
                         htmlFor="good"
                      >
-                        Товар
+                        До замовлення
                      </label>
                      <GoodCombobox
                         goodId={goodId}

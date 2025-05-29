@@ -56,7 +56,7 @@ export function GoodCombobox({
                   variant={"secondary"}
                   className="flex w-full justify-start"
                >
-                  {selectedGood ? selectedGood.name : "Без товару"}
+                  {selectedGood ? selectedGood.name : "-"}
                   <ComboboxTriggerIcon />
                </Button>
             }
@@ -81,13 +81,13 @@ export function GoodCombobox({
             }}
          >
             <ComboboxInput
-               placeholder="Шукати або створити товар.."
+               placeholder="Шукати або додати нове.."
                value={goodName}
                onValueChange={setGoodName}
             />
             <ComboboxEmpty>
                {goods.data?.length === 0
-                  ? "Товарів немає"
+                  ? "Додайте перше"
                   : "Нічого не знайдено"}
             </ComboboxEmpty>
             {goods.data?.map((item) => (

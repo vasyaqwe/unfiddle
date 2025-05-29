@@ -220,13 +220,8 @@ export const orderRouter = t.router({
          await ctx.db
             .update(order)
             .set({
-               name: input.name,
+               ...input,
                normalizedName,
-               quantity: input.quantity,
-               sellingPrice: input.sellingPrice,
-               note: input.note,
-               status: input.status,
-               severity: input.severity,
                deletedAt:
                   input.deletedAt === undefined
                      ? undefined
