@@ -729,7 +729,7 @@ function OrderRow({
                   className="flex items-center gap-1 whitespace-nowrap font-medium text-sm"
                >
                   <UserAvatar
-                     size={22}
+                     size={25}
                      user={item.creator}
                      className="inline-block"
                   />
@@ -747,7 +747,7 @@ function OrderRow({
                            <TooltipTrigger
                               render={
                                  <UserAvatar
-                                    size={24}
+                                    size={25}
                                     user={assignee.user}
                                  />
                               }
