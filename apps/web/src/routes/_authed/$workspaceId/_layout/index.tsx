@@ -947,7 +947,9 @@ function OrderRow({
                         Відновити
                      </MenuItem>
                   )}
-                  {item.deletedAt && auth.user.id === item.creatorId ? (
+                  {item.deletedAt &&
+                  (auth.user.id === item.creatorId ||
+                     auth.workspace.role === "admin") ? (
                      <MenuItem
                         destructive
                         onClick={() => setConfirmDeleteOpen(true)}

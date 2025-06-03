@@ -3,15 +3,10 @@ import { Main } from "@/layout/components/main"
 import { PendingComponent } from "@/layout/components/pending-component"
 import { Sidebar } from "@/layout/components/sidebar"
 import { BottomNavigation } from "@/routes/_authed/$workspaceId/-components/bottom-navigation"
-import { SidebarContent } from "@/routes/_authed/$workspaceId/-components/sidebar"
+import { SidebarContent } from "@/routes/_authed/$workspaceId/-components/sidebar-content"
 import { SocketProvider } from "@/socket/provider"
 import { trpc } from "@/trpc"
-import {
-   Outlet,
-   createFileRoute,
-   notFound,
-   redirect,
-} from "@tanstack/react-router"
+import { Outlet, createFileRoute, notFound } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout")({
    component: RouteComponent,
@@ -23,9 +18,7 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout")({
                { staleTime: CACHE_FOREVER },
             ),
          )
-         .catch(() => {
-            throw redirect({ to: "/login" })
-         })
+         .catch()
 
       if (!workspace) throw notFound()
 
