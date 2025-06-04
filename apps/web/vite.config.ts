@@ -1,3 +1,4 @@
+import { sentryVitePlugin } from "@sentry/vite-plugin"
 import tailwindcss from "@tailwindcss/vite"
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite"
 import react from "@vitejs/plugin-react"
@@ -10,6 +11,11 @@ export default defineConfig(({ mode }) => {
 
    return {
       plugins: [
+         sentryVitePlugin({
+            authToken: process.env.SENTRY_AUTH_TOKEN,
+            org: "unfiddle",
+            project: "unfiddle-web",
+         }),
          TanStackRouterVite({ target: "react", autoCodeSplitting: true }),
          react({
             babel: {
@@ -19,6 +25,9 @@ export default defineConfig(({ mode }) => {
          tailwindcss(),
          tsconfigPaths(),
       ],
+      build: {
+         sourcemap: true,
+      },
       preview: {
          port: 3000,
       },

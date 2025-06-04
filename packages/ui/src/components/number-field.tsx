@@ -1,6 +1,7 @@
 import { NumberField as NumberFieldPrimitive } from "@base-ui-components/react/number-field"
+import type { Input } from "@unfiddle/ui/components/input"
 import { cn } from "@unfiddle/ui/utils"
-import { type Input, input } from "./input"
+import { input } from "./input/constants"
 
 export function NumberField({
    children,

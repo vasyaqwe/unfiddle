@@ -1,5 +1,6 @@
 import { env } from "@/env"
 import type { TRPCError } from "@/trpc"
+import * as Sentry from "@sentry/react"
 import { useQueryErrorResetBoundary } from "@tanstack/react-query"
 import {
    type ErrorComponentProps,
@@ -30,6 +31,10 @@ export function ErrorComponent({ error, reset, className, ...props }: Props) {
    React.useEffect(() => {
       queryErrorResetBoundary.reset()
    }, [queryErrorResetBoundary])
+
+   React.useEffect(() => {
+      if (error) Sentry.captureException(error)
+   }, [error])
 
    return (
       <div

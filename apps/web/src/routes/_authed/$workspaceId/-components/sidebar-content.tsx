@@ -5,7 +5,8 @@ import { WorkspaceMenuPopup } from "@/routes/_authed/$workspaceId/-components/wo
 import { UserAvatar } from "@/user/components/user-avatar"
 import { WorkspaceLogo } from "@/workspace/components/workspace-logo"
 import { Link, useParams, useSearch } from "@tanstack/react-router"
-import { Button, button } from "@unfiddle/ui/components/button"
+import { Button } from "@unfiddle/ui/components/button"
+import { button } from "@unfiddle/ui/components/button/constants"
 import { DrawerTrigger } from "@unfiddle/ui/components/drawer"
 import { Icons } from "@unfiddle/ui/components/icons"
 import {

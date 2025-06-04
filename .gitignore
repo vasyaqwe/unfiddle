@@ -10,6 +10,7 @@ build
 .env.me
 .env.vault
 env.d.ts
+.env.sentry-build-plugin
 
 .turbo
 .astro

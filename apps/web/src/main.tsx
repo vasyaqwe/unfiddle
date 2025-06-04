@@ -2,9 +2,10 @@ import "@unfiddle/ui/styles.css"
 import type { ApiClientError } from "@/api"
 import { queryClient, trpc } from "@/trpc"
 import { ErrorComponent } from "@/ui/components/error"
+import * as Sentry from "@sentry/react"
 import { QueryClientProvider } from "@tanstack/react-query"
 import { Link, RouterProvider, createRouter } from "@tanstack/react-router"
-import { button } from "@unfiddle/ui/components/button"
+import { button } from "@unfiddle/ui/components/button/constants"
 import { Logo } from "@unfiddle/ui/components/logo"
 import { TooltipProvider } from "@unfiddle/ui/components/tooltip"
 import { cx } from "@unfiddle/ui/utils"
@@ -31,6 +32,11 @@ const router = createRouter({
          }}
       />
    ),
+})
+
+Sentry.init({
+   dsn: "https://62c9a826502697061366307fab6f06fb@o4509439991152640.ingest.de.sentry.io/4509439995412560",
+   integrations: [Sentry.tanstackRouterBrowserTracingIntegration(router)],
 })
 
 function NotFound() {

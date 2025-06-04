@@ -1,4 +1,4 @@
-import { input } from "@unfiddle/ui/components/input"
+import { input } from "@unfiddle/ui/components/input/constants"
 import { cn } from "@unfiddle/ui/utils"
 import * as chrono from "chrono-node"
 import * as React from "react"
