@@ -127,14 +127,13 @@ function RouteComponent() {
       query.data ?? [],
       R.groupBy((item) => R.prop(item, "groupId") ?? "noop"),
       (groups) =>
-         Object.fromEntries(
-            Object.entries(groups).sort(([keyA], [keyB]) => {
-               if (keyA === "noop") return -1
-               if (keyB === "noop") return 1
-               return 0
-            }),
-         ),
+         Object.entries(groups).sort(([keyA], [keyB]) => {
+            if (keyA === "noop") return -1
+            if (keyB === "noop") return 1
+            return 0
+         }),
    )
+   console.log(groupedData, "<<<<<<<<<")
 
    return (
       <>
@@ -172,7 +171,7 @@ function RouteComponent() {
                ) : !data || data.length === 0 ? (
                   <Empty />
                ) : (
-                  Object.entries(groupedData).map(([key, data], idx) => {
+                  groupedData.map(([key, data], idx) => {
                      // const _profit = data
                      //    .filter((item) => item.status === "successful")
                      //    .reduce((acc, item) => {
