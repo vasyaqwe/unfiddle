@@ -126,6 +126,14 @@ function RouteComponent() {
    const groupedData = R.pipe(
       query.data ?? [],
       R.groupBy((item) => R.prop(item, "groupId") ?? "noop"),
+      (groups) =>
+         Object.fromEntries(
+            Object.entries(groups).sort(([keyA], [keyB]) => {
+               if (keyA === "noop") return -1
+               if (keyB === "noop") return 1
+               return 0
+            }),
+         ),
    )
 
    return (
