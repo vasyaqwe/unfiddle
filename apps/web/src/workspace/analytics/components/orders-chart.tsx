@@ -102,14 +102,12 @@ function ChartContent() {
    ) : (
       <div className="scrollbar-hidden flex grow flex-col overflow-x-auto">
          <ChartContainer
-            config={
-               {
-                  quantity: {
-                     label: "Quantity",
-                     color: "var(--color-chart-1)",
-                  },
-               }
-            }
+            config={{
+               quantity: {
+                  label: "Quantity",
+                  color: "var(--color-chart-1)",
+               },
+            }}
             style={{ minWidth: data.length * 16 }}
             className="mt-5 h-0 grow [--color-chart-1:var(--color-primary-6)] "
          >

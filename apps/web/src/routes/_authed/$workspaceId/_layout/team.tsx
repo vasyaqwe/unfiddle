@@ -272,7 +272,7 @@ function MemberRow({
                      render={
                         <Button
                            variant={"ghost"}
-                           className="-ml-3 disabled:cursor-auto disabled:opacity-100 disabled:hover:bg-transparent"
+                           className="-ml-2 disabled:cursor-auto disabled:opacity-100 disabled:hover:bg-transparent"
                         >
                            <SelectValue />
                         </Button>
