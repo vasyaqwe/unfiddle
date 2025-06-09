@@ -81,8 +81,12 @@ export const workspaceMemberRouter = t.router({
          const found = await ctx.db.query.workspace.findFirst({
             where: eq(workspace.id, input.workspaceId),
          })
-         if (found?.creatorId !== ctx.user.id)
+         if (found?.creatorId !== ctx.user.id || input.id === found?.creatorId)
             throw new TRPCError({ code: "FORBIDDEN" })
+
+         const sessions = await ctx.db.query.session.findMany({
+            where: eq(session.userId, input.id),
+         })
 
          await ctx.db.batch([
             ctx.db
@@ -133,14 +137,17 @@ export const workspaceMemberRouter = t.router({
                   ),
                ),
             ),
-            ctx.db
-               .update(session)
-               .set({
-                  workspaceMemberships: ctx.session.workspaceMemberships.filter(
-                     (m) => m.workspaceId !== input.workspaceId,
-                  ),
-               })
-               .where(eq(session.userId, input.id)),
+            ...sessions.map((s) =>
+               ctx.db
+                  .update(session)
+                  .set({
+                     workspaceMemberships:
+                        s.workspaceMemberships?.filter(
+                           (m) => m.workspaceId !== input.workspaceId,
+                        ) ?? [],
+                  })
+                  .where(eq(session.id, s.id)),
+            ),
          ])
       }),
 })
