@@ -53,6 +53,7 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
       beforeLoad: (opts) => {
          if (
             opts.context.workspace.role !== "admin" &&
+            opts.context.workspace.role !== "owner" &&
             !opts.search.who.includes(opts.context.user.id)
          )
             throw redirect({ to: ".", search: { who: [opts.context.user.id] } })
@@ -120,7 +121,8 @@ function RouteComponent() {
          <Header>
             <HeaderBackButton />
             <HeaderTitle>
-               {auth.workspace.role === "admin"
+               {auth.workspace.role === "owner" ||
+               auth.workspace.role === "admin"
                   ? "Аналітика"
                   : "Ваша аналітика"}
             </HeaderTitle>
@@ -133,12 +135,14 @@ function RouteComponent() {
                }
             >
                <p className="font-semibold text-xl max-md:hidden">
-                  {auth.workspace.role === "admin"
+                  {auth.workspace.role === "owner" ||
+                  auth.workspace.role === "admin"
                      ? "Аналітика"
                      : "Ваша аналітика"}
                </p>
                <div className="flex grid-cols-2 items-center gap-2 max-md:grid max-md:w-full">
-                  {auth.workspace.role === "admin" ? (
+                  {auth.workspace.role === "owner" ||
+                  auth.workspace.role === "admin" ? (
                      <Combobox
                         multiple
                         canBeEmpty
@@ -184,7 +188,10 @@ function RouteComponent() {
                         </ComboboxPopup>
                      </Combobox>
                   ) : null}
-                  {auth.workspace.role === "admin" ? <WhoCombobox /> : null}
+                  {auth.workspace.role === "owner" ||
+                  auth.workspace.role === "admin" ? (
+                     <WhoCombobox />
+                  ) : null}
                   <PeriodSelect searchKey={"period"} />
                </div>
             </header>

@@ -4,7 +4,7 @@ import { order, orderAssignee } from "@unfiddle/core/order/schema"
 import { procurement } from "@unfiddle/core/procurement/schema"
 import { t } from "@unfiddle/core/trpc/context"
 import { workspaceMemberMiddleware } from "@unfiddle/core/workspace/middleware"
-import { workspace, workspaceMember } from "@unfiddle/core/workspace/schema"
+import { workspaceMember } from "@unfiddle/core/workspace/schema"
 import { and, desc, eq, exists } from "drizzle-orm"
 import { createUpdateSchema } from "drizzle-zod"
 import { z } from "zod"
@@ -36,7 +36,10 @@ export const workspaceMemberRouter = t.router({
             .required(),
       )
       .mutation(async ({ ctx, input }) => {
-         if (ctx.membership.role !== "admin")
+         if (ctx.membership.role !== "admin" && ctx.membership.role !== "owner")
+            throw new TRPCError({ code: "FORBIDDEN" })
+
+         if (input.role === "owner" && ctx.membership.role !== "owner")
             throw new TRPCError({ code: "FORBIDDEN" })
 
          await ctx.db.batch([
@@ -78,10 +81,7 @@ export const workspaceMemberRouter = t.router({
          }),
       )
       .mutation(async ({ ctx, input }) => {
-         const found = await ctx.db.query.workspace.findFirst({
-            where: eq(workspace.id, input.workspaceId),
-         })
-         if (found?.creatorId !== ctx.user.id || input.id === found?.creatorId)
+         if (ctx.membership.role !== "owner")
             throw new TRPCError({ code: "FORBIDDEN" })
 
          const sessions = await ctx.db.query.session.findMany({
@@ -141,10 +141,9 @@ export const workspaceMemberRouter = t.router({
                ctx.db
                   .update(session)
                   .set({
-                     workspaceMemberships:
-                        s.workspaceMemberships?.filter(
-                           (m) => m.workspaceId !== input.workspaceId,
-                        ) ?? [],
+                     workspaceMemberships: s.workspaceMemberships.filter(
+                        (m) => m.workspaceId !== input.workspaceId,
+                     ),
                   })
                   .where(eq(session.id, s.id)),
             ),

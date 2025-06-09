@@ -955,7 +955,7 @@ function OrderRow({
                      </MenuItem>
                   )}
                   {item.deletedAt &&
-                  (auth.user.id === item.creatorId ||
+                  (auth.workspace.role === "owner" ||
                      auth.workspace.role === "admin") ? (
                      <MenuItem
                         destructive

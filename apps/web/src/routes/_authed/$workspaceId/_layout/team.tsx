@@ -103,7 +103,8 @@ function RouteComponent() {
                open={inviteOpen}
                onOpenChange={setInviteOpen}
             >
-               {auth.workspace.role === "admin" ? (
+               {auth.workspace.role === "owner" ||
+               auth.workspace.role === "admin" ? (
                   <DialogTrigger
                      render={
                         <Button
@@ -154,7 +155,8 @@ function RouteComponent() {
          <MainScrollArea container={false}>
             <div className="container mb-8 flex items-center justify-between max-md:hidden">
                <p className="font-semibold text-xl">Команда</p>
-               {auth.workspace.role === "admin" ? (
+               {auth.workspace.role === "owner" ||
+               auth.workspace.role === "admin" ? (
                   <Button onClick={() => setInviteOpen(true)}>Запросити</Button>
                ) : null}
             </div>
@@ -173,9 +175,7 @@ function RouteComponent() {
                         <TableHead>Пошта</TableHead>
                         <TableHead>Роль</TableHead>
                         <TableHead>Приєднався</TableHead>
-                        {auth.workspace.creatorId === auth.user.id ? (
-                           <TableHead />
-                        ) : null}
+                        {auth.workspace.role === "owner" ? <TableHead /> : null}
                      </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -263,9 +263,11 @@ function MemberRow({
                >
                   <SelectTrigger
                      disabled={
-                        (auth.workspace.role === "admin" &&
-                           member.user.id === auth.user.id) ||
-                        auth.workspace.role !== "admin"
+                        member.user.id === auth.user.id || // Can't change own role
+                        (member.role === "owner" &&
+                           auth.workspace.role !== "owner") || // Only owners can modify owner roles
+                        auth.workspace.role === "manager" ||
+                        auth.workspace.role === "buyer"
                      }
                      render={
                         <Button
@@ -277,14 +279,23 @@ function MemberRow({
                      }
                   />
                   <SelectPopup>
-                     {WORKSPACE_ROLES.map((role) => (
-                        <SelectItem
-                           key={role}
-                           value={role}
-                        >
-                           {WORKSPACE_ROLES_TRANSLATION[role]}
-                        </SelectItem>
-                     ))}
+                     {WORKSPACE_ROLES.map((role) => {
+                        return (
+                           <SelectItem
+                              key={role}
+                              value={role}
+                              disabled={
+                                 role === "owner" &&
+                                 auth.workspace.role !== "owner"
+                              }
+                              className={
+                                 "data-disabled:cursor-not-allowed data-disabled:opacity-70 data-disabled:hover:bg-transparent"
+                              }
+                           >
+                              {WORKSPACE_ROLES_TRANSLATION[role]}
+                           </SelectItem>
+                        )
+                     })}
                   </SelectPopup>
                </Select>
             </TableCell>
@@ -294,7 +305,7 @@ function MemberRow({
                   day: "numeric",
                })}
             </TableCell>
-            {auth.workspace.creatorId === auth.user.id &&
+            {auth.workspace.role === "owner" &&
             member.user.id !== auth.user.id ? (
                <TableCell>
                   <Menu>

@@ -109,7 +109,7 @@ export const workspaceRouter = t.router({
                ctx.db.insert(workspaceMember).values({
                   workspaceId: createdWorkspace.id,
                   userId: ctx.user.id,
-                  role: "admin",
+                  role: "owner",
                }),
                ctx.db
                   .update(session)
@@ -118,7 +118,7 @@ export const workspaceRouter = t.router({
                         ...ctx.session.workspaceMemberships,
                         {
                            workspaceId: createdWorkspace.id,
-                           role: "admin",
+                           role: "owner",
                         },
                      ],
                   })
