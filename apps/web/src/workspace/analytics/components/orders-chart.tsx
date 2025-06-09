@@ -9,7 +9,6 @@ import { useSuspenseQuery } from "@tanstack/react-query"
 import { CatchBoundary } from "@tanstack/react-router"
 import { useParams, useSearch } from "@tanstack/react-router"
 import {
-   type ChartConfig,
    ChartContainer,
    ChartTooltip,
    ChartTooltipContent,
@@ -109,7 +108,7 @@ function ChartContent() {
                      label: "Quantity",
                      color: "var(--color-chart-1)",
                   },
-               } satisfies ChartConfig
+               }
             }
             style={{ minWidth: data.length * 16 }}
             className="mt-5 h-0 grow [--color-chart-1:var(--color-primary-6)] "

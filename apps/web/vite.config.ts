@@ -15,6 +15,7 @@ export default defineConfig(({ mode }) => {
             authToken: process.env.SENTRY_AUTH_TOKEN,
             org: "unfiddle",
             project: "unfiddle-web",
+            disable: process.env.NODE_ENV === "development",
          }),
          TanStackRouterVite({ target: "react", autoCodeSplitting: true }),
          react({

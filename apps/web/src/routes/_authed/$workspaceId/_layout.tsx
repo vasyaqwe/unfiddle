@@ -18,7 +18,9 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout")({
                { staleTime: CACHE_FOREVER },
             ),
          )
-         .catch()
+         .catch(() => {
+            throw notFound()
+         })
 
       if (!workspace) throw notFound()
 

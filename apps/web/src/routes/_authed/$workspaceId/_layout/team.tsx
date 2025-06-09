@@ -1,6 +1,7 @@
 import { useAuth } from "@/auth/hooks"
 import { formatDate } from "@/date"
 import { env } from "@/env"
+import { useDelayedValue } from "@/interactions/use-delayed-value"
 import { MainScrollArea } from "@/layout/components/main"
 import {
    Header,
@@ -24,9 +25,23 @@ import {
    DialogTrigger,
    DialogXClose,
 } from "@unfiddle/ui/components/dialog"
+import {
+   AlertDialog,
+   AlertDialogClose,
+   AlertDialogDescription,
+   AlertDialogFooter,
+   AlertDialogPopup,
+   AlertDialogTitle,
+} from "@unfiddle/ui/components/dialog/alert"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { Input } from "@unfiddle/ui/components/input"
 import { Loading } from "@unfiddle/ui/components/loading"
+import {
+   Menu,
+   MenuItem,
+   MenuPopup,
+   MenuTrigger,
+} from "@unfiddle/ui/components/menu"
 import {
    Select,
    SelectItem,
@@ -43,6 +58,7 @@ import {
    TableRow,
 } from "@unfiddle/ui/components/table"
 import * as React from "react"
+import { toast } from "sonner"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/team")({
    component: RouteComponent,
@@ -68,6 +84,8 @@ function RouteComponent() {
    const inputRef = React.useRef<HTMLInputElement>(null)
    const joinLink = `${env.WEB_URL}/join/${auth.workspace?.inviteCode}`
 
+   const [inviteOpen, setInviteOpen] = React.useState(false)
+
    const createCode = useMutation(
       trpc.workspace.createCode.mutationOptions({
          onSuccess: () => {
@@ -77,30 +95,67 @@ function RouteComponent() {
    )
 
    return (
-      <Dialog>
+      <>
          <Header>
             <HeaderBackButton />
             <HeaderTitle>Команда</HeaderTitle>
-            {auth.workspace.role === "admin" ? (
-               <DialogTrigger
-                  render={
+            <Dialog
+               open={inviteOpen}
+               onOpenChange={setInviteOpen}
+            >
+               {auth.workspace.role === "admin" ? (
+                  <DialogTrigger
+                     render={
+                        <Button
+                           className="ml-auto"
+                           variant={"ghost"}
+                           kind={"icon"}
+                           aria-label="Запросити"
+                        >
+                           <Icons.plus />
+                        </Button>
+                     }
+                  />
+               ) : null}
+               <DialogPopup>
+                  <DialogTitle>
+                     Запросіть людей
+                     <DialogXClose />
+                  </DialogTitle>
+                  <p className="text-foreground/75">
+                     Будь-хто може приєднатися до проєкту за цим посиланням.
+                  </p>
+                  <div className="relative mt-4 flex items-center gap-0.5">
+                     <Input
+                        readOnly
+                        ref={inputRef}
+                        value={joinLink}
+                        className={"mr-1 truncate"}
+                     />
+                     <CopyButton
+                        value={joinLink}
+                        size={"lg"}
+                     />
                      <Button
-                        className="ml-auto"
-                        variant={"ghost"}
+                        disabled={createCode.isPending}
+                        onClick={() =>
+                           createCode.mutate({ id: auth.workspace.id })
+                        }
+                        size={"lg"}
                         kind={"icon"}
-                        aria-label="Запросити"
+                        variant={"ghost"}
                      >
-                        <Icons.plus />
+                        <Icons.reload className="size-5" />
                      </Button>
-                  }
-               />
-            ) : null}
+                  </div>
+               </DialogPopup>
+            </Dialog>
          </Header>
          <MainScrollArea container={false}>
             <div className="container mb-8 flex items-center justify-between max-md:hidden">
                <p className="font-semibold text-xl">Команда</p>
                {auth.workspace.role === "admin" ? (
-                  <DialogTrigger render={<Button>Запросити</Button>} />
+                  <Button onClick={() => setInviteOpen(true)}>Запросити</Button>
                ) : null}
             </div>
             {query.isPending ? (
@@ -118,6 +173,9 @@ function RouteComponent() {
                         <TableHead>Пошта</TableHead>
                         <TableHead>Роль</TableHead>
                         <TableHead>Приєднався</TableHead>
+                        {auth.workspace.creatorId === auth.user.id ? (
+                           <TableHead />
+                        ) : null}
                      </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -131,37 +189,7 @@ function RouteComponent() {
                </Table>
             )}
          </MainScrollArea>
-         <DialogPopup>
-            <DialogTitle>
-               Запросіть людей
-               <DialogXClose />
-            </DialogTitle>
-            <p className="text-foreground/75">
-               Будь-хто може приєднатися до проєкту за цим посиланням.
-            </p>
-            <div className="relative mt-4 flex items-center gap-0.5">
-               <Input
-                  readOnly
-                  ref={inputRef}
-                  value={joinLink}
-                  className={"mr-1 truncate"}
-               />
-               <CopyButton
-                  value={joinLink}
-                  size={"lg"}
-               />
-               <Button
-                  disabled={createCode.isPending}
-                  onClick={() => createCode.mutate({ id: auth.workspace.id })}
-                  size={"lg"}
-                  kind={"icon"}
-                  variant={"ghost"}
-               >
-                  <Icons.reload className="size-5" />
-               </Button>
-            </div>
-         </DialogPopup>
-      </Dialog>
+      </>
    )
 }
 
@@ -171,6 +199,10 @@ function MemberRow({
    const params = Route.useParams()
    const queryClient = useQueryClient()
    const auth = useAuth()
+
+   const [deleteOpen, setDeleteOpen] = React.useState(false)
+   const menuTriggerRef = React.useRef<HTMLButtonElement>(null)
+
    const update = useMutation(
       trpc.workspace.member.update.mutationOptions({
          onSuccess: () => {
@@ -183,63 +215,159 @@ function MemberRow({
       }),
    )
 
+   const deleteMember = useMutation(
+      trpc.workspace.member.delete.mutationOptions({
+         onSuccess: () => {
+            toast.success("Успішно видалено")
+            queryClient.invalidateQueries(
+               trpc.workspace.member.list.queryOptions({
+                  workspaceId: params.workspaceId,
+               }),
+            )
+            queryClient.invalidateQueries(
+               trpc.order.list.queryOptions({
+                  filter: {},
+                  workspaceId: params.workspaceId,
+               }),
+            )
+         },
+      }),
+   )
+
+   const isDeletePending = useDelayedValue(deleteMember.isPending, 150)
+
    return (
-      <TableRow>
-         <TableCell>
-            <div className="flex items-center gap-1.5">
-               <UserAvatar
-                  size={24}
-                  className="-mt-px"
-                  user={member.user}
-               />
-               {member.user.name}
-            </div>
-         </TableCell>
-         <TableCell>{member.user.email}</TableCell>
-         <TableCell className="min-w-[150px]">
-            <Select
-               value={member.role}
-               onValueChange={(role) =>
-                  update.mutate({
-                     userId: member.user.id,
-                     workspaceId: params.workspaceId,
-                     role,
-                  })
-               }
-            >
-               <SelectTrigger
-                  disabled={
-                     (auth.workspace.role === "admin" &&
-                        member.user.id === auth.user.id) ||
-                     auth.workspace.role !== "admin"
+      <>
+         <TableRow>
+            <TableCell>
+               <div className="flex items-center gap-1.5">
+                  <UserAvatar
+                     size={24}
+                     className="-mt-px"
+                     user={member.user}
+                  />
+                  {member.user.name}
+               </div>
+            </TableCell>
+            <TableCell>{member.user.email}</TableCell>
+            <TableCell className="min-w-[150px]">
+               <Select
+                  value={member.role}
+                  onValueChange={(role) =>
+                     update.mutate({
+                        userId: member.user.id,
+                        workspaceId: params.workspaceId,
+                        role,
+                     })
                   }
-                  render={
-                     <Button
-                        variant={"ghost"}
-                        className="-ml-3 disabled:cursor-auto disabled:opacity-100 disabled:hover:bg-transparent"
-                     >
-                        <SelectValue />
-                     </Button>
-                  }
-               />
-               <SelectPopup>
-                  {WORKSPACE_ROLES.map((role) => (
-                     <SelectItem
-                        key={role}
-                        value={role}
-                     >
-                        {WORKSPACE_ROLES_TRANSLATION[role]}
-                     </SelectItem>
-                  ))}
-               </SelectPopup>
-            </Select>
-         </TableCell>
-         <TableCell>
-            {formatDate(member.createdAt, {
-               month: "long",
-               day: "numeric",
-            })}
-         </TableCell>
-      </TableRow>
+               >
+                  <SelectTrigger
+                     disabled={
+                        (auth.workspace.role === "admin" &&
+                           member.user.id === auth.user.id) ||
+                        auth.workspace.role !== "admin"
+                     }
+                     render={
+                        <Button
+                           variant={"ghost"}
+                           className="-ml-3 disabled:cursor-auto disabled:opacity-100 disabled:hover:bg-transparent"
+                        >
+                           <SelectValue />
+                        </Button>
+                     }
+                  />
+                  <SelectPopup>
+                     {WORKSPACE_ROLES.map((role) => (
+                        <SelectItem
+                           key={role}
+                           value={role}
+                        >
+                           {WORKSPACE_ROLES_TRANSLATION[role]}
+                        </SelectItem>
+                     ))}
+                  </SelectPopup>
+               </Select>
+            </TableCell>
+            <TableCell>
+               {formatDate(member.createdAt, {
+                  month: "long",
+                  day: "numeric",
+               })}
+            </TableCell>
+            {auth.workspace.creatorId === auth.user.id &&
+            member.user.id !== auth.user.id ? (
+               <TableCell>
+                  <Menu>
+                     <MenuTrigger
+                        ref={menuTriggerRef}
+                        render={
+                           <Button
+                              variant={"ghost"}
+                              kind={"icon"}
+                           >
+                              <Icons.ellipsisHorizontal />
+                           </Button>
+                        }
+                     />
+                     <MenuPopup align="end">
+                        <MenuItem
+                           destructive
+                           onClick={() => setDeleteOpen(true)}
+                        >
+                           <Icons.trash />
+                           Видалити
+                        </MenuItem>
+                     </MenuPopup>
+                  </Menu>
+               </TableCell>
+            ) : null}
+         </TableRow>
+         <AlertDialog
+            open={deleteOpen}
+            onOpenChange={setDeleteOpen}
+         >
+            <AlertDialogPopup finalFocus={menuTriggerRef}>
+               <AlertDialogTitle>
+                  Видалити {member.user.name} з команди?
+               </AlertDialogTitle>
+               <AlertDialogDescription>
+                  <b>
+                     {member.user.name} ({member.user.email})
+                  </b>{" "}
+                  більше не буде мати доступу до проєкту. Усі дані від цього
+                  користувача також будуть видалені (замовлення, закупівлі).
+               </AlertDialogDescription>
+               {/* <div className="flex items-center gap-2.5">
+                  <Switch id="delete_data" />
+                  <label htmlFor="delete_data">
+                     Також видалити всі дані цього користувача (замовлення,
+                     закупівлі).
+                  </label>
+               </div> */}
+               <AlertDialogFooter>
+                  <AlertDialogClose
+                     render={<Button variant="secondary">Відмінити</Button>}
+                  />
+                  <AlertDialogClose
+                     render={
+                        <Button
+                           disabled={isDeletePending}
+                           pending={isDeletePending}
+                           variant={"destructive"}
+                           onClick={() =>
+                              deleteMember.mutate({
+                                 id: member.user.id,
+                                 workspaceId: params.workspaceId,
+                              })
+                           }
+                        >
+                           Так, видалити
+                        </Button>
+                     }
+                  />
+               </AlertDialogFooter>
+            </AlertDialogPopup>
+         </AlertDialog>
+      </>
    )
 }

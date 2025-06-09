@@ -1,9 +1,11 @@
 import { TRPCError } from "@trpc/server"
 import { session } from "@unfiddle/core/auth/schema"
+import { order, orderAssignee } from "@unfiddle/core/order/schema"
+import { procurement } from "@unfiddle/core/procurement/schema"
 import { t } from "@unfiddle/core/trpc/context"
 import { workspaceMemberMiddleware } from "@unfiddle/core/workspace/middleware"
-import { workspaceMember } from "@unfiddle/core/workspace/schema"
-import { and, desc, eq } from "drizzle-orm"
+import { workspace, workspaceMember } from "@unfiddle/core/workspace/schema"
+import { and, desc, eq, exists } from "drizzle-orm"
 import { createUpdateSchema } from "drizzle-zod"
 import { z } from "zod"
 
@@ -65,6 +67,80 @@ export const workspaceMemberRouter = t.router({
                   ),
                })
                .where(eq(session.userId, input.userId)),
+         ])
+      }),
+   delete: t.procedure
+      .use(workspaceMemberMiddleware)
+      .input(
+         z.object({
+            id: z.string(),
+            workspaceId: z.string(),
+         }),
+      )
+      .mutation(async ({ ctx, input }) => {
+         const found = await ctx.db.query.workspace.findFirst({
+            where: eq(workspace.id, input.workspaceId),
+         })
+         if (found?.creatorId !== ctx.user.id)
+            throw new TRPCError({ code: "FORBIDDEN" })
+
+         await ctx.db.batch([
+            ctx.db
+               .delete(workspaceMember)
+               .where(
+                  and(
+                     eq(workspaceMember.workspaceId, input.workspaceId),
+                     eq(workspaceMember.userId, input.id),
+                  ),
+               ),
+            ctx.db
+               .delete(order)
+               .where(
+                  and(
+                     eq(order.workspaceId, input.workspaceId),
+                     eq(order.creatorId, input.id),
+                  ),
+               ),
+            ctx.db.delete(orderAssignee).where(
+               and(
+                  eq(orderAssignee.userId, input.id),
+                  exists(
+                     ctx.db
+                        .select()
+                        .from(order)
+                        .where(
+                           and(
+                              eq(order.id, orderAssignee.orderId),
+                              eq(order.workspaceId, input.workspaceId),
+                           ),
+                        ),
+                  ),
+               ),
+            ),
+            ctx.db.delete(procurement).where(
+               and(
+                  eq(procurement.creatorId, input.id),
+                  exists(
+                     ctx.db
+                        .select()
+                        .from(order)
+                        .where(
+                           and(
+                              eq(order.id, procurement.orderId),
+                              eq(order.workspaceId, input.workspaceId),
+                           ),
+                        ),
+                  ),
+               ),
+            ),
+            ctx.db
+               .update(session)
+               .set({
+                  workspaceMemberships: ctx.session.workspaceMemberships.filter(
+                     (m) => m.workspaceId !== input.workspaceId,
+                  ),
+               })
+               .where(eq(session.userId, input.id)),
          ])
       }),
 })
