@@ -127,13 +127,28 @@ function RouteComponent() {
       query.data ?? [],
       R.groupBy((item) => R.prop(item, "groupId") ?? "noop"),
       (groups) =>
-         Object.entries(groups).sort(([keyA], [keyB]) => {
+         Object.entries(groups).sort(([keyA, itemsA], [keyB, itemsB]) => {
             if (keyA === "noop") return -1
             if (keyB === "noop") return 1
-            return 0
+
+            if (!itemsA?.length || !itemsB?.length) return 0
+
+            const item1 = itemsA[itemsA.length - 1]
+            const item2 = itemsB[itemsB.length - 1]
+
+            if (
+               !item1 ||
+               typeof item1 === "string" ||
+               !item2 ||
+               typeof item2 === "string"
+            )
+               return 0
+
+            const oldestA = new Date(item1.createdAt).getTime()
+            const oldestB = new Date(item2.createdAt).getTime()
+            return oldestB - oldestA
          }),
    )
-   console.log(groupedData, "<<<<<<<<<")
 
    return (
       <>
