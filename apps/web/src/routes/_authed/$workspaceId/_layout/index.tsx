@@ -123,33 +123,65 @@ function RouteComponent() {
    const query = useQuery(queryOptions.list)
    const data = query.data ?? []
 
-   const groupedData = R.pipe(
-      query.data ?? [],
-      R.groupBy((item) => R.prop(item, "groupId") ?? "noop"),
-      (groups) =>
-         Object.entries(groups).sort(([keyA, itemsA], [keyB, itemsB]) => {
-            if (keyA === "noop") return -1
-            if (keyB === "noop") return 1
+   const groupedData = React.useMemo(() => {
+      const data = query.data ?? []
 
-            if (!itemsA?.length || !itemsB?.length) return 0
+      const groupedItems = data.filter((item) => item.groupId)
+      const ungroupedItems = data.filter((item) => !item.groupId)
 
-            const item1 = itemsA[itemsA.length - 1]
-            const item2 = itemsB[itemsB.length - 1]
+      const groups: Record<string, typeof data> = {}
+      for (const item of groupedItems) {
+         // biome-ignore lint/style/noNonNullAssertion: <explanation>
+         const groupId = item.groupId!
 
-            if (
-               !item1 ||
-               typeof item1 === "string" ||
-               !item2 ||
-               typeof item2 === "string"
-            )
-               return 0
+         if (!groups[groupId]) groups[groupId] = []
+         groups[groupId].push(item)
+      }
 
-            const oldestA = new Date(item1.createdAt).getTime()
-            const oldestB = new Date(item2.createdAt).getTime()
-            return oldestB - oldestA
-         }),
-   )
-   console.log(groupedData)
+      for (const items of Object.values(groups)) {
+         items.sort(
+            (a, b) =>
+               new Date(b.createdAt).getTime() -
+               new Date(a.createdAt).getTime(),
+         )
+      }
+
+      const mixedItems = []
+
+      for (const [key, items] of Object.entries(groups)) {
+         mixedItems.push({
+            type: "group",
+            key: key,
+            items: items,
+         })
+      }
+
+      for (const item of ungroupedItems) {
+         mixedItems.push({
+            type: "individual",
+            item: item,
+            items: [],
+         })
+      }
+
+      return mixedItems.sort((a, b) => {
+         const itemsA = a.items ?? []
+         const itemsB = b.items ?? []
+
+         const itemA = itemsA[itemsA.length - 1]
+         const itemB = itemsB[itemsB.length - 1]
+
+         const dateA =
+            a.type === "group"
+               ? new Date(itemA?.createdAt ?? 0).getTime()
+               : new Date(a.item?.createdAt ?? 0).getTime()
+         const dateB =
+            b.type === "group"
+               ? new Date(itemB?.createdAt ?? 0).getTime()
+               : new Date(b.item?.createdAt ?? 0).getTime()
+         return dateB - dateA
+      })
+   }, [query.data])
 
    return (
       <>
@@ -187,46 +219,34 @@ function RouteComponent() {
                ) : !data || data.length === 0 ? (
                   <Empty />
                ) : (
-                  groupedData.map(([key, data], idx) => {
-                     // const _profit = data
-                     //    .filter((item) => item.status === "successful")
-                     //    .reduce((acc, item) => {
-                     //       const itemProfit = item.procurements.reduce(
-                     //          (procAcc, p) =>
-                     //             procAcc +
-                     //             ((item.sellingPrice ?? 0) - p.purchasePrice) *
-                     //                p.quantity,
-                     //          0,
-                     //       )
-                     //       return acc + itemProfit
-                     //    }, 0)
+                  groupedData.map((entry) => {
+                     if (entry.type === "individual") {
+                        if (!entry.item) return null
 
-                     const groupShortId =
-                        key === "noop"
-                           ? null
-                           : String(
-                                data[data.length - 1]?.shortId ?? 1,
-                             ).padStart(3, "0")
+                        return (
+                           <div
+                              key={entry.item.id}
+                              className={"border-surface-5 border-b"}
+                           >
+                              <OrderRow
+                                 item={entry.item}
+                                 groupShortId={null}
+                              />
+                           </div>
+                        )
+                     }
+
+                     const groupShortId = String(
+                        entry.items[entry.items.length - 1]?.shortId ?? 1,
+                     ).padStart(3, "0")
 
                      return (
                         <div
-                           key={key}
-                           className="group relative border-surface-5 border-b before:absolute before:inset-y-0 before:left-0 before:z-[2] before:my-auto before:h-[calc(100%-0.5rem)] before:w-1 before:rounded-e-md before:bg-primary-6 data-noop:before:hidden"
-                           data-noop={key === "noop" ? "" : undefined}
-                           data-first={idx === 0 ? "" : undefined}
+                           key={entry.key}
+                           className="group relative border-surface-5 border-b before:absolute before:inset-y-0 before:left-0 before:z-[2] before:my-auto before:h-[calc(100%-0.5rem)] before:w-1 before:rounded-e-md before:bg-primary-6"
                         >
-                           {/* <div className="flex h-10 items-center gap-3 border-surface-5 border-y bg-surface-2 px-4 group-data-first:border-t-transparent lg:pr-29 lg:pl-[37px]">
-                              <p className="flex items-center gap-2 font-medium text-sm">
-                                 <span className="line-clamp-1">{key}</span>
-                                 {profit < 1 ? null : (
-                                    <span className="font-semibold text-green-700">
-                                       {formatCurrency(profit)}
-                                    </span>
-                                 )}
-                              </p>
-                           </div> */}
                            <div className={"divide-y divide-surface-5"}>
-                              {data.map((item) => (
+                              {entry.items.map((item) => (
                                  <OrderRow
                                     key={item.id}
                                     item={item}
