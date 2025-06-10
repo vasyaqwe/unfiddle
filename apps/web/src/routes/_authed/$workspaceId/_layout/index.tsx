@@ -149,6 +149,7 @@ function RouteComponent() {
             return oldestB - oldestA
          }),
    )
+   console.log(groupedData)
 
    return (
       <>
