@@ -1,7 +1,8 @@
 import { authClient } from "@/auth"
+import { env } from "@/env"
 import { validator } from "@/validator"
 import { useMutation } from "@tanstack/react-query"
-import { Link, createFileRoute, useNavigate } from "@tanstack/react-router"
+import { Link, createFileRoute } from "@tanstack/react-router"
 import { MIN_PASSWORD_LENGTH } from "@unfiddle/core/auth/constants"
 import { Button } from "@unfiddle/ui/components/button"
 import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
@@ -19,7 +20,10 @@ export const Route = createFileRoute("/signup")({
 
 function RouteComponent() {
    const search = Route.useSearch()
-   const navigate = useNavigate()
+
+   const callbackURL = search.invite_code
+      ? `${env.WEB_URL}/join/${search.invite_code}`
+      : env.WEB_URL
 
    const signup = useMutation({
       mutationFn: async (json: {
@@ -35,9 +39,7 @@ function RouteComponent() {
          if (res.error) throw res.error
          const res2 = await authClient.sendVerificationEmail({
             email: json.email,
-            callbackURL: search.invite_code
-               ? `${window.location.origin}/join/${search.invite_code}`
-               : window.location.origin,
+            callbackURL,
          })
          if (res2.error) throw res2.error
       },
@@ -70,17 +72,9 @@ function RouteComponent() {
       mutationFn: async () => {
          const res = await authClient.signIn.social({
             provider: "google",
-            callbackURL: window.location.origin,
+            callbackURL,
          })
          if (res.error) throw res.error
-      },
-      onSuccess: () => {
-         if (search.invite_code)
-            return navigate({
-               to: "/join/$code",
-               params: { code: search.invite_code },
-            })
-         navigate({ to: "/" })
       },
       onError: () => {
          toast.error("Ой-ой!", {

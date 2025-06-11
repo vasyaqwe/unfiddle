@@ -1,4 +1,5 @@
 import { authClient } from "@/auth"
+import { env } from "@/env"
 import { validator } from "@/validator"
 import { useMutation } from "@tanstack/react-query"
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router"
@@ -69,17 +70,11 @@ function RouteComponent() {
       mutationFn: async () => {
          const res = await authClient.signIn.social({
             provider: "google",
-            callbackURL: window.location.origin,
+            callbackURL: search.invite_code
+               ? `${env.WEB_URL}/join/${search.invite_code}`
+               : env.WEB_URL,
          })
          if (res.error) throw res.error
-      },
-      onSuccess: () => {
-         if (search.invite_code)
-            return navigate({
-               to: "/join/$code",
-               params: { code: search.invite_code },
-            })
-         navigate({ to: "/" })
       },
       onError: () => {
          toast.error("Ой-ой!", {

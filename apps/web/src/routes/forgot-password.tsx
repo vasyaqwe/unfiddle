@@ -1,4 +1,5 @@
 import { authClient } from "@/auth"
+import { env } from "@/env"
 import { useMutation } from "@tanstack/react-query"
 import { Link, createFileRoute } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
@@ -18,7 +19,7 @@ function RouteComponent() {
       mutationFn: async (json: { email: string }) => {
          const res = await authClient.forgetPassword({
             email: json.email,
-            redirectTo: `${window.location.origin}/reset-password`,
+            redirectTo: `${env.WEB_URL}/reset-password`,
          })
 
          if (res.error) throw res.error
