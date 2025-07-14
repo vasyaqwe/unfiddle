@@ -10,10 +10,7 @@ import {
    DrawerTitle,
 } from "@unfiddle/ui/components/drawer"
 import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
-import {
-   NumberField,
-   NumberFieldInput,
-} from "@unfiddle/ui/components/number-field"
+import { NumberField } from "@unfiddle/ui/components/number-field"
 import {
    Select,
    SelectItem,
@@ -22,7 +19,7 @@ import {
    SelectTriggerIcon,
    SelectValue,
 } from "@unfiddle/ui/components/select"
-import { formData, number } from "@unfiddle/ui/utils"
+import { formData } from "@unfiddle/ui/utils"
 import * as React from "react"
 
 export function CreateOrder({ children }: { children?: React.ReactNode }) {
@@ -33,6 +30,7 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
       onMutate: () => setOpen(false),
       onError: () => setOpen(true),
    })
+   const formRef = React.useRef<HTMLFormElement>(null)
 
    return (
       <Drawer
@@ -43,25 +41,36 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
          <DrawerPopup>
             <DrawerTitle>Нове замовлення</DrawerTitle>
             <form
+               ref={formRef}
                className="mt-4 flex grow flex-col space-y-7"
                onSubmit={(e) => {
                   e.preventDefault()
-                  const form = formData<{
-                     name: string
-                     quantity: string
-                     sellingPrice: string
-                     note: string
-                     groupId: string
-                  }>(e.target)
+                  const activeElement = document.activeElement as HTMLElement
+                  if (
+                     activeElement &&
+                     formRef.current?.contains(activeElement)
+                  ) {
+                     activeElement.blur()
+                  }
 
-                  mutation.mutate({
-                     workspaceId: auth.workspace.id,
-                     groupId: form.groupId === "" ? null : form.groupId,
-                     name: form.name,
-                     quantity: number(form.quantity),
-                     sellingPrice: number(form.sellingPrice),
-                     note: form.note,
-                     severity,
+                  requestAnimationFrame(() => {
+                     const form = formData<{
+                        name: string
+                        quantity: string
+                        sellingPrice: string
+                        note: string
+                        groupId: string
+                     }>(e.target)
+
+                     mutation.mutate({
+                        workspaceId: auth.workspace.id,
+                        groupId: form.groupId === "" ? null : form.groupId,
+                        name: form.name,
+                        quantity: +form.quantity,
+                        sellingPrice: +form.sellingPrice,
+                        note: form.note,
+                        severity,
+                     })
                   })
                }}
             >
@@ -79,19 +88,17 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
                      <NumberField
                         required
                         name="quantity"
+                        placeholder="шт."
                         min={1}
-                     >
-                        <NumberFieldInput placeholder="шт." />
-                     </NumberField>
+                     />
                   </Field>
                   <Field>
                      <FieldLabel>Ціна продажу</FieldLabel>
                      <NumberField
                         name="sellingPrice"
+                        placeholder="₴"
                         min={1}
-                     >
-                        <NumberFieldInput placeholder="₴" />
-                     </NumberField>
+                     />
                   </Field>
                </div>
                <Field>
@@ -128,7 +135,13 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
                                  variant={"secondary"}
                                  className="w-full justify-start"
                               >
-                                 <SelectValue />
+                                 <SelectValue>
+                                    {(label) =>
+                                       ORDER_SEVERITIES_TRANSLATION[
+                                          label as never
+                                       ]
+                                    }
+                                 </SelectValue>
                                  <SelectTriggerIcon />
                               </Button>
                            }

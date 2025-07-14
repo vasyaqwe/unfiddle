@@ -1,38 +1,32 @@
 import { NumberField as NumberFieldPrimitive } from "@base-ui-components/react/number-field"
-import type { Input } from "@unfiddle/ui/components/input"
 import { cn } from "@unfiddle/ui/utils"
 import { input } from "./input/constants"
 
 export function NumberField({
    children,
+   placeholder,
    className,
    ...props
-}: React.ComponentProps<typeof NumberFieldPrimitive.Root>) {
+}: React.ComponentProps<typeof NumberFieldPrimitive.Root> & {
+   placeholder?: string | undefined
+}) {
    return (
       <NumberFieldPrimitive.Root
+         inputMode="numeric"
          className={cn("w-full", className)}
          {...props}
       >
          <NumberFieldPrimitive.ScrubArea>
             <NumberFieldPrimitive.ScrubAreaCursor />
          </NumberFieldPrimitive.ScrubArea>
-         {children}
+         <NumberFieldPrimitive.Group>
+            <NumberFieldPrimitive.Decrement />
+            <NumberFieldPrimitive.Input
+               placeholder={placeholder}
+               className={cn(input(), className)}
+            />
+            <NumberFieldPrimitive.Increment />
+         </NumberFieldPrimitive.Group>
       </NumberFieldPrimitive.Root>
-   )
-}
-
-export function NumberFieldInput({
-   className,
-   ...props
-}: React.ComponentProps<typeof Input>) {
-   return (
-      <NumberFieldPrimitive.Group>
-         <NumberFieldPrimitive.Decrement />
-         <NumberFieldPrimitive.Input
-            className={cn(input(), className)}
-            {...props}
-         />
-         <NumberFieldPrimitive.Increment />
-      </NumberFieldPrimitive.Group>
    )
 }

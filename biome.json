@@ -19,7 +19,8 @@
          "routeTree.gen.ts",
          "migrations/meta",
          "package.json",
-         ".wrangler"
+         ".wrangler",
+         ".tanstack"
       ]
    },
    "css": {

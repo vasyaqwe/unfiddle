@@ -41,7 +41,9 @@ export function PeriodSelect({
                      "min-w-32 disabled:cursor-default disabled:bg-surface-3"
                   }
                >
-                  <SelectValue />
+                  <SelectValue>
+                     {(label) => PERIOD_FILTERS_TRANSLATION[label as never]}
+                  </SelectValue>
                   <SelectTriggerIcon />
                </Button>
             }

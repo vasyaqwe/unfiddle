@@ -9,13 +9,6 @@ import tsconfigPaths from "vite-tsconfig-paths"
 export default defineConfig(() => {
    return {
       plugins: [
-         sentryVitePlugin({
-            authToken: process.env.SENTRY_AUTH_TOKEN,
-            org: "unfiddle",
-            project: "unfiddle-web",
-            disable: process.env.NODE_ENV === "development",
-            telemetry: false,
-         }),
          tanstackRouter({ target: "react", autoCodeSplitting: true }),
          react({
             babel: {
@@ -24,6 +17,13 @@ export default defineConfig(() => {
          }),
          tailwindcss(),
          tsconfigPaths(),
+         sentryVitePlugin({
+            authToken: process.env.SENTRY_AUTH_TOKEN,
+            org: "unfiddle",
+            project: "unfiddle-web",
+            disable: process.env.NODE_ENV === "development",
+            telemetry: false,
+         }),
       ],
       build: {
          sourcemap: true,

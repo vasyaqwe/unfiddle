@@ -18,6 +18,7 @@ env.d.ts
 .DS_Store
 .vscode
 .partykit
+.tanstack
 vite.config.ts.timestamp-*.js
 vite.config.ts.timestamp-*.mjs
 tmp

@@ -4,12 +4,12 @@ import { useQuery } from "@tanstack/react-query"
 import { useNavigate, useParams } from "@tanstack/react-router"
 import { Icons } from "@unfiddle/ui/components/icons"
 import {
-   Menu,
    MenuCheckboxItem,
    MenuItem,
    MenuPopup,
    MenuSeparator,
    MenuSubmenuTrigger,
+   Submenu,
 } from "@unfiddle/ui/components/menu"
 
 export function WorkspaceMenuPopup() {
@@ -34,7 +34,7 @@ export function WorkspaceMenuPopup() {
             <Icons.gear />
             Налаштування
          </MenuItem> */}
-         <Menu>
+         <Submenu>
             <MenuSubmenuTrigger>
                <Icons.arrowsLeftRight />
                Проєкти
@@ -60,7 +60,7 @@ export function WorkspaceMenuPopup() {
                   Новий проєкт..
                </MenuItem>
             </MenuPopup>
-         </Menu>
+         </Submenu>
       </MenuPopup>
    )
 }

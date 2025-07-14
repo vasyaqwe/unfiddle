@@ -10,236 +10,317 @@
 
 import { createFileRoute } from '@tanstack/react-router'
 
-// Import Routes
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as AuthedRouteImport } from './routes/_authed'
+import { Route as AuthedIndexRouteImport } from './routes/_authed/index'
+import { Route as JoinCodeRouteImport } from './routes/join.$code'
+import { Route as AuthedNewRouteImport } from './routes/_authed/new'
+import { Route as AuthedWorkspaceIdLayoutRouteImport } from './routes/_authed/$workspaceId/_layout'
+import { Route as AuthedWorkspaceIdLayoutIndexRouteImport } from './routes/_authed/$workspaceId/_layout/index'
+import { Route as AuthedWorkspaceIdLayoutTeamRouteImport } from './routes/_authed/$workspaceId/_layout/team'
+import { Route as AuthedWorkspaceIdLayoutSettingsRouteImport } from './routes/_authed/$workspaceId/_layout/settings'
+import { Route as AuthedWorkspaceIdLayoutSearchRouteImport } from './routes/_authed/$workspaceId/_layout/search'
+import { Route as AuthedWorkspaceIdLayoutAnalyticsRouteImport } from './routes/_authed/$workspaceId/_layout/analytics'
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as SignupImport } from './routes/signup'
-import { Route as ResetPasswordImport } from './routes/reset-password'
-import { Route as LoginImport } from './routes/login'
-import { Route as ForgotPasswordImport } from './routes/forgot-password'
-import { Route as AuthedImport } from './routes/_authed'
-import { Route as AuthedIndexImport } from './routes/_authed/index'
-import { Route as JoinCodeImport } from './routes/join.$code'
-import { Route as AuthedNewImport } from './routes/_authed/new'
-import { Route as AuthedWorkspaceIdLayoutImport } from './routes/_authed/$workspaceId/_layout'
-import { Route as AuthedWorkspaceIdLayoutIndexImport } from './routes/_authed/$workspaceId/_layout/index'
-import { Route as AuthedWorkspaceIdLayoutTeamImport } from './routes/_authed/$workspaceId/_layout/team'
-import { Route as AuthedWorkspaceIdLayoutSettingsImport } from './routes/_authed/$workspaceId/_layout/settings'
-import { Route as AuthedWorkspaceIdLayoutSearchImport } from './routes/_authed/$workspaceId/_layout/search'
-import { Route as AuthedWorkspaceIdLayoutAnalyticsImport } from './routes/_authed/$workspaceId/_layout/analytics'
+const AuthedWorkspaceIdRouteImport = createFileRoute('/_authed/$workspaceId')()
 
-// Create Virtual Routes
-
-const AuthedWorkspaceIdImport = createFileRoute('/_authed/$workspaceId')()
-
-// Create/Update Routes
-
-const SignupRoute = SignupImport.update({
+const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const ResetPasswordRoute = ResetPasswordImport.update({
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const LoginRoute = LoginImport.update({
+const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const ForgotPasswordRoute = ForgotPasswordImport.update({
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const AuthedRoute = AuthedImport.update({
+const AuthedRoute = AuthedRouteImport.update({
   id: '/_authed',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const AuthedWorkspaceIdRoute = AuthedWorkspaceIdImport.update({
+const AuthedWorkspaceIdRoute = AuthedWorkspaceIdRouteImport.update({
   id: '/$workspaceId',
   path: '/$workspaceId',
   getParentRoute: () => AuthedRoute,
 } as any)
-
-const AuthedIndexRoute = AuthedIndexImport.update({
+const AuthedIndexRoute = AuthedIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthedRoute,
 } as any)
-
-const JoinCodeRoute = JoinCodeImport.update({
+const JoinCodeRoute = JoinCodeRouteImport.update({
   id: '/join/$code',
   path: '/join/$code',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const AuthedNewRoute = AuthedNewImport.update({
+const AuthedNewRoute = AuthedNewRouteImport.update({
   id: '/new',
   path: '/new',
   getParentRoute: () => AuthedRoute,
 } as any)
-
-const AuthedWorkspaceIdLayoutRoute = AuthedWorkspaceIdLayoutImport.update({
+const AuthedWorkspaceIdLayoutRoute = AuthedWorkspaceIdLayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => AuthedWorkspaceIdRoute,
 } as any)
-
 const AuthedWorkspaceIdLayoutIndexRoute =
-  AuthedWorkspaceIdLayoutIndexImport.update({
+  AuthedWorkspaceIdLayoutIndexRouteImport.update({
     id: '/',
     path: '/',
     getParentRoute: () => AuthedWorkspaceIdLayoutRoute,
   } as any)
-
 const AuthedWorkspaceIdLayoutTeamRoute =
-  AuthedWorkspaceIdLayoutTeamImport.update({
+  AuthedWorkspaceIdLayoutTeamRouteImport.update({
     id: '/team',
     path: '/team',
     getParentRoute: () => AuthedWorkspaceIdLayoutRoute,
   } as any)
-
 const AuthedWorkspaceIdLayoutSettingsRoute =
-  AuthedWorkspaceIdLayoutSettingsImport.update({
+  AuthedWorkspaceIdLayoutSettingsRouteImport.update({
     id: '/settings',
     path: '/settings',
     getParentRoute: () => AuthedWorkspaceIdLayoutRoute,
   } as any)
-
 const AuthedWorkspaceIdLayoutSearchRoute =
-  AuthedWorkspaceIdLayoutSearchImport.update({
+  AuthedWorkspaceIdLayoutSearchRouteImport.update({
     id: '/search',
     path: '/search',
     getParentRoute: () => AuthedWorkspaceIdLayoutRoute,
   } as any)
-
 const AuthedWorkspaceIdLayoutAnalyticsRoute =
-  AuthedWorkspaceIdLayoutAnalyticsImport.update({
+  AuthedWorkspaceIdLayoutAnalyticsRouteImport.update({
     id: '/analytics',
     path: '/analytics',
     getParentRoute: () => AuthedWorkspaceIdLayoutRoute,
   } as any)
 
-// Populate the FileRoutesByPath interface
+export interface FileRoutesByFullPath {
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/signup': typeof SignupRoute
+  '/new': typeof AuthedNewRoute
+  '/join/$code': typeof JoinCodeRoute
+  '/': typeof AuthedIndexRoute
+  '/$workspaceId': typeof AuthedWorkspaceIdLayoutRouteWithChildren
+  '/$workspaceId/analytics': typeof AuthedWorkspaceIdLayoutAnalyticsRoute
+  '/$workspaceId/search': typeof AuthedWorkspaceIdLayoutSearchRoute
+  '/$workspaceId/settings': typeof AuthedWorkspaceIdLayoutSettingsRoute
+  '/$workspaceId/team': typeof AuthedWorkspaceIdLayoutTeamRoute
+  '/$workspaceId/': typeof AuthedWorkspaceIdLayoutIndexRoute
+}
+export interface FileRoutesByTo {
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/signup': typeof SignupRoute
+  '/new': typeof AuthedNewRoute
+  '/join/$code': typeof JoinCodeRoute
+  '/': typeof AuthedIndexRoute
+  '/$workspaceId': typeof AuthedWorkspaceIdLayoutIndexRoute
+  '/$workspaceId/analytics': typeof AuthedWorkspaceIdLayoutAnalyticsRoute
+  '/$workspaceId/search': typeof AuthedWorkspaceIdLayoutSearchRoute
+  '/$workspaceId/settings': typeof AuthedWorkspaceIdLayoutSettingsRoute
+  '/$workspaceId/team': typeof AuthedWorkspaceIdLayoutTeamRoute
+}
+export interface FileRoutesById {
+  __root__: typeof rootRouteImport
+  '/_authed': typeof AuthedRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/signup': typeof SignupRoute
+  '/_authed/new': typeof AuthedNewRoute
+  '/join/$code': typeof JoinCodeRoute
+  '/_authed/': typeof AuthedIndexRoute
+  '/_authed/$workspaceId': typeof AuthedWorkspaceIdRouteWithChildren
+  '/_authed/$workspaceId/_layout': typeof AuthedWorkspaceIdLayoutRouteWithChildren
+  '/_authed/$workspaceId/_layout/analytics': typeof AuthedWorkspaceIdLayoutAnalyticsRoute
+  '/_authed/$workspaceId/_layout/search': typeof AuthedWorkspaceIdLayoutSearchRoute
+  '/_authed/$workspaceId/_layout/settings': typeof AuthedWorkspaceIdLayoutSettingsRoute
+  '/_authed/$workspaceId/_layout/team': typeof AuthedWorkspaceIdLayoutTeamRoute
+  '/_authed/$workspaceId/_layout/': typeof AuthedWorkspaceIdLayoutIndexRoute
+}
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/forgot-password'
+    | '/login'
+    | '/reset-password'
+    | '/signup'
+    | '/new'
+    | '/join/$code'
+    | '/'
+    | '/$workspaceId'
+    | '/$workspaceId/analytics'
+    | '/$workspaceId/search'
+    | '/$workspaceId/settings'
+    | '/$workspaceId/team'
+    | '/$workspaceId/'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/forgot-password'
+    | '/login'
+    | '/reset-password'
+    | '/signup'
+    | '/new'
+    | '/join/$code'
+    | '/'
+    | '/$workspaceId'
+    | '/$workspaceId/analytics'
+    | '/$workspaceId/search'
+    | '/$workspaceId/settings'
+    | '/$workspaceId/team'
+  id:
+    | '__root__'
+    | '/_authed'
+    | '/forgot-password'
+    | '/login'
+    | '/reset-password'
+    | '/signup'
+    | '/_authed/new'
+    | '/join/$code'
+    | '/_authed/'
+    | '/_authed/$workspaceId'
+    | '/_authed/$workspaceId/_layout'
+    | '/_authed/$workspaceId/_layout/analytics'
+    | '/_authed/$workspaceId/_layout/search'
+    | '/_authed/$workspaceId/_layout/settings'
+    | '/_authed/$workspaceId/_layout/team'
+    | '/_authed/$workspaceId/_layout/'
+  fileRoutesById: FileRoutesById
+}
+export interface RootRouteChildren {
+  AuthedRoute: typeof AuthedRouteWithChildren
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
+  LoginRoute: typeof LoginRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  SignupRoute: typeof SignupRoute
+  JoinCodeRoute: typeof JoinCodeRoute
+}
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_authed': {
-      id: '/_authed'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof AuthedImport
-      parentRoute: typeof rootRoute
-    }
-    '/forgot-password': {
-      id: '/forgot-password'
-      path: '/forgot-password'
-      fullPath: '/forgot-password'
-      preLoaderRoute: typeof ForgotPasswordImport
-      parentRoute: typeof rootRoute
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginImport
-      parentRoute: typeof rootRoute
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
       fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupImport
-      parentRoute: typeof rootRoute
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authed/new': {
-      id: '/_authed/new'
-      path: '/new'
-      fullPath: '/new'
-      preLoaderRoute: typeof AuthedNewImport
-      parentRoute: typeof AuthedImport
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/join/$code': {
-      id: '/join/$code'
-      path: '/join/$code'
-      fullPath: '/join/$code'
-      preLoaderRoute: typeof JoinCodeImport
-      parentRoute: typeof rootRoute
-    }
-    '/_authed/': {
-      id: '/_authed/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof AuthedIndexImport
-      parentRoute: typeof AuthedImport
+    '/_authed': {
+      id: '/_authed'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthedRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authed/$workspaceId': {
       id: '/_authed/$workspaceId'
       path: '/$workspaceId'
       fullPath: '/$workspaceId'
-      preLoaderRoute: typeof AuthedWorkspaceIdImport
-      parentRoute: typeof AuthedImport
+      preLoaderRoute: typeof AuthedWorkspaceIdRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/': {
+      id: '/_authed/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof AuthedIndexRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/join/$code': {
+      id: '/join/$code'
+      path: '/join/$code'
+      fullPath: '/join/$code'
+      preLoaderRoute: typeof JoinCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authed/new': {
+      id: '/_authed/new'
+      path: '/new'
+      fullPath: '/new'
+      preLoaderRoute: typeof AuthedNewRouteImport
+      parentRoute: typeof AuthedRoute
     }
     '/_authed/$workspaceId/_layout': {
       id: '/_authed/$workspaceId/_layout'
       path: '/$workspaceId'
       fullPath: '/$workspaceId'
-      preLoaderRoute: typeof AuthedWorkspaceIdLayoutImport
+      preLoaderRoute: typeof AuthedWorkspaceIdLayoutRouteImport
       parentRoute: typeof AuthedWorkspaceIdRoute
-    }
-    '/_authed/$workspaceId/_layout/analytics': {
-      id: '/_authed/$workspaceId/_layout/analytics'
-      path: '/analytics'
-      fullPath: '/$workspaceId/analytics'
-      preLoaderRoute: typeof AuthedWorkspaceIdLayoutAnalyticsImport
-      parentRoute: typeof AuthedWorkspaceIdLayoutImport
-    }
-    '/_authed/$workspaceId/_layout/search': {
-      id: '/_authed/$workspaceId/_layout/search'
-      path: '/search'
-      fullPath: '/$workspaceId/search'
-      preLoaderRoute: typeof AuthedWorkspaceIdLayoutSearchImport
-      parentRoute: typeof AuthedWorkspaceIdLayoutImport
-    }
-    '/_authed/$workspaceId/_layout/settings': {
-      id: '/_authed/$workspaceId/_layout/settings'
-      path: '/settings'
-      fullPath: '/$workspaceId/settings'
-      preLoaderRoute: typeof AuthedWorkspaceIdLayoutSettingsImport
-      parentRoute: typeof AuthedWorkspaceIdLayoutImport
-    }
-    '/_authed/$workspaceId/_layout/team': {
-      id: '/_authed/$workspaceId/_layout/team'
-      path: '/team'
-      fullPath: '/$workspaceId/team'
-      preLoaderRoute: typeof AuthedWorkspaceIdLayoutTeamImport
-      parentRoute: typeof AuthedWorkspaceIdLayoutImport
     }
     '/_authed/$workspaceId/_layout/': {
       id: '/_authed/$workspaceId/_layout/'
       path: '/'
       fullPath: '/$workspaceId/'
-      preLoaderRoute: typeof AuthedWorkspaceIdLayoutIndexImport
-      parentRoute: typeof AuthedWorkspaceIdLayoutImport
+      preLoaderRoute: typeof AuthedWorkspaceIdLayoutIndexRouteImport
+      parentRoute: typeof AuthedWorkspaceIdLayoutRoute
+    }
+    '/_authed/$workspaceId/_layout/team': {
+      id: '/_authed/$workspaceId/_layout/team'
+      path: '/team'
+      fullPath: '/$workspaceId/team'
+      preLoaderRoute: typeof AuthedWorkspaceIdLayoutTeamRouteImport
+      parentRoute: typeof AuthedWorkspaceIdLayoutRoute
+    }
+    '/_authed/$workspaceId/_layout/settings': {
+      id: '/_authed/$workspaceId/_layout/settings'
+      path: '/settings'
+      fullPath: '/$workspaceId/settings'
+      preLoaderRoute: typeof AuthedWorkspaceIdLayoutSettingsRouteImport
+      parentRoute: typeof AuthedWorkspaceIdLayoutRoute
+    }
+    '/_authed/$workspaceId/_layout/search': {
+      id: '/_authed/$workspaceId/_layout/search'
+      path: '/search'
+      fullPath: '/$workspaceId/search'
+      preLoaderRoute: typeof AuthedWorkspaceIdLayoutSearchRouteImport
+      parentRoute: typeof AuthedWorkspaceIdLayoutRoute
+    }
+    '/_authed/$workspaceId/_layout/analytics': {
+      id: '/_authed/$workspaceId/_layout/analytics'
+      path: '/analytics'
+      fullPath: '/$workspaceId/analytics'
+      preLoaderRoute: typeof AuthedWorkspaceIdLayoutAnalyticsRouteImport
+      parentRoute: typeof AuthedWorkspaceIdLayoutRoute
     }
   }
 }
-
-// Create and export the route tree
 
 interface AuthedWorkspaceIdLayoutRouteChildren {
   AuthedWorkspaceIdLayoutAnalyticsRoute: typeof AuthedWorkspaceIdLayoutAnalyticsRoute
@@ -290,117 +371,6 @@ const AuthedRouteChildren: AuthedRouteChildren = {
 const AuthedRouteWithChildren =
   AuthedRoute._addFileChildren(AuthedRouteChildren)
 
-export interface FileRoutesByFullPath {
-  '': typeof AuthedRouteWithChildren
-  '/forgot-password': typeof ForgotPasswordRoute
-  '/login': typeof LoginRoute
-  '/reset-password': typeof ResetPasswordRoute
-  '/signup': typeof SignupRoute
-  '/new': typeof AuthedNewRoute
-  '/join/$code': typeof JoinCodeRoute
-  '/': typeof AuthedIndexRoute
-  '/$workspaceId': typeof AuthedWorkspaceIdLayoutRouteWithChildren
-  '/$workspaceId/analytics': typeof AuthedWorkspaceIdLayoutAnalyticsRoute
-  '/$workspaceId/search': typeof AuthedWorkspaceIdLayoutSearchRoute
-  '/$workspaceId/settings': typeof AuthedWorkspaceIdLayoutSettingsRoute
-  '/$workspaceId/team': typeof AuthedWorkspaceIdLayoutTeamRoute
-  '/$workspaceId/': typeof AuthedWorkspaceIdLayoutIndexRoute
-}
-
-export interface FileRoutesByTo {
-  '/forgot-password': typeof ForgotPasswordRoute
-  '/login': typeof LoginRoute
-  '/reset-password': typeof ResetPasswordRoute
-  '/signup': typeof SignupRoute
-  '/new': typeof AuthedNewRoute
-  '/join/$code': typeof JoinCodeRoute
-  '/': typeof AuthedIndexRoute
-  '/$workspaceId': typeof AuthedWorkspaceIdLayoutIndexRoute
-  '/$workspaceId/analytics': typeof AuthedWorkspaceIdLayoutAnalyticsRoute
-  '/$workspaceId/search': typeof AuthedWorkspaceIdLayoutSearchRoute
-  '/$workspaceId/settings': typeof AuthedWorkspaceIdLayoutSettingsRoute
-  '/$workspaceId/team': typeof AuthedWorkspaceIdLayoutTeamRoute
-}
-
-export interface FileRoutesById {
-  __root__: typeof rootRoute
-  '/_authed': typeof AuthedRouteWithChildren
-  '/forgot-password': typeof ForgotPasswordRoute
-  '/login': typeof LoginRoute
-  '/reset-password': typeof ResetPasswordRoute
-  '/signup': typeof SignupRoute
-  '/_authed/new': typeof AuthedNewRoute
-  '/join/$code': typeof JoinCodeRoute
-  '/_authed/': typeof AuthedIndexRoute
-  '/_authed/$workspaceId': typeof AuthedWorkspaceIdRouteWithChildren
-  '/_authed/$workspaceId/_layout': typeof AuthedWorkspaceIdLayoutRouteWithChildren
-  '/_authed/$workspaceId/_layout/analytics': typeof AuthedWorkspaceIdLayoutAnalyticsRoute
-  '/_authed/$workspaceId/_layout/search': typeof AuthedWorkspaceIdLayoutSearchRoute
-  '/_authed/$workspaceId/_layout/settings': typeof AuthedWorkspaceIdLayoutSettingsRoute
-  '/_authed/$workspaceId/_layout/team': typeof AuthedWorkspaceIdLayoutTeamRoute
-  '/_authed/$workspaceId/_layout/': typeof AuthedWorkspaceIdLayoutIndexRoute
-}
-
-export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | ''
-    | '/forgot-password'
-    | '/login'
-    | '/reset-password'
-    | '/signup'
-    | '/new'
-    | '/join/$code'
-    | '/'
-    | '/$workspaceId'
-    | '/$workspaceId/analytics'
-    | '/$workspaceId/search'
-    | '/$workspaceId/settings'
-    | '/$workspaceId/team'
-    | '/$workspaceId/'
-  fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/forgot-password'
-    | '/login'
-    | '/reset-password'
-    | '/signup'
-    | '/new'
-    | '/join/$code'
-    | '/'
-    | '/$workspaceId'
-    | '/$workspaceId/analytics'
-    | '/$workspaceId/search'
-    | '/$workspaceId/settings'
-    | '/$workspaceId/team'
-  id:
-    | '__root__'
-    | '/_authed'
-    | '/forgot-password'
-    | '/login'
-    | '/reset-password'
-    | '/signup'
-    | '/_authed/new'
-    | '/join/$code'
-    | '/_authed/'
-    | '/_authed/$workspaceId'
-    | '/_authed/$workspaceId/_layout'
-    | '/_authed/$workspaceId/_layout/analytics'
-    | '/_authed/$workspaceId/_layout/search'
-    | '/_authed/$workspaceId/_layout/settings'
-    | '/_authed/$workspaceId/_layout/team'
-    | '/_authed/$workspaceId/_layout/'
-  fileRoutesById: FileRoutesById
-}
-
-export interface RootRouteChildren {
-  AuthedRoute: typeof AuthedRouteWithChildren
-  ForgotPasswordRoute: typeof ForgotPasswordRoute
-  LoginRoute: typeof LoginRoute
-  ResetPasswordRoute: typeof ResetPasswordRoute
-  SignupRoute: typeof SignupRoute
-  JoinCodeRoute: typeof JoinCodeRoute
-}
-
 const rootRouteChildren: RootRouteChildren = {
   AuthedRoute: AuthedRouteWithChildren,
   ForgotPasswordRoute: ForgotPasswordRoute,
@@ -409,94 +379,6 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   JoinCodeRoute: JoinCodeRoute,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/_authed",
-        "/forgot-password",
-        "/login",
-        "/reset-password",
-        "/signup",
-        "/join/$code"
-      ]
-    },
-    "/_authed": {
-      "filePath": "_authed.tsx",
-      "children": [
-        "/_authed/new",
-        "/_authed/",
-        "/_authed/$workspaceId"
-      ]
-    },
-    "/forgot-password": {
-      "filePath": "forgot-password.tsx"
-    },
-    "/login": {
-      "filePath": "login.tsx"
-    },
-    "/reset-password": {
-      "filePath": "reset-password.tsx"
-    },
-    "/signup": {
-      "filePath": "signup.tsx"
-    },
-    "/_authed/new": {
-      "filePath": "_authed/new.tsx",
-      "parent": "/_authed"
-    },
-    "/join/$code": {
-      "filePath": "join.$code.tsx"
-    },
-    "/_authed/": {
-      "filePath": "_authed/index.tsx",
-      "parent": "/_authed"
-    },
-    "/_authed/$workspaceId": {
-      "filePath": "_authed/$workspaceId",
-      "parent": "/_authed",
-      "children": [
-        "/_authed/$workspaceId/_layout"
-      ]
-    },
-    "/_authed/$workspaceId/_layout": {
-      "filePath": "_authed/$workspaceId/_layout.tsx",
-      "parent": "/_authed/$workspaceId",
-      "children": [
-        "/_authed/$workspaceId/_layout/analytics",
-        "/_authed/$workspaceId/_layout/search",
-        "/_authed/$workspaceId/_layout/settings",
-        "/_authed/$workspaceId/_layout/team",
-        "/_authed/$workspaceId/_layout/"
-      ]
-    },
-    "/_authed/$workspaceId/_layout/analytics": {
-      "filePath": "_authed/$workspaceId/_layout/analytics.tsx",
-      "parent": "/_authed/$workspaceId/_layout"
-    },
-    "/_authed/$workspaceId/_layout/search": {
-      "filePath": "_authed/$workspaceId/_layout/search.tsx",
-      "parent": "/_authed/$workspaceId/_layout"
-    },
-    "/_authed/$workspaceId/_layout/settings": {
-      "filePath": "_authed/$workspaceId/_layout/settings.tsx",
-      "parent": "/_authed/$workspaceId/_layout"
-    },
-    "/_authed/$workspaceId/_layout/team": {
-      "filePath": "_authed/$workspaceId/_layout/team.tsx",
-      "parent": "/_authed/$workspaceId/_layout"
-    },
-    "/_authed/$workspaceId/_layout/": {
-      "filePath": "_authed/$workspaceId/_layout/index.tsx",
-      "parent": "/_authed/$workspaceId/_layout"
-    }
-  }
-}
-ROUTE_MANIFEST_END */

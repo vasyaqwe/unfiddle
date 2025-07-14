@@ -9,11 +9,8 @@ import {
 } from "@unfiddle/ui/components/drawer"
 import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
 import { Icons } from "@unfiddle/ui/components/icons"
-import {
-   NumberField,
-   NumberFieldInput,
-} from "@unfiddle/ui/components/number-field"
-import { formData, number } from "@unfiddle/ui/utils"
+import { NumberField } from "@unfiddle/ui/components/number-field"
+import { formData } from "@unfiddle/ui/utils"
 import * as React from "react"
 
 export function CreateProcurement({
@@ -27,6 +24,7 @@ export function CreateProcurement({
       onMutate: () => setOpen(false),
       onError: () => setOpen(true),
    })
+   const formRef = React.useRef<HTMLFormElement>(null)
 
    return (
       <Drawer
@@ -44,21 +42,32 @@ export function CreateProcurement({
          <DrawerPopup>
             <DrawerTitle>Нова закупівля</DrawerTitle>
             <form
+               ref={formRef}
                className="mt-4 flex grow flex-col space-y-7"
                onSubmit={(e) => {
                   e.preventDefault()
-                  const form = formData<{
-                     quantity: string
-                     purchasePrice: string
-                     note: string
-                  }>(e.target)
+                  const activeElement = document.activeElement as HTMLElement
+                  if (
+                     activeElement &&
+                     formRef.current?.contains(activeElement)
+                  ) {
+                     activeElement.blur()
+                  }
 
-                  mutation.mutate({
-                     orderId,
-                     workspaceId: auth.workspace.id,
-                     quantity: number(form.quantity),
-                     purchasePrice: number(form.purchasePrice),
-                     note: form.note,
+                  requestAnimationFrame(() => {
+                     const form = formData<{
+                        quantity: string
+                        purchasePrice: string
+                        note: string
+                     }>(e.target)
+
+                     mutation.mutate({
+                        orderId,
+                        workspaceId: auth.workspace.id,
+                        quantity: +form.quantity,
+                        purchasePrice: +form.purchasePrice,
+                        note: form.note,
+                     })
                   })
                }}
             >
@@ -76,20 +85,18 @@ export function CreateProcurement({
                      <NumberField
                         required
                         name="quantity"
+                        placeholder="шт."
                         min={1}
-                     >
-                        <NumberFieldInput placeholder="шт." />
-                     </NumberField>
+                     />
                   </Field>
                   <Field>
                      <FieldLabel>Ціна</FieldLabel>
                      <NumberField
                         required
                         name="purchasePrice"
+                        placeholder="₴"
                         min={1}
-                     >
-                        <NumberFieldInput placeholder="₴" />
-                     </NumberField>
+                     />
                   </Field>
                </div>
                <Field>

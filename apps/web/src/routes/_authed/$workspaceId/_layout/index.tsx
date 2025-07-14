@@ -60,13 +60,6 @@ import {
    CollapsibleTrigger,
    CollapsibleTriggerIcon,
 } from "@unfiddle/ui/components/collapsible"
-import {
-   Combobox,
-   ComboboxInput,
-   ComboboxItem,
-   ComboboxPopup,
-   ComboboxTrigger,
-} from "@unfiddle/ui/components/combobox"
 import { DateInput } from "@unfiddle/ui/components/date-input"
 import {
    AlertDialog,
@@ -86,6 +79,7 @@ import {
    MenuPopup,
    MenuSubmenuTrigger,
    MenuTrigger,
+   Submenu,
 } from "@unfiddle/ui/components/menu"
 import {
    Popover,
@@ -356,6 +350,7 @@ function ToggleArchived() {
 }
 
 function FilterMenu() {
+   const params = Route.useParams()
    const search = Route.useSearch({
       select: (search) => ({
          status: search.status,
@@ -366,8 +361,6 @@ function FilterMenu() {
    const navigate = useNavigate()
    const queryClient = useQueryClient()
    const queryOptions = useOrderQueryOptions()
-   const query = useQuery(queryOptions.list)
-   const data = query.data ?? []
 
    const onFilterChange = (
       key: "status" | "severity" | "creator",
@@ -393,9 +386,13 @@ function FilterMenu() {
       .filter((value) => Array.isArray(value))
       .reduce((total, arr) => total + arr.length, 0)
 
-   const creators = Array.from(
-      new Map(data.map((item) => [item.creator.id, item.creator])).values(),
+   const membersQ = useQuery(
+      trpc.workspace.member.list.queryOptions({
+         workspaceId: params.workspaceId,
+      }),
    )
+   const members = membersQ.data ?? []
+   const managers = members.filter((m) => m.role !== "buyer").map((m) => m.user)
 
    const removeFilter = () => {
       navigate({
@@ -424,7 +421,7 @@ function FilterMenu() {
                }
             />
             <MenuPopup align="start">
-               <Menu>
+               <Submenu>
                   <MenuSubmenuTrigger>
                      <Icons.circleCheckDotted />
                      Статус
@@ -442,8 +439,8 @@ function FilterMenu() {
                         </MenuCheckboxItem>
                      ))}
                   </MenuPopup>
-               </Menu>
-               <Menu>
+               </Submenu>
+               <Submenu>
                   <MenuSubmenuTrigger>
                      <SeverityIcon severity="high" />
                      Пріорітет
@@ -463,15 +460,15 @@ function FilterMenu() {
                         </MenuCheckboxItem>
                      ))}
                   </MenuPopup>
-               </Menu>
-               {creators.length === 0 ? null : (
-                  <Menu>
+               </Submenu>
+               {managers.length === 0 ? null : (
+                  <Submenu>
                      <MenuSubmenuTrigger>
                         <Icons.user />
                         Менеджер
                      </MenuSubmenuTrigger>
                      <MenuPopup>
-                        {creators.map((creator) => (
+                        {managers.map((creator) => (
                            <MenuCheckboxItem
                               checked={
                                  search.creator?.includes(creator.id) ?? false
@@ -485,7 +482,7 @@ function FilterMenu() {
                            </MenuCheckboxItem>
                         ))}
                      </MenuPopup>
-                  </Menu>
+                  </Submenu>
                )}
             </MenuPopup>
          </Menu>
@@ -834,7 +831,7 @@ function OrderRow({
                         <SelectValue>
                            {(label) => (
                               <>
-                                 {label}{" "}
+                                 {ORDER_STATUSES_TRANSLATION[label as never]}{" "}
                                  {item.status === "successful"
                                     ? `(${formatCurrency(totalProfit)})`
                                     : ""}
@@ -959,6 +956,7 @@ function OrderRow({
             </div>
             <Menu>
                <MenuTrigger
+                  onClick={(e) => e.stopPropagation()}
                   ref={menuTriggerRef}
                   render={
                      <Button
@@ -1142,7 +1140,6 @@ function ProcurementRow({
       theme.resolvedTheme ?? "light",
    )
    const profit = (sellingPrice - item.purchasePrice) * item.quantity
-
    const update = useUpdateProcurement()
    const deleteItem = useDeleteProcurement()
 
@@ -1182,7 +1179,7 @@ function ProcurementRow({
             className="col-end-4 mt-[2px] justify-self-end max-lg:order-4 lg:mt-[2px]"
             id="p_status"
          >
-            <Combobox
+            <Select
                value={item.status}
                onValueChange={(status) =>
                   update.mutate({
@@ -1192,7 +1189,7 @@ function ProcurementRow({
                   })
                }
             >
-               <ComboboxTrigger
+               <SelectTrigger
                   className={"cursor-pointer"}
                   onClick={(e) => {
                      e.stopPropagation()
@@ -1204,27 +1201,29 @@ function ProcurementRow({
                         background: `linear-gradient(140deg, ${from}, ${to})`,
                      }}
                   >
-                     {PROCUREMENT_STATUSES_TRANSLATION[item.status]}
+                     <SelectValue>
+                        {(label) =>
+                           PROCUREMENT_STATUSES_TRANSLATION[label as never]
+                        }
+                     </SelectValue>
                   </Badge>
-               </ComboboxTrigger>
-               <ComboboxPopup
+               </SelectTrigger>
+               <SelectPopup
                   align="start"
                   onClick={(e) => {
                      e.stopPropagation()
                   }}
                >
-                  <ComboboxInput />
                   {PROCUREMENT_STATUSES.map((s) => (
-                     <ComboboxItem
+                     <SelectItem
                         key={s}
                         value={s}
-                        keywords={[PROCUREMENT_STATUSES_TRANSLATION[s]]}
                      >
                         {PROCUREMENT_STATUSES_TRANSLATION[s]}
-                     </ComboboxItem>
+                     </SelectItem>
                   ))}
-               </ComboboxPopup>
-            </Combobox>
+               </SelectPopup>
+            </Select>
          </AlignedColumn>
          <p className="lg:!max-w-[80ch] col-span-2 mt-2 break-normal empty:hidden max-lg:order-5 lg:mt-1">
             {item.note}
