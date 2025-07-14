@@ -24,6 +24,26 @@ export function ScrollArea({
    )
 }
 
+// export function ScrollArea({
+//    className,
+//    children,
+//    ...props
+// }: React.ComponentProps<"div">) {
+//    return (
+//       <div className="relative grow">
+//          <div
+//             className={cn(
+//                "absolute inset-0 overflow-y-auto overscroll-contain",
+//                className,
+//             )}
+//             {...props}
+//          >
+//             {children}
+//          </div>
+//       </div>
+//    )
+// }
+
 export function ScrollAreaScrollbar({
    className,
    ...props

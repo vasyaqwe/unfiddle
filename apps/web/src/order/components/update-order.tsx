@@ -1,6 +1,6 @@
 import { useAuth } from "@/auth/hooks"
-import { ORDER_SEVERITIES_TRANSLATION } from "@/order/constants"
 import { useUpdateOrder } from "@/order/mutations/use-update-order"
+import { ORDER_SEVERITIES_TRANSLATION } from "@unfiddle/core/order/constants"
 import { ORDER_SEVERITIES } from "@unfiddle/core/order/constants"
 import type { OrderSeverity } from "@unfiddle/core/order/types"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"

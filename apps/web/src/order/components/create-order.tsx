@@ -1,6 +1,6 @@
 import { useAuth } from "@/auth/hooks"
-import { ORDER_SEVERITIES_TRANSLATION } from "@/order/constants"
 import { useCreateOrder } from "@/order/mutations/use-create-order"
+import { ORDER_SEVERITIES_TRANSLATION } from "@unfiddle/core/order/constants"
 import { ORDER_SEVERITIES } from "@unfiddle/core/order/constants"
 import type { OrderSeverity } from "@unfiddle/core/order/types"
 import { Button } from "@unfiddle/ui/components/button"

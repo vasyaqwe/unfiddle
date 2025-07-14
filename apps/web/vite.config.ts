@@ -16,6 +16,7 @@ export default defineConfig(({ mode }) => {
             org: "unfiddle",
             project: "unfiddle-web",
             disable: process.env.NODE_ENV === "development",
+            telemetry: false,
          }),
          TanStackRouterVite({ target: "react", autoCodeSplitting: true }),
          react({

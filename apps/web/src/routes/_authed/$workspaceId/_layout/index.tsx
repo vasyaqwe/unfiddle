@@ -1,21 +1,14 @@
 import { useAuth } from "@/auth/hooks"
-import { formatCurrency } from "@/currency"
 import { MainScrollArea } from "@/layout/components/main"
-import { formatNumber } from "@/number"
 import { useCreateOrderAssignee } from "@/order/assignee/mutations/use-create-order-assignee"
 import { useDeleteOrderAssignee } from "@/order/assignee/mutations/use-delete-order-assignee"
 import { CreateOrder } from "@/order/components/create-order"
 import { SeverityIcon } from "@/order/components/severity-icon"
 import { UpdateOrder } from "@/order/components/update-order"
-import {
-   ORDER_SEVERITIES_TRANSLATION,
-   ORDER_STATUSES_TRANSLATION,
-} from "@/order/constants"
 import { useDeleteOrder } from "@/order/mutations/use-delete-order"
 import { useUpdateOrder } from "@/order/mutations/use-update-order"
 import { useOrderQueryOptions } from "@/order/queries"
 import { expandedOrderIdsAtom } from "@/order/store"
-import { formatOrderDate, orderStatusGradient } from "@/order/utils"
 import { CreateProcurement } from "@/procurement/components/create-procurement"
 import { UpdateProcurement } from "@/procurement/components/update-procurement"
 import { PROCUREMENT_STATUSES_TRANSLATION } from "@/procurement/constants"
@@ -36,11 +29,21 @@ import { validator } from "@/validator"
 import { Toggle } from "@base-ui-components/react/toggle"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { formatCurrency } from "@unfiddle/core/currency"
+import { formatNumber } from "@unfiddle/core/number"
+import {
+   ORDER_SEVERITIES_TRANSLATION,
+   ORDER_STATUSES_TRANSLATION,
+} from "@unfiddle/core/order/constants"
 import {
    ORDER_SEVERITIES,
    ORDER_STATUSES,
 } from "@unfiddle/core/order/constants"
 import { orderFilterSchema } from "@unfiddle/core/order/filter"
+import {
+   formatOrderDate,
+   orderStatusGradient,
+} from "@unfiddle/core/order/utils"
 import { PROCUREMENT_STATUSES } from "@unfiddle/core/procurement/constants"
 import type { Procurement } from "@unfiddle/core/procurement/types"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"
@@ -90,6 +93,13 @@ import {
    PopoverTrigger,
 } from "@unfiddle/ui/components/popover"
 import { ProfitArrow } from "@unfiddle/ui/components/profit-arrow"
+import {
+   Select,
+   SelectItem,
+   SelectPopup,
+   SelectTrigger,
+   SelectValue,
+} from "@unfiddle/ui/components/select"
 import { Separator } from "@unfiddle/ui/components/separator"
 import {
    Tooltip,
@@ -769,7 +779,7 @@ function OrderRow({
                </p>
                <AlignedColumn
                   id={`o_creator`}
-                  className="flex items-center gap-1 whitespace-nowrap font-medium text-sm"
+                  className="flex items-center gap-1.5 whitespace-nowrap font-medium text-sm"
                >
                   <UserAvatar
                      size={25}
@@ -800,7 +810,8 @@ function OrderRow({
                      </AvatarStackItem>
                   ))}
                </AvatarStack>
-               <Combobox
+               <Select
+                  alignItemToTrigger={false}
                   value={item.status}
                   onValueChange={(status) =>
                      update.mutate({
@@ -810,41 +821,46 @@ function OrderRow({
                      })
                   }
                >
-                  <ComboboxTrigger
+                  <SelectTrigger
                      onClick={(e) => {
                         e.stopPropagation()
                      }}
-                     className={" cursor-pointer"}
+                     className={"cursor-pointer"}
                   >
                      <Badge
                         style={{
                            background: `linear-gradient(140deg, ${from}, ${to})`,
                         }}
                      >
-                        {ORDER_STATUSES_TRANSLATION[item.status]}{" "}
-                        {item.status === "successful"
-                           ? `(${formatCurrency(totalProfit)})`
-                           : ""}
+                        <SelectValue>
+                           {(label) => (
+                              <>
+                                 {label}{" "}
+                                 {item.status === "successful"
+                                    ? `(${formatCurrency(totalProfit)})`
+                                    : ""}
+                              </>
+                           )}
+                        </SelectValue>
                      </Badge>
-                  </ComboboxTrigger>
-                  <ComboboxPopup
+                  </SelectTrigger>
+                  <SelectPopup
+                     sideOffset={4}
                      align="end"
                      onClick={(e) => {
                         e.stopPropagation()
                      }}
                   >
-                     <ComboboxInput />
                      {ORDER_STATUSES.map((s) => (
-                        <ComboboxItem
+                        <SelectItem
                            key={s}
                            value={s}
-                           keywords={[ORDER_STATUSES_TRANSLATION[s]]}
                         >
                            {ORDER_STATUSES_TRANSLATION[s]}
-                        </ComboboxItem>
+                        </SelectItem>
                      ))}
-                  </ComboboxPopup>
-               </Combobox>
+                  </SelectPopup>
+               </Select>
             </div>
             <p className="min-w-[60px] text-foreground/75 max-lg:hidden">
                {formatOrderDate(item.createdAt)}

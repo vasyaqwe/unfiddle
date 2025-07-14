@@ -1,5 +1,5 @@
-import { formatDate } from "@/date"
-import { ORDER_STATUSES_COLORS } from "@/order/constants"
+import { formatDate } from "@unfiddle/core/date"
+import { ORDER_STATUSES_COLORS } from "@unfiddle/core/order/constants"
 import type { OrderStatus } from "@unfiddle/core/order/types"
 import tailwindColors from "tailwindcss/colors"
 

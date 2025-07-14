@@ -16,6 +16,7 @@
     "@tailwindcss/vite": "^4.1.7",
     "@tanstack/react-query": "^5.76.1",
     "@tanstack/react-router": "^1.116.0",
+    "@tanstack/react-virtual": "^3.13.10",
     "@tanstack/router-plugin": "^1.116.1",
     "@trpc/client": "^11.1.2",
     "@trpc/tanstack-react-query": "^11.1.2",
@@ -39,6 +40,7 @@
     "remeda": "^2.6.0",
     "sonner": "^1.7.1",
     "vaul-base": "^0.0.5",
+    "virtua": "^0.41.5",
     "vite-tsconfig-paths": "^5.1.4",
     "zod": "^3.24.3"
   },

@@ -40,7 +40,6 @@ export function MainScrollArea({
 }: Props) {
    return (
       <ScrollArea
-         data-main-scroll-area
          className={cn(
             "flex flex-col pt-4 lg:pt-8",
             container ? "pb-14" : "",
