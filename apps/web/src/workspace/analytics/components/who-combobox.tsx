@@ -96,6 +96,7 @@ export function WhoCombobox() {
                <ComboboxItem
                   key={member.user.id}
                   value={member.user.id}
+                  keywords={[member.user.name]}
                >
                   <UserAvatar
                      size={18}

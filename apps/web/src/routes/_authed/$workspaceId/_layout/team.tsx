@@ -274,11 +274,7 @@ function MemberRow({
                            variant={"ghost"}
                            className="-ml-2 disabled:cursor-auto disabled:opacity-100 disabled:hover:bg-transparent"
                         >
-                           <SelectValue>
-                              {(label) =>
-                                 WORKSPACE_ROLES_TRANSLATION[label as never]
-                              }
-                           </SelectValue>
+                           <SelectValue>{(label) => label}</SelectValue>
                         </Button>
                      }
                   />

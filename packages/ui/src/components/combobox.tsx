@@ -5,7 +5,7 @@ import {
    CommandInput,
    CommandItem,
    CommandList,
-} from "cmdk-base"
+} from "cmdk"
 import * as React from "react"
 import { POPUP_STYLES } from "../constants"
 import { cn, cx } from "../utils"
@@ -152,7 +152,7 @@ export function ComboboxPopup({
          light={false}
          sideOffset={4}
          className={cn(
-            "scrollbar-hidden max-h-56 min-w-[calc(var(--anchor-width)+3rem)] scroll-py-1 overflow-y-auto p-1",
+            "scrollbar-hidden max-h-56 min-w-[calc(var(--anchor-width)+4rem)] scroll-py-1 overflow-y-auto p-1",
             className,
          )}
          {...props}

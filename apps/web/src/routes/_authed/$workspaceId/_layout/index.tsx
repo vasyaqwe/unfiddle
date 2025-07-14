@@ -60,6 +60,13 @@ import {
    CollapsibleTrigger,
    CollapsibleTriggerIcon,
 } from "@unfiddle/ui/components/collapsible"
+import {
+   Combobox,
+   ComboboxInput,
+   ComboboxItem,
+   ComboboxPopup,
+   ComboboxTrigger,
+} from "@unfiddle/ui/components/combobox"
 import { DateInput } from "@unfiddle/ui/components/date-input"
 import {
    AlertDialog,
@@ -87,13 +94,6 @@ import {
    PopoverTrigger,
 } from "@unfiddle/ui/components/popover"
 import { ProfitArrow } from "@unfiddle/ui/components/profit-arrow"
-import {
-   Select,
-   SelectItem,
-   SelectPopup,
-   SelectTrigger,
-   SelectValue,
-} from "@unfiddle/ui/components/select"
 import { Separator } from "@unfiddle/ui/components/separator"
 import {
    Tooltip,
@@ -807,7 +807,7 @@ function OrderRow({
                      </AvatarStackItem>
                   ))}
                </AvatarStack>
-               <Select
+               <Combobox
                   value={item.status}
                   onValueChange={(status) =>
                      update.mutate({
@@ -817,7 +817,7 @@ function OrderRow({
                      })
                   }
                >
-                  <SelectTrigger
+                  <ComboboxTrigger
                      onClick={(e) => {
                         e.stopPropagation()
                      }}
@@ -828,36 +828,31 @@ function OrderRow({
                            background: `linear-gradient(140deg, ${from}, ${to})`,
                         }}
                      >
-                        <SelectValue>
-                           {(label) => (
-                              <>
-                                 {ORDER_STATUSES_TRANSLATION[label as never]}{" "}
-                                 {item.status === "successful"
-                                    ? `(${formatCurrency(totalProfit)})`
-                                    : ""}
-                              </>
-                           )}
-                        </SelectValue>
+                        {ORDER_STATUSES_TRANSLATION[item.status]}{" "}
+                        {item.status === "successful"
+                           ? `(${formatCurrency(totalProfit)})`
+                           : ""}
                      </Badge>
-                  </SelectTrigger>
-                  <SelectPopup
-                     alignItemWithTrigger={false}
+                  </ComboboxTrigger>
+                  <ComboboxPopup
                      sideOffset={4}
                      align="end"
                      onClick={(e) => {
                         e.stopPropagation()
                      }}
                   >
+                     <ComboboxInput />
                      {ORDER_STATUSES.map((s) => (
-                        <SelectItem
+                        <ComboboxItem
                            key={s}
                            value={s}
+                           keywords={[ORDER_STATUSES_TRANSLATION[s]]}
                         >
                            {ORDER_STATUSES_TRANSLATION[s]}
-                        </SelectItem>
+                        </ComboboxItem>
                      ))}
-                  </SelectPopup>
-               </Select>
+                  </ComboboxPopup>
+               </Combobox>
             </div>
             <p className="min-w-[60px] text-foreground/75 max-lg:hidden">
                {formatOrderDate(item.createdAt)}
@@ -1179,7 +1174,7 @@ function ProcurementRow({
             className="col-end-4 mt-[2px] justify-self-end max-lg:order-4 lg:mt-[2px]"
             id="p_status"
          >
-            <Select
+            <Combobox
                value={item.status}
                onValueChange={(status) =>
                   update.mutate({
@@ -1189,7 +1184,7 @@ function ProcurementRow({
                   })
                }
             >
-               <SelectTrigger
+               <ComboboxTrigger
                   className={"cursor-pointer"}
                   onClick={(e) => {
                      e.stopPropagation()
@@ -1201,29 +1196,27 @@ function ProcurementRow({
                         background: `linear-gradient(140deg, ${from}, ${to})`,
                      }}
                   >
-                     <SelectValue>
-                        {(label) =>
-                           PROCUREMENT_STATUSES_TRANSLATION[label as never]
-                        }
-                     </SelectValue>
+                     {PROCUREMENT_STATUSES_TRANSLATION[item.status]}
                   </Badge>
-               </SelectTrigger>
-               <SelectPopup
+               </ComboboxTrigger>
+               <ComboboxPopup
                   align="start"
                   onClick={(e) => {
                      e.stopPropagation()
                   }}
                >
+                  <ComboboxInput />
                   {PROCUREMENT_STATUSES.map((s) => (
-                     <SelectItem
+                     <ComboboxItem
                         key={s}
                         value={s}
+                        keywords={[PROCUREMENT_STATUSES_TRANSLATION[s]]}
                      >
                         {PROCUREMENT_STATUSES_TRANSLATION[s]}
-                     </SelectItem>
+                     </ComboboxItem>
                   ))}
-               </SelectPopup>
-            </Select>
+               </ComboboxPopup>
+            </Combobox>
          </AlignedColumn>
          <p className="lg:!max-w-[80ch] col-span-2 mt-2 break-normal empty:hidden max-lg:order-5 lg:mt-1">
             {item.note}

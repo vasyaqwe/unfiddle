@@ -4,7 +4,7 @@ import { POPUP_STYLES } from "@unfiddle/ui/constants"
 import { cn } from "../utils"
 
 export const Menu = MenuPrimitive.Root
-export const Submenu = MenuPrimitive.SubmenuRoot
+export const Submenu = MenuPrimitive.Root
 export const MenuTrigger = MenuPrimitive.Trigger
 export const MenuGroup = MenuPrimitive.Group
 // export const MenuRadioGroup = MenuPrimitive.RadioGroup

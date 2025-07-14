@@ -19,7 +19,7 @@ import {
    SelectTriggerIcon,
    SelectValue,
 } from "@unfiddle/ui/components/select"
-import { formData } from "@unfiddle/ui/utils"
+import { formData, number } from "@unfiddle/ui/utils"
 import * as React from "react"
 
 export function CreateOrder({ children }: { children?: React.ReactNode }) {
@@ -66,8 +66,8 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
                         workspaceId: auth.workspace.id,
                         groupId: form.groupId === "" ? null : form.groupId,
                         name: form.name,
-                        quantity: +form.quantity,
-                        sellingPrice: +form.sellingPrice,
+                        quantity:number(form.quantity),
+                        sellingPrice: number(form.sellingPrice),
                         note: form.note,
                         severity,
                      })
@@ -135,13 +135,7 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
                                  variant={"secondary"}
                                  className="w-full justify-start"
                               >
-                                 <SelectValue>
-                                    {(label) =>
-                                       ORDER_SEVERITIES_TRANSLATION[
-                                          label as never
-                                       ]
-                                    }
-                                 </SelectValue>
+                                 <SelectValue>{(label) => label}</SelectValue>
                                  <SelectTriggerIcon />
                               </Button>
                            }

@@ -9,7 +9,7 @@
     "generate-pwa-assets": "pwa-assets-generator --preset minimal-2023 public/icon.svg"
   },
   "dependencies": {
-    "@base-ui-components/react": "^1.0.0-beta.1",
+    "@base-ui-components/react": "1.0.0-alpha.8",
     "@oslojs/encoding": "^1.1.0",
     "@sentry/react": "^9.25.1",
     "@sentry/vite-plugin": "^3.5.0",
@@ -28,7 +28,7 @@
     "better-auth": "^1.2.7",
     "boring-avatars": "^1.11.2",
     "chrono-node": "2.8.0",
-    "cmdk-base": "^0.0.3",
+    "cmdk": "^1.1.1",
     "hono": "^4.7.7",
     "jotai": "^2.11.0",
     "next-themes": "^0.4.6",
@@ -37,7 +37,7 @@
     "react-dom": "^19.1.0",
     "react-hotkeys-hook": "^4.6.1",
     "recharts": "^2.15.3",
-    "remeda": "^2.6.0",
+    "remeda": "^2.17.4",
     "sonner": "^1.7.1",
     "vaul-base": "^0.0.5",
     "virtua": "^0.41.5",
@@ -48,6 +48,6 @@
     "@unfiddle/tsconfig": "workspace:*",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
-    "vite": "^7.0.4"
+    "vite": "7.0.4"
   }
 }

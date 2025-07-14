@@ -181,6 +181,7 @@ function RouteComponent() {
                                  keywords={[
                                     formatDate(item, { month: "long" }),
                                  ]}
+                                 className="capitalize"
                               >
                                  {formatDate(item, { month: "long" })}
                               </ComboboxItem>

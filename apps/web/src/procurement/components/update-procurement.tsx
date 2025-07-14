@@ -10,7 +10,7 @@ import {
 } from "@unfiddle/ui/components/drawer"
 import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
 import { NumberField } from "@unfiddle/ui/components/number-field"
-import { formData } from "@unfiddle/ui/utils"
+import { formData, number } from "@unfiddle/ui/utils"
 import * as React from "react"
 
 export function UpdateProcurement({
@@ -61,8 +61,8 @@ export function UpdateProcurement({
                      mutation.mutate({
                         id: procurement.id,
                         workspaceId: auth.workspace.id,
-                        quantity: +form.quantity,
-                        purchasePrice: +form.purchasePrice,
+                        quantity:number(form.quantity),
+                        purchasePrice: number(form.purchasePrice),
                         note: form.note,
                      })
                   })
