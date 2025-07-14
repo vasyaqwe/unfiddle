@@ -26,11 +26,13 @@ export function useOrderSocket() {
 
          if (data.senderId === auth.user.id) return
 
-         if (data.action === "create_assignee")
+         if (data.action === "create_assignee") {
+            update({ id: data.orderId, status: "processing" })
             return createAssignee({
                orderId: data.orderId,
                assignee: data.assignee,
             })
+         }
 
          if (data.action === "delete_assignee")
             return deleteAssignee({

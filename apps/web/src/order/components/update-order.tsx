@@ -119,8 +119,11 @@ export function UpdateOrder({
                   <Field>
                      <FieldLabel>Ціна продажу</FieldLabel>
                      <NumberField
-                        required
-                        defaultValue={order.sellingPrice}
+                        defaultValue={
+                           order.sellingPrice === 0
+                              ? undefined
+                              : order.sellingPrice
+                        }
                         name="sellingPrice"
                         placeholder="₴"
                         min={1}

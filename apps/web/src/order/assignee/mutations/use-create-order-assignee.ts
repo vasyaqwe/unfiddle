@@ -1,4 +1,5 @@
 import { useAuth } from "@/auth/hooks"
+import { useOptimisticUpdateOrder } from "@/order/mutations/use-update-order"
 import { useOrderQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
@@ -15,6 +16,7 @@ export function useCreateOrderAssignee({
    const socket = useSocket()
    const queryOptions = useOrderQueryOptions()
    const create = useOptimisticCreateOrderAssignee()
+   const update = useOptimisticUpdateOrder({ invalidate: true })
 
    return useMutation(
       trpc.order.assignee.create.mutationOptions({
@@ -23,6 +25,7 @@ export function useCreateOrderAssignee({
 
             const data = queryClient.getQueryData(queryOptions.list.queryKey)
 
+            update({ id: input.orderId, status: "processing" })
             create({ ...input, assignee: { user: auth.user } })
 
             onMutate?.()

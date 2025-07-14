@@ -203,7 +203,7 @@ function RouteComponent() {
             <CreateOrder>
                <DrawerTrigger
                   render={
-                     <Button className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-[10] overflow-visible shadow-md md:right-8 md:bottom-8 md:h-9 md:px-3">
+                     <Button className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-[10] overflow-visible shadow-xl md:right-8 md:bottom-8 md:h-9 md:px-3">
                         <Icons.plus className="md:size-6" />
                         Замовлення
                      </Button>
@@ -1031,7 +1031,7 @@ function OrderRow({
                         </p>
                      </div>
                      {item.desiredPrice ? (
-                        <p className="mt-2 mb-3 font-medium font-mono text-black text-lg leading-tight lg:text-[1rem] dark:text-foreground">
+                        <p className="mt-1 mb-3 font-medium font-mono text-black text-lg leading-tight lg:text-[1rem] dark:text-foreground">
                            Бажано по {formatCurrency(item.desiredPrice)}
                         </p>
                      ) : null}
