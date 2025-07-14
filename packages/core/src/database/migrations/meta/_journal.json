@@ -29,6 +29,13 @@
       "when": 1748511808081,
       "tag": "0003_nifty_scourge",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1752498515791,
+      "tag": "0004_slimy_professor_monster",
+      "breakpoints": true
     }
   ]
 }

@@ -74,9 +74,11 @@ export function UpdateOrder({
                         name: string
                         quantity: string
                         sellingPrice: string
+                        desiredPrice: string
                         note: string
                         groupId: string
                      }>(e.target)
+
                      mutation.mutate({
                         id: order.id,
                         workspaceId: auth.workspace.id,
@@ -84,6 +86,10 @@ export function UpdateOrder({
                         name: form.name,
                         quantity: number(form.quantity),
                         sellingPrice: number(form.sellingPrice),
+                        desiredPrice:
+                           form.desiredPrice.length === 0
+                              ? null
+                              : number(form.desiredPrice),
                         note: form.note,
                         severity,
                      })
@@ -121,6 +127,14 @@ export function UpdateOrder({
                      />
                   </Field>
                </div>
+               <Field>
+                  <FieldLabel>Бажана ціна закупівлі</FieldLabel>
+                  <NumberField
+                     name="desiredPrice"
+                     placeholder="₴"
+                     defaultValue={order.desiredPrice ?? undefined}
+                  />
+               </Field>
                <Field>
                   <FieldLabel>Комент</FieldLabel>
                   <FieldControl

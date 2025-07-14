@@ -58,6 +58,7 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
                         name: string
                         quantity: string
                         sellingPrice: string
+                        desiredPrice: string
                         note: string
                         groupId: string
                      }>(e.target)
@@ -68,6 +69,10 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
                         name: form.name,
                         quantity: number(form.quantity),
                         sellingPrice: number(form.sellingPrice),
+                        desiredPrice:
+                           form.desiredPrice.length === 0
+                              ? null
+                              : number(form.desiredPrice),
                         note: form.note,
                         severity,
                      })
@@ -101,6 +106,13 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
                      />
                   </Field>
                </div>
+               <Field>
+                  <FieldLabel>Бажана ціна закупівлі</FieldLabel>
+                  <NumberField
+                     name="desiredPrice"
+                     placeholder="₴"
+                  />
+               </Field>
                <Field>
                   <FieldLabel>Комент</FieldLabel>
                   <FieldControl

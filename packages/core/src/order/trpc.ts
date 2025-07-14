@@ -98,6 +98,7 @@ export const orderRouter = t.router({
                severity: true,
                quantity: true,
                sellingPrice: true,
+               desiredPrice: true,
                status: true,
                note: true,
                creatorId: true,

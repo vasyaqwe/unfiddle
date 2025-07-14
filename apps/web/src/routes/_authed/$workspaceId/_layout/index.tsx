@@ -1015,7 +1015,7 @@ function OrderRow({
             </Menu>
          </CollapsibleTrigger>
          <CollapsiblePanel
-            key={item.procurements.length}
+            key={`${item.procurements.length}_${!!item.desiredPrice}_${!!item.note}`}
             render={
                <div className="border-neutral border-t bg-surface-3/60 pt-4 lg:pt-3">
                   <div className="container mb-4">
@@ -1030,26 +1030,17 @@ function OrderRow({
                               : "Без ціни"}
                         </p>
                      </div>
+                     {item.desiredPrice ? (
+                        <p className="mt-2 mb-3 font-medium font-mono text-black text-lg leading-tight lg:text-[1rem] dark:text-foreground">
+                           Бажано по {formatCurrency(item.desiredPrice)}
+                        </p>
+                     ) : null}
                      <p
                         className={cx(
                            "mb-4 flex gap-1 font-medium text-foreground/75",
                            item.note.length === 0 ? "hidden" : "",
                         )}
                      >
-                        <svg
-                           className="mt-[0.1rem] size-4.5 shrink-0"
-                           viewBox="0 0 24 24"
-                           fill="none"
-                           xmlns="http://www.w3.org/2000/svg"
-                        >
-                           <path
-                              d="M12 11V16M12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21ZM12.0498 8V8.1L11.9502 8.1002V8H12.0498Z"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                           />
-                        </svg>
                         {item.note}
                      </p>
                      {item.procurements.length === 0 ? (
