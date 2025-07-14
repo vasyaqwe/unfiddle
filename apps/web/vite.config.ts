@@ -1,14 +1,12 @@
 import { sentryVitePlugin } from "@sentry/vite-plugin"
 import tailwindcss from "@tailwindcss/vite"
-import { TanStackRouterVite } from "@tanstack/router-plugin/vite"
+import { tanstackRouter } from "@tanstack/router-plugin/vite"
 import react from "@vitejs/plugin-react"
-import { defineConfig, loadEnv } from "vite"
+import { defineConfig } from "vite"
 import tsconfigPaths from "vite-tsconfig-paths"
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => {
-   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) }
-
+export default defineConfig(() => {
    return {
       plugins: [
          sentryVitePlugin({
@@ -18,7 +16,7 @@ export default defineConfig(({ mode }) => {
             disable: process.env.NODE_ENV === "development",
             telemetry: false,
          }),
-         TanStackRouterVite({ target: "react", autoCodeSplitting: true }),
+         tanstackRouter({ target: "react", autoCodeSplitting: true }),
          react({
             babel: {
                plugins: [["babel-plugin-react-compiler", {}]],
@@ -35,9 +33,6 @@ export default defineConfig(({ mode }) => {
       },
       server: {
          port: 3000,
-      },
-      define: {
-         "process.env": {},
       },
    }
 })

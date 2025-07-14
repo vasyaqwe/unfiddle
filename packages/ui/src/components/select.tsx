@@ -91,6 +91,7 @@ export function SelectPopup({
    className,
    children,
    sideOffset = 0,
+   alignItemWithTrigger = true,
    ...props
 }: React.ComponentProps<typeof SelectPrimitive.Positioner>) {
    return (
@@ -98,6 +99,7 @@ export function SelectPopup({
          <SelectBackdrop />
          <SelectPositioner
             sideOffset={sideOffset}
+            alignItemWithTrigger={alignItemWithTrigger}
             className={"group z-[51]"}
             {...props}
          >

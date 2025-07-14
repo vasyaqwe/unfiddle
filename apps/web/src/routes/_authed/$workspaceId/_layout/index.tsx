@@ -811,7 +811,6 @@ function OrderRow({
                   ))}
                </AvatarStack>
                <Select
-                  alignItemToTrigger={false}
                   value={item.status}
                   onValueChange={(status) =>
                      update.mutate({
@@ -845,6 +844,7 @@ function OrderRow({
                      </Badge>
                   </SelectTrigger>
                   <SelectPopup
+                     alignItemWithTrigger={false}
                      sideOffset={4}
                      align="end"
                      onClick={(e) => {
