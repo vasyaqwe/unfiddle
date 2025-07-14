@@ -828,7 +828,8 @@ function OrderRow({
                            background: `linear-gradient(140deg, ${from}, ${to})`,
                         }}
                      >
-                        {ORDER_STATUSES_TRANSLATION[item.status]}{" "}
+                        {ORDER_STATUSES_TRANSLATION[item.status] ??
+                           "Без статусу"}{" "}
                         {item.status === "successful"
                            ? `(${formatCurrency(totalProfit)})`
                            : ""}

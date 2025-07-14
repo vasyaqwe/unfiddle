@@ -6,8 +6,14 @@ export function SeverityIcon({
    severity,
    className = "",
 }: { severity: OrderSeverity; className?: string }) {
-   return severity === "high" ? (
-      <Icons.alert className={cn("size-5 text-orange-9", className)} />
+   return severity === "critical" ? (
+      <Icons.alert
+         className={cn("size-5 text-red-9 dark:text-red-10", className)}
+      />
+   ) : severity === "high" ? (
+      <Icons.alert
+         className={cn("size-5 text-yellow-8 dark:text-yellow-9", className)}
+      />
    ) : (
       <Icons.circle className={cn("size-5 text-foreground/50", className)} />
    )

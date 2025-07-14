@@ -61,7 +61,7 @@ export function UpdateProcurement({
                      mutation.mutate({
                         id: procurement.id,
                         workspaceId: auth.workspace.id,
-                        quantity:number(form.quantity),
+                        quantity: number(form.quantity),
                         purchasePrice: number(form.purchasePrice),
                         note: form.note,
                      })
