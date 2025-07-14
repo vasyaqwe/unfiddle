@@ -1,4 +1,4 @@
-import { orderAssignee } from "@unfiddle/core/order/schema"
+import { order, orderAssignee } from "@unfiddle/core/order/schema"
 import { t } from "@unfiddle/core/trpc/context"
 import { workspaceMemberMiddleware } from "@unfiddle/core/workspace/middleware"
 import { and, eq } from "drizzle-orm"
@@ -15,13 +15,21 @@ export const orderAssigneeRouter = t.router({
          }),
       )
       .mutation(async ({ ctx, input }) => {
-         await ctx.db
-            .insert(orderAssignee)
-            .values({
-               userId: input.userId,
-               orderId: input.orderId,
-            })
-            .onConflictDoNothing()
+         await Promise.all([
+            ctx.db
+               .insert(orderAssignee)
+               .values({
+                  userId: input.userId,
+                  orderId: input.orderId,
+               })
+               .onConflictDoNothing(),
+            ctx.db
+               .update(order)
+               .set({
+                  status: "processing",
+               })
+               .where(eq(order.id, input.orderId)),
+         ])
       }),
    delete: t.procedure
       .use(workspaceMemberMiddleware)
