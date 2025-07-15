@@ -33,7 +33,6 @@ export function UpdateProcurement({
 
    return (
       <Drawer
-         modal={false}
          open={open}
          onOpenChange={setOpen}
       >
