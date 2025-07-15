@@ -58,13 +58,10 @@ function DrawerSeparator({ className, ...props }: React.ComponentProps<"div">) {
 
 function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
    return (
-      <>
-         <DrawerSeparator className="mt-auto" />
-         <div
-            className={cn("flex items-center justify-between gap-2", className)}
-            {...props}
-         />
-      </>
+      <div
+         className={cn("mt-auto flex justify-between gap-2", className)}
+         {...props}
+      />
    )
 }
 

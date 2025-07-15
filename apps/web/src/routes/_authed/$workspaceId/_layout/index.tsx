@@ -1106,6 +1106,7 @@ function OrderRow({
                                  item={p}
                                  sellingPrice={item.sellingPrice ?? 0}
                                  orderId={item.id}
+                                 orderName={item.name}
                               />
                            ))}
                         </Card>
@@ -1166,10 +1167,12 @@ function ProcurementRow({
    item,
    sellingPrice,
    orderId,
+   orderName,
 }: {
    item: Procurement
    sellingPrice: number
    orderId: string
+   orderName: string
 }) {
    const params = Route.useParams()
    const theme = useTheme()
@@ -1278,6 +1281,7 @@ function ProcurementRow({
             onClick={(e) => e.stopPropagation()}
          >
             <UpdateProcurement
+               orderName={orderName}
                procurement={item}
                open={editOpen}
                setOpen={setEditOpen}

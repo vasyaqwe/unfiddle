@@ -1,10 +1,12 @@
-import { useAuth } from "@/auth/hooks"
 import { OrderForm } from "@/order/components/order-form"
 import { useUpdateOrder } from "@/order/mutations/use-update-order"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"
+import { Button } from "@unfiddle/ui/components/button"
 
 import {
    Drawer,
+   DrawerClose,
+   DrawerFooter,
    DrawerPopup,
    DrawerTitle,
 } from "@unfiddle/ui/components/drawer"
@@ -20,7 +22,6 @@ export function UpdateOrder({
    open: boolean
    setOpen: (open: boolean) => void
 }) {
-   const auth = useAuth()
    const mutation = useUpdateOrder({
       onMutate: () => setOpen(false),
       onError: () => setOpen(true),
@@ -43,11 +44,17 @@ export function UpdateOrder({
                   mutation.mutate({
                      ...data,
                      id: order.id,
-                     workspaceId: auth.workspace.id,
                   })
                }
                order={order}
-            />
+            >
+               <DrawerFooter>
+                  <Button>Зберегти</Button>
+                  <DrawerClose
+                     render={<Button variant={"secondary"}>Відмінити</Button>}
+                  />
+               </DrawerFooter>
+            </OrderForm>
          </DrawerPopup>
       </Drawer>
    )

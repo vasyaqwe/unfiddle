@@ -6,7 +6,7 @@ import type { RouterInput, RouterOutput } from "@unfiddle/core/trpc/types"
 import { Button } from "@unfiddle/ui/components/button"
 import { Checkbox } from "@unfiddle/ui/components/checkbox"
 import { DateInput } from "@unfiddle/ui/components/date-input"
-import { DrawerClose } from "@unfiddle/ui/components/drawer"
+import {} from "@unfiddle/ui/components/drawer"
 import {
    Field,
    FieldControl,
@@ -29,9 +29,11 @@ import * as React from "react"
 export function OrderForm({
    order,
    onSubmit,
+   children,
 }: {
    order?: RouterOutput["order"]["list"][number] | undefined
    onSubmit: (data: RouterInput["order"]["create"]) => void
+   children: React.ReactNode
 }) {
    const auth = useAuth()
    const [severity, setSeverity] = React.useState<OrderSeverity>(
@@ -210,12 +212,7 @@ export function OrderForm({
             />
             <FieldLabel>З ПДВ</FieldLabel>
          </Field>
-         <div className="mt-auto flex justify-between">
-            <Button>Зберегти</Button>
-            <DrawerClose
-               render={<Button variant={"secondary"}>Відмінити</Button>}
-            />
-         </div>
+         {children}
       </form>
    )
 }
