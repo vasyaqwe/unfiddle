@@ -136,7 +136,7 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
                      </div>
                   </Field>
                   <Field>
-                     <FieldLabel className={"mb-2.5"}>Пріорітет</FieldLabel>
+                     <FieldLabel className={"mb-2.5"}>Пріоритет</FieldLabel>
                      <Select
                         value={severity}
                         onValueChange={(s) => setSeverity(s)}

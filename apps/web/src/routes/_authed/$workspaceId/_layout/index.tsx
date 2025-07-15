@@ -443,7 +443,7 @@ function FilterMenu() {
                <Submenu>
                   <MenuSubmenuTrigger>
                      <SeverityIcon severity="high" />
-                     Пріорітет
+                     Пріоритет
                   </MenuSubmenuTrigger>
                   <MenuPopup>
                      {ORDER_SEVERITIES.map((severity) => (
