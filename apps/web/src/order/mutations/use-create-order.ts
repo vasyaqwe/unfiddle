@@ -36,6 +36,8 @@ export function useCreateOrder({
                status: null,
                groupId: input.groupId ?? null,
                note: input.note ?? "",
+               vat: input.vat ?? false,
+               client: input.client ?? null,
                procurements: [],
                assignees: [],
                deletedAt: null,

@@ -10,6 +10,6 @@ export const orderFilterSchema = z.object({
    creator: z.array(z.string()).optional(),
    q: z.string().optional(),
    archived: z.boolean().optional(),
-   start_date: z.string().optional(),
-   end_date: z.string().optional(),
+   startDate: z.string().optional(),
+   endDate: z.string().optional(),
 })

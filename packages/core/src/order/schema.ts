@@ -115,6 +115,9 @@ export const updateOrderSchema = createUpdateSchema(order)
       status: true,
       severity: true,
       groupId: true,
+      vat: true,
+      client: true,
+      deliversAt: true,
    })
    .required({ id: true, workspaceId: true })
    .extend({ deletedAt: z.date().nullable().optional() })

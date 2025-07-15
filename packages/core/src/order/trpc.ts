@@ -56,19 +56,19 @@ export const orderRouter = t.router({
             whereConditions.push(isNull(order.deletedAt))
          }
 
-         if (filter.start_date) {
+         if (filter.startDate) {
             whereConditions.push(
                gte(
                   order.createdAt,
-                  new Date(new Date(filter.start_date).setHours(0, 0, 0, 0)),
+                  new Date(new Date(filter.startDate).setHours(0, 0, 0, 0)),
                ),
             )
          }
-         if (filter.end_date) {
+         if (filter.endDate) {
             whereConditions.push(
                lt(
                   order.createdAt,
-                  new Date(new Date(filter.end_date).setHours(23, 59, 59, 999)),
+                  new Date(new Date(filter.endDate).setHours(23, 59, 59, 999)),
                ),
             )
          }
@@ -101,6 +101,8 @@ export const orderRouter = t.router({
                desiredPrice: true,
                status: true,
                note: true,
+               vat: true,
+               client: true,
                creatorId: true,
                groupId: true,
                deletedAt: true,

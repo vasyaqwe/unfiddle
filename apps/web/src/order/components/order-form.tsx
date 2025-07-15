@@ -4,8 +4,14 @@ import { ORDER_SEVERITIES } from "@unfiddle/core/order/constants"
 import type { OrderSeverity } from "@unfiddle/core/order/types"
 import type { RouterInput, RouterOutput } from "@unfiddle/core/trpc/types"
 import { Button } from "@unfiddle/ui/components/button"
+import { Checkbox } from "@unfiddle/ui/components/checkbox"
 import { DrawerClose } from "@unfiddle/ui/components/drawer"
-import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
+import {
+   Field,
+   FieldControl,
+   FieldGroup,
+   FieldLabel,
+} from "@unfiddle/ui/components/field"
 import { NumberField } from "@unfiddle/ui/components/number-field"
 import {
    Select,
@@ -50,6 +56,7 @@ export function OrderForm({
                   desiredPrice: string
                   note: string
                   groupId: string
+                  vat: "on" | "off"
                }>(e.target)
 
                onSubmit({
@@ -63,6 +70,7 @@ export function OrderForm({
                         ? null
                         : number(form.desiredPrice),
                   note: form.note,
+                  vat: form.vat === "on",
                   severity,
                })
             })
@@ -77,7 +85,7 @@ export function OrderForm({
                defaultValue={order?.name ?? ""}
             />
          </Field>
-         <div className="grid grid-cols-2 gap-3 md:gap-8">
+         <FieldGroup>
             <Field>
                <FieldLabel>Кількість</FieldLabel>
                <NumberField
@@ -98,7 +106,7 @@ export function OrderForm({
                   placeholder="₴"
                />
             </Field>
-         </div>
+         </FieldGroup>
          <Field>
             <FieldLabel>Бажана ціна закупівлі</FieldLabel>
             <NumberField
@@ -115,7 +123,7 @@ export function OrderForm({
                defaultValue={order?.note}
             />
          </Field>
-         <div className="grid gap-3 md:grid-cols-2 md:gap-8">
+         <FieldGroup>
             <Field>
                <FieldLabel>До замовлення</FieldLabel>
                <div className="relative">
@@ -160,7 +168,14 @@ export function OrderForm({
                   </SelectPopup>
                </Select>
             </Field>
-         </div>
+         </FieldGroup>
+         <Field className={"flex flex-row items-center gap-2"}>
+            <Checkbox
+               name="vat"
+               defaultChecked={order?.vat ?? false}
+            />
+            <FieldLabel>З ПДВ</FieldLabel>
+         </Field>
          <div className="mt-auto flex justify-between">
             <Button>Зберегти</Button>
             <DrawerClose

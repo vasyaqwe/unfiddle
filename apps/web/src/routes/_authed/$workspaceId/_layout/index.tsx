@@ -507,8 +507,8 @@ function FilterMenu() {
 function DateFilter() {
    const search = Route.useSearch()
    const navigate = useNavigate()
-   const [startDate, setStartDate] = React.useState(search.start_date)
-   const [endDate, setEndDate] = React.useState(search.end_date)
+   const [startDate, setStartDate] = React.useState(search.startDate)
+   const [endDate, setEndDate] = React.useState(search.endDate)
    const [open, setOpen] = React.useState(false)
 
    return (
@@ -525,7 +525,7 @@ function DateFilter() {
                   className="relative"
                >
                   <Icons.calendar className="size-[18px]" />
-                  {search.start_date || search.end_date ? (
+                  {search.startDate || search.endDate ? (
                      <span className="absolute top-[3px] right-[3px] size-[5px] rounded-full bg-primary-7" />
                   ) : null}
                </Button>
@@ -553,15 +553,14 @@ function DateFilter() {
             </div>
             <div className="mt-4 grid grid-cols-2 items-center gap-2">
                <Button
-                  className=""
                   variant={"tertiary"}
                   onClick={() => {
                      navigate({
                         to: ".",
                         search: (prev) => ({
                            ...prev,
-                           start_date: undefined,
-                           end_date: undefined,
+                           startDate: undefined,
+                           endDate: undefined,
                         }),
                      })
                      setStartDate(undefined)
@@ -577,8 +576,8 @@ function DateFilter() {
                         to: ".",
                         search: (prev) => ({
                            ...prev,
-                           start_date: startDate,
-                           end_date: endDate,
+                           startDate: startDate,
+                           endDate: endDate,
                         }),
                      })
                      setOpen(false)
@@ -786,7 +785,10 @@ function OrderRow({
                   <span className="whitespace-nowrap">{item.creator.name}</span>
                </AlignedColumn>
             </div>
-            <p className="lg:!max-w-[80%] col-span-2 col-start-1 row-start-2 mt-px w-[calc(100%-36px)] break-normal font-semibold max-lg:pl-1">
+            <p
+               data-vat={item.vat ? "" : undefined}
+               className="lg:!max-w-[80%] col-span-2 col-start-1 row-start-2 mt-px w-[calc(100%-36px)] break-normal font-semibold data-vat:text-orange-10 max-lg:pl-1"
+            >
                {item.name}
             </p>
             <div className="ml-auto flex items-center gap-3.5">
@@ -1039,12 +1041,15 @@ function OrderRow({
                               ? formatCurrency(item.sellingPrice)
                               : "Без ціни"}
                         </p>
+                        {item.desiredPrice ? (
+                           <>
+                              <Separator className={"h-6 w-px bg-surface-7"} />
+                              <p className="font-medium font-mono text-black text-lg leading-tight lg:text-[1rem] dark:text-foreground">
+                                 Бажано по {formatCurrency(item.desiredPrice)}
+                              </p>
+                           </>
+                        ) : null}
                      </div>
-                     {item.desiredPrice ? (
-                        <p className="mt-1 mb-3 font-medium font-mono text-black text-lg leading-tight lg:text-[1rem] dark:text-foreground">
-                           Бажано по {formatCurrency(item.desiredPrice)}
-                        </p>
-                     ) : null}
                      <p
                         className={cx(
                            "mb-4 flex gap-1 font-medium text-foreground/75",

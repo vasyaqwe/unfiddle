@@ -28,6 +28,18 @@ export function FieldsetLegend({
    )
 }
 
+export function FieldGroup({
+   className,
+   ...props
+}: React.ComponentProps<"div">) {
+   return (
+      <div
+         className={cn("grid gap-3 md:grid-cols-2 md:gap-8", className)}
+         {...props}
+      />
+   )
+}
+
 export function Field({
    className,
    ...props
