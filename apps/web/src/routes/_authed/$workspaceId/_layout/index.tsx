@@ -807,7 +807,7 @@ function OrderRow({
                      </AvatarStackItem>
                   ))}
                </AvatarStack>
-               {item.status ? (
+               {item.status && ORDER_STATUSES_TRANSLATION[item.status] ? (
                   <Combobox
                      canBeEmpty
                      value={item.status}
