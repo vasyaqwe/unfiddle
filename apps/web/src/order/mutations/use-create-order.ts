@@ -31,9 +31,9 @@ export function useCreateOrder({
                sellingPrice: input.sellingPrice ?? null,
                desiredPrice: input.desiredPrice ?? null,
                severity: input.severity ?? "low",
-               status: "pending",
                creatorId: auth.user.id,
                creator: auth.user,
+               status: null,
                groupId: input.groupId ?? null,
                note: input.note ?? "",
                procurements: [],
@@ -97,8 +97,8 @@ export function useOptimisticCreateOrder() {
       queryClient.setQueryData(queryOptions.list.queryKey, (oldData) => {
          if (!oldData) return oldData
 
-         if (search.status?.length && !search.status.includes(input.status))
-            return oldData
+         // if (search.status?.length && !search.status.includes(input.status))
+         //    return oldData
 
          if (
             search.severity?.length &&

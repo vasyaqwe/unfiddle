@@ -2,8 +2,8 @@ import type { OrderSeverity, OrderStatus } from "@unfiddle/core/order/types"
 import type tailwindColors from "tailwindcss/colors"
 
 export const ORDER_STATUSES = [
-   "pending",
    "processing",
+   "en_route",
    "successful",
    "canceled",
 ] as const
@@ -13,16 +13,16 @@ export const ORDER_SEVERITIES = ["low", "high", "critical"] as const
 type TailwindColor = keyof typeof tailwindColors
 
 export const ORDER_STATUSES_COLORS: Record<OrderStatus, TailwindColor> = {
-   pending: "stone",
-   successful: "green",
    processing: "blue",
+   en_route: "orange",
+   successful: "green",
    canceled: "red",
 }
 
 export const ORDER_STATUSES_TRANSLATION: Record<OrderStatus, string> = {
-   pending: "В дорозі",
-   successful: "Успішно",
    processing: "В роботі",
+   en_route: "В дорозі",
+   successful: "Успішно",
    canceled: "Скасовано",
 }
 

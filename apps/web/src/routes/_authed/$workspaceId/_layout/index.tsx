@@ -730,7 +730,7 @@ function OrderRow({
    const theme = useTheme()
    const [expandedOrderIds, setExpandedOrderIds] = useAtom(expandedOrderIdsAtom)
    const [from, to] = orderStatusGradient(
-      item.status,
+      item.status ?? "canceled",
       theme.resolvedTheme ?? "light",
    )
 
@@ -807,53 +807,63 @@ function OrderRow({
                      </AvatarStackItem>
                   ))}
                </AvatarStack>
-               <Combobox
-                  value={item.status}
-                  onValueChange={(status) =>
-                     update.mutate({
-                        id: item.id,
-                        workspaceId: params.workspaceId,
-                        status: status as never,
-                     })
-                  }
-               >
-                  <ComboboxTrigger
-                     onClick={(e) => {
-                        e.stopPropagation()
+               {item.status ? (
+                  <Combobox
+                     canBeEmpty
+                     value={item.status}
+                     onValueChange={(status) => {
+                        if (item.status === status)
+                           return update.mutate({
+                              id: item.id,
+                              workspaceId: params.workspaceId,
+                              status: null,
+                           })
+
+                        update.mutate({
+                           id: item.id,
+                           workspaceId: params.workspaceId,
+                           status: status as never,
+                        })
                      }}
-                     className={"cursor-pointer"}
                   >
-                     <Badge
-                        style={{
-                           background: `linear-gradient(140deg, ${from}, ${to})`,
+                     <ComboboxTrigger
+                        onClick={(e) => {
+                           e.stopPropagation()
+                        }}
+                        className={"cursor-pointer"}
+                     >
+                        <Badge
+                           style={{
+                              background: `linear-gradient(140deg, ${from}, ${to})`,
+                           }}
+                        >
+                           {ORDER_STATUSES_TRANSLATION[item.status] ??
+                              "Без статусу"}{" "}
+                           {item.status === "successful"
+                              ? `(${formatCurrency(totalProfit)})`
+                              : ""}
+                        </Badge>
+                     </ComboboxTrigger>
+                     <ComboboxPopup
+                        sideOffset={4}
+                        align="end"
+                        onClick={(e) => {
+                           e.stopPropagation()
                         }}
                      >
-                        {ORDER_STATUSES_TRANSLATION[item.status] ??
-                           "Без статусу"}{" "}
-                        {item.status === "successful"
-                           ? `(${formatCurrency(totalProfit)})`
-                           : ""}
-                     </Badge>
-                  </ComboboxTrigger>
-                  <ComboboxPopup
-                     sideOffset={4}
-                     align="end"
-                     onClick={(e) => {
-                        e.stopPropagation()
-                     }}
-                  >
-                     <ComboboxInput />
-                     {ORDER_STATUSES.map((s) => (
-                        <ComboboxItem
-                           key={s}
-                           value={s}
-                           keywords={[ORDER_STATUSES_TRANSLATION[s]]}
-                        >
-                           {ORDER_STATUSES_TRANSLATION[s]}
-                        </ComboboxItem>
-                     ))}
-                  </ComboboxPopup>
-               </Combobox>
+                        <ComboboxInput />
+                        {ORDER_STATUSES.map((s) => (
+                           <ComboboxItem
+                              key={s}
+                              value={s}
+                              keywords={[ORDER_STATUSES_TRANSLATION[s]]}
+                           >
+                              {ORDER_STATUSES_TRANSLATION[s]}
+                           </ComboboxItem>
+                        ))}
+                     </ComboboxPopup>
+                  </Combobox>
+               ) : null}
             </div>
             <p className="min-w-[60px] text-foreground/75 max-lg:hidden">
                {formatOrderDate(item.createdAt)}
