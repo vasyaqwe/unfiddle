@@ -101,7 +101,11 @@ export function Textarea({
    useFontsLoadedListener(resizeTextarea)
    return (
       <textarea
-         className={cn(input(), "min-h-20 resize-none py-2", className)}
+         className={cn(
+            input(),
+            "md:!pt-2.5 !pt-3.5 min-h-12 resize-none pb-2 md:min-h-10",
+            className,
+         )}
          {...props}
          onChange={handleChange}
          ref={ref}

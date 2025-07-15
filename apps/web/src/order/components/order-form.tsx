@@ -5,6 +5,7 @@ import type { OrderSeverity } from "@unfiddle/core/order/types"
 import type { RouterInput, RouterOutput } from "@unfiddle/core/trpc/types"
 import { Button } from "@unfiddle/ui/components/button"
 import { Checkbox } from "@unfiddle/ui/components/checkbox"
+import { DateInput } from "@unfiddle/ui/components/date-input"
 import { DrawerClose } from "@unfiddle/ui/components/drawer"
 import {
    Field,
@@ -21,6 +22,7 @@ import {
    SelectTriggerIcon,
    SelectValue,
 } from "@unfiddle/ui/components/select"
+import { Textarea } from "@unfiddle/ui/components/textarea"
 import { formData, number } from "@unfiddle/ui/utils"
 import * as React from "react"
 
@@ -35,12 +37,13 @@ export function OrderForm({
    const [severity, setSeverity] = React.useState<OrderSeverity>(
       order?.severity ?? "low",
    )
+   const [deliversAt, setDeliversAt] = React.useState(order?.deliversAt ?? null)
    const formRef = React.useRef<HTMLFormElement>(null)
 
    return (
       <form
          ref={formRef}
-         className="mt-4 flex grow flex-col space-y-7"
+         className="mt-4 flex grow flex-col space-y-3 md:space-y-8"
          onSubmit={(e) => {
             e.preventDefault()
             const activeElement = document.activeElement as HTMLElement
@@ -55,6 +58,7 @@ export function OrderForm({
                   sellingPrice: string
                   desiredPrice: string
                   note: string
+                  client: string
                   groupId: string
                   vat: "on" | "off"
                }>(e.target)
@@ -70,6 +74,7 @@ export function OrderForm({
                         ? null
                         : number(form.desiredPrice),
                   note: form.note,
+                  client: form.client.length === 0 ? null : form.client,
                   vat: form.vat === "on",
                   severity,
                })
@@ -115,30 +120,42 @@ export function OrderForm({
                defaultValue={order?.desiredPrice ?? undefined}
             />
          </Field>
+         <FieldGroup>
+            <Field>
+               <FieldLabel>Клієнт</FieldLabel>
+               <FieldControl
+                  name="client"
+                  placeholder="Ім'я клієнта"
+                  defaultValue={order?.client ?? ""}
+               />
+            </Field>
+            <div className="flex w-full flex-col items-start">
+               <label
+                  htmlFor="term"
+                  className="font-medium text-sm"
+               >
+                  Термін постачання
+               </label>
+               <DateInput
+                  id="term"
+                  value={deliversAt}
+                  onValueChange={setDeliversAt}
+               />
+            </div>
+         </FieldGroup>
          <Field>
             <FieldLabel>Комент</FieldLabel>
             <FieldControl
-               name="note"
-               placeholder="Додайте комент"
-               defaultValue={order?.note}
+               render={
+                  <Textarea
+                     name="note"
+                     placeholder="Додайте комент"
+                     defaultValue={order?.note}
+                  />
+               }
             />
          </Field>
          <FieldGroup>
-            <Field>
-               <FieldLabel>До замовлення</FieldLabel>
-               <div className="relative">
-                  <span className="absolute bottom-[7px] left-0 mt-2 text-[1rem]">
-                     №
-                  </span>
-                  <FieldControl
-                     placeholder="000"
-                     name="groupId"
-                     inputMode="numeric"
-                     className={"pl-6"}
-                     defaultValue={order?.groupId ?? ""}
-                  />
-               </div>
-            </Field>
             <Field>
                <FieldLabel className={"mb-2.5"}>Пріоритет</FieldLabel>
                <Select
@@ -167,6 +184,21 @@ export function OrderForm({
                      ))}
                   </SelectPopup>
                </Select>
+            </Field>
+            <Field>
+               <FieldLabel>До замовлення</FieldLabel>
+               <div className="relative">
+                  <span className="absolute bottom-[7px] left-0 mt-2 text-[1rem]">
+                     №
+                  </span>
+                  <FieldControl
+                     placeholder="000"
+                     name="groupId"
+                     inputMode="numeric"
+                     className={"pl-6"}
+                     defaultValue={order?.groupId ?? ""}
+                  />
+               </div>
             </Field>
          </FieldGroup>
          <Field className={"flex flex-row items-center gap-2"}>

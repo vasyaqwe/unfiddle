@@ -30,6 +30,7 @@ import { Toggle } from "@base-ui-components/react/toggle"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
+import { formatDate } from "@unfiddle/core/date"
 import { formatNumber } from "@unfiddle/core/number"
 import {
    ORDER_SEVERITIES_TRANSLATION,
@@ -95,6 +96,14 @@ import {
 } from "@unfiddle/ui/components/popover"
 import { ProfitArrow } from "@unfiddle/ui/components/profit-arrow"
 import { Separator } from "@unfiddle/ui/components/separator"
+import {
+   Table,
+   TableBody,
+   TableCell,
+   TableHead,
+   TableHeader,
+   TableRow,
+} from "@unfiddle/ui/components/table"
 import {
    Tooltip,
    TooltipPopup,
@@ -507,8 +516,12 @@ function FilterMenu() {
 function DateFilter() {
    const search = Route.useSearch()
    const navigate = useNavigate()
-   const [startDate, setStartDate] = React.useState(search.startDate)
-   const [endDate, setEndDate] = React.useState(search.endDate)
+   const [startDate, setStartDate] = React.useState(
+      search.startDate ? new Date(search.startDate) : null,
+   )
+   const [endDate, setEndDate] = React.useState(
+      search.endDate ? new Date(search.endDate) : null,
+   )
    const [open, setOpen] = React.useState(false)
 
    return (
@@ -535,18 +548,14 @@ function DateFilter() {
             <p className="mb-2 font-medium">Фільтрувати за датою</p>
             <div className="grid grid-cols-2 items-center gap-2">
                <DateInput
-                  value={startDate ? new Date(startDate) : null}
-                  onValueChange={(date) => {
-                     setStartDate(date ? date.toISOString() : undefined)
-                  }}
+                  value={startDate}
+                  onValueChange={setStartDate}
                   placeholder="Початок"
                   className="max-w-[170px]"
                />
                <DateInput
-                  value={endDate ? new Date(endDate) : null}
-                  onValueChange={(date) => {
-                     setEndDate(date ? date.toISOString() : undefined)
-                  }}
+                  value={endDate}
+                  onValueChange={setEndDate}
                   placeholder="Кінець"
                   className="max-w-[170px]"
                />
@@ -563,8 +572,8 @@ function DateFilter() {
                            endDate: undefined,
                         }),
                      })
-                     setStartDate(undefined)
-                     setEndDate(undefined)
+                     setStartDate(null)
+                     setEndDate(null)
                   }}
                >
                   Скинути
@@ -576,8 +585,8 @@ function DateFilter() {
                         to: ".",
                         search: (prev) => ({
                            ...prev,
-                           startDate: startDate,
-                           endDate: endDate,
+                           startDate: startDate?.toISOString() ?? undefined,
+                           endDate: endDate?.toISOString() ?? undefined,
                         }),
                      })
                      setOpen(false)
@@ -1029,37 +1038,64 @@ function OrderRow({
          <CollapsiblePanel
             key={`${item.procurements.length}_${!!item.desiredPrice}_${!!item.note}`}
             render={
-               <div className="border-neutral border-t bg-surface-3/60 pt-4 lg:pt-3">
+               <div className="border-neutral border-t bg-surface-3/60 pt-2">
                   <div className="container mb-4">
-                     <div className="mb-4 flex items-center gap-3">
-                        <p className="whitespace-nowrap font-medium font-mono text-black text-lg leading-tight lg:text-[1rem] dark:text-foreground">
-                           {formatNumber(item.quantity)} шт.
-                        </p>
-                        <Separator className={"h-6 w-px bg-surface-7"} />
-                        <p className="whitespace-nowrap font-medium font-mono text-black text-lg leading-tight lg:text-[1rem] dark:text-foreground">
-                           {item.sellingPrice
-                              ? formatCurrency(item.sellingPrice)
-                              : "Без ціни"}
-                        </p>
-                        {item.desiredPrice ? (
-                           <>
-                              <Separator className={"h-6 w-px bg-surface-7"} />
-                              <p className="font-medium font-mono text-black text-lg leading-tight lg:text-[1rem] dark:text-foreground">
-                                 Бажано по {formatCurrency(item.desiredPrice)}
-                              </p>
-                           </>
-                        ) : null}
-                     </div>
+                     <Table>
+                        <TableHeader>
+                           <TableRow>
+                              <TableHead className="first:pl-0 last:pr-0">
+                                 Кількість
+                              </TableHead>
+                              <TableHead className="first:pl-0 last:pr-0">
+                                 Ціна
+                              </TableHead>
+                              <TableHead className="first:pl-0 last:pr-0">
+                                 Бажано по
+                              </TableHead>
+                              <TableHead className="first:pl-0 last:pr-0">
+                                 Термін постачання
+                              </TableHead>
+                              <TableHead className="first:pl-0 last:pr-0">
+                                 Клієнт
+                              </TableHead>
+                           </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                           <TableRow className="border-surface-4 font-medium">
+                              <TableCell className="font-mono first:pl-0 last:pr-0">
+                                 {formatNumber(item.quantity)} шт.
+                              </TableCell>
+                              <TableCell className="font-mono first:pl-0 last:pr-0">
+                                 {item.sellingPrice
+                                    ? formatCurrency(item.sellingPrice)
+                                    : "—"}
+                              </TableCell>
+                              <TableCell className="font-mono first:pl-0 last:pr-0">
+                                 {item.desiredPrice
+                                    ? formatCurrency(item.desiredPrice)
+                                    : "—"}
+                              </TableCell>
+                              <TableCell className="first:pl-0 last:pr-0">
+                                 {item.deliversAt
+                                    ? formatDate(item.deliversAt)
+                                    : "—"}
+                              </TableCell>
+                              <TableCell className="first:pl-0 last:pr-0">
+                                 {item.client ?? "—"}
+                              </TableCell>
+                           </TableRow>
+                        </TableBody>
+                     </Table>
                      <p
                         className={cx(
-                           "mb-4 flex gap-1 font-medium text-foreground/75",
+                           "mt-2 mb-3 flex gap-1 font-medium",
                            item.note.length === 0 ? "hidden" : "",
                         )}
                      >
                         {item.note}
                      </p>
                      {item.procurements.length === 0 ? (
-                        <p className="font-medium text-foreground/80">
+                        <p className="border-surface-4 border-t pt-3 font-medium text-foreground/75">
                            Ще немає закупівель.
                         </p>
                      ) : (

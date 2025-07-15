@@ -43,7 +43,7 @@ export function CreateProcurement({
             <DrawerTitle>Нова закупівля</DrawerTitle>
             <form
                ref={formRef}
-               className="mt-4 flex grow flex-col space-y-7"
+               className="mt-4 flex grow flex-col space-y-3 md:space-y-8"
                onSubmit={(e) => {
                   e.preventDefault()
                   const activeElement = document.activeElement as HTMLElement
