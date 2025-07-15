@@ -76,6 +76,7 @@ export function OrderForm({
                   note: form.note,
                   client: form.client.length === 0 ? null : form.client,
                   vat: form.vat === "on",
+                  deliversAt,
                   severity,
                })
             })
@@ -137,6 +138,7 @@ export function OrderForm({
                   Термін постачання
                </label>
                <DateInput
+                  inDialog
                   id="term"
                   value={deliversAt}
                   onValueChange={setDeliversAt}
