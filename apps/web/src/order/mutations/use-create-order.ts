@@ -38,6 +38,7 @@ export function useCreateOrder({
                note: input.note ?? "",
                vat: input.vat ?? false,
                client: input.client ?? null,
+               deliversAt: input.deliversAt ?? null,
                procurements: [],
                assignees: [],
                deletedAt: null,
