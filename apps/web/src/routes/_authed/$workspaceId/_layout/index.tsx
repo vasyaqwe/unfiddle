@@ -908,7 +908,7 @@ function OrderRow({
                                     update.mutate({
                                        id: item.id,
                                        workspaceId: params.workspaceId,
-                                       deletedAt: new Date().toString(),
+                                       deletedAt: new Date(),
                                     })
                                  }
                               >

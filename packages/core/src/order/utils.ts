@@ -20,7 +20,7 @@ export const orderStatusGradient = (status: OrderStatus, theme: string) => {
    return [tailwindColors[color][from], tailwindColors[color][to]] as const
 }
 
-export const formatOrderDate = (date: string) => {
+export const formatOrderDate = (date: string | Date) => {
    return formatDate(
       date,
       new Date(date).getDate() === new Date().getDate()

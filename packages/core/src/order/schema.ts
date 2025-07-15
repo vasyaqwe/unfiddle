@@ -45,7 +45,10 @@ export const order = d.table(
       severity: d.text({ enum: ORDER_SEVERITIES }).notNull().default("low"),
       note: d.text().notNull().default(""),
       status: d.text({ enum: ORDER_STATUSES }),
+      vat: d.integer({ mode: "boolean" }).notNull().default(false),
+      client: d.text(),
       deletedAt: d.integer({ mode: "timestamp" }),
+      deliversAt: d.integer({ mode: "timestamp" }),
       ...d.timestamps,
    },
    (table) => [
@@ -114,4 +117,4 @@ export const updateOrderSchema = createUpdateSchema(order)
       groupId: true,
    })
    .required({ id: true, workspaceId: true })
-   .extend({ deletedAt: z.string().nullable().optional() })
+   .extend({ deletedAt: z.date().nullable().optional() })

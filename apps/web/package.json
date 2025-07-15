@@ -39,6 +39,7 @@
     "recharts": "^2.15.3",
     "remeda": "^2.17.4",
     "sonner": "^1.7.1",
+    "superjson": "^2.2.2",
     "vaul-base": "^0.0.5",
     "virtua": "^0.41.5",
     "vite-tsconfig-paths": "^5.1.4",

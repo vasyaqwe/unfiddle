@@ -39,7 +39,7 @@ export function useCreateOrder({
                procurements: [],
                assignees: [],
                deletedAt: null,
-               createdAt: new Date().toString(),
+               createdAt: new Date(),
             })
 
             onMutate?.()
@@ -97,8 +97,7 @@ export function useOptimisticCreateOrder() {
       queryClient.setQueryData(queryOptions.list.queryKey, (oldData) => {
          if (!oldData) return oldData
 
-         // if (search.status?.length && !search.status.includes(input.status))
-         //    return oldData
+         if (search.status?.length) return oldData
 
          if (
             search.severity?.length &&

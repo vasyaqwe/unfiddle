@@ -12,6 +12,7 @@ import {
 } from "@trpc/tanstack-react-query"
 import type { AppRouter } from "@unfiddle/core/trpc/types"
 import { toast } from "sonner"
+import superjson from "superjson"
 
 export const { TRPCProvider, useTRPC, useTRPCClient } =
    createTRPCContext<AppRouter>()
@@ -43,6 +44,7 @@ export const client = createTRPCClient<AppRouter>({
    links: [
       httpBatchStreamLink({
          url: `${env.API_URL}/trpc`,
+         transformer: superjson,
          fetch(url, options) {
             return fetch(url, {
                ...options,
