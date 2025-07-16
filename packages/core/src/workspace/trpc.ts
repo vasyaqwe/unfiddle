@@ -45,33 +45,33 @@ export const workspaceRouter = t.router({
       .input(z.record(z.string(), z.array(z.any())))
       .mutation(async ({ ctx, input }) => {
          for (const [name, rows] of Object.entries(input)) {
-            const table = tableMap[name as keyof typeof tableMap];
+            const table = tableMap[name as keyof typeof tableMap]
             if (!table) {
-               throw new Error(`invalid table: ${name}`);
+               throw new Error(`invalid table: ${name}`)
             }
             if (rows.length === 0) {
-               continue;
+               continue
             }
             const newRows = rows.map((row) => {
-               const newRow = { ...row };
+               const newRow = { ...row }
                if (newRow.createdAt) {
-                  newRow.createdAt = new Date(newRow.createdAt);
+                  newRow.createdAt = new Date(newRow.createdAt)
                }
                if (newRow.updatedAt) {
-                  newRow.updatedAt = new Date(newRow.updatedAt);
+                  newRow.updatedAt = new Date(newRow.updatedAt)
                }
                if (newRow.deletedAt) {
-                  newRow.deletedAt = new Date(newRow.deletedAt);
+                  newRow.deletedAt = new Date(newRow.deletedAt)
                }
-               return newRow;
-            });
-            for (let i = 0; i < newRows.length; i += 10) {
-               const batch = newRows.slice(i, i + 10);
-               await ctx.db.insert(table).values(batch);
+               return newRow
+            })
+            for (let i = 0; i < newRows.length; i += 5) {
+               const batch = newRows.slice(i, i + 5)
+               await ctx.db.insert(table).values(batch)
             }
          }
 
-         return { success: true };
+         return { success: true }
       }),
    search: t.procedure
       .use(workspaceMemberMiddleware)
