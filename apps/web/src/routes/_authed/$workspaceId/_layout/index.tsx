@@ -137,66 +137,6 @@ function RouteComponent() {
    const query = useQuery(queryOptions.list)
    const data = query.data ?? []
 
-   const groupedData = React.useMemo(() => {
-      const data = query.data ?? []
-
-      const groupedItems = data.filter((item) => item.groupId)
-      const ungroupedItems = data.filter((item) => !item.groupId)
-
-      const groups: Record<string, typeof data> = {}
-      for (const item of groupedItems) {
-         // biome-ignore lint/style/noNonNullAssertion: <explanation>
-         const groupId = item.groupId!
-
-         if (!groups[groupId]) groups[groupId] = []
-         groups[groupId].push(item)
-      }
-
-      for (const items of Object.values(groups)) {
-         items.sort(
-            (a, b) =>
-               new Date(b.createdAt).getTime() -
-               new Date(a.createdAt).getTime(),
-         )
-      }
-
-      const mixedItems = []
-
-      for (const [key, items] of Object.entries(groups)) {
-         mixedItems.push({
-            type: "group",
-            key: key,
-            items: items,
-         })
-      }
-
-      for (const item of ungroupedItems) {
-         mixedItems.push({
-            type: "individual",
-            item: item,
-            items: [],
-         })
-      }
-
-      return mixedItems.sort((a, b) => {
-         const itemsA = a.items ?? []
-         const itemsB = b.items ?? []
-
-         const itemA = itemsA[itemsA.length - 1]
-         const itemB = itemsB[itemsB.length - 1]
-
-         const dateA =
-            a.type === "group"
-               ? new Date(itemA?.createdAt ?? 0).getTime()
-               : new Date(a.item?.createdAt ?? 0).getTime()
-         const dateB =
-            b.type === "group"
-               ? new Date(itemB?.createdAt ?? 0).getTime()
-               : new Date(b.item?.createdAt ?? 0).getTime()
-         return dateB - dateA
-      })
-   }, [query.data])
-
    // if (auth.user.email !== "vasylpolishchuk22@gmail.com")
    // return (
    //    <div className="absolute inset-0 m-auto size-fit text-center">
@@ -241,44 +181,16 @@ function RouteComponent() {
                ) : !data || data.length === 0 ? (
                   <Empty />
                ) : (
-                  groupedData.map((entry) => {
-                     if (entry.type === "individual") {
-                        if (!entry.item) return null
-
-                        return (
-                           <div
-                              key={entry.item.id}
-                              className={"border-surface-5 border-b"}
-                           >
-                              <OrderRow
-                                 order={entry.item}
-                                 groupShortId={null}
-                              />
-                           </div>
-                        )
-                     }
-
-                     const groupShortId = String(
-                        entry.items[entry.items.length - 1]?.shortId ?? 1,
-                     ).padStart(3, "0")
-
-                     return (
-                        <div
-                           key={entry.key}
-                           className="group relative border-surface-5 border-b before:absolute before:inset-y-0 before:left-0 before:z-[2] before:my-auto before:h-[calc(100%-0.5rem)] before:w-1 before:rounded-e-md before:bg-primary-6"
-                        >
-                           <div className={"divide-y divide-surface-5"}>
-                              {entry.items.map((order) => (
-                                 <OrderRow
-                                    key={order.id}
-                                    order={order}
-                                    groupShortId={groupShortId}
-                                 />
-                              ))}
-                           </div>
-                        </div>
-                     )
-                  })
+                  <div className="group relative border-surface-5 border-b">
+                     <div className={"divide-y divide-surface-5"}>
+                        {query.data.map((order) => (
+                           <OrderRow
+                              key={order.id}
+                              order={order}
+                           />
+                        ))}
+                     </div>
+                  </div>
                )}
             </div>
          </MainScrollArea>
@@ -737,10 +649,8 @@ function Empty() {
 
 function OrderRow({
    order,
-   groupShortId,
 }: {
    order: RouterOutput["order"]["list"][number]
-   groupShortId: string | null
 }) {
    const params = Route.useParams()
    const auth = useAuth()
@@ -789,7 +699,7 @@ function OrderRow({
                   className="mr-[2px] shrink-0"
                />
                <p className="whitespace-nowrap font-medium font-mono text-foreground/75 text-sm">
-                  №{groupShortId ?? String(order.shortId).padStart(3, "0")}
+                  №{String(order.shortId).padStart(3, "0")}
                </p>
                <AlignedColumn
                   id={`o_creator`}
@@ -1152,14 +1062,14 @@ function OrderRow({
                                  {item.name}
                                  <Separator className="w-full lg:mx-1 lg:h-4 lg:w-px" />
                                  <span className="flex items-center gap-2">
-                                    <span className="font-medium font-mono">
+                                    <span className="font-mono">
                                        {" "}
                                        {item.quantity} шт.
                                     </span>
                                     {item.desiredPrice ? (
                                        <>
                                           <Separator className="mx-1 h-4 w-px" />
-                                          <span className="font-medium font-mono">
+                                          <span className="font-mono">
                                              Бажано по{" "}
                                              {formatCurrency(item.desiredPrice)}
                                           </span>

@@ -79,13 +79,11 @@ export function OrderForm({
                   desiredPrice: string
                   note: string
                   client: string
-                  groupId: string
                   vat: "on" | "off"
                }>(e.target)
 
                onSubmit({
                   workspaceId: auth.workspace.id,
-                  groupId: form.groupId === "" ? null : form.groupId,
                   name: form.name,
                   sellingPrice: number(form.sellingPrice),
                   note: form.note,

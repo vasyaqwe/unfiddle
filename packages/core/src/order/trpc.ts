@@ -106,7 +106,6 @@ export const orderRouter = t.router({
                client: true,
                analogs: true,
                creatorId: true,
-               groupId: true,
                deletedAt: true,
                deliversAt: true,
                createdAt: true,

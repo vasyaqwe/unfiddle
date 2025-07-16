@@ -145,7 +145,6 @@ export const updateOrderSchema = createUpdateSchema(order)
       desiredPrice: true,
       status: true,
       severity: true,
-      groupId: true,
       vat: true,
       client: true,
       deliversAt: true,
