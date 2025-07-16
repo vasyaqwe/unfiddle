@@ -1,9 +1,12 @@
--- This is a 100% harmless SQL migration file for Drizzle ORM.
--- It uses empty DO blocks to satisfy the "cannot be empty" requirement
--- without performing any actual database changes.
+-- This is a 100% harmless SQL migration file for Drizzle ORM,
+-- specifically designed for SQLite databases.
+-- It creates a dummy table if it doesn't exist, which is a no-op if it does.
 
 -- Up migration
-DO $$ BEGIN END; $$ LANGUAGE plpgsql;
+CREATE TABLE IF NOT EXISTS _drizzle_dummy_migration_table (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 -- Down migration
-DO $$ BEGIN END; $$ LANGUAGE plpgsql;
+DROP TABLE IF EXISTS _drizzle_dummy_migration_table;
