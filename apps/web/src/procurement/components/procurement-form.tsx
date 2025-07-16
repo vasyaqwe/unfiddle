@@ -1,8 +1,18 @@
 import { useAuth } from "@/auth/hooks"
+import type { OrderItem } from "@unfiddle/core/order/types"
 import type { Procurement } from "@unfiddle/core/procurement/types"
 import type { RouterInput } from "@unfiddle/core/trpc/types"
+import { Button } from "@unfiddle/ui/components/button"
 import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
 import { NumberField } from "@unfiddle/ui/components/number-field"
+import {
+   Select,
+   SelectItem,
+   SelectPopup,
+   SelectTrigger,
+   SelectTriggerIcon,
+   SelectValue,
+} from "@unfiddle/ui/components/select"
 import { Textarea } from "@unfiddle/ui/components/textarea"
 import { formData, number } from "@unfiddle/ui/utils"
 import * as React from "react"
@@ -12,6 +22,7 @@ export function ProcurementForm({
    onSubmit,
    children,
    orderName,
+   orderItems,
 }: {
    procurement?: Procurement | undefined
    onSubmit: (
@@ -21,6 +32,7 @@ export function ProcurementForm({
    ) => void
    children: React.ReactNode
    orderName: string
+   orderItems: OrderItem[]
 }) {
    const auth = useAuth()
    const formRef = React.useRef<HTMLFormElement>(null)
@@ -42,6 +54,7 @@ export function ProcurementForm({
                   quantity: string
                   purchasePrice: string
                   provider: string
+                  orderItemId: string
                }>(e.target)
 
                onSubmit({
@@ -50,6 +63,7 @@ export function ProcurementForm({
                   purchasePrice: number(form.purchasePrice),
                   note: form.note,
                   provider: form.provider.length === 0 ? null : form.provider,
+                  orderItemId: form.orderItemId,
                })
             })
          }}
@@ -61,6 +75,36 @@ export function ProcurementForm({
                readOnly
                disabled
             />
+         </Field>
+         <Field>
+            <FieldLabel className={"mb-2.5"}>Товар</FieldLabel>
+            <Select
+               required
+               name="orderItemId"
+               defaultValue={orderItems[0]?.id}
+            >
+               <SelectTrigger
+                  render={
+                     <Button
+                        variant={"secondary"}
+                        className="w-full justify-start"
+                     >
+                        <SelectValue>{(label) => label}</SelectValue>
+                        <SelectTriggerIcon />
+                     </Button>
+                  }
+               />
+               <SelectPopup align="start">
+                  {orderItems.map((item) => (
+                     <SelectItem
+                        key={item.id}
+                        value={item.id}
+                     >
+                        {item.name}
+                     </SelectItem>
+                  ))}
+               </SelectPopup>
+            </Select>
          </Field>
          <div className="grid grid-cols-2 gap-3">
             <Field>

@@ -6,6 +6,8 @@ import type { updateOrderSchema } from "@unfiddle/core/order/schema"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import type { z } from "zod"
 
+export type OrderItem = RouterOutput["order"]["list"][number]["items"][number]
+
 export type OrderStatus = (typeof ORDER_STATUSES)[number]
 export type OrderSeverity = (typeof ORDER_SEVERITIES)[number]
 

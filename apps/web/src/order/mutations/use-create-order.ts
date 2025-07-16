@@ -44,6 +44,11 @@ export function useCreateOrder({
                analogs: [],
                deletedAt: null,
                createdAt: new Date(),
+               items: input.items.map((item) => ({
+                  ...item,
+                  id: crypto.randomUUID(),
+                  desiredPrice: item.desiredPrice ?? null,
+               })),
             })
 
             onMutate?.()

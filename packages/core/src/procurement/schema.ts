@@ -1,6 +1,6 @@
 import { user } from "@unfiddle/core/auth/schema"
 import { d } from "@unfiddle/core/database"
-import { order } from "@unfiddle/core/order/schema"
+import { order, orderItem } from "@unfiddle/core/order/schema"
 import { PROCUREMENT_STATUSES } from "@unfiddle/core/procurement/constants"
 import { relations } from "drizzle-orm"
 import { createUpdateSchema } from "drizzle-zod"
@@ -18,6 +18,9 @@ export const procurement = d.table(
          .text()
          .notNull()
          .references(() => user.id, { onDelete: "cascade" }),
+      orderItemId: d
+         .text()
+         .references(() => orderItem.id, { onDelete: "cascade" }),
       quantity: d.integer().notNull(),
       purchasePrice: d.numeric({ mode: "number" }).notNull(),
       status: d
@@ -43,6 +46,10 @@ export const procurementRelations = relations(procurement, ({ one }) => ({
    order: one(order, {
       fields: [procurement.orderId],
       references: [order.id],
+   }),
+   orderItem: one(orderItem, {
+      fields: [procurement.orderItemId],
+      references: [orderItem.id],
    }),
 }))
 

@@ -67,16 +67,14 @@ export function useUpdateOrder({
    )
 }
 
-export function useOptimisticUpdateOrder({
-   invalidate = false,
-}: { invalidate?: boolean } = {}) {
+export function useOptimisticUpdateOrder() {
    const queryClient = useQueryClient()
    const queryOptions = useOrderQueryOptions()
 
    const desc = (a: { createdAt: string }, b: { createdAt: string }) =>
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
 
-   const moveItemBetweenQueries = <
+   const moveItemBetweenQueries = async <
       T extends Record<string, string | null> & {
          id: string
          createdAt: string
@@ -87,7 +85,19 @@ export function useOptimisticUpdateOrder({
       itemId: string,
       update: Partial<T>,
    ) => {
-      const fromData = queryClient.getQueryData<T[]>(fromKey) || []
+      let fromData = queryClient.getQueryData<T[]>(fromKey)
+      let toData = queryClient.getQueryData<T[]>(toKey)
+
+      if (!fromData) {
+         await queryClient.prefetchQuery({ queryKey: fromKey })
+         fromData = queryClient.getQueryData<T[]>(fromKey) || []
+      }
+
+      if (!toData) {
+         await queryClient.prefetchQuery({ queryKey: toKey })
+         toData = queryClient.getQueryData<T[]>(toKey) || []
+      }
+
       const item = fromData.find((i) => i.id === itemId)
       if (!item) return
 
@@ -96,34 +106,28 @@ export function useOptimisticUpdateOrder({
          fromData.filter((i) => i.id !== itemId),
       )
 
-      queryClient.setQueryData(toKey, (toData: T[] = []) =>
-         [...toData, { ...item, ...update }].sort(desc),
+      queryClient.setQueryData(toKey, (currentToData: T[] = []) =>
+         [...currentToData, { ...item, ...update }].sort(desc),
       )
    }
 
-   return (input: Partial<RouterOutput["order"]["list"][number]>) => {
+   return async (input: Partial<RouterOutput["order"]["list"][number]>) => {
       if (input.deletedAt === null) {
-         moveItemBetweenQueries(
+         return await moveItemBetweenQueries(
             queryOptions.listArchived.queryKey,
             queryOptions.listNotArchived.queryKey,
             input.id ?? "",
             { deletedAt: null },
          )
-         if (invalidate)
-            queryClient.invalidateQueries(queryOptions.listNotArchived)
-         return
       }
 
       if (input.deletedAt) {
-         moveItemBetweenQueries(
+         return await moveItemBetweenQueries(
             queryOptions.listNotArchived.queryKey,
             queryOptions.listArchived.queryKey,
             input.id ?? "",
             { deletedAt: new Date().toString() },
          )
-         if (invalidate)
-            queryClient.invalidateQueries(queryOptions.listArchived)
-         return
       }
 
       queryClient.setQueryData(queryOptions.list.queryKey, (oldData) => {

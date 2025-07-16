@@ -16,7 +16,7 @@ export function useCreateOrderAssignee({
    const socket = useSocket()
    const queryOptions = useOrderQueryOptions()
    const create = useOptimisticCreateOrderAssignee()
-   const update = useOptimisticUpdateOrder({ invalidate: true })
+   const update = useOptimisticUpdateOrder()
 
    return useMutation(
       trpc.order.assignee.create.mutationOptions({

@@ -11,8 +11,7 @@ import usePartySocket from "partysocket/react"
 export function useOrderSocket() {
    const auth = useAuth()
    const create = useOptimisticCreateOrder()
-   // because we're adding/removing items on lists that might not have been loaded (like archived list), we need to invalidate them
-   const update = useOptimisticUpdateOrder({ invalidate: true })
+   const update = useOptimisticUpdateOrder()
    const deleteOrder = useOptimisticDeleteOrder()
    const createAssignee = useOptimisticCreateOrderAssignee()
    const deleteAssignee = useOptimisticDeleteOrderAssignee()
@@ -21,13 +20,13 @@ export function useOrderSocket() {
       host: env.COLLABORATION_URL,
       party: "order",
       room: auth.workspace.id,
-      onMessage(event) {
+      async onMessage(event) {
          const data = JSON.parse(event.data) as OrderEvent
 
          if (data.senderId === auth.user.id) return
 
          if (data.action === "create_assignee") {
-            update({ id: data.orderId, status: "processing" })
+            await update({ id: data.orderId, status: "processing" })
             return createAssignee({
                orderId: data.orderId,
                assignee: data.assignee,

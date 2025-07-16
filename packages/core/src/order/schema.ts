@@ -71,6 +71,31 @@ export const order = d.table(
    ],
 )
 
+export const orderItem = d.table(
+   "order_item",
+
+   {
+      id: d.id("order_item"),
+      orderId: d
+         .text()
+         .notNull()
+         .references(() => order.id, { onDelete: "cascade" }),
+      name: d.text().notNull(),
+      quantity: d.integer().notNull(),
+      desiredPrice: d.numeric({ mode: "number" }),
+      ...d.timestamps,
+   },
+
+   (table) => [d.index("order_item_order_id_idx").on(table.orderId)],
+)
+
+export const orderItemRelations = relations(orderItem, ({ one }) => ({
+   order: one(order, {
+      fields: [orderItem.orderId],
+      references: [order.id],
+   }),
+}))
+
 export const orderAssignee = d.table(
    "order_assignee",
    {
@@ -106,6 +131,7 @@ export const orderRelations = relations(order, ({ one, many }) => ({
    }),
    procurements: many(procurement),
    assignees: many(orderAssignee),
+   items: many(orderItem),
 }))
 
 export const updateOrderSchema = createUpdateSchema(order)

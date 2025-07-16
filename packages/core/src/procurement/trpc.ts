@@ -1,3 +1,5 @@
+import { TRPCError } from "@trpc/server"
+import { orderItem } from "@unfiddle/core/order/schema"
 import {
    procurement,
    updateProcurementSchema,
@@ -17,7 +19,7 @@ export const procurementRouter = t.router({
             .extend({ workspaceId: z.string() }),
       )
       .mutation(async ({ ctx, input }) => {
-         return await ctx.db
+         const createdProcurement = await ctx.db
             .insert(procurement)
             .values({
                ...input,
@@ -25,6 +27,21 @@ export const procurementRouter = t.router({
             })
             .returning()
             .get()
+         const orderItemId = createdProcurement.orderItemId
+         if (!orderItemId)
+            throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" })
+
+         const foundItem = await ctx.db.query.orderItem.findFirst({
+            where: eq(orderItem.id, orderItemId),
+            columns: {
+               name: true,
+            },
+         })
+
+         return {
+            ...createdProcurement,
+            orderItem: { name: foundItem?.name ?? "" },
+         }
       }),
    update: t.procedure
       .use(workspaceMemberMiddleware)
