@@ -818,7 +818,9 @@ function OrderRow({
                      </AvatarStackItem>
                   ))}
                </AvatarStack>
-               {item.status && ORDER_STATUSES_TRANSLATION[item.status] ? (
+               {item.status &&
+               item.status !== "pending" &&
+               ORDER_STATUSES_TRANSLATION[item.status] ? (
                   <Combobox
                      canBeEmpty
                      value={item.status}
@@ -827,7 +829,7 @@ function OrderRow({
                            return update.mutate({
                               id: item.id,
                               workspaceId: params.workspaceId,
-                              status: null,
+                              status: "pending",
                            })
 
                         update.mutate({
@@ -863,15 +865,17 @@ function OrderRow({
                         }}
                      >
                         <ComboboxInput />
-                        {ORDER_STATUSES.map((s) => (
-                           <ComboboxItem
-                              key={s}
-                              value={s}
-                              keywords={[ORDER_STATUSES_TRANSLATION[s]]}
-                           >
-                              {ORDER_STATUSES_TRANSLATION[s]}
-                           </ComboboxItem>
-                        ))}
+                        {ORDER_STATUSES.map((s) =>
+                           s === "pending" ? null : (
+                              <ComboboxItem
+                                 key={s}
+                                 value={s}
+                                 keywords={[ORDER_STATUSES_TRANSLATION[s]]}
+                              >
+                                 {ORDER_STATUSES_TRANSLATION[s]}
+                              </ComboboxItem>
+                           ),
+                        )}
                      </ComboboxPopup>
                   </Combobox>
                ) : null}

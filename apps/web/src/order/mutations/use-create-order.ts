@@ -33,7 +33,7 @@ export function useCreateOrder({
                severity: input.severity ?? "low",
                creatorId: auth.user.id,
                creator: auth.user,
-               status: null,
+               status: "pending",
                groupId: input.groupId ?? null,
                note: input.note ?? "",
                vat: input.vat ?? false,
