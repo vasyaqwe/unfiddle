@@ -5,6 +5,7 @@ import {
    order,
    orderAssignee,
    orderCounter,
+   orderItem,
    updateOrderSchema,
 } from "@unfiddle/core/order/schema"
 import { procurement } from "@unfiddle/core/procurement/schema"
@@ -82,8 +83,6 @@ export const orderRouter = t.router({
                 OR
                 ${order.shortId} LIKE ${searchTerm}
                 OR
-                ${order.quantity} LIKE ${searchTerm}
-                OR
                 ${order.sellingPrice} LIKE ${searchTerm}
               )`,
             )
@@ -96,9 +95,7 @@ export const orderRouter = t.router({
                shortId: true,
                name: true,
                severity: true,
-               quantity: true,
                sellingPrice: true,
-               desiredPrice: true,
                status: true,
                note: true,
                vat: true,
@@ -148,8 +145,21 @@ export const orderRouter = t.router({
                            image: true,
                         },
                      },
+                     orderItem: {
+                        columns: {
+                           name: true,
+                        },
+                     },
                   },
                   orderBy: [desc(procurement.createdAt)],
+               },
+               items: {
+                  columns: {
+                     id: true,
+                     name: true,
+                     quantity: true,
+                     desiredPrice: true,
+                  },
                },
             },
             orderBy: [desc(order.createdAt)],
@@ -160,7 +170,12 @@ export const orderRouter = t.router({
       .input(
          createInsertSchema(order)
             .omit({ creatorId: true, shortId: true })
-            .extend({ analogs: z.array(z.string()).default([]) }),
+            .extend({
+               analogs: z.array(z.string()).default([]),
+               items: z
+                  .array(createInsertSchema(orderItem).omit({ orderId: true }))
+                  .min(1),
+            }),
       )
       .mutation(async ({ ctx, input }) => {
          const existingCounter = await ctx.db.query.orderCounter.findFirst({
@@ -183,6 +198,26 @@ export const orderRouter = t.router({
             })
             .returning()
             .get()
+
+         const createdOrderItems = await tryCatch(
+            ctx.db
+               .insert(orderItem)
+               .values(
+                  input.items.map((item) => ({
+                     ...item,
+                     orderId: createdOrder.id,
+                  })),
+               )
+               .returning(),
+         )
+
+         if (createdOrderItems.error) {
+            await ctx.db.delete(order).where(eq(order.id, createdOrder.id))
+            throw new TRPCError({
+               code: "INTERNAL_SERVER_ERROR",
+               message: "Failed to create order items",
+            })
+         }
 
          const batchQueries: BatchItem[] = []
 
@@ -213,10 +248,13 @@ export const orderRouter = t.router({
 
          if (batch.error || batch.data.some((r) => r.error)) {
             await ctx.db.delete(order).where(eq(order.id, createdOrder.id))
+            await ctx.db
+               .delete(orderItem)
+               .where(eq(orderItem.orderId, createdOrder.id))
             throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" })
          }
 
-         return createdOrder
+         return { ...createdOrder, items: createdOrderItems.data }
       }),
    update: t.procedure
       .use(workspaceMemberMiddleware)

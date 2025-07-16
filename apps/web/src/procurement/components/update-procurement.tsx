@@ -1,5 +1,6 @@
 import { ProcurementForm } from "@/procurement/components/procurement-form"
 import { useUpdateProcurement } from "@/procurement/mutations/use-update-procurement"
+import type { OrderItem } from "@unfiddle/core/order/types"
 import type { Procurement } from "@unfiddle/core/procurement/types"
 import { Button } from "@unfiddle/ui/components/button"
 import {
@@ -16,12 +17,14 @@ export function UpdateProcurement({
    open,
    setOpen,
    orderName,
+   orderItems,
 }: {
    procurement: Procurement
    finalFocus: React.RefObject<HTMLButtonElement | null>
    open: boolean
    setOpen: (open: boolean) => void
    orderName: string
+   orderItems: OrderItem[]
 }) {
    const mutation = useUpdateProcurement({
       onMutate: () => setOpen(false),
@@ -36,6 +39,7 @@ export function UpdateProcurement({
          <DrawerPopup finalFocus={finalFocus}>
             <DrawerTitle>Редагувати закупівлю</DrawerTitle>
             <ProcurementForm
+               orderItems={orderItems}
                orderName={orderName}
                onSubmit={(data) =>
                   mutation.mutate({

@@ -78,6 +78,9 @@ export function SidebarContent() {
                <DrawerTrigger
                   render={
                      <Button
+                        disabled={
+                           auth.user.email !== "vasylpolishchuk22@gmail.com"
+                        }
                         variant={"secondary"}
                         className="mt-3 w-full"
                         size={"lg"}

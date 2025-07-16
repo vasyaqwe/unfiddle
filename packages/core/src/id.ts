@@ -7,6 +7,7 @@ export const ID_PREFIXES = {
    file: "file",
    workspace: "wrk",
    order: "ord",
+   order_item: "oitem",
    procurement: "pro",
    good: "good",
 } as const

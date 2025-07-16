@@ -1,7 +1,8 @@
 import { TRPCError } from "@trpc/server"
 import { session } from "@unfiddle/core/auth/schema"
 import { createCode } from "@unfiddle/core/id"
-import { order } from "@unfiddle/core/order/schema"
+import { order, orderItem } from "@unfiddle/core/order/schema"
+import { procurement } from "@unfiddle/core/procurement/schema"
 import { t } from "@unfiddle/core/trpc/context"
 import { tryCatch } from "@unfiddle/core/try-catch"
 import { workspaceAnalyticsRouter } from "@unfiddle/core/workspace/analytics/trpc"
@@ -12,10 +13,96 @@ import {
    workspace,
    workspaceMember,
 } from "@unfiddle/core/workspace/schema"
-import { and, desc, eq, or, sql } from "drizzle-orm"
+import { and, desc, eq, inArray, or, sql } from "drizzle-orm"
 import { z } from "zod"
 
 export const workspaceRouter = t.router({
+   migrateOrdersToOrderItems: t.procedure.mutation(async ({ ctx }) => {
+      const BATCH_SIZE = 10
+      let totalMigrated = 0
+
+      while (true) {
+         const ordersToMigrate = await ctx.db.query.order.findMany({
+            where: (order, { notExists }) =>
+               notExists(
+                  ctx.db
+                     .select()
+                     .from(orderItem)
+                     .where(eq(orderItem.orderId, order.id)),
+               ),
+            limit: BATCH_SIZE,
+         })
+
+         if (ordersToMigrate.length === 0) {
+            break
+         }
+
+         const newOrderItems = ordersToMigrate.map((o) => ({
+            orderId: o.id,
+            name: o.name,
+            quantity: o.quantity,
+            desiredPrice: o.desiredPrice,
+         }))
+
+         await ctx.db.insert(orderItem).values(newOrderItems)
+
+         totalMigrated += ordersToMigrate.length
+
+         if (ordersToMigrate.length < BATCH_SIZE) {
+            break
+         }
+      }
+
+      return { message: `Migrated ${totalMigrated} orders.` }
+   }),
+
+   migrateProcurementsToOrderItems: t.procedure.mutation(async ({ ctx }) => {
+      const BATCH_SIZE = 10
+      let totalMigrated = 0
+
+      while (true) {
+         const procurementsToMigrate = await ctx.db.query.procurement.findMany({
+            where: (procurement, { isNull }) => isNull(procurement.orderItemId),
+            limit: BATCH_SIZE,
+         })
+
+         if (procurementsToMigrate.length === 0) {
+            break
+         }
+
+         const orderIds = [
+            ...new Set(procurementsToMigrate.map((p) => p.orderId)),
+         ]
+
+         const correspondingItems = await ctx.db.query.orderItem.findMany({
+            where: inArray(orderItem.orderId, orderIds),
+            columns: { id: true, orderId: true },
+         })
+
+         const orderIdToItemIdMap = new Map(
+            correspondingItems.map((item) => [item.orderId, item.id]),
+         )
+
+         for (const proc of procurementsToMigrate) {
+            const itemId = orderIdToItemIdMap.get(proc.orderId)
+            if (itemId) {
+               await ctx.db
+                  .update(procurement)
+                  .set({ orderItemId: itemId })
+                  .where(eq(procurement.id, proc.id))
+            }
+         }
+
+         totalMigrated += procurementsToMigrate.length
+
+         if (procurementsToMigrate.length < BATCH_SIZE) {
+            break
+         }
+      }
+
+      return { message: `Migrated ${totalMigrated} procurements.` }
+   }),
+
    member: workspaceMemberRouter,
    analytics: workspaceAnalyticsRouter,
    search: t.procedure

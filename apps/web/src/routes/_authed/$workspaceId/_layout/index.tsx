@@ -41,6 +41,7 @@ import {
    ORDER_STATUSES,
 } from "@unfiddle/core/order/constants"
 import { orderFilterSchema } from "@unfiddle/core/order/filter"
+import type { OrderItem } from "@unfiddle/core/order/types"
 import {
    formatOrderDate,
    orderStatusGradient,
@@ -95,7 +96,6 @@ import {
    PopoverPopup,
    PopoverTrigger,
 } from "@unfiddle/ui/components/popover"
-import { ProfitArrow } from "@unfiddle/ui/components/profit-arrow"
 import { Separator } from "@unfiddle/ui/components/separator"
 import {
    Table,
@@ -129,6 +129,8 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/")({
    },
    validateSearch: validator(orderFilterSchema),
 })
+
+const block = true
 
 function RouteComponent() {
    const auth = useAuth()
@@ -196,6 +198,13 @@ function RouteComponent() {
          return dateB - dateA
       })
    }, [query.data])
+   if (block && auth.user.email !== "vasylpolishchuk22@gmail.com")
+      return (
+         <div className="absolute inset-0 m-auto size-fit text-center">
+            <h1>Технічна перерва</h1>
+            <p>Сайт скоро повернеться</p>
+         </div>
+      )
 
    return (
       <>
@@ -243,7 +252,7 @@ function RouteComponent() {
                               className={"border-surface-5 border-b"}
                            >
                               <OrderRow
-                                 item={entry.item}
+                                 order={entry.item}
                                  groupShortId={null}
                               />
                            </div>
@@ -260,10 +269,10 @@ function RouteComponent() {
                            className="group relative border-surface-5 border-b before:absolute before:inset-y-0 before:left-0 before:z-[2] before:my-auto before:h-[calc(100%-0.5rem)] before:w-1 before:rounded-e-md before:bg-primary-6"
                         >
                            <div className={"divide-y divide-surface-5"}>
-                              {entry.items.map((item) => (
+                              {entry.items.map((order) => (
                                  <OrderRow
-                                    key={item.id}
-                                    item={item}
+                                    key={order.id}
+                                    order={order}
                                     groupShortId={groupShortId}
                                  />
                               ))}
@@ -728,10 +737,10 @@ function Empty() {
 }
 
 function OrderRow({
-   item,
+   order,
    groupShortId,
 }: {
-   item: RouterOutput["order"]["list"][number]
+   order: RouterOutput["order"]["list"][number]
    groupShortId: string | null
 }) {
    const params = Route.useParams()
@@ -739,7 +748,7 @@ function OrderRow({
    const theme = useTheme()
    const [expandedOrderIds, setExpandedOrderIds] = useAtom(expandedOrderIdsAtom)
    const [from, to] = orderStatusGradient(
-      item.status ?? "canceled",
+      order.status ?? "canceled",
       theme.resolvedTheme ?? "light",
    )
 
@@ -753,20 +762,20 @@ function OrderRow({
    const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false)
    const menuTriggerRef = React.useRef<HTMLButtonElement>(null)
 
-   const totalProfit = item.procurements.reduce(
+   const totalProfit = order.procurements.reduce(
       (acc, p) =>
-         acc + ((item.sellingPrice ?? 0) - p.purchasePrice) * p.quantity,
+         acc + ((order.sellingPrice ?? 0) - p.purchasePrice) * p.quantity,
       0,
    )
 
    return (
       <Collapsible
-         open={expandedOrderIds.includes(item.id)}
+         open={expandedOrderIds.includes(order.id)}
          onOpenChange={(open) =>
             setExpandedOrderIds(
                open
-                  ? [...expandedOrderIds, item.id]
-                  : expandedOrderIds.filter((id) => id !== item.id),
+                  ? [...expandedOrderIds, order.id]
+                  : expandedOrderIds.filter((id) => id !== order.id),
             )
          }
       >
@@ -777,11 +786,11 @@ function OrderRow({
             <div className="flex items-center gap-2">
                <CollapsibleTriggerIcon className="lg:mr-0.5 lg:mb-px" />
                <SeverityIcon
-                  severity={item.severity}
+                  severity={order.severity}
                   className="mr-[2px] shrink-0"
                />
                <p className="whitespace-nowrap font-medium font-mono text-foreground/75 text-sm">
-                  №{groupShortId ?? String(item.shortId).padStart(3, "0")}
+                  №{groupShortId ?? String(order.shortId).padStart(3, "0")}
                </p>
                <AlignedColumn
                   id={`o_creator`}
@@ -789,21 +798,23 @@ function OrderRow({
                >
                   <UserAvatar
                      size={25}
-                     user={item.creator}
+                     user={order.creator}
                      className="inline-block"
                   />
-                  <span className="whitespace-nowrap">{item.creator.name}</span>
+                  <span className="whitespace-nowrap">
+                     {order.creator.name}
+                  </span>
                </AlignedColumn>
             </div>
             <p
-               data-vat={item.vat ? "" : undefined}
+               data-vat={order.vat ? "" : undefined}
                className="lg:!max-w-[80%] col-span-2 col-start-1 row-start-2 mt-px w-[calc(100%-36px)] break-normal font-semibold data-vat:text-orange-10 max-lg:pl-1"
             >
-               {item.name}
+               {order.name}
             </p>
             <div className="ml-auto flex items-center gap-4">
                <AvatarStack className="max-md:hidden">
-                  {item.assignees.map((assignee) => (
+                  {order.assignees.map((assignee) => (
                      <AvatarStackItem key={assignee.user.id}>
                         <Tooltip delay={0}>
                            <TooltipTrigger
@@ -819,20 +830,20 @@ function OrderRow({
                      </AvatarStackItem>
                   ))}
                </AvatarStack>
-               {item.status && ORDER_STATUSES_TRANSLATION[item.status] ? (
+               {order.status && ORDER_STATUSES_TRANSLATION[order.status] ? (
                   <Combobox
                      canBeEmpty
-                     value={item.status}
+                     value={order.status}
                      onValueChange={(status) => {
-                        if (item.status === status)
+                        if (order.status === status)
                            return update.mutate({
-                              id: item.id,
+                              id: order.id,
                               workspaceId: params.workspaceId,
                               status: null,
                            })
 
                         update.mutate({
-                           id: item.id,
+                           id: order.id,
                            workspaceId: params.workspaceId,
                            status: status as never,
                         })
@@ -849,9 +860,9 @@ function OrderRow({
                               background: `linear-gradient(140deg, ${from}, ${to})`,
                            }}
                         >
-                           {ORDER_STATUSES_TRANSLATION[item.status] ??
+                           {ORDER_STATUSES_TRANSLATION[order.status] ??
                               "Без статусу"}{" "}
-                           {item.status === "successful"
+                           {order.status === "successful"
                               ? `(${formatCurrency(totalProfit)})`
                               : ""}
                         </Badge>
@@ -878,7 +889,7 @@ function OrderRow({
                ) : null}
             </div>
             <p className="min-w-[60px] text-foreground/75 max-lg:hidden">
-               {formatOrderDate(item.createdAt)}
+               {formatOrderDate(order.createdAt)}
             </p>
             <div
                className="absolute"
@@ -887,7 +898,7 @@ function OrderRow({
                <UpdateOrder
                   open={editOpen}
                   setOpen={setEditOpen}
-                  order={item}
+                  order={order}
                   finalFocus={menuTriggerRef}
                />
                <AlertDialog
@@ -899,7 +910,7 @@ function OrderRow({
                      onClick={(e) => e.stopPropagation()}
                   >
                      <AlertDialogTitle>
-                        Архівувати {item.name}?
+                        Архівувати {order.name}?
                      </AlertDialogTitle>
                      <AlertDialogDescription>
                         Замовлення не буде повністю видалене, лише{" "}
@@ -918,7 +929,7 @@ function OrderRow({
                                  variant={"destructive"}
                                  onClick={() =>
                                     update.mutate({
-                                       id: item.id,
+                                       id: order.id,
                                        workspaceId: params.workspaceId,
                                        deletedAt: new Date(),
                                     })
@@ -940,7 +951,7 @@ function OrderRow({
                      onClick={(e) => e.stopPropagation()}
                   >
                      <AlertDialogTitle>
-                        Видалити {item.name}?,{" "}
+                        Видалити {order.name}?,{" "}
                      </AlertDialogTitle>
                      <AlertDialogDescription>
                         Замовлення буде видалене назавжди, разом{" "}
@@ -959,7 +970,7 @@ function OrderRow({
                                  variant={"destructive"}
                                  onClick={() =>
                                     deleteItem.mutate({
-                                       id: item.id,
+                                       id: order.id,
                                        workspaceId: params.workspaceId,
                                     })
                                  }
@@ -1000,7 +1011,7 @@ function OrderRow({
                      <Icons.pencil />
                      Редагувати
                   </MenuItem>
-                  {item.deletedAt === null ? (
+                  {order.deletedAt === null ? (
                      <MenuItem
                         destructive
                         onClick={() => setConfirmArchiveOpen(true)}
@@ -1012,7 +1023,7 @@ function OrderRow({
                      <MenuItem
                         onClick={() =>
                            update.mutate({
-                              id: item.id,
+                              id: order.id,
                               workspaceId: params.workspaceId,
                               deletedAt: null,
                            })
@@ -1022,7 +1033,7 @@ function OrderRow({
                         Відновити
                      </MenuItem>
                   )}
-                  {item.deletedAt &&
+                  {order.deletedAt &&
                   (auth.workspace.role === "owner" ||
                      auth.workspace.role === "admin") ? (
                      <MenuItem
@@ -1037,139 +1048,36 @@ function OrderRow({
             </Menu>
          </CollapsibleTrigger>
          <CollapsiblePanel
-            key={`${item.procurements.length}_${!!item.desiredPrice}_${!!item.note}_${item.analogs.length}`}
+            key={`${order.procurements.length}_${!!order.note}_${order.analogs.length}`}
             render={
                <div className="border-neutral border-t bg-surface-3/60 pt-2">
                   <div className="container mb-4">
-                     <Table>
-                        <TableHeader>
-                           <TableRow>
-                              <TableHead className="first:pl-0 last:pr-0">
-                                 Кількість
-                              </TableHead>
-                              <TableHead className="first:pl-0 last:pr-0">
-                                 Ціна
-                              </TableHead>
-                              <TableHead className="first:pl-0 last:pr-0">
-                                 Бажано по
-                              </TableHead>
-                              <TableHead className="first:pl-0 last:pr-0">
-                                 Термін постачання
-                              </TableHead>
-                              <TableHead className="first:pl-0 last:pr-0">
-                                 Клієнт
-                              </TableHead>
-                           </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                           <TableRow className="border-surface-4 font-medium">
-                              <TableCell className="font-mono first:pl-0 last:pr-0">
-                                 {formatNumber(item.quantity)} шт.
-                              </TableCell>
-                              <TableCell className="font-mono first:pl-0 last:pr-0">
-                                 {item.sellingPrice
-                                    ? formatCurrency(item.sellingPrice)
-                                    : "—"}
-                              </TableCell>
-                              <TableCell className="font-mono first:pl-0 last:pr-0">
-                                 {item.desiredPrice
-                                    ? formatCurrency(item.desiredPrice)
-                                    : "—"}
-                              </TableCell>
-                              <TableCell className="first:pl-0 last:pr-0">
-                                 {item.deliversAt
-                                    ? formatDate(item.deliversAt)
-                                    : "—"}
-                              </TableCell>
-                              <TableCell className="first:pl-0 last:pr-0">
-                                 {item.client ?? "—"}
-                              </TableCell>
-                           </TableRow>
-                        </TableBody>
-                     </Table>
-                     <p
-                        className={cx(
-                           "mt-2 mb-3 flex gap-1 whitespace-pre-wrap font-medium",
-                           item.note.length === 0 ? "hidden" : "",
-                        )}
-                     >
-                        {item.note}
-                     </p>
-                     {item.analogs.length === 0 ? null : (
-                        <div>
-                           <p className="mb-2 font-medium text-lg">Аналоги</p>
-                           <div className="mb-4 flex flex-wrap gap-1">
-                              {item.analogs.map((name, idx) => (
-                                 <Card
-                                    key={name}
-                                    className="group/analog before:mask-l-from-30% relative flex items-center rounded-md border-surface-12/15 px-4 py-1.5 before:pointer-events-none before:absolute before:inset-0 before:z-[1] before:bg-background before:opacity-0 before:transition-opacity hover:before:opacity-100"
-                                 >
-                                    {name}
-                                    <Button
-                                       className="absolute right-0.75 z-[2] opacity-0 transition-opacity group-hover/analog:opacity-100"
-                                       size={"sm"}
-                                       kind={"icon"}
-                                       variant={"ghost"}
-                                       onClick={(e) => {
-                                          e.stopPropagation()
-                                          update.mutate({
-                                             id: item.id,
-                                             workspaceId: params.workspaceId,
-                                             analogs: item.analogs.filter(
-                                                (_, existingIdx) =>
-                                                   existingIdx !== idx,
-                                             ),
-                                          })
-                                       }}
-                                    >
-                                       <Icons.trash className="size-4" />
-                                    </Button>
-                                 </Card>
-                              ))}
-                           </div>
-                        </div>
-                     )}
-                     {item.procurements.length === 0 ? (
-                        <p className="border-surface-4 border-t pt-3 font-medium text-foreground/75">
-                           Ще немає закупівель.
-                        </p>
-                     ) : (
-                        <Card className="relative z-[2] mt-2 rounded-lg border-surface-12/15 p-0">
-                           {item.procurements.map((p) => (
-                              <ProcurementRow
-                                 key={p.id}
-                                 item={p}
-                                 sellingPrice={item.sellingPrice ?? 0}
-                                 orderId={item.id}
-                                 orderName={item.name}
-                              />
-                           ))}
-                        </Card>
-                     )}
-                     <div className="mt-3 flex grid-cols-2 items-center gap-2 max-sm:grid">
-                        <CreateProcurement
-                           orderName={item.name}
-                           orderId={item.id}
-                           empty={item.procurements.length === 0}
-                        />
+                     <div className="mt-1 mb-2 flex items-center gap-2">
+                        {order.analogs.length === 0 ? (
+                           <CreateAnalog
+                              orderId={order.id}
+                              analogs={order.analogs}
+                           />
+                        ) : null}
                         <Toggle
-                           pressed={item.assignees.some(
+                           pressed={order.assignees.some(
                               (a) => a.user.id === auth.user.id,
                            )}
                            render={(props, state) => (
                               <Button
                                  {...props}
+                                 className="max-sm:grow"
                                  variant={"secondary"}
                                  onClick={() => {
                                     if (state.pressed)
                                        return deleteAssignee.mutate({
-                                          orderId: item.id,
+                                          orderId: order.id,
                                           userId: auth.user.id,
                                           workspaceId: auth.workspace.id,
                                        })
 
                                     createAssignee.mutate({
-                                       orderId: item.id,
+                                       orderId: order.id,
                                        userId: auth.user.id,
                                        workspaceId: auth.workspace.id,
                                     })
@@ -1189,11 +1097,141 @@ function OrderRow({
                               </Button>
                            )}
                         />
-                        <CreateAnalog
-                           orderId={item.id}
-                           analogs={item.analogs}
+                     </div>
+                     <Table>
+                        <TableHeader>
+                           <TableRow>
+                              <TableHead className="first:pl-0 last:pr-0">
+                                 Ціна
+                              </TableHead>
+                              <TableHead className="first:pl-0 last:pr-0">
+                                 Термін постачання
+                              </TableHead>
+                              <TableHead className="first:pl-0 last:pr-0">
+                                 Клієнт
+                              </TableHead>
+                           </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                           <TableRow className="border-surface-4 font-medium">
+                              <TableCell className="font-mono first:pl-0 last:pr-0">
+                                 {order.sellingPrice
+                                    ? formatCurrency(order.sellingPrice)
+                                    : "—"}
+                              </TableCell>
+                              <TableCell className="first:pl-0 last:pr-0">
+                                 {order.deliversAt
+                                    ? formatDate(order.deliversAt)
+                                    : "—"}
+                              </TableCell>
+                              <TableCell className="first:pl-0 last:pr-0">
+                                 {order.client ?? "—"}
+                              </TableCell>
+                           </TableRow>
+                        </TableBody>
+                     </Table>
+                     <p
+                        className={cx(
+                           "mt-2 mb-3 flex gap-1 whitespace-pre-wrap font-medium",
+                           order.note.length === 0 ? "hidden" : "",
+                        )}
+                     >
+                        {order.note}
+                     </p>
+                     <div>
+                        <p className="mb-2 font-medium text-lg">Товари</p>
+                        <div className="mb-4 flex flex-wrap gap-1">
+                           {order.items.map((item) => (
+                              <Card
+                                 key={item.id}
+                                 className="relative z-[2] flex w-full items-center gap-2 rounded-lg border-surface-12/15 px-3 py-2"
+                              >
+                                 {item.name}
+                                 <Separator className="mx-1 h-4 w-px" />
+                                 <span className="font-medium font-mono">
+                                    {" "}
+                                    {item.quantity} шт.
+                                 </span>
+                                 {item.desiredPrice ? (
+                                    <>
+                                       <Separator className="mx-1 h-4 w-px" />
+                                       <span className="font-medium font-mono">
+                                          Бажано по{" "}
+                                          {formatCurrency(item.desiredPrice)}
+                                       </span>
+                                    </>
+                                 ) : null}
+                              </Card>
+                           ))}
+                        </div>
+                     </div>
+                     {order.analogs.length === 0 ? null : (
+                        <div>
+                           <div className="mb-2 flex items-center justify-between">
+                              <p className="font-medium text-lg">Аналоги</p>
+                              <CreateAnalog
+                                 orderId={order.id}
+                                 analogs={order.analogs}
+                              />
+                           </div>
+                           <div className="mb-4 flex flex-wrap gap-1">
+                              {order.analogs.map((name, idx) => (
+                                 <Card
+                                    key={name}
+                                    className="group/analog before:mask-l-from-[2rem] relative flex items-center rounded-md border-surface-12/15 px-3 py-1.5 before:pointer-events-none before:absolute before:inset-0 before:z-[1] before:bg-background before:opacity-0 before:transition-opacity hover:before:opacity-100"
+                                 >
+                                    {name}
+                                    <Button
+                                       className="absolute right-0.75 z-[2] opacity-0 transition-opacity group-hover/analog:opacity-100"
+                                       size={"sm"}
+                                       kind={"icon"}
+                                       variant={"ghost"}
+                                       onClick={(e) => {
+                                          e.stopPropagation()
+                                          update.mutate({
+                                             id: order.id,
+                                             workspaceId: params.workspaceId,
+                                             analogs: order.analogs.filter(
+                                                (_, existingIdx) =>
+                                                   existingIdx !== idx,
+                                             ),
+                                          })
+                                       }}
+                                    >
+                                       <Icons.trash className="size-4" />
+                                    </Button>
+                                 </Card>
+                              ))}
+                           </div>
+                        </div>
+                     )}
+                     <div className="mb-2 flex items-center justify-between">
+                        <p className="font-medium text-lg">Закупівлі</p>
+                        <CreateProcurement
+                           orderItems={order.items}
+                           orderName={order.name}
+                           orderId={order.id}
+                           empty={order.procurements.length === 0}
                         />
                      </div>
+                     {order.procurements.length === 0 ? (
+                        <p className="font-medium text-foreground/75">
+                           Ще немає закупівель.
+                        </p>
+                     ) : (
+                        <Card className="relative z-[2] mt-2 rounded-lg border-surface-12/15 p-0">
+                           {order.procurements.map((p) => (
+                              <ProcurementRow
+                                 key={p.id}
+                                 item={p}
+                                 sellingPrice={order.sellingPrice ?? 0}
+                                 orderId={order.id}
+                                 orderName={order.name}
+                                 orderItems={order.items}
+                              />
+                           ))}
+                        </Card>
+                     )}
                   </div>
                </div>
             }
@@ -1222,7 +1260,9 @@ function CreateAnalog({
                   variant={"secondary"}
                >
                   <Icons.lightBulb className="!-ml-[2px]" />
-                  Запропонувати аналог
+                  {analogs.length === 0
+                     ? "Запропонувати аналог"
+                     : "Запропонувати"}
                </Button>
             }
          />
@@ -1258,11 +1298,13 @@ function ProcurementRow({
    sellingPrice,
    orderId,
    orderName,
+   orderItems,
 }: {
    item: Procurement
    sellingPrice: number
    orderId: string
    orderName: string
+   orderItems: OrderItem[]
 }) {
    const params = Route.useParams()
    const theme = useTheme()
@@ -1270,7 +1312,7 @@ function ProcurementRow({
       item.status,
       theme.resolvedTheme ?? "light",
    )
-   const profit = (sellingPrice - item.purchasePrice) * item.quantity
+   const _profit = (sellingPrice - item.purchasePrice) * item.quantity
    const update = useUpdateProcurement()
    const deleteItem = useDeleteProcurement()
 
@@ -1291,6 +1333,14 @@ function ProcurementRow({
             />
             {item.creator.name}
          </AlignedColumn>
+         {item.orderItem ? (
+            <AlignedColumn
+               id={`${orderId}_p_item_name`}
+               className="whitespace-nowrap font-medium font-mono lg:mt-1 lg:text-sm"
+            >
+               {item.orderItem.name}
+            </AlignedColumn>
+         ) : null}
          <span className="col-end-4 flex items-center justify-end gap-2 lg:gap-4">
             <AlignedColumn
                id={`${orderId}_p_quantity`}
@@ -1362,7 +1412,7 @@ function ProcurementRow({
          <p className="lg:!max-w-[80ch] col-span-2 mt-2 whitespace-pre-wrap break-normal empty:hidden max-lg:order-5 lg:mt-1">
             {item.note}
          </p>
-         <p className="col-start-1 whitespace-nowrap font-medium font-mono text-[1rem] max-lg:order-3 max-lg:self-center lg:mt-1 lg:ml-auto lg:text-right">
+         {/* <p className="col-start-1 whitespace-nowrap font-medium font-mono text-[1rem] max-lg:order-3 max-lg:self-center lg:mt-1 lg:ml-auto lg:text-right">
             {profit === 0 ? null : (
                <ProfitArrow
                   className="mr-1.5 mb-[-0.2rem] lg:mb-[-0.21rem]"
@@ -1370,12 +1420,13 @@ function ProcurementRow({
                />
             )}
             {formatCurrency(profit)}{" "}
-         </p>
+         </p> */}
          <div
             className="absolute"
             onClick={(e) => e.stopPropagation()}
          >
             <UpdateProcurement
+               orderItems={orderItems}
                orderName={orderName}
                procurement={item}
                open={editOpen}
@@ -1424,7 +1475,7 @@ function ProcurementRow({
                   <Button
                      variant={"ghost"}
                      kind={"icon"}
-                     className="col-start-3 shrink-0 justify-self-end max-lg:order-last max-lg:mt-auto"
+                     className="col-start-3 shrink-0 justify-self-end max-lg:order-last max-lg:mt-auto lg:ml-auto"
                   >
                      <Icons.ellipsisHorizontal />
                   </Button>

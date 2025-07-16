@@ -1,5 +1,6 @@
 import { ProcurementForm } from "@/procurement/components/procurement-form"
 import { useCreateProcurement } from "@/procurement/mutations/use-create-procurement"
+import type { OrderItem } from "@unfiddle/core/order/types"
 import { Button } from "@unfiddle/ui/components/button"
 import {
    Drawer,
@@ -17,7 +18,13 @@ export function CreateProcurement({
    orderName,
    orderId,
    empty,
-}: { orderName: string; orderId: string; empty: boolean }) {
+   orderItems,
+}: {
+   orderName: string
+   orderId: string
+   empty: boolean
+   orderItems: OrderItem[]
+}) {
    const [open, setOpen] = React.useState(false)
    const mutation = useCreateProcurement({
       onMutate: () => setOpen(false),
@@ -40,6 +47,7 @@ export function CreateProcurement({
          <DrawerPopup>
             <DrawerTitle>Нова закупівля</DrawerTitle>
             <ProcurementForm
+               orderItems={orderItems}
                orderName={orderName}
                onSubmit={(data) =>
                   mutation.mutate({

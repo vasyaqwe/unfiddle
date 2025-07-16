@@ -29,7 +29,6 @@ export function useCreateOrder({
                id: crypto.randomUUID(),
                shortId: 0,
                sellingPrice: input.sellingPrice ?? null,
-               desiredPrice: input.desiredPrice ?? null,
                severity: input.severity ?? "low",
                creatorId: auth.user.id,
                creator: auth.user,
@@ -44,6 +43,11 @@ export function useCreateOrder({
                analogs: [],
                deletedAt: null,
                createdAt: new Date(),
+               items: input.items.map((item) => ({
+                  ...item,
+                  id: crypto.randomUUID(),
+                  desiredPrice: item.desiredPrice ?? null,
+               })),
             })
 
             onMutate?.()
@@ -67,6 +71,7 @@ export function useCreateOrder({
                   creator: auth.user,
                   procurements: [],
                   assignees: [],
+                  items: order.items,
                },
             })
             // notify({

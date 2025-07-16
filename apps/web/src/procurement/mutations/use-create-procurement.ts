@@ -22,6 +22,8 @@ export function useCreateProcurement({
             await queryClient.cancelQueries(queryOptions.list)
 
             const data = queryClient.getQueryData(queryOptions.list.queryKey)
+            const orderItems = data?.flatMap((order) => order.items) ?? []
+            const orderItem = orderItems.find((i) => i.id === input.orderItemId)
 
             create({
                ...input,
@@ -30,6 +32,9 @@ export function useCreateProcurement({
                creator: auth.user,
                note: input.note ?? "",
                provider: input.provider ?? null,
+               orderItem: {
+                  name: orderItem?.name ?? "",
+               },
             })
 
             onMutate?.()
