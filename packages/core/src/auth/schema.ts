@@ -21,7 +21,11 @@ const userId = d
    .references(() => user.id, { onDelete: "cascade" })
 
 const workspaceMembershipsSchema = z.array(
-   z.object({ workspaceId: z.string(), role: z.enum(WORKSPACE_ROLES) }),
+   z.object({
+      workspaceId: z.string(),
+      role: z.enum(WORKSPACE_ROLES),
+      deletedAt: z.date().nullable(),
+   }),
 )
 
 export const session = d.table("session", {

@@ -206,6 +206,7 @@ export const workspaceRouter = t.router({
                         {
                            workspaceId: createdWorkspace.id,
                            role: "owner",
+                           deletedAt: null,
                         },
                      ],
                   })
@@ -292,8 +293,14 @@ export const workspaceRouter = t.router({
                   userId: ctx.user.id,
                   workspaceId: foundWorkspace.id,
                   role: "manager",
+                  deletedAt: null,
                })
-               .onConflictDoNothing(),
+               .onConflictDoUpdate({
+                  set: {
+                     deletedAt: null,
+                  },
+                  target: [workspaceMember.userId, workspaceMember.workspaceId],
+               }),
             ctx.db
                .update(session)
                .set({
@@ -304,6 +311,7 @@ export const workspaceRouter = t.router({
                      {
                         workspaceId: foundWorkspace.id,
                         role: "manager",
+                        deletedAt: null,
                      },
                   ],
                })

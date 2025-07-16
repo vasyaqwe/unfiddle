@@ -1,0 +1,1 @@
+ALTER TABLE `workspace_member` ADD `deleted_at` integer;

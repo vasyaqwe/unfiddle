@@ -130,8 +130,6 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/")({
    validateSearch: validator(orderFilterSchema),
 })
 
-const block = true
-
 function RouteComponent() {
    const auth = useAuth()
 
@@ -198,7 +196,10 @@ function RouteComponent() {
          return dateB - dateA
       })
    }, [query.data])
-   if (block && auth.user.email !== "vasylpolishchuk22@gmail.com")
+
+   const block = auth.user.email !== "vasylpolishchuk22@gmail.com"
+
+   if (block)
       return (
          <div className="absolute inset-0 m-auto size-fit text-center">
             <h1>Технічна перерва</h1>

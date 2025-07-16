@@ -1,11 +1,10 @@
 import { TRPCError } from "@trpc/server"
 import { session } from "@unfiddle/core/auth/schema"
-import { order, orderAssignee } from "@unfiddle/core/order/schema"
-import { procurement } from "@unfiddle/core/procurement/schema"
+import {} from "@unfiddle/core/order/schema"
 import { t } from "@unfiddle/core/trpc/context"
 import { workspaceMemberMiddleware } from "@unfiddle/core/workspace/middleware"
 import { workspaceMember } from "@unfiddle/core/workspace/schema"
-import { and, desc, eq, exists } from "drizzle-orm"
+import { and, desc, eq, isNull } from "drizzle-orm"
 import { createUpdateSchema } from "drizzle-zod"
 import { z } from "zod"
 
@@ -15,7 +14,10 @@ export const workspaceMemberRouter = t.router({
       .input(z.object({ workspaceId: z.string() }))
       .query(async ({ ctx, input }) => {
          return await ctx.db.query.workspaceMember.findMany({
-            where: eq(workspaceMember.workspaceId, input.workspaceId),
+            where: and(
+               eq(workspaceMember.workspaceId, input.workspaceId),
+               isNull(workspaceMember.deletedAt),
+            ),
             with: {
                user: {
                   columns: { id: true, name: true, email: true, image: true },
@@ -88,61 +90,26 @@ export const workspaceMemberRouter = t.router({
             where: eq(session.userId, input.id),
          })
 
+         const newDate = new Date()
+
          await ctx.db.batch([
             ctx.db
-               .delete(workspaceMember)
+               .update(workspaceMember)
+               .set({ deletedAt: newDate })
                .where(
                   and(
                      eq(workspaceMember.workspaceId, input.workspaceId),
                      eq(workspaceMember.userId, input.id),
                   ),
                ),
-            ctx.db
-               .delete(order)
-               .where(
-                  and(
-                     eq(order.workspaceId, input.workspaceId),
-                     eq(order.creatorId, input.id),
-                  ),
-               ),
-            ctx.db.delete(orderAssignee).where(
-               and(
-                  eq(orderAssignee.userId, input.id),
-                  exists(
-                     ctx.db
-                        .select()
-                        .from(order)
-                        .where(
-                           and(
-                              eq(order.id, orderAssignee.orderId),
-                              eq(order.workspaceId, input.workspaceId),
-                           ),
-                        ),
-                  ),
-               ),
-            ),
-            ctx.db.delete(procurement).where(
-               and(
-                  eq(procurement.creatorId, input.id),
-                  exists(
-                     ctx.db
-                        .select()
-                        .from(order)
-                        .where(
-                           and(
-                              eq(order.id, procurement.orderId),
-                              eq(order.workspaceId, input.workspaceId),
-                           ),
-                        ),
-                  ),
-               ),
-            ),
             ...sessions.map((s) =>
                ctx.db
                   .update(session)
                   .set({
-                     workspaceMemberships: s.workspaceMemberships.filter(
-                        (m) => m.workspaceId !== input.workspaceId,
+                     workspaceMemberships: s.workspaceMemberships.map((m) =>
+                        m.workspaceId === input.workspaceId
+                           ? { ...m, deletedAt: newDate }
+                           : m,
                      ),
                   })
                   .where(eq(session.id, s.id)),

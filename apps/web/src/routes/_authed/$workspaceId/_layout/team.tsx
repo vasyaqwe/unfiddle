@@ -346,15 +346,8 @@ function MemberRow({
                      {member.user.name} ({member.user.email})
                   </b>{" "}
                   більше не буде мати доступу до проєкту. Усі дані від цього
-                  користувача також будуть видалені (замовлення, закупівлі).
+                  користувача залишаться незмінними (замовлення, закупівлі).
                </AlertDialogDescription>
-               {/* <div className="flex items-center gap-2.5">
-                  <Switch id="delete_data" />
-                  <label htmlFor="delete_data">
-                     Також видалити всі дані цього користувача (замовлення,
-                     закупівлі).
-                  </label>
-               </div> */}
                <AlertDialogFooter>
                   <AlertDialogClose
                      render={<Button variant="secondary">Відмінити</Button>}
