@@ -78,6 +78,7 @@ import {
    AlertDialogTitle,
 } from "@unfiddle/ui/components/dialog/alert"
 import { DrawerTrigger } from "@unfiddle/ui/components/drawer"
+import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { Input } from "@unfiddle/ui/components/input"
 import {
@@ -109,7 +110,7 @@ import {
    TooltipPopup,
    TooltipTrigger,
 } from "@unfiddle/ui/components/tooltip"
-import { cx } from "@unfiddle/ui/utils"
+import { cx, formData } from "@unfiddle/ui/utils"
 import { useAtom } from "jotai"
 import { useTheme } from "next-themes"
 import * as React from "react"
@@ -800,8 +801,8 @@ function OrderRow({
             >
                {item.name}
             </p>
-            <div className="ml-auto flex items-center gap-3.5">
-               <AvatarStack className="mt-px max-md:hidden">
+            <div className="ml-auto flex items-center gap-4">
+               <AvatarStack className="max-md:hidden">
                   {item.assignees.map((assignee) => (
                      <AvatarStackItem key={assignee.user.id}>
                         <Tooltip delay={0}>
@@ -1036,7 +1037,7 @@ function OrderRow({
             </Menu>
          </CollapsibleTrigger>
          <CollapsiblePanel
-            key={`${item.procurements.length}_${!!item.desiredPrice}_${!!item.note}`}
+            key={`${item.procurements.length}_${!!item.desiredPrice}_${!!item.note}_${item.analogs.length}`}
             render={
                <div className="border-neutral border-t bg-surface-3/60 pt-2">
                   <div className="container mb-4">
@@ -1088,12 +1089,46 @@ function OrderRow({
                      </Table>
                      <p
                         className={cx(
-                           "mt-2 mb-3 flex gap-1 font-medium",
+                           "mt-2 mb-3 flex gap-1 whitespace-pre-wrap font-medium",
                            item.note.length === 0 ? "hidden" : "",
                         )}
                      >
                         {item.note}
                      </p>
+                     {item.analogs.length === 0 ? null : (
+                        <div>
+                           <p className="mb-2 font-medium text-lg">Аналоги</p>
+                           <div className="mb-4 flex flex-wrap gap-1">
+                              {item.analogs.map((name, idx) => (
+                                 <Card
+                                    key={name}
+                                    className="group/analog before:mask-l-from-30% relative flex items-center rounded-md border-surface-12/15 px-4 py-1.5 before:pointer-events-none before:absolute before:inset-0 before:z-[1] before:bg-background before:opacity-0 before:transition-opacity hover:before:opacity-100"
+                                 >
+                                    {name}
+                                    <Button
+                                       className="absolute right-0.75 z-[2] opacity-0 transition-opacity group-hover/analog:opacity-100"
+                                       size={"sm"}
+                                       kind={"icon"}
+                                       variant={"ghost"}
+                                       onClick={(e) => {
+                                          e.stopPropagation()
+                                          update.mutate({
+                                             id: item.id,
+                                             workspaceId: params.workspaceId,
+                                             analogs: item.analogs.filter(
+                                                (_, existingIdx) =>
+                                                   existingIdx !== idx,
+                                             ),
+                                          })
+                                       }}
+                                    >
+                                       <Icons.trash className="size-4" />
+                                    </Button>
+                                 </Card>
+                              ))}
+                           </div>
+                        </div>
+                     )}
                      {item.procurements.length === 0 ? (
                         <p className="border-surface-4 border-t pt-3 font-medium text-foreground/75">
                            Ще немає закупівель.
@@ -1154,12 +1189,67 @@ function OrderRow({
                               </Button>
                            )}
                         />
+                        <CreateAnalog
+                           orderId={item.id}
+                           analogs={item.analogs}
+                        />
                      </div>
                   </div>
                </div>
             }
          />
       </Collapsible>
+   )
+}
+
+function CreateAnalog({
+   orderId,
+   analogs,
+}: { orderId: string; analogs: string[] }) {
+   const params = Route.useParams()
+   const update = useUpdateOrder({ onMutate: () => setOpen(false) })
+   const [open, setOpen] = React.useState(false)
+
+   return (
+      <Popover
+         open={open}
+         onOpenChange={setOpen}
+      >
+         <PopoverTrigger
+            render={
+               <Button
+                  className="col-span-2"
+                  variant={"secondary"}
+               >
+                  <Icons.lightBulb className="!-ml-[2px]" />
+                  Запропонувати аналог
+               </Button>
+            }
+         />
+         <PopoverPopup>
+            <form
+               onSubmit={(e) => {
+                  e.preventDefault()
+                  const form = formData<{ name: string }>(e.target)
+                  update.mutate({
+                     id: orderId,
+                     workspaceId: params.workspaceId,
+                     analogs: [...analogs, form.name],
+                  })
+               }}
+            >
+               <Field>
+                  <FieldLabel>Назва</FieldLabel>
+                  <FieldControl
+                     required
+                     placeholder="Уведіть назву товару"
+                     name="name"
+                  />
+               </Field>
+               <Button className="mt-3 w-full">Додати</Button>
+            </form>
+         </PopoverPopup>
+      </Popover>
    )
 }
 
@@ -1264,7 +1354,7 @@ function ProcurementRow({
                </ComboboxPopup>
             </Combobox>
          </AlignedColumn>
-         <p className="lg:!max-w-[80ch] col-span-2 mt-2 break-normal empty:hidden max-lg:order-5 lg:mt-1">
+         <p className="lg:!max-w-[80ch] col-span-2 mt-2 whitespace-pre-wrap break-normal empty:hidden max-lg:order-5 lg:mt-1">
             {item.note}
          </p>
          <p className="col-start-1 whitespace-nowrap font-medium font-mono text-[1rem] max-lg:order-3 max-lg:self-center lg:mt-1 lg:ml-auto lg:text-right">

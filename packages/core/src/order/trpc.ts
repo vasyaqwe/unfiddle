@@ -108,6 +108,7 @@ export const orderRouter = t.router({
                deletedAt: true,
                deliversAt: true,
                createdAt: true,
+               analogs: true,
             },
             with: {
                creator: {
