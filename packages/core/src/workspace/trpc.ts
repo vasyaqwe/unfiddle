@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server"
 import { session } from "@unfiddle/core/auth/schema"
+import { workspaceMember } from "@unfiddle/core/database/schema"
 import { createCode } from "@unfiddle/core/id"
 import { order, orderAssignee } from "@unfiddle/core/order/schema"
 import { procurement } from "@unfiddle/core/procurement/schema"
@@ -11,12 +12,11 @@ import { workspaceMemberMiddleware } from "@unfiddle/core/workspace/middleware"
 import {
    updateWorkspaceSchema,
    workspace,
-   workspaceMember,
 } from "@unfiddle/core/workspace/schema"
-import { and, desc, eq, gt, or, sql } from "drizzle-orm"
+import { and, desc, eq, or, sql } from "drizzle-orm"
 import { z } from "zod"
 
-const tableMap = {
+const _tableMap = {
    order,
    orderAssignee,
    procurement,
@@ -25,54 +25,54 @@ const tableMap = {
 export const workspaceRouter = t.router({
    member: workspaceMemberRouter,
    analytics: workspaceAnalyticsRouter,
-   backup: t.procedure.query(async ({ ctx }) => {
-      const date = new Date("2025-07-12T00:00:00.000Z")
-      const data = await Promise.all(
-         Object.entries(tableMap).map(async ([name, table]) => {
-            const rows = await ctx.db
-               .select()
-               .from(table)
-               .where(gt(table.createdAt, date))
-            return { name, rows }
-         }),
-      )
+   // backup: t.procedure.query(async ({ ctx }) => {
+   //    const date = new Date("2025-07-12T00:00:00.000Z")
+   //    const data = await Promise.all(
+   //       Object.entries(tableMap).map(async ([name, table]) => {
+   //          const rows = await ctx.db
+   //             .select()
+   //             .from(table)
+   //             .where(gt(table.createdAt, date))
+   //          return { name, rows }
+   //       }),
+   //    )
 
-      const filteredData = data.filter((d) => d.rows.length > 0)
+   //    const filteredData = data.filter((d) => d.rows.length > 0)
 
-      return Object.fromEntries(filteredData.map((d) => [d.name, d.rows]))
-   }),
-   restore: t.procedure
-      .input(z.record(z.string(), z.array(z.any())))
-      .mutation(async ({ ctx, input }) => {
-         for (const [name, rows] of Object.entries(input)) {
-            const table = tableMap[name as keyof typeof tableMap]
-            if (!table) {
-               throw new Error(`invalid table: ${name}`)
-            }
-            if (rows.length === 0) {
-               continue
-            }
-            const newRows = rows.map((row) => {
-               const newRow = { ...row }
-               if (newRow.createdAt) {
-                  newRow.createdAt = new Date(newRow.createdAt)
-               }
-               if (newRow.updatedAt) {
-                  newRow.updatedAt = new Date(newRow.updatedAt)
-               }
-               if (newRow.deletedAt) {
-                  newRow.deletedAt = new Date(newRow.deletedAt)
-               }
-               return newRow
-            })
-            for (let i = 0; i < newRows.length; i += 5) {
-               const batch = newRows.slice(i, i + 5)
-               await ctx.db.insert(table).values(batch)
-            }
-         }
+   //    return Object.fromEntries(filteredData.map((d) => [d.name, d.rows]))
+   // }),
+   // restore: t.procedure
+   //    .input(z.record(z.string(), z.array(z.any())))
+   //    .mutation(async ({ ctx, input }) => {
+   //       for (const [name, rows] of Object.entries(input)) {
+   //          const table = tableMap[name as keyof typeof tableMap]
+   //          if (!table) {
+   //             throw new Error(`invalid table: ${name}`)
+   //          }
+   //          if (rows.length === 0) {
+   //             continue
+   //          }
+   //          const newRows = rows.map((row) => {
+   //             const newRow = { ...row }
+   //             if (newRow.createdAt) {
+   //                newRow.createdAt = new Date(newRow.createdAt)
+   //             }
+   //             if (newRow.updatedAt) {
+   //                newRow.updatedAt = new Date(newRow.updatedAt)
+   //             }
+   //             if (newRow.deletedAt) {
+   //                newRow.deletedAt = new Date(newRow.deletedAt)
+   //             }
+   //             return newRow
+   //          })
+   //          for (let i = 0; i < newRows.length; i += 5) {
+   //             const batch = newRows.slice(i, i + 5)
+   //             await ctx.db.insert(table).values(batch)
+   //          }
+   //       }
 
-         return { success: true }
-      }),
+   //       return { success: true }
+   //    }),
    search: t.procedure
       .use(workspaceMemberMiddleware)
       .input(z.object({ id: z.string(), query: z.string() }))
@@ -174,6 +174,7 @@ export const workspaceRouter = t.router({
                         {
                            workspaceId: createdWorkspace.id,
                            role: "owner",
+                           deletedAt: null,
                         },
                      ],
                   })
@@ -253,7 +254,7 @@ export const workspaceRouter = t.router({
                message: "Workspace not found",
             })
 
-         const _batch = await ctx.db.batch([
+         await ctx.db.batch([
             ctx.db
                .insert(workspaceMember)
                .values({
@@ -261,7 +262,12 @@ export const workspaceRouter = t.router({
                   workspaceId: foundWorkspace.id,
                   role: "manager",
                })
-               .onConflictDoNothing(),
+               .onConflictDoUpdate({
+                  set: {
+                     deletedAt: null,
+                  },
+                  target: [workspaceMember.userId, workspaceMember.workspaceId],
+               }),
             ctx.db
                .update(session)
                .set({
@@ -272,6 +278,7 @@ export const workspaceRouter = t.router({
                      {
                         workspaceId: foundWorkspace.id,
                         role: "manager",
+                        deletedAt: null,
                      },
                   ],
                })

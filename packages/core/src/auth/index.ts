@@ -131,6 +131,7 @@ export const authClient: any = (c: Context<HonoEnv>) => {
                      columns: {
                         workspaceId: true,
                         role: true,
+                        deletedAt: true,
                      },
                   })
 

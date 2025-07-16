@@ -36,6 +36,7 @@ export const workspaceMember = d.table(
          .text()
          .references(() => workspace.id, { onDelete: "cascade" })
          .notNull(),
+      deletedAt: d.integer({ mode: "timestamp" }),
       ...d.timestamps,
    },
    (table) => [d.primaryKey({ columns: [table.userId, table.workspaceId] })],

@@ -64,6 +64,13 @@
       "when": 1752696447117,
       "tag": "0011_minor_arachne",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1752697360094,
+      "tag": "0012_lively_giant_girl",
+      "breakpoints": true
     }
   ]
 }
