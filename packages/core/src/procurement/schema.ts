@@ -13,7 +13,7 @@ export const procurement = d.table(
       orderId: d
          .text()
          .notNull()
-         .references(() => order.id, { onDelete: "cascade" }),
+         .references(() => order.id),
       creatorId: d
          .text()
          .notNull()

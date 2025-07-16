@@ -44,7 +44,7 @@ export const order = d.table(
       desiredPrice: d.numeric({ mode: "number" }),
       severity: d.text({ enum: ORDER_SEVERITIES }).notNull().default("low"),
       note: d.text().notNull().default(""),
-      status: d.text({ enum: ORDER_STATUSES }),
+      status: d.text({ enum: ORDER_STATUSES }).notNull(),
       vat: d.integer({ mode: "boolean" }).notNull().default(false),
       client: d.text(),
       deletedAt: d.integer({ mode: "timestamp" }),
@@ -72,7 +72,7 @@ export const orderAssignee = d.table(
       userId,
       orderId: d
          .text()
-         .references(() => order.id, { onDelete: "cascade" })
+         .references(() => order.id)
          .notNull(),
       ...d.timestamps,
    },

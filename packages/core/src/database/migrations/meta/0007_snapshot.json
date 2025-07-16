@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "15a7edad-013c-4d36-bb09-cb963d8f6aee",
+  "id": "ca9716e8-fbd5-4e32-b118-81948960b345",
   "prevId": "95a7b48e-7d41-479d-ab7d-53ba4182da8d",
   "tables": {
     "account": {
@@ -592,6 +592,13 @@
           "autoincrement": false,
           "default": "''"
         },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "vat": {
           "name": "vat",
           "type": "integer",
@@ -765,7 +772,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
+          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
@@ -910,7 +917,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
+          "onDelete": "no action",
           "onUpdate": "no action"
         },
         "procurement_creator_id_user_id_fk": {
