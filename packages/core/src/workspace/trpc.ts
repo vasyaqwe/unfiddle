@@ -65,7 +65,10 @@ export const workspaceRouter = t.router({
                }
                return newRow;
             });
-            await ctx.db.insert(table).values(newRows);
+            for (let i = 0; i < newRows.length; i += 10) {
+               const batch = newRows.slice(i, i + 10);
+               await ctx.db.insert(table).values(batch);
+            }
          }
 
          return { success: true };
