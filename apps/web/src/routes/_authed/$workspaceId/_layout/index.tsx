@@ -1134,7 +1134,7 @@ function OrderRow({
                            Ще немає закупівель.
                         </p>
                      ) : (
-                        <Card className="relative z-[2] rounded-lg border-surface-12/15 p-0">
+                        <Card className="relative z-[2] mt-2 rounded-lg border-surface-12/15 p-0">
                            {item.procurements.map((p) => (
                               <ProcurementRow
                                  key={p.id}
@@ -1354,6 +1354,11 @@ function ProcurementRow({
                </ComboboxPopup>
             </Combobox>
          </AlignedColumn>
+         {item.provider ? (
+            <p className="lg:!max-w-[80ch] col-span-2 mt-2 whitespace-pre-wrap break-normal empty:hidden max-lg:order-5 lg:mt-1">
+               {item.provider}
+            </p>
+         ) : null}
          <p className="lg:!max-w-[80ch] col-span-2 mt-2 whitespace-pre-wrap break-normal empty:hidden max-lg:order-5 lg:mt-1">
             {item.note}
          </p>

@@ -41,12 +41,14 @@ export function ProcurementForm({
                   note: string
                   quantity: string
                   purchasePrice: string
+                  provider: string
                }>(e.target)
 
                onSubmit({
                   workspaceId: auth.workspace.id,
                   quantity: number(form.quantity),
                   purchasePrice: number(form.purchasePrice),
+                  provider: form.provider.length === 0 ? null : form.provider,
                   note: form.note,
                })
             })
@@ -82,6 +84,14 @@ export function ProcurementForm({
                />
             </Field>
          </div>
+         <Field>
+            <FieldLabel>Постачальник</FieldLabel>
+            <FieldControl
+               name="provider"
+               placeholder="Уведіть постачальника"
+               defaultValue={procurement?.provider ?? ""}
+            />
+         </Field>
          <Field>
             <FieldLabel>Комент</FieldLabel>
             <FieldControl

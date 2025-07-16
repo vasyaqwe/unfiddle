@@ -24,6 +24,7 @@ export const procurement = d.table(
          .text({ enum: PROCUREMENT_STATUSES })
          .notNull()
          .default("pending"),
+      provider: d.text(),
       note: d.text().default(""),
       ...d.timestamps,
    },
@@ -52,6 +53,7 @@ export const updateProcurementSchema = createUpdateSchema(procurement)
       quantity: true,
       status: true,
       purchasePrice: true,
+      provider: true,
    })
    .required({ id: true })
    .extend({ workspaceId: z.string() })

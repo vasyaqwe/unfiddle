@@ -29,6 +29,7 @@ export function useCreateProcurement({
                status: "pending",
                creator: auth.user,
                note: input.note ?? "",
+               provider: input.provider ?? null,
             })
 
             onMutate?.()

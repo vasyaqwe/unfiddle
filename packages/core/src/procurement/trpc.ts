@@ -32,12 +32,7 @@ export const procurementRouter = t.router({
       .mutation(async ({ ctx, input }) => {
          await ctx.db
             .update(procurement)
-            .set({
-               quantity: input.quantity,
-               purchasePrice: input.purchasePrice,
-               note: input.note,
-               status: input.status,
-            })
+            .set(input)
             .where(eq(procurement.id, input.id))
       }),
    delete: t.procedure
