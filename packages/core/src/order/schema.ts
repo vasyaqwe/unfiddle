@@ -44,7 +44,7 @@ export const order = d.table(
       desiredPrice: d.numeric({ mode: "number" }),
       severity: d.text({ enum: ORDER_SEVERITIES }).notNull().default("low"),
       note: d.text().notNull().default(""),
-      status: d.text({ enum: ORDER_STATUSES }).notNull(),
+      status: d.text({ enum: ORDER_STATUSES }),
       vat: d.integer({ mode: "boolean" }).notNull().default(false),
       client: d.text(),
       deletedAt: d.integer({ mode: "timestamp" }),
