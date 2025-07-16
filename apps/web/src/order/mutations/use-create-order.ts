@@ -41,6 +41,7 @@ export function useCreateOrder({
                deliversAt: input.deliversAt ?? null,
                procurements: [],
                assignees: [],
+               analogs: [],
                deletedAt: null,
                createdAt: new Date(),
             })

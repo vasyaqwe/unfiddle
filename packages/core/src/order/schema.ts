@@ -7,7 +7,7 @@ import {
 } from "@unfiddle/core/order/constants"
 import { procurement } from "@unfiddle/core/procurement/schema"
 import { workspace } from "@unfiddle/core/workspace/schema"
-import { relations } from "drizzle-orm"
+import { relations, sql } from "drizzle-orm"
 import { createUpdateSchema } from "drizzle-zod"
 import { z } from "zod"
 
@@ -49,6 +49,11 @@ export const order = d.table(
       client: d.text(),
       deletedAt: d.integer({ mode: "timestamp" }),
       deliversAt: d.integer({ mode: "timestamp" }),
+      analogs: d
+         .text({ mode: "json" })
+         .$type<string[]>()
+         .notNull()
+         .default(sql`'[]'`),
       ...d.timestamps,
    },
    (table) => [
@@ -120,4 +125,7 @@ export const updateOrderSchema = createUpdateSchema(order)
       deliversAt: true,
    })
    .required({ id: true, workspaceId: true })
-   .extend({ deletedAt: z.date().nullable().optional() })
+   .extend({
+      deletedAt: z.date().nullable().optional(),
+      analogs: z.array(z.string()).optional(),
+   })

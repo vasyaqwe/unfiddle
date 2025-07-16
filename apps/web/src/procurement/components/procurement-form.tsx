@@ -41,6 +41,7 @@ export function ProcurementForm({
                   note: string
                   quantity: string
                   purchasePrice: string
+                  provider: string
                }>(e.target)
 
                onSubmit({
@@ -48,6 +49,7 @@ export function ProcurementForm({
                   quantity: number(form.quantity),
                   purchasePrice: number(form.purchasePrice),
                   note: form.note,
+                  provider: form.provider.length === 0 ? null : form.provider,
                })
             })
          }}
@@ -82,6 +84,14 @@ export function ProcurementForm({
                />
             </Field>
          </div>
+         <Field>
+            <FieldLabel>Постачальник</FieldLabel>
+            <FieldControl
+               name="provider"
+               placeholder="Уведіть постачальника"
+               defaultValue={procurement?.provider ?? ""}
+            />
+         </Field>
          <Field>
             <FieldLabel>Комент</FieldLabel>
             <FieldControl

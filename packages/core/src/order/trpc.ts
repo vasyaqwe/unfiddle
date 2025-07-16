@@ -103,6 +103,7 @@ export const orderRouter = t.router({
                note: true,
                vat: true,
                client: true,
+               analogs: true,
                creatorId: true,
                groupId: true,
                deletedAt: true,
@@ -137,6 +138,7 @@ export const orderRouter = t.router({
                      purchasePrice: true,
                      status: true,
                      note: true,
+                     provider: true,
                   },
                   with: {
                      creator: {
@@ -155,7 +157,11 @@ export const orderRouter = t.router({
       }),
    create: t.procedure
       .use(workspaceMemberMiddleware)
-      .input(createInsertSchema(order).omit({ creatorId: true, shortId: true }))
+      .input(
+         createInsertSchema(order)
+            .omit({ creatorId: true, shortId: true })
+            .extend({ analogs: z.array(z.string()).default([]) }),
+      )
       .mutation(async ({ ctx, input }) => {
          const existingCounter = await ctx.db.query.orderCounter.findFirst({
             where: eq(orderCounter.workspaceId, input.workspaceId),
