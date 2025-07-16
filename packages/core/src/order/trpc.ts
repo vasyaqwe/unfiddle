@@ -238,6 +238,12 @@ export const orderRouter = t.router({
       .use(workspaceMemberMiddleware)
       .input(z.object({ id: z.string(), workspaceId: z.string() }))
       .mutation(async ({ ctx, input }) => {
-         await ctx.db.delete(order).where(eq(order.id, input.id))
+         await Promise.all([
+            ctx.db.delete(procurement).where(eq(procurement.orderId, input.id)),
+            ctx.db
+               .delete(orderAssignee)
+               .where(eq(orderAssignee.orderId, input.id)),
+            ctx.db.delete(order).where(eq(order.id, input.id)),
+         ])
       }),
 })
