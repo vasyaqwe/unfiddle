@@ -1,7 +1,8 @@
 import { TRPCError } from "@trpc/server"
 import { session } from "@unfiddle/core/auth/schema"
 import { createCode } from "@unfiddle/core/id"
-import { order } from "@unfiddle/core/order/schema"
+import { order, orderAssignee } from "@unfiddle/core/order/schema"
+import { procurement } from "@unfiddle/core/procurement/schema"
 import { t } from "@unfiddle/core/trpc/context"
 import { tryCatch } from "@unfiddle/core/try-catch"
 import { workspaceAnalyticsRouter } from "@unfiddle/core/workspace/analytics/trpc"
@@ -12,12 +13,50 @@ import {
    workspace,
    workspaceMember,
 } from "@unfiddle/core/workspace/schema"
-import { and, desc, eq, or, sql } from "drizzle-orm"
+import { and, desc, eq, gt, or, sql } from "drizzle-orm"
 import { z } from "zod"
+
+const tableMap = {
+   order,
+   orderAssignee,
+   procurement,
+}
 
 export const workspaceRouter = t.router({
    member: workspaceMemberRouter,
    analytics: workspaceAnalyticsRouter,
+   backup: t.procedure.query(async ({ ctx }) => {
+      const date = new Date("2025-07-12T00:00:00.000Z")
+      const data = await Promise.all(
+         Object.entries(tableMap).map(async ([name, table]) => {
+            const rows = await ctx.db
+               .select()
+               .from(table)
+               .where(gt(table.createdAt, date))
+            return { name, rows }
+         }),
+      )
+
+      const filteredData = data.filter((d) => d.rows.length > 0)
+
+      return Object.fromEntries(filteredData.map((d) => [d.name, d.rows]))
+   }),
+   restore: t.procedure
+      .input(z.record(z.string(), z.array(z.any())))
+      .mutation(async ({ ctx, input }) => {
+         for (const [name, rows] of Object.entries(input)) {
+            const table = tableMap[name as keyof typeof tableMap]
+            if (!table) {
+               throw new Error(`invalid table: ${name}`)
+            }
+            if (rows.length === 0) {
+               continue
+            }
+            await ctx.db.insert(table).values(rows)
+         }
+
+         return { success: true }
+      }),
    search: t.procedure
       .use(workspaceMemberMiddleware)
       .input(z.object({ id: z.string(), query: z.string() }))
