@@ -34,7 +34,7 @@
    --color-primary-12: hsl(217, 91%, 20%);
 
    --color-background: #ffffff;
-   --color-foreground: var(--color-surface-12);
+   --color-foreground: hsl(0, 0%, 8%);
    --color-neutral: var(--color-surface-4);
    --color-highlight-foreground: hsl(28, 60%, 28%);
    --color-highlight-background: hsl(44, 90%, 88%);
