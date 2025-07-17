@@ -1,21 +1,16 @@
+import type { updateOrderItemSchema } from "@unfiddle/core/database/schema"
+import type { OrderAssignee } from "@unfiddle/core/order/assignee/types"
 import type {
    ORDER_SEVERITIES,
    ORDER_STATUSES,
 } from "@unfiddle/core/order/constants"
-import type {
-   updateOrderItemSchema,
-   updateOrderSchema,
-} from "@unfiddle/core/order/schema"
+import type { OrderItem } from "@unfiddle/core/order/item/types"
+import type { updateOrderSchema } from "@unfiddle/core/order/schema"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import type { z } from "zod"
 
-export type OrderItem = RouterOutput["order"]["list"][number]["items"][number]
-
 export type OrderStatus = (typeof ORDER_STATUSES)[number]
 export type OrderSeverity = (typeof ORDER_SEVERITIES)[number]
-
-export type OrderAssignee =
-   RouterOutput["order"]["list"][number]["assignees"][number]
 
 export type OrderEvent =
    | {

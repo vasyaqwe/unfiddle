@@ -3,7 +3,7 @@ import { useOrderQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import type { OrderItem } from "@unfiddle/core/order/types"
+import type { OrderItem } from "@unfiddle/core/order/item/types"
 import { toast } from "sonner"
 
 export function useCreateOrderItem({

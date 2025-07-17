@@ -1,10 +1,12 @@
 import { user } from "@unfiddle/core/auth/schema"
 import { d } from "@unfiddle/core/database"
 import { good } from "@unfiddle/core/good/schema"
+import { orderAssignee } from "@unfiddle/core/order/assignee/schema"
 import {
    ORDER_SEVERITIES,
    ORDER_STATUSES,
 } from "@unfiddle/core/order/constants"
+import { orderItem } from "@unfiddle/core/order/item/schema"
 import { procurement } from "@unfiddle/core/procurement/schema"
 import { workspace } from "@unfiddle/core/workspace/schema"
 import { relations, sql } from "drizzle-orm"
@@ -20,17 +22,15 @@ export const orderCounter = d.table("order_counter", {
    lastId: d.integer().notNull().default(0),
 })
 
-const userId = d
-   .text()
-   .references(() => user.id, { onDelete: "cascade" })
-   .notNull()
-
 export const order = d.table(
    "order",
    {
       id: d.id("order"),
       shortId: d.integer().notNull(),
-      creatorId: userId,
+      creatorId: d
+         .text()
+         .references(() => user.id, { onDelete: "cascade" })
+         .notNull(),
       workspaceId: d
          .text()
          .notNull()
@@ -70,70 +70,6 @@ export const order = d.table(
          .on(table.workspaceId, table.shortId),
    ],
 )
-
-export const orderItem = d.table(
-   "order_item",
-   {
-      id: d.id("order_item"),
-      orderId: d
-         .text()
-         .notNull()
-         .references(() => order.id, { onDelete: "cascade" }),
-      workspaceId: d.text().references(() => workspace.id),
-      name: d.text().notNull(),
-      quantity: d.integer().notNull(),
-      desiredPrice: d.numeric({ mode: "number" }),
-      ...d.timestamps,
-   },
-   (table) => [d.index("order_item_order_id_idx").on(table.orderId)],
-)
-
-export const orderItemRelations = relations(orderItem, ({ one }) => ({
-   order: one(order, {
-      fields: [orderItem.orderId],
-      references: [order.id],
-   }),
-}))
-
-export const updateOrderItemSchema = createUpdateSchema(orderItem)
-   .pick({
-      id: true,
-      name: true,
-      quantity: true,
-      desiredPrice: true,
-   })
-   .required({ id: true })
-   .extend({
-      workspaceId: z.string(),
-   })
-
-export const orderAssignee = d.table(
-   "order_assignee",
-   {
-      userId,
-      workspaceId: d
-         .text()
-         .notNull()
-         .references(() => workspace.id, { onDelete: "cascade" }),
-      orderId: d
-         .text()
-         .references(() => order.id)
-         .notNull(),
-      ...d.timestamps,
-   },
-   (table) => [d.primaryKey({ columns: [table.userId, table.orderId] })],
-)
-
-export const orderAssigneeRelations = relations(orderAssignee, ({ one }) => ({
-   user: one(user, {
-      fields: [orderAssignee.userId],
-      references: [user.id],
-   }),
-   order: one(order, {
-      fields: [orderAssignee.orderId],
-      references: [order.id],
-   }),
-}))
 
 export const orderRelations = relations(order, ({ one, many }) => ({
    creator: one(user, {

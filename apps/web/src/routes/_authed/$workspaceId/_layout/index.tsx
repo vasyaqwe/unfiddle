@@ -44,7 +44,7 @@ import {
    ORDER_STATUSES,
 } from "@unfiddle/core/order/constants"
 import { orderFilterSchema } from "@unfiddle/core/order/filter"
-import type { OrderItem } from "@unfiddle/core/order/types"
+import type { OrderItem as OrderItemType } from "@unfiddle/core/order/item/types"
 import {
    formatOrderDate,
    orderStatusGradient,
@@ -1071,9 +1071,9 @@ function OrderRow({
                               />
                            </CreateOrderItem>
                         </div>
-                        <div className="mb-4 flex flex-wrap gap-1">
+                        <Card className="relative z-[2] mt-2 rounded-lg border-surface-12/15 p-0">
                            {order.items.map((item) => (
-                              <OrderItemCard
+                              <OrderItem
                                  key={item.id}
                                  item={item}
                                  orderId={order.id}
@@ -1081,11 +1081,11 @@ function OrderRow({
                                  orderName={order.name}
                               />
                            ))}
-                        </div>
+                        </Card>
                      </div>
                      {order.analogs.length === 0 ? null : (
                         <div>
-                           <div className="mb-2 flex items-center justify-between">
+                           <div className="my-2 flex items-center justify-between">
                               <p className="font-medium text-lg">Аналоги</p>
                               <CreateAnalog
                                  orderId={order.id}
@@ -1123,7 +1123,7 @@ function OrderRow({
                            </div>
                         </div>
                      )}
-                     <div className="mb-2 flex items-center justify-between">
+                     <div className="my-2 flex items-center justify-between">
                         <p className="font-medium text-lg">Закупівлі</p>
                         <CreateProcurement
                            orderItems={order.items}
@@ -1158,13 +1158,13 @@ function OrderRow({
    )
 }
 
-function OrderItemCard({
+function OrderItem({
    item,
    orderId,
    ordersLength,
    orderName,
 }: {
-   item: OrderItem
+   item: OrderItemType
    orderId: string
    ordersLength: number
    orderName: string
@@ -1176,13 +1176,13 @@ function OrderItemCard({
    const deleteItem = useDeleteOrderItem()
 
    return (
-      <Card
-         key={item.id}
-         className="relative z-[2] flex w-full gap-2 rounded-lg border-surface-12/15 px-3 py-2 max-lg:flex-col lg:items-center lg:p-2 lg:pl-3"
-      >
-         <span className="max-lg:w-[calc(100%-2rem)]"> {item.name}</span>
-         <Separator className="w-full lg:mx-1 lg:h-4 lg:w-px" />
-         <span className="flex items-center gap-2">
+      <div className="items-center border-neutral border-t p-3 text-left first:border-none lg:flex lg:gap-2 lg:p-2 lg:pl-3">
+         <span className="line-clamp-1 max-lg:w-[calc(100%-2rem)]">
+            {" "}
+            {item.name}
+         </span>
+         <Separator className="w-full max-lg:my-2 lg:mx-1 lg:h-4 lg:w-px" />
+         <span className="flex items-center gap-2 whitespace-nowrap">
             <span className="font-mono"> {item.quantity} шт.</span>
             {item.desiredPrice ? (
                <>
@@ -1249,7 +1249,7 @@ function OrderItemCard({
                )}
             </MenuPopup>
          </Menu>
-      </Card>
+      </div>
    )
 }
 
@@ -1272,14 +1272,21 @@ function CreateAnalog({
                   className="col-span-2"
                   variant={"secondary"}
                >
-                  <Icons.lightBulb className="!-ml-[2px]" />
-                  {analogs.length === 0
-                     ? "Запропонувати аналог"
-                     : "Запропонувати"}
+                  {analogs.length === 0 ? (
+                     <>
+                        <Icons.lightBulb className="!-ml-[2px]" />
+                        Запропонувати аналог
+                     </>
+                  ) : (
+                     <>
+                        <Icons.plus />
+                        Додати
+                     </>
+                  )}
                </Button>
             }
          />
-         <PopoverPopup>
+         <PopoverPopup align={analogs.length === 0 ? "start" : "end"}>
             <form
                onSubmit={(e) => {
                   e.preventDefault()
@@ -1299,7 +1306,7 @@ function CreateAnalog({
                      name="name"
                   />
                </Field>
-               <Button className="mt-3 w-full">Додати</Button>
+               <Button className="mt-4 w-full">Додати</Button>
             </form>
          </PopoverPopup>
       </Popover>
@@ -1317,7 +1324,7 @@ function ProcurementRow({
    sellingPrice: number
    orderId: string
    orderName: string
-   orderItems: OrderItem[]
+   orderItems: OrderItemType[]
 }) {
    const params = Route.useParams()
    const theme = useTheme()
@@ -1336,7 +1343,7 @@ function ProcurementRow({
    return (
       <div className="items-start gap-3 border-neutral border-t p-3 text-left first:border-none lg:flex lg:gap-4 lg:p-2 lg:pl-3">
          {item.orderItem?.name ? (
-            <p className="font-medium font-mono max-lg:w-[calc(100%-2rem)] lg:mt-1 lg:hidden lg:text-sm">
+            <p className="line-clamp-1 font-medium font-mono max-lg:w-[calc(100%-2rem)] lg:mt-1 lg:hidden lg:text-sm">
                {item.orderItem.name}
             </p>
          ) : null}
@@ -1355,7 +1362,7 @@ function ProcurementRow({
             {item.orderItem ? (
                <AlignedColumn
                   id={`${orderId}_p_item_name`}
-                  className="font-medium font-mono max-lg:hidden lg:mt-1 lg:text-sm"
+                  className="line-clamp-1 font-medium font-mono max-lg:hidden lg:mt-1 lg:text-sm"
                >
                   {item.orderItem.name}
                </AlignedColumn>
@@ -1443,6 +1450,43 @@ function ProcurementRow({
             )}
             {formatCurrency(profit)}{" "}
          </p> */}
+
+         <Menu>
+            <MenuTrigger
+               ref={menuTriggerRef}
+               render={
+                  <Button
+                     variant={"ghost"}
+                     kind={"icon"}
+                     className="shrink-0 justify-self-end max-lg:absolute max-lg:top-1 max-lg:right-1 lg:ml-auto"
+                  >
+                     <Icons.ellipsisHorizontal />
+                  </Button>
+               }
+            />
+            <MenuPopup
+               align="end"
+               onClick={(e) => {
+                  e.stopPropagation()
+               }}
+            >
+               <MenuItem
+                  onClick={() => {
+                     setEditOpen(true)
+                  }}
+               >
+                  <Icons.pencil />
+                  Редагувати
+               </MenuItem>
+               <MenuItem
+                  destructive
+                  onClick={() => setConfirmDeleteOpen(true)}
+               >
+                  <Icons.trash />
+                  Видалити
+               </MenuItem>
+            </MenuPopup>
+         </Menu>
          <div
             className="absolute"
             onClick={(e) => e.stopPropagation()}
@@ -1490,42 +1534,6 @@ function ProcurementRow({
                </AlertDialogPopup>
             </AlertDialog>
          </div>
-         <Menu>
-            <MenuTrigger
-               ref={menuTriggerRef}
-               render={
-                  <Button
-                     variant={"ghost"}
-                     kind={"icon"}
-                     className="shrink-0 justify-self-end max-lg:absolute max-lg:top-1 max-lg:right-1 lg:ml-auto"
-                  >
-                     <Icons.ellipsisHorizontal />
-                  </Button>
-               }
-            />
-            <MenuPopup
-               align="end"
-               onClick={(e) => {
-                  e.stopPropagation()
-               }}
-            >
-               <MenuItem
-                  onClick={() => {
-                     setEditOpen(true)
-                  }}
-               >
-                  <Icons.pencil />
-                  Редагувати
-               </MenuItem>
-               <MenuItem
-                  destructive
-                  onClick={() => setConfirmDeleteOpen(true)}
-               >
-                  <Icons.trash />
-                  Видалити
-               </MenuItem>
-            </MenuPopup>
-         </Menu>
       </div>
    )
 }

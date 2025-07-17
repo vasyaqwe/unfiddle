@@ -1,6 +1,6 @@
 import { ProcurementForm } from "@/procurement/components/procurement-form"
 import { useUpdateProcurement } from "@/procurement/mutations/use-update-procurement"
-import type { OrderItem } from "@unfiddle/core/order/types"
+import type { OrderItem } from "@unfiddle/core/order/item/types"
 import type { Procurement } from "@unfiddle/core/procurement/types"
 import { Button } from "@unfiddle/ui/components/button"
 import {

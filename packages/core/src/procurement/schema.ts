@@ -1,6 +1,7 @@
 import { user } from "@unfiddle/core/auth/schema"
 import { d } from "@unfiddle/core/database"
-import { order, orderItem } from "@unfiddle/core/order/schema"
+import { orderItem } from "@unfiddle/core/database/schema"
+import { order } from "@unfiddle/core/order/schema"
 import { PROCUREMENT_STATUSES } from "@unfiddle/core/procurement/constants"
 import { workspace } from "@unfiddle/core/workspace/schema"
 import { relations } from "drizzle-orm"

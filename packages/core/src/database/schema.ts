@@ -1,5 +1,7 @@
 export * from "../auth/schema"
 export * from "../workspace/schema"
 export * from "../order/schema"
+export * from "../order/item/schema"
+export * from "../order/assignee/schema"
 export * from "../procurement/schema"
 export * from "../good/schema"

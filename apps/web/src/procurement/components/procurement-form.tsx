@@ -1,5 +1,5 @@
 import { useAuth } from "@/auth/hooks"
-import type { OrderItem } from "@unfiddle/core/order/types"
+import type { OrderItem } from "@unfiddle/core/order/item/types"
 import type { Procurement } from "@unfiddle/core/procurement/types"
 import type { RouterInput } from "@unfiddle/core/trpc/types"
 import { Button } from "@unfiddle/ui/components/button"

@@ -1,4 +1,5 @@
-import { order, orderAssignee } from "@unfiddle/core/order/schema"
+import { orderAssignee } from "@unfiddle/core/database/schema"
+import { order } from "@unfiddle/core/order/schema"
 import { t } from "@unfiddle/core/trpc/context"
 import { workspaceMemberMiddleware } from "@unfiddle/core/workspace/middleware"
 import { and, eq } from "drizzle-orm"

@@ -4,7 +4,7 @@ import { useOrderQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import type { OrderAssignee } from "@unfiddle/core/order/types"
+import type { OrderAssignee } from "@unfiddle/core/order/assignee/types"
 import { toast } from "sonner"
 
 export function useCreateOrderAssignee({

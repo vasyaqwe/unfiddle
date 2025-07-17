@@ -1,6 +1,6 @@
 import { OrderItemForm } from "@/order/item/components/order-item-form"
 import { useUpdateOrderItem } from "@/order/item/mutations/use-update-order-item"
-import type { OrderItem } from "@unfiddle/core/order/types"
+import type { OrderItem } from "@unfiddle/core/order/item/types"
 import { Button } from "@unfiddle/ui/components/button"
 import {
    Drawer,

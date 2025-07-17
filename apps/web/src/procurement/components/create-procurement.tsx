@@ -1,6 +1,6 @@
 import { ProcurementForm } from "@/procurement/components/procurement-form"
 import { useCreateProcurement } from "@/procurement/mutations/use-create-procurement"
-import type { OrderItem } from "@unfiddle/core/order/types"
+import type { OrderItem } from "@unfiddle/core/order/item/types"
 import { Button } from "@unfiddle/ui/components/button"
 import {
    Drawer,
@@ -9,9 +9,7 @@ import {
    DrawerTitle,
    DrawerTrigger,
 } from "@unfiddle/ui/components/drawer"
-import {} from "@unfiddle/ui/components/field"
 import { Icons } from "@unfiddle/ui/components/icons"
-import {} from "@unfiddle/ui/utils"
 import * as React from "react"
 
 export function CreateProcurement({

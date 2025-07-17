@@ -1,12 +1,11 @@
 import { TRPCError } from "@trpc/server"
+import { orderAssignee, orderItem } from "@unfiddle/core/database/schema"
 import { orderAssigneeRouter } from "@unfiddle/core/order/assignee/trpc"
 import { orderFilterSchema } from "@unfiddle/core/order/filter"
 import { orderItemRouter } from "@unfiddle/core/order/item/trpc"
 import {
    order,
-   orderAssignee,
    orderCounter,
-   orderItem,
    updateOrderSchema,
 } from "@unfiddle/core/order/schema"
 import { procurement } from "@unfiddle/core/procurement/schema"

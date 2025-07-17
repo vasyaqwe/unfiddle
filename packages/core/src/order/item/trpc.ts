@@ -1,5 +1,8 @@
 import { TRPCError } from "@trpc/server"
-import { orderItem, updateOrderItemSchema } from "@unfiddle/core/order/schema"
+import {
+   orderItem,
+   updateOrderItemSchema,
+} from "@unfiddle/core/order/item/schema"
 import { t } from "@unfiddle/core/trpc/context"
 import { tryCatch } from "@unfiddle/core/try-catch"
 import { workspaceMemberMiddleware } from "@unfiddle/core/workspace/middleware"

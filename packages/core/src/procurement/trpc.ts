@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server"
-import { orderItem } from "@unfiddle/core/order/schema"
+import { orderItem } from "@unfiddle/core/order/item/schema"
 import {
    procurement,
    updateProcurementSchema,
