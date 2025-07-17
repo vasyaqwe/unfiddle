@@ -6,18 +6,14 @@ import {
 } from "@unfiddle/core/procurement/schema"
 import { t } from "@unfiddle/core/trpc/context"
 import { workspaceMemberMiddleware } from "@unfiddle/core/workspace/middleware"
-import { eq } from "drizzle-orm"
+import { and, eq } from "drizzle-orm"
 import { createInsertSchema } from "drizzle-zod"
 import { z } from "zod"
 
 export const procurementRouter = t.router({
    create: t.procedure
       .use(workspaceMemberMiddleware)
-      .input(
-         createInsertSchema(procurement)
-            .omit({ creatorId: true })
-            .extend({ workspaceId: z.string() }),
-      )
+      .input(createInsertSchema(procurement).omit({ creatorId: true }))
       .mutation(async ({ ctx, input }) => {
          const createdProcurement = await ctx.db
             .insert(procurement)
@@ -50,12 +46,24 @@ export const procurementRouter = t.router({
          await ctx.db
             .update(procurement)
             .set(input)
-            .where(eq(procurement.id, input.id))
+            .where(
+               and(
+                  eq(procurement.id, input.id),
+                  eq(procurement.workspaceId, input.workspaceId),
+               ),
+            )
       }),
    delete: t.procedure
       .use(workspaceMemberMiddleware)
       .input(z.object({ id: z.string(), workspaceId: z.string() }))
       .mutation(async ({ ctx, input }) => {
-         await ctx.db.delete(procurement).where(eq(procurement.id, input.id))
+         await ctx.db
+            .delete(procurement)
+            .where(
+               and(
+                  eq(procurement.id, input.id),
+                  eq(procurement.workspaceId, input.workspaceId),
+               ),
+            )
       }),
 })

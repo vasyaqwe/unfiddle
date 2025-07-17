@@ -16,13 +16,7 @@ export const orderAssigneeRouter = t.router({
       )
       .mutation(async ({ ctx, input }) => {
          await Promise.all([
-            ctx.db
-               .insert(orderAssignee)
-               .values({
-                  userId: input.userId,
-                  orderId: input.orderId,
-               })
-               .onConflictDoNothing(),
+            ctx.db.insert(orderAssignee).values(input).onConflictDoNothing(),
             ctx.db
                .update(order)
                .set({

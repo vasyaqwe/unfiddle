@@ -108,7 +108,10 @@ export const orderAssignee = d.table(
    "order_assignee",
    {
       userId,
-      workspaceId: d.text(),
+      workspaceId: d
+         .text()
+         .notNull()
+         .references(() => workspace.id, { onDelete: "cascade" }),
       orderId: d
          .text()
          .references(() => order.id)
