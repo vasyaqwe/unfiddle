@@ -24,25 +24,25 @@ import {
    HeaderUserMenu,
    HeaderWorkspaceMenu,
 } from "@/routes/_authed/$workspaceId/-components/header"
+import { DateFilter } from "@/routes/_authed/$workspaceId/_layout/(home)/-components/date-filter"
+import { Empty } from "@/routes/_authed/$workspaceId/_layout/(home)/-components/empty"
+import { FilterMenu } from "@/routes/_authed/$workspaceId/_layout/(home)/-components/filter-menu"
+import { Search } from "@/routes/_authed/$workspaceId/_layout/(home)/-components/search"
+import { ToggleAll } from "@/routes/_authed/$workspaceId/_layout/(home)/-components/toggle-all"
+import { ToggleArchived } from "@/routes/_authed/$workspaceId/_layout/(home)/-components/toggle-archived"
 import { trpc } from "@/trpc"
 import { AlignedColumn } from "@/ui/components/aligned-column"
-import { ErrorComponent } from "@/ui/components/error"
+import { SuspenseBoundary } from "@/ui/components/suspense-boundary"
 import { UserAvatar } from "@/user/components/user-avatar"
 import { validator } from "@/validator"
 import { Toggle } from "@base-ui-components/react/toggle"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { useSuspenseQuery } from "@tanstack/react-query"
+import { createFileRoute } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
 import { formatDate } from "@unfiddle/core/date"
 import { formatNumber } from "@unfiddle/core/number"
-import {
-   ORDER_SEVERITIES_TRANSLATION,
-   ORDER_STATUSES_TRANSLATION,
-} from "@unfiddle/core/order/constants"
-import {
-   ORDER_SEVERITIES,
-   ORDER_STATUSES,
-} from "@unfiddle/core/order/constants"
+import { ORDER_STATUSES_TRANSLATION } from "@unfiddle/core/order/constants"
+import { ORDER_STATUSES } from "@unfiddle/core/order/constants"
 import { orderFilterSchema } from "@unfiddle/core/order/filter"
 import type { OrderItem as OrderItemType } from "@unfiddle/core/order/item/types"
 import {
@@ -72,7 +72,6 @@ import {
    ComboboxPopup,
    ComboboxTrigger,
 } from "@unfiddle/ui/components/combobox"
-import { DateInput } from "@unfiddle/ui/components/date-input"
 import {
    AlertDialog,
    AlertDialogClose,
@@ -84,15 +83,11 @@ import {
 import { DrawerTrigger } from "@unfiddle/ui/components/drawer"
 import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
 import { Icons } from "@unfiddle/ui/components/icons"
-import { Input } from "@unfiddle/ui/components/input"
 import {
    Menu,
-   MenuCheckboxItem,
    MenuItem,
    MenuPopup,
-   MenuSubmenuTrigger,
    MenuTrigger,
-   Submenu,
 } from "@unfiddle/ui/components/menu"
 import {
    Popover,
@@ -117,9 +112,8 @@ import { cx, formData } from "@unfiddle/ui/utils"
 import { useAtom } from "jotai"
 import { useTheme } from "next-themes"
 import * as React from "react"
-import * as R from "remeda"
 
-export const Route = createFileRoute("/_authed/$workspaceId/_layout/")({
+export const Route = createFileRoute("/_authed/$workspaceId/_layout/(home)/")({
    component: RouteComponent,
    loaderDeps: (opts) => ({ search: opts.search }),
    loader: async ({ context, params, deps }) => {
@@ -135,10 +129,6 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/")({
 
 function RouteComponent() {
    const auth = useAuth()
-
-   const queryOptions = useOrderQueryOptions()
-   const query = useQuery(queryOptions.list)
-   const data = query.data ?? []
 
    // if (auth.user.email !== "vasylpolishchuk22@gmail.com")
    // return (
@@ -179,473 +169,30 @@ function RouteComponent() {
                   <FilterMenu />
                   <Search />
                </div>
-               {query.isPending ? null : query.isError ? (
-                  <ErrorComponent error={query.error} />
-               ) : !data || data.length === 0 ? (
-                  <Empty />
-               ) : (
-                  <div className="group relative border-surface-5 border-b">
-                     <div className={"divide-y divide-surface-5"}>
-                        {query.data.map((order) => (
-                           <OrderRow
-                              key={order.id}
-                              order={order}
-                           />
-                        ))}
-                     </div>
-                  </div>
-               )}
+               <SuspenseBoundary>
+                  <Content />
+               </SuspenseBoundary>
             </div>
          </MainScrollArea>
       </>
    )
 }
 
-function ToggleAll() {
+function Content() {
    const queryOptions = useOrderQueryOptions()
-   const query = useQuery(queryOptions.list)
-   const data = query.data ?? []
-
-   const orderIds = data.map((item) => item.id)
-   const [expandedOrderIds, setExpandedOrderIds] = useAtom(expandedOrderIdsAtom)
+   const query = useSuspenseQuery(queryOptions.list)
+   if (query.data.length === 0) return <Empty />
 
    return (
-      <Toggle
-         pressed={
-            expandedOrderIds.filter((id) => orderIds.includes(id)).length > 0
-         }
-         onPressedChange={(pressed) =>
-            !pressed ? setExpandedOrderIds([]) : setExpandedOrderIds(orderIds)
-         }
-         render={(props, state) => (
-            <Button
-               {...props}
-               variant={"ghost"}
-               kind={"icon"}
-               size={"sm"}
-            >
-               <Icons.chevronUpDuo
-                  className={cx(
-                     "size-6 shrink-0 text-foreground/75 transition-all duration-150",
-                     state.pressed ? "rotate-180" : "",
-                  )}
+      <div className="group relative border-surface-5 border-b">
+         <div className={"divide-y divide-surface-5"}>
+            {query.data.map((order) => (
+               <OrderRow
+                  key={order.id}
+                  order={order}
                />
-            </Button>
-         )}
-      />
-   )
-}
-
-function ToggleArchived() {
-   const params = Route.useParams()
-   const search = Route.useSearch()
-   const navigate = useNavigate()
-
-   return (
-      <Tooltip>
-         <TooltipTrigger
-            render={
-               <Toggle
-                  pressed={!!search.archived}
-                  onPressedChange={(archived) => {
-                     navigate({
-                        to: ".",
-                        params,
-                        search: (prev) => ({
-                           ...prev,
-                           archived,
-                        }),
-                     })
-                  }}
-                  render={(props, state) => (
-                     <Button
-                        {...props}
-                        kind={"icon"}
-                        variant={"ghost"}
-                        size={"sm"}
-                        className="-ml-0.5"
-                     >
-                        {state.pressed ? (
-                           <Icons.arrowLeft className="size-5" />
-                        ) : (
-                           <Icons.archive className="size-5" />
-                        )}
-                     </Button>
-                  )}
-               />
-            }
-         />
-         <TooltipPopup>
-            {search.archived ? "Показати усі" : "Показати архівовані"}
-         </TooltipPopup>
-      </Tooltip>
-   )
-}
-
-function FilterMenu() {
-   const params = Route.useParams()
-   const search = Route.useSearch({
-      select: (search) => ({
-         status: search.status,
-         severity: search.severity,
-         creator: search.creator,
-      }),
-   })
-   const navigate = useNavigate()
-   const queryClient = useQueryClient()
-   const queryOptions = useOrderQueryOptions()
-
-   const onFilterChange = (
-      key: "status" | "severity" | "creator",
-      value: string,
-      isChecked: boolean,
-   ) => {
-      const currentValues = search[key] ?? []
-      const newValues = isChecked
-         ? [...currentValues, value]
-         : currentValues.filter((v) => v !== value)
-
-      navigate({
-         to: ".",
-         search: (prev) => ({
-            ...prev,
-            [key]: newValues.length ? newValues : undefined,
-         }),
-         replace: true,
-      })
-   }
-
-   const selectedLength = Object.values(search)
-      .filter((value) => Array.isArray(value))
-      .reduce((total, arr) => total + arr.length, 0)
-
-   const membersQ = useQuery(
-      trpc.workspace.member.list.queryOptions({
-         workspaceId: params.workspaceId,
-      }),
-   )
-   const members = membersQ.data ?? []
-   const managers = members.filter((m) => m.role !== "buyer").map((m) => m.user)
-
-   const removeFilter = () => {
-      navigate({
-         to: ".",
-         search: (prev) => ({
-            ...prev,
-            status: undefined,
-            severity: undefined,
-            creator: undefined,
-         }),
-      }).then(() => queryClient.invalidateQueries(queryOptions.list))
-   }
-
-   return (
-      <>
-         <Menu>
-            <MenuTrigger
-               render={
-                  <Button
-                     variant={"ghost"}
-                     size={"sm"}
-                  >
-                     <Icons.filter className="size-5" />
-                     Фільтр
-                  </Button>
-               }
-            />
-            <MenuPopup align="start">
-               <Submenu>
-                  <MenuSubmenuTrigger>
-                     <Icons.circleCheckDotted />
-                     Статус
-                  </MenuSubmenuTrigger>
-                  <MenuPopup className={"max-h-56 overflow-y-auto"}>
-                     {ORDER_STATUSES.map((status) => (
-                        <MenuCheckboxItem
-                           checked={search.status?.includes(status) ?? false}
-                           onCheckedChange={(checked) =>
-                              onFilterChange("status", status, checked)
-                           }
-                           key={status}
-                        >
-                           {ORDER_STATUSES_TRANSLATION[status]}
-                        </MenuCheckboxItem>
-                     ))}
-                  </MenuPopup>
-               </Submenu>
-               <Submenu>
-                  <MenuSubmenuTrigger>
-                     <SeverityIcon severity="high" />
-                     Пріоритет
-                  </MenuSubmenuTrigger>
-                  <MenuPopup>
-                     {ORDER_SEVERITIES.map((severity) => (
-                        <MenuCheckboxItem
-                           checked={
-                              search.severity?.includes(severity) ?? false
-                           }
-                           onCheckedChange={(checked) =>
-                              onFilterChange("severity", severity, checked)
-                           }
-                           key={severity}
-                        >
-                           {ORDER_SEVERITIES_TRANSLATION[severity]}
-                        </MenuCheckboxItem>
-                     ))}
-                  </MenuPopup>
-               </Submenu>
-               {managers.length === 0 ? null : (
-                  <Submenu>
-                     <MenuSubmenuTrigger>
-                        <Icons.user />
-                        Менеджер
-                     </MenuSubmenuTrigger>
-                     <MenuPopup>
-                        {managers.map((creator) => (
-                           <MenuCheckboxItem
-                              checked={
-                                 search.creator?.includes(creator.id) ?? false
-                              }
-                              onCheckedChange={(checked) =>
-                                 onFilterChange("creator", creator.id, checked)
-                              }
-                              key={creator.id}
-                           >
-                              {creator.name}
-                           </MenuCheckboxItem>
-                        ))}
-                     </MenuPopup>
-                  </Submenu>
-               )}
-            </MenuPopup>
-         </Menu>
-         {selectedLength === 0 ? null : (
-            <Badge className="overflow-hidden pr-0">
-               {selectedLength} обрано
-               <Button
-                  variant={"ghost"}
-                  size={"sm"}
-                  kind={"icon"}
-                  onClick={removeFilter}
-                  className="rounded-none"
-               >
-                  <Icons.xMark className="size-4" />
-               </Button>
-            </Badge>
-         )}
-      </>
-   )
-}
-
-function DateFilter() {
-   const search = Route.useSearch()
-   const navigate = useNavigate()
-   const [startDate, setStartDate] = React.useState(
-      search.startDate ? new Date(search.startDate) : null,
-   )
-   const [endDate, setEndDate] = React.useState(
-      search.endDate ? new Date(search.endDate) : null,
-   )
-   const [open, setOpen] = React.useState(false)
-
-   return (
-      <Popover
-         open={open}
-         onOpenChange={setOpen}
-      >
-         <PopoverTrigger
-            render={
-               <Button
-                  variant={"ghost"}
-                  kind={"icon"}
-                  size={"sm"}
-                  className="relative"
-               >
-                  <Icons.calendar className="size-[18px]" />
-                  {search.startDate || search.endDate ? (
-                     <span className="absolute top-[3px] right-[3px] size-[5px] rounded-full bg-primary-7" />
-                  ) : null}
-               </Button>
-            }
-         />
-         <PopoverPopup align="start">
-            <p className="mb-2 font-medium">Фільтрувати за датою</p>
-            <div className="grid grid-cols-2 items-center gap-2">
-               <DateInput
-                  value={startDate}
-                  onValueChange={setStartDate}
-                  placeholder="Початок"
-                  className="max-w-[170px]"
-               />
-               <DateInput
-                  value={endDate}
-                  onValueChange={setEndDate}
-                  placeholder="Кінець"
-                  className="max-w-[170px]"
-               />
-            </div>
-            <div className="mt-4 grid grid-cols-2 items-center gap-2">
-               <Button
-                  variant={"tertiary"}
-                  onClick={() => {
-                     navigate({
-                        to: ".",
-                        search: (prev) => ({
-                           ...prev,
-                           startDate: undefined,
-                           endDate: undefined,
-                        }),
-                     })
-                     setStartDate(null)
-                     setEndDate(null)
-                  }}
-               >
-                  Скинути
-               </Button>
-               <Button
-                  className="md:h-[1.85rem]"
-                  onClick={() => {
-                     navigate({
-                        to: ".",
-                        search: (prev) => ({
-                           ...prev,
-                           startDate: startDate?.toISOString() ?? undefined,
-                           endDate: endDate?.toISOString() ?? undefined,
-                        }),
-                     })
-                     setOpen(false)
-                  }}
-               >
-                  Застосувати
-               </Button>
-            </div>
-         </PopoverPopup>
-      </Popover>
-   )
-}
-
-function Search() {
-   const search = Route.useSearch()
-   const navigate = useNavigate()
-   const queryClient = useQueryClient()
-   const queryOptions = useOrderQueryOptions()
-   const [searching, setSearching] = React.useState(false)
-
-   const onChange = R.funnel<[string], void>(
-      (query) => {
-         navigate({
-            to: ".",
-            search: (prev) => ({
-               ...prev,
-               q: query ?? undefined,
-            }),
-            replace: true,
-         })
-      },
-      { minQuietPeriodMs: 300, reducer: (_acc, newQuery) => newQuery },
-   )
-
-   const active = searching || (search.q && search.q.length > 0)
-
-   return (
-      <div className="relative ml-auto flex h-9 max-w-[320px] items-center md:h-9">
-         {active ? (
-            <Input
-               autoFocus
-               className={"h-9 border-b-0 pt-0 pr-10 md:h-9 md:pt-0"}
-               defaultValue={search.q}
-               placeholder="Шукати.."
-               onChange={(e) => onChange.call(e.target.value)}
-            />
-         ) : null}
-         <Button
-            variant={"ghost"}
-            kind={"icon"}
-            size={"sm"}
-            className="absolute inset-y-0 right-0 my-auto"
-            type="button"
-            onClick={() => {
-               if (!active) return setSearching(true)
-
-               navigate({
-                  to: ".",
-                  search: (prev) => ({
-                     ...prev,
-                     q: undefined,
-                  }),
-               }).then(() => queryClient.invalidateQueries(queryOptions.list))
-               setSearching(false)
-            }}
-         >
-            {active ? (
-               <Icons.xMark className="size-[18px]" />
-            ) : (
-               <Icons.search className="size-[18px]" />
-            )}
-         </Button>
-      </div>
-   )
-}
-
-function Empty() {
-   const search = Route.useSearch()
-   const auth = useAuth()
-
-   return (
-      <div className="-translate-y-8 absolute inset-0 m-auto size-fit text-center">
-         <div className="mx-auto mb-5 flex max-w-30 flex-col items-center">
-            {auth.workspace.image ? (
-               <img
-                  src={auth.workspace.image}
-                  alt=""
-               />
-            ) : (
-               <>
-                  {search.archived ? (
-                     <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="size-12"
-                        viewBox="0 0 18 18"
-                     >
-                        <g fill="currentColor">
-                           <path
-                              d="M15.75,8.5c-.414,0-.75-.336-.75-.75v-1.5c0-.689-.561-1.25-1.25-1.25h-5.386c-.228,0-.443-.104-.585-.281l-.603-.752c-.238-.297-.594-.467-.975-.467h-1.951c-.689,0-1.25,.561-1.25,1.25v3c0,.414-.336,.75-.75,.75s-.75-.336-.75-.75v-3c0-1.517,1.233-2.75,2.75-2.75h1.951c.838,0,1.62,.375,2.145,1.029l.378,.471h5.026c1.517,0,2.75,1.233,2.75,2.75v1.5c0,.414-.336,.75-.75,.75Z"
-                              fill="currentColor"
-                           />
-                           <path
-                              d="M17.082,7.879c-.43-.559-1.08-.879-1.785-.879H2.703c-.705,0-1.355,.32-1.785,.879-.429,.559-.571,1.27-.39,1.951l1.101,4.128c.32,1.202,1.413,2.042,2.657,2.042H13.713c1.244,0,2.337-.839,2.657-2.042l1.101-4.128c.182-.681,.04-1.392-.39-1.951Z"
-                              fill="currentColor"
-                           />
-                        </g>
-                     </svg>
-                  ) : (
-                     <svg
-                        className="size-12"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 32 32"
-                     >
-                        <g fill="currentColor">
-                           <path
-                              d="M2.424,17.977l.068-10.18c.012-1.843,1.301-3.423,3.08-3.775l9.831-1.949c2.362-.468,4.555,1.38,4.539,3.827l-.068,10.182c-.013,1.842-1.302,3.421-3.081,3.774l-9.831,1.949c-2.362,.468-4.555-1.38-4.539-3.828Z"
-                              opacity=".2"
-                           />
-                           <path
-                              d="M7.241,22.039l.068-10.182c.011-1.841,1.301-3.42,3.08-3.773l9.831-1.948c2.362-.468,4.555,1.38,4.539,3.827l-.068,10.182c-.012,1.842-1.301,3.421-3.08,3.774l-9.831,1.949c-2.362,.468-4.555-1.38-4.539-3.827v-.002Z"
-                              opacity=".5"
-                           />
-                           <path
-                              d="M12.058,26.1l.068-10.182c.012-1.843,1.301-3.421,3.08-3.774l9.831-1.949c2.362-.468,4.555,1.38,4.539,3.827l-.068,10.182c-.012,1.843-1.301,3.422-3.08,3.774l-9.831,1.949c-2.362,.468-4.555-1.38-4.539-3.827h0Z"
-                              opacity=".8"
-                           />
-                        </g>
-                     </svg>
-                  )}
-               </>
-            )}
+            ))}
          </div>
-         <p className="mb-2 font-medium text-foreground/90 text-lg">
-            {search.archived ? "В архіві нічого немає" : "Немає замовлень"}
-         </p>
       </div>
    )
 }

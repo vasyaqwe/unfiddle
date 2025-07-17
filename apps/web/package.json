@@ -41,7 +41,6 @@
     "sonner": "^1.7.1",
     "superjson": "^2.2.2",
     "vaul-base": "^0.0.5",
-    "virtua": "^0.41.5",
     "vite-tsconfig-paths": "^5.1.4",
     "zod": "^3.24.3"
   },

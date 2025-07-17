@@ -2,10 +2,11 @@ import { useAuth } from "@/auth/hooks"
 import { trpc } from "@/trpc"
 import { keepPreviousData } from "@tanstack/react-query"
 import { useSearch } from "@tanstack/react-router"
+import { useDeferredValue } from "react"
 
 export function useOrderQueryOptions() {
    const auth = useAuth()
-   const search = useSearch({ strict: false })
+   const search = useDeferredValue(useSearch({ strict: false }))
 
    const list = trpc.order.list.queryOptions(
       {

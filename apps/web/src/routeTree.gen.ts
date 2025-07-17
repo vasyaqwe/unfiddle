@@ -20,11 +20,11 @@ import { Route as AuthedIndexRouteImport } from './routes/_authed/index'
 import { Route as JoinCodeRouteImport } from './routes/join.$code'
 import { Route as AuthedNewRouteImport } from './routes/_authed/new'
 import { Route as AuthedWorkspaceIdLayoutRouteImport } from './routes/_authed/$workspaceId/_layout'
-import { Route as AuthedWorkspaceIdLayoutIndexRouteImport } from './routes/_authed/$workspaceId/_layout/index'
 import { Route as AuthedWorkspaceIdLayoutTeamRouteImport } from './routes/_authed/$workspaceId/_layout/team'
 import { Route as AuthedWorkspaceIdLayoutSettingsRouteImport } from './routes/_authed/$workspaceId/_layout/settings'
 import { Route as AuthedWorkspaceIdLayoutSearchRouteImport } from './routes/_authed/$workspaceId/_layout/search'
 import { Route as AuthedWorkspaceIdLayoutAnalyticsRouteImport } from './routes/_authed/$workspaceId/_layout/analytics'
+import { Route as AuthedWorkspaceIdLayouthomeIndexRouteImport } from './routes/_authed/$workspaceId/_layout/(home)/index'
 
 const AuthedWorkspaceIdRouteImport = createFileRoute('/_authed/$workspaceId')()
 
@@ -76,12 +76,6 @@ const AuthedWorkspaceIdLayoutRoute = AuthedWorkspaceIdLayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => AuthedWorkspaceIdRoute,
 } as any)
-const AuthedWorkspaceIdLayoutIndexRoute =
-  AuthedWorkspaceIdLayoutIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthedWorkspaceIdLayoutRoute,
-  } as any)
 const AuthedWorkspaceIdLayoutTeamRoute =
   AuthedWorkspaceIdLayoutTeamRouteImport.update({
     id: '/team',
@@ -106,6 +100,12 @@ const AuthedWorkspaceIdLayoutAnalyticsRoute =
     path: '/analytics',
     getParentRoute: () => AuthedWorkspaceIdLayoutRoute,
   } as any)
+const AuthedWorkspaceIdLayouthomeIndexRoute =
+  AuthedWorkspaceIdLayouthomeIndexRouteImport.update({
+    id: '/(home)/',
+    path: '/',
+    getParentRoute: () => AuthedWorkspaceIdLayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
@@ -120,7 +120,7 @@ export interface FileRoutesByFullPath {
   '/$workspaceId/search': typeof AuthedWorkspaceIdLayoutSearchRoute
   '/$workspaceId/settings': typeof AuthedWorkspaceIdLayoutSettingsRoute
   '/$workspaceId/team': typeof AuthedWorkspaceIdLayoutTeamRoute
-  '/$workspaceId/': typeof AuthedWorkspaceIdLayoutIndexRoute
+  '/$workspaceId/': typeof AuthedWorkspaceIdLayouthomeIndexRoute
 }
 export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
@@ -130,7 +130,7 @@ export interface FileRoutesByTo {
   '/new': typeof AuthedNewRoute
   '/join/$code': typeof JoinCodeRoute
   '/': typeof AuthedIndexRoute
-  '/$workspaceId': typeof AuthedWorkspaceIdLayoutIndexRoute
+  '/$workspaceId': typeof AuthedWorkspaceIdLayouthomeIndexRoute
   '/$workspaceId/analytics': typeof AuthedWorkspaceIdLayoutAnalyticsRoute
   '/$workspaceId/search': typeof AuthedWorkspaceIdLayoutSearchRoute
   '/$workspaceId/settings': typeof AuthedWorkspaceIdLayoutSettingsRoute
@@ -152,7 +152,7 @@ export interface FileRoutesById {
   '/_authed/$workspaceId/_layout/search': typeof AuthedWorkspaceIdLayoutSearchRoute
   '/_authed/$workspaceId/_layout/settings': typeof AuthedWorkspaceIdLayoutSettingsRoute
   '/_authed/$workspaceId/_layout/team': typeof AuthedWorkspaceIdLayoutTeamRoute
-  '/_authed/$workspaceId/_layout/': typeof AuthedWorkspaceIdLayoutIndexRoute
+  '/_authed/$workspaceId/_layout/(home)/': typeof AuthedWorkspaceIdLayouthomeIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -200,7 +200,7 @@ export interface FileRouteTypes {
     | '/_authed/$workspaceId/_layout/search'
     | '/_authed/$workspaceId/_layout/settings'
     | '/_authed/$workspaceId/_layout/team'
-    | '/_authed/$workspaceId/_layout/'
+    | '/_authed/$workspaceId/_layout/(home)/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -284,13 +284,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedWorkspaceIdLayoutRouteImport
       parentRoute: typeof AuthedWorkspaceIdRoute
     }
-    '/_authed/$workspaceId/_layout/': {
-      id: '/_authed/$workspaceId/_layout/'
-      path: '/'
-      fullPath: '/$workspaceId/'
-      preLoaderRoute: typeof AuthedWorkspaceIdLayoutIndexRouteImport
-      parentRoute: typeof AuthedWorkspaceIdLayoutRoute
-    }
     '/_authed/$workspaceId/_layout/team': {
       id: '/_authed/$workspaceId/_layout/team'
       path: '/team'
@@ -319,6 +312,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedWorkspaceIdLayoutAnalyticsRouteImport
       parentRoute: typeof AuthedWorkspaceIdLayoutRoute
     }
+    '/_authed/$workspaceId/_layout/(home)/': {
+      id: '/_authed/$workspaceId/_layout/(home)/'
+      path: '/'
+      fullPath: '/$workspaceId/'
+      preLoaderRoute: typeof AuthedWorkspaceIdLayouthomeIndexRouteImport
+      parentRoute: typeof AuthedWorkspaceIdLayoutRoute
+    }
   }
 }
 
@@ -327,7 +327,7 @@ interface AuthedWorkspaceIdLayoutRouteChildren {
   AuthedWorkspaceIdLayoutSearchRoute: typeof AuthedWorkspaceIdLayoutSearchRoute
   AuthedWorkspaceIdLayoutSettingsRoute: typeof AuthedWorkspaceIdLayoutSettingsRoute
   AuthedWorkspaceIdLayoutTeamRoute: typeof AuthedWorkspaceIdLayoutTeamRoute
-  AuthedWorkspaceIdLayoutIndexRoute: typeof AuthedWorkspaceIdLayoutIndexRoute
+  AuthedWorkspaceIdLayouthomeIndexRoute: typeof AuthedWorkspaceIdLayouthomeIndexRoute
 }
 
 const AuthedWorkspaceIdLayoutRouteChildren: AuthedWorkspaceIdLayoutRouteChildren =
@@ -337,7 +337,8 @@ const AuthedWorkspaceIdLayoutRouteChildren: AuthedWorkspaceIdLayoutRouteChildren
     AuthedWorkspaceIdLayoutSearchRoute: AuthedWorkspaceIdLayoutSearchRoute,
     AuthedWorkspaceIdLayoutSettingsRoute: AuthedWorkspaceIdLayoutSettingsRoute,
     AuthedWorkspaceIdLayoutTeamRoute: AuthedWorkspaceIdLayoutTeamRoute,
-    AuthedWorkspaceIdLayoutIndexRoute: AuthedWorkspaceIdLayoutIndexRoute,
+    AuthedWorkspaceIdLayouthomeIndexRoute:
+      AuthedWorkspaceIdLayouthomeIndexRoute,
   }
 
 const AuthedWorkspaceIdLayoutRouteWithChildren =

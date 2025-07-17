@@ -27,7 +27,6 @@ export function Main({
 interface Props extends React.ComponentProps<"div"> {
    containerClassName?: string
    container?: boolean
-   virtualized?: boolean
 }
 
 export function MainScrollArea({
@@ -35,7 +34,6 @@ export function MainScrollArea({
    className,
    containerClassName,
    container = true,
-   virtualized = false,
    ...props
 }: Props) {
    return (
@@ -47,19 +45,15 @@ export function MainScrollArea({
          )}
          {...props}
       >
-         {virtualized ? (
-            children
-         ) : (
-            <div
-               className={cn(
-                  "flex grow flex-col",
-                  container ? "container" : "",
-                  containerClassName,
-               )}
-            >
-               {children}
-            </div>
-         )}
+         <div
+            className={cn(
+               "flex grow flex-col",
+               container ? "container" : "",
+               containerClassName,
+            )}
+         >
+            {children}
+         </div>
       </ScrollArea>
    )
 }
