@@ -108,6 +108,7 @@ export const orderAssignee = d.table(
    "order_assignee",
    {
       userId,
+      workspaceId: d.text(),
       orderId: d
          .text()
          .references(() => order.id)
