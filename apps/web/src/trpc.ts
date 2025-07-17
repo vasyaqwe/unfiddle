@@ -1,5 +1,6 @@
 import { CACHE_AWHILE } from "@/api"
 import { env } from "@/env"
+import * as Sentry from "@sentry/react"
 import { MutationCache, QueryClient } from "@tanstack/react-query"
 import {
    type TRPCClientErrorLike,
@@ -32,6 +33,16 @@ export const queryClient = new QueryClient({
    },
    // handle hono RPC errors
    mutationCache: new MutationCache({
+      onError: (error, _variables, _context, mutation) => {
+         Sentry.captureException(
+            error instanceof Error ? error : new Error(JSON.stringify(error)),
+            {
+               extra: {
+                  mutationId: mutation?.mutationId,
+               },
+            },
+         )
+      },
       onSuccess: async (res) => {
          if (!(res instanceof Response)) return
          if (res.ok) return
