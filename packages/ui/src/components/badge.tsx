@@ -9,7 +9,7 @@ const badge = cva(
             primary: "border-surface-12/11 bg-background text-foreground/80",
          },
          size: {
-            sm: "h-[1.5rem] rounded-[0.3rem] px-1.5 text-xs",
+            sm: "h-[26px] rounded-sm px-1.5",
             md: "h-7 rounded-sm px-2",
             lg: "h-8 rounded-lg px-3",
          },

@@ -969,12 +969,6 @@ function OrderRow({
                <div className="border-neutral border-t bg-surface-3/60 pt-2">
                   <div className="container mb-4">
                      <div className="mt-1 mb-2 flex items-center gap-2">
-                        {order.analogs.length === 0 ? (
-                           <CreateAnalog
-                              orderId={order.id}
-                              analogs={order.analogs}
-                           />
-                        ) : null}
                         <Toggle
                            pressed={order.assignees.some(
                               (a) => a.user.id === auth.user.id,
@@ -1013,6 +1007,12 @@ function OrderRow({
                               </Button>
                            )}
                         />
+                        {order.analogs.length === 0 ? (
+                           <CreateAnalog
+                              orderId={order.id}
+                              analogs={order.analogs}
+                           />
+                        ) : null}
                      </div>
                      <Table>
                         <TableHeader>
@@ -1071,7 +1071,7 @@ function OrderRow({
                               />
                            </CreateOrderItem>
                         </div>
-                        <Card className="relative z-[2] mt-2 rounded-lg border-surface-12/15 p-0">
+                        <div className="relative z-[2] mt-2">
                            {order.items.map((item) => (
                               <OrderItem
                                  key={item.id}
@@ -1081,7 +1081,7 @@ function OrderRow({
                                  orderName={order.name}
                               />
                            ))}
-                        </Card>
+                        </div>
                      </div>
                      {order.analogs.length === 0 ? null : (
                         <div>
@@ -1176,8 +1176,8 @@ function OrderItem({
    const deleteItem = useDeleteOrderItem()
 
    return (
-      <div className="items-center border-neutral border-t p-3 text-left first:border-none lg:flex lg:gap-2 lg:p-2 lg:pl-3">
-         <span className="line-clamp-1 max-lg:w-[calc(100%-2rem)]">
+      <Card className="mt-1 items-center border-surface-12/15 p-3 text-left lg:flex lg:gap-2 lg:p-2 lg:pl-3">
+         <span className="line-clamp-1 font-medium max-lg:w-[calc(100%-2rem)]">
             {" "}
             {item.name}
          </span>
@@ -1249,7 +1249,7 @@ function OrderItem({
                )}
             </MenuPopup>
          </Menu>
-      </div>
+      </Card>
    )
 }
 
@@ -1341,16 +1341,16 @@ function ProcurementRow({
    const menuTriggerRef = React.useRef<HTMLButtonElement>(null)
 
    return (
-      <div className="items-start gap-3 border-neutral border-t p-3 text-left first:border-none lg:flex lg:gap-4 lg:p-2 lg:pl-3">
+      <div className="gap-3 border-neutral border-t p-3 text-left first:border-none lg:gap-4 lg:p-2 lg:pl-3">
          {item.orderItem?.name ? (
-            <p className="line-clamp-1 font-medium font-mono max-lg:w-[calc(100%-2rem)] lg:mt-1 lg:hidden lg:text-sm">
+            <p className="line-clamp-1 font-medium font-mono max-lg:w-[calc(100%-2rem)] lg:hidden lg:text-sm">
                {item.orderItem.name}
             </p>
          ) : null}
-         <span className="flex items-center gap-2 max-lg:mt-2 lg:gap-4">
+         <div className="flex w-full items-center gap-3 max-lg:mt-2 lg:gap-4">
             <AlignedColumn
                id={`${orderId}_p_creator`}
-               className="flex items-center gap-1.5 whitespace-nowrap font-medium lg:mt-[0.17rem]"
+               className="flex items-center gap-1.5 whitespace-nowrap font-medium"
             >
                <UserAvatar
                   size={16}
@@ -1362,85 +1362,117 @@ function ProcurementRow({
             {item.orderItem ? (
                <AlignedColumn
                   id={`${orderId}_p_item_name`}
-                  className="line-clamp-1 font-medium font-mono max-lg:hidden lg:mt-1 lg:text-sm"
+                  className="font-medium font-mono max-lg:hidden lg:text-sm"
                >
                   {item.orderItem.name}
                </AlignedColumn>
             ) : null}
-            <span className="flex items-center justify-end gap-2 max-lg:ml-auto lg:gap-4">
-               <AlignedColumn
-                  id={`${orderId}_p_quantity`}
-                  className="whitespace-nowrap font-medium font-mono lg:mt-1 lg:text-sm"
-               >
-                  {formatNumber(item.quantity)} шт.
-               </AlignedColumn>
-               <Separator className={"h-4 w-px bg-surface-7 lg:hidden"} />
-               <AlignedColumn
-                  id={`${orderId}_p_price`}
-                  className="whitespace-nowrap font-medium font-mono lg:mt-1 lg:text-sm"
-               >
-                  {formatCurrency(item.purchasePrice)}
-               </AlignedColumn>
-            </span>
-         </span>
-         <span className="flex items-center gap-2 max-lg:mt-2 lg:gap-4">
             <AlignedColumn
-               className="mt-[2px] justify-self-end max-lg:order-4 lg:mt-[2px]"
-               id="p_status"
+               id={`${orderId}_p_quantity`}
+               className="whitespace-nowrap font-medium font-mono lg:text-sm"
             >
-               <Combobox
-                  value={item.status}
-                  onValueChange={(status) =>
-                     update.mutate({
-                        id: item.id,
-                        workspaceId: params.workspaceId,
-                        status: status as never,
-                     })
-                  }
-               >
-                  <ComboboxTrigger
-                     className={"cursor-pointer"}
-                     onClick={(e) => {
-                        e.stopPropagation()
-                     }}
-                  >
-                     <Badge
-                        size={"sm"}
-                        style={{
-                           background: `linear-gradient(140deg, ${from}, ${to})`,
-                        }}
-                     >
-                        {PROCUREMENT_STATUSES_TRANSLATION[item.status]}
-                     </Badge>
-                  </ComboboxTrigger>
-                  <ComboboxPopup
-                     align="start"
-                     onClick={(e) => {
-                        e.stopPropagation()
-                     }}
-                  >
-                     <ComboboxInput />
-                     {PROCUREMENT_STATUSES.map((s) => (
-                        <ComboboxItem
-                           key={s}
-                           value={s}
-                           keywords={[PROCUREMENT_STATUSES_TRANSLATION[s]]}
-                        >
-                           {PROCUREMENT_STATUSES_TRANSLATION[s]}
-                        </ComboboxItem>
-                     ))}
-                  </ComboboxPopup>
-               </Combobox>
+               {formatNumber(item.quantity)} шт.
             </AlignedColumn>
+            <Separator className={"h-4 w-px bg-surface-7 lg:hidden"} />
+            <AlignedColumn
+               id={`${orderId}_p_price`}
+               className="whitespace-nowrap font-medium font-mono lg:text-sm"
+            >
+               {formatCurrency(item.purchasePrice)}
+            </AlignedColumn>
+            <Combobox
+               value={item.status}
+               onValueChange={(status) =>
+                  update.mutate({
+                     id: item.id,
+                     workspaceId: params.workspaceId,
+                     status: status as never,
+                  })
+               }
+            >
+               <ComboboxTrigger
+                  className={"ml-auto cursor-pointer"}
+                  onClick={(e) => {
+                     e.stopPropagation()
+                  }}
+               >
+                  <Badge
+                     size={"sm"}
+                     style={{
+                        background: `linear-gradient(140deg, ${from}, ${to})`,
+                     }}
+                  >
+                     {PROCUREMENT_STATUSES_TRANSLATION[item.status]}
+                  </Badge>
+               </ComboboxTrigger>
+               <ComboboxPopup
+                  align="end"
+                  onClick={(e) => {
+                     e.stopPropagation()
+                  }}
+               >
+                  <ComboboxInput />
+                  {PROCUREMENT_STATUSES.map((s) => (
+                     <ComboboxItem
+                        key={s}
+                        value={s}
+                        keywords={[PROCUREMENT_STATUSES_TRANSLATION[s]]}
+                     >
+                        {PROCUREMENT_STATUSES_TRANSLATION[s]}
+                     </ComboboxItem>
+                  ))}
+               </ComboboxPopup>
+            </Combobox>
+            <Menu>
+               <MenuTrigger
+                  ref={menuTriggerRef}
+                  render={
+                     <Button
+                        variant={"ghost"}
+                        kind={"icon"}
+                        className="shrink-0 max-lg:absolute max-lg:top-1 max-lg:right-1"
+                     >
+                        <Icons.ellipsisHorizontal />
+                     </Button>
+                  }
+               />
+               <MenuPopup
+                  align="end"
+                  onClick={(e) => {
+                     e.stopPropagation()
+                  }}
+               >
+                  <MenuItem
+                     onClick={() => {
+                        setEditOpen(true)
+                     }}
+                  >
+                     <Icons.pencil />
+                     Редагувати
+                  </MenuItem>
+                  <MenuItem
+                     destructive
+                     onClick={() => setConfirmDeleteOpen(true)}
+                  >
+                     <Icons.trash />
+                     Видалити
+                  </MenuItem>
+               </MenuPopup>
+            </Menu>
+         </div>
+         <div className="mt-2 flex lg:mt-1">
             {item.provider ? (
-               <p className="lg:!max-w-[80ch] mt-2 empty:hidden max-lg:mr-auto lg:mt-1">
-                  {item.provider}
-               </p>
+               <>
+                  <p className="lg:!max-w-[80ch] empty:hidden max-lg:mr-auto">
+                     {item.provider}
+                  </p>
+                  <Separator className="mx-2.5 my-auto h-4 w-px" />
+               </>
             ) : null}
-         </span>
-         <p className="lg:!max-w-[80ch] mt-2 whitespace-pre-wrap break-all empty:hidden lg:mt-1">
-            {item.note}
-         </p>
+            <p className="lg:!max-w-[80ch] whitespace-pre-wrap empty:hidden">
+               {item.note}
+            </p>
+         </div>
          {/* <p className="col-start-1 whitespace-nowrap font-medium font-mono text-[1rem] max-lg:order-3 max-lg:self-center lg:mt-1 lg:ml-auto lg:text-right">
             {profit === 0 ? null : (
                <ProfitArrow
@@ -1451,42 +1483,6 @@ function ProcurementRow({
             {formatCurrency(profit)}{" "}
          </p> */}
 
-         <Menu>
-            <MenuTrigger
-               ref={menuTriggerRef}
-               render={
-                  <Button
-                     variant={"ghost"}
-                     kind={"icon"}
-                     className="shrink-0 justify-self-end max-lg:absolute max-lg:top-1 max-lg:right-1 lg:ml-auto"
-                  >
-                     <Icons.ellipsisHorizontal />
-                  </Button>
-               }
-            />
-            <MenuPopup
-               align="end"
-               onClick={(e) => {
-                  e.stopPropagation()
-               }}
-            >
-               <MenuItem
-                  onClick={() => {
-                     setEditOpen(true)
-                  }}
-               >
-                  <Icons.pencil />
-                  Редагувати
-               </MenuItem>
-               <MenuItem
-                  destructive
-                  onClick={() => setConfirmDeleteOpen(true)}
-               >
-                  <Icons.trash />
-                  Видалити
-               </MenuItem>
-            </MenuPopup>
-         </Menu>
          <div
             className="absolute"
             onClick={(e) => e.stopPropagation()}
