@@ -210,7 +210,7 @@ export const orderRouter = t.router({
                .values(
                   input.items.map((item) => ({
                      ...item,
-
+                     workspaceId: input.workspaceId,
                      orderId: createdOrder.id,
                   })),
                )

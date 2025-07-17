@@ -101,9 +101,11 @@ export const updateOrderItemSchema = createUpdateSchema(orderItem)
       name: true,
       quantity: true,
       desiredPrice: true,
-      workspaceId: true,
    })
-   .required({ id: true, workspaceId: true })
+   .required({ id: true })
+   .extend({
+      workspaceId: z.string(),
+   })
 
 export const orderAssignee = d.table(
    "order_assignee",

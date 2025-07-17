@@ -3,14 +3,14 @@ import { orderItem, updateOrderItemSchema } from "@unfiddle/core/order/schema"
 import { t } from "@unfiddle/core/trpc/context"
 import { tryCatch } from "@unfiddle/core/try-catch"
 import { workspaceMemberMiddleware } from "@unfiddle/core/workspace/middleware"
-import { eq } from "drizzle-orm"
+import { and, eq } from "drizzle-orm"
 import { createInsertSchema } from "drizzle-zod"
 import { z } from "zod"
 
 export const orderItemRouter = t.router({
    create: t.procedure
       .use(workspaceMemberMiddleware)
-      .input(createInsertSchema(orderItem).required({ workspaceId: true }))
+      .input(createInsertSchema(orderItem).extend({ workspaceId: z.string() }))
       .mutation(async ({ ctx, input }) => {
          return await ctx.db.insert(orderItem).values(input).returning().get()
       }),
@@ -21,7 +21,12 @@ export const orderItemRouter = t.router({
          await ctx.db
             .update(orderItem)
             .set(input)
-            .where(eq(orderItem.id, input.id))
+            .where(
+               and(
+                  eq(orderItem.id, input.id),
+                  eq(orderItem.workspaceId, input.workspaceId),
+               ),
+            )
       }),
    delete: t.procedure
       .use(workspaceMemberMiddleware)
@@ -34,7 +39,14 @@ export const orderItemRouter = t.router({
       )
       .mutation(async ({ ctx, input }) => {
          const res = await tryCatch(
-            ctx.db.delete(orderItem).where(eq(orderItem.id, input.orderItemId)),
+            ctx.db
+               .delete(orderItem)
+               .where(
+                  and(
+                     eq(orderItem.id, input.orderItemId),
+                     eq(orderItem.workspaceId, input.workspaceId),
+                  ),
+               ),
          )
          if (res.error?.message.includes("SQLITE_CONSTRAINT"))
             throw new TRPCError({
