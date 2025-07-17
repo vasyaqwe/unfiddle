@@ -1,0 +1,1 @@
+ALTER TABLE `order_item` ADD `workspace_id` text REFERENCES workspace(id);

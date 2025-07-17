@@ -10,7 +10,7 @@ import { z } from "zod"
 export const orderItemRouter = t.router({
    create: t.procedure
       .use(workspaceMemberMiddleware)
-      .input(createInsertSchema(orderItem).extend({ workspaceId: z.string() }))
+      .input(createInsertSchema(orderItem).required({ workspaceId: true }))
       .mutation(async ({ ctx, input }) => {
          return await ctx.db.insert(orderItem).values(input).returning().get()
       }),

@@ -79,6 +79,7 @@ export const orderItem = d.table(
          .text()
          .notNull()
          .references(() => order.id, { onDelete: "cascade" }),
+      workspaceId: d.text().references(() => workspace.id),
       name: d.text().notNull(),
       quantity: d.integer().notNull(),
       desiredPrice: d.numeric({ mode: "number" }),
@@ -100,9 +101,9 @@ export const updateOrderItemSchema = createUpdateSchema(orderItem)
       name: true,
       quantity: true,
       desiredPrice: true,
+      workspaceId: true,
    })
-   .required({ id: true })
-   .extend({ workspaceId: z.string() })
+   .required({ id: true, workspaceId: true })
 
 export const orderAssignee = d.table(
    "order_assignee",
