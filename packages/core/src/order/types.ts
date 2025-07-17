@@ -2,7 +2,10 @@ import type {
    ORDER_SEVERITIES,
    ORDER_STATUSES,
 } from "@unfiddle/core/order/constants"
-import type { updateOrderSchema } from "@unfiddle/core/order/schema"
+import type {
+   updateOrderItemSchema,
+   updateOrderSchema,
+} from "@unfiddle/core/order/schema"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import type { z } from "zod"
 
@@ -35,6 +38,23 @@ export type OrderEvent =
         action: "delete_assignee"
         orderId: string
         userId: string
+        senderId: string
+     }
+   | {
+        action: "create_item"
+        item: OrderItem
+        orderId: string
+        senderId: string
+     }
+   | {
+        action: "update_item"
+        item: z.infer<typeof updateOrderItemSchema>
+        senderId: string
+     }
+   | {
+        action: "delete_item"
+        orderId: string
+        orderItemId: string
         senderId: string
      }
    | {

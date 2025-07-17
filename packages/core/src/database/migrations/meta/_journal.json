@@ -78,6 +78,13 @@
       "when": 1752698093086,
       "tag": "0013_orange_enchantress",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "6",
+      "when": 1752753641599,
+      "tag": "0014_bitter_thunderbolt",
+      "breakpoints": true
     }
   ]
 }

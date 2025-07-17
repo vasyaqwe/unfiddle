@@ -107,97 +107,99 @@ export function OrderForm({
                defaultValue={order?.name ?? ""}
             />
          </Field>
-         <Fieldset className={"space-y-2"}>
-            <FieldsetLegend className={"md:mb-4"}>Товари</FieldsetLegend>
-            <FieldGroup className="md:grid-cols-[1fr_4rem_5rem_2rem] md:gap-5">
-               <p className="font-medium text-sm">Назва</p>
-               <p className="font-medium text-sm">Кількість</p>
-               <p className="font-medium text-sm">Баж. ціна</p>
-            </FieldGroup>
-            {items.map((item, idx) => (
-               <FieldGroup
-                  key={idx}
-                  className="md:grid-cols-[1fr_4rem_5rem_2rem] md:gap-5"
-               >
-                  <Field>
-                     <FieldControl
-                        disabled={!!order}
-                        required
-                        placeholder="Уведіть назву"
-                        value={item.name}
-                        onChange={(e) =>
-                           setItems(
-                              items.map((i, itemIdx) =>
-                                 idx === itemIdx
-                                    ? { ...i, name: e.target.value }
-                                    : i,
-                              ),
-                           )
-                        }
-                     />
-                  </Field>
-                  <Field>
-                     <NumberField
-                        disabled={!!order}
-                        required
-                        placeholder="шт."
-                        min={1}
-                        value={item.quantity}
-                        onValueChange={(quantity) =>
-                           setItems(
-                              items.map((i, itemIdx) =>
-                                 idx === itemIdx
-                                    ? { ...i, quantity: quantity ?? 1 }
-                                    : i,
-                              ),
-                           )
-                        }
-                     />
-                  </Field>
-                  <Field>
-                     <NumberField
-                        disabled={!!order}
-                        placeholder="₴"
-                        value={item.desiredPrice}
-                        onValueChange={(desiredPrice) =>
-                           setItems(
-                              items.map((i, itemIdx) =>
-                                 idx === itemIdx ? { ...i, desiredPrice } : i,
-                              ),
-                           )
-                        }
-                     />
-                  </Field>
-                  <Button
-                     onClick={() =>
-                        setItems(items.filter((_, itemIdx) => idx !== itemIdx))
-                     }
-                     type="button"
-                     variant={"ghost"}
-                     kind={"icon"}
-                     disabled={items.length === 1 || !!order}
-                     className="self-end disabled:cursor-not-allowed"
-                  >
-                     <Icons.trash />
-                  </Button>
+         {order ? null : (
+            <Fieldset className={"space-y-2"}>
+               <FieldsetLegend className={"md:mb-4"}>Товари</FieldsetLegend>
+               <FieldGroup className="md:grid-cols-[1fr_4rem_5rem_2rem] md:gap-5">
+                  <p className="font-medium text-sm">Назва</p>
+                  <p className="font-medium text-sm">Кількість</p>
+                  <p className="font-medium text-sm">Баж. ціна</p>
                </FieldGroup>
-            ))}
-            <Button
-               disabled={!!order}
-               onClick={() =>
-                  setItems([
-                     ...items,
-                     { name: "", quantity: 1, desiredPrice: null },
-                  ])
-               }
-               type="button"
-               className="mt-2 w-full disabled:cursor-not-allowed"
-               variant={"secondary"}
-            >
-               <Icons.plus />
-               Додати товар
-            </Button>
-         </Fieldset>
+               {items.map((item, idx) => (
+                  <FieldGroup
+                     key={idx}
+                     className="md:grid-cols-[1fr_4rem_5rem_2rem] md:gap-5"
+                  >
+                     <Field>
+                        <FieldControl
+                           required
+                           placeholder="Уведіть назву"
+                           value={item.name}
+                           onChange={(e) =>
+                              setItems(
+                                 items.map((i, itemIdx) =>
+                                    idx === itemIdx
+                                       ? { ...i, name: e.target.value }
+                                       : i,
+                                 ),
+                              )
+                           }
+                        />
+                     </Field>
+                     <Field>
+                        <NumberField
+                           required
+                           placeholder="шт."
+                           min={1}
+                           value={item.quantity}
+                           onValueChange={(quantity) =>
+                              setItems(
+                                 items.map((i, itemIdx) =>
+                                    idx === itemIdx
+                                       ? { ...i, quantity: quantity ?? 1 }
+                                       : i,
+                                 ),
+                              )
+                           }
+                        />
+                     </Field>
+                     <Field>
+                        <NumberField
+                           placeholder="₴"
+                           value={item.desiredPrice}
+                           onValueChange={(desiredPrice) =>
+                              setItems(
+                                 items.map((i, itemIdx) =>
+                                    idx === itemIdx
+                                       ? { ...i, desiredPrice }
+                                       : i,
+                                 ),
+                              )
+                           }
+                        />
+                     </Field>
+                     <Button
+                        onClick={() =>
+                           setItems(
+                              items.filter((_, itemIdx) => idx !== itemIdx),
+                           )
+                        }
+                        type="button"
+                        variant={"ghost"}
+                        kind={"icon"}
+                        disabled={items.length === 1}
+                        className="self-end disabled:cursor-not-allowed"
+                     >
+                        <Icons.trash />
+                     </Button>
+                  </FieldGroup>
+               ))}
+               <Button
+                  onClick={() =>
+                     setItems([
+                        ...items,
+                        { name: "", quantity: 1, desiredPrice: null },
+                     ])
+                  }
+                  type="button"
+                  className="mt-2 w-full disabled:cursor-not-allowed"
+                  variant={"secondary"}
+               >
+                  <Icons.plus />
+                  Додати товар
+               </Button>
+            </Fieldset>
+         )}
          <Fieldset className={"space-y-3 md:space-y-8"}>
             <FieldsetLegend className={"md:mb-4"}>Деталі</FieldsetLegend>
             <FieldGroup>

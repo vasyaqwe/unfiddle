@@ -18,9 +18,7 @@ export const procurement = d.table(
          .text()
          .notNull()
          .references(() => user.id, { onDelete: "cascade" }),
-      orderItemId: d
-         .text()
-         .references(() => orderItem.id, { onDelete: "cascade" }),
+      orderItemId: d.text().references(() => orderItem.id),
       quantity: d.integer().notNull(),
       purchasePrice: d.numeric({ mode: "number" }).notNull(),
       status: d

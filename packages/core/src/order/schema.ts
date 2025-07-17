@@ -73,7 +73,6 @@ export const order = d.table(
 
 export const orderItem = d.table(
    "order_item",
-
    {
       id: d.id("order_item"),
       orderId: d
@@ -85,7 +84,6 @@ export const orderItem = d.table(
       desiredPrice: d.numeric({ mode: "number" }),
       ...d.timestamps,
    },
-
    (table) => [d.index("order_item_order_id_idx").on(table.orderId)],
 )
 
@@ -95,6 +93,16 @@ export const orderItemRelations = relations(orderItem, ({ one }) => ({
       references: [order.id],
    }),
 }))
+
+export const updateOrderItemSchema = createUpdateSchema(orderItem)
+   .pick({
+      id: true,
+      name: true,
+      quantity: true,
+      desiredPrice: true,
+   })
+   .required({ id: true })
+   .extend({ workspaceId: z.string() })
 
 export const orderAssignee = d.table(
    "order_assignee",

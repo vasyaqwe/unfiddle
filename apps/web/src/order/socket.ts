@@ -2,6 +2,9 @@ import { useAuth } from "@/auth/hooks"
 import { env } from "@/env"
 import { useOptimisticCreateOrderAssignee } from "@/order/assignee/mutations/use-create-order-assignee"
 import { useOptimisticDeleteOrderAssignee } from "@/order/assignee/mutations/use-delete-order-assignee"
+import { useOptimisticCreateOrderItem } from "@/order/item/mutations/use-create-order-item"
+import { useOptimisticDeleteOrderItem } from "@/order/item/mutations/use-delete-order-item"
+import { useOptimisticUpdateOrderItem } from "@/order/item/mutations/use-update-order-item"
 import { useOptimisticCreateOrder } from "@/order/mutations/use-create-order"
 import { useOptimisticDeleteOrder } from "@/order/mutations/use-delete-order"
 import { useOptimisticUpdateOrder } from "@/order/mutations/use-update-order"
@@ -15,6 +18,9 @@ export function useOrderSocket() {
    const deleteOrder = useOptimisticDeleteOrder()
    const createAssignee = useOptimisticCreateOrderAssignee()
    const deleteAssignee = useOptimisticDeleteOrderAssignee()
+   const createItem = useOptimisticCreateOrderItem()
+   const updateItem = useOptimisticUpdateOrderItem()
+   const deleteItem = useOptimisticDeleteOrderItem()
 
    return usePartySocket({
       host: env.COLLABORATION_URL,
@@ -24,6 +30,19 @@ export function useOrderSocket() {
          const data = JSON.parse(event.data) as OrderEvent
 
          if (data.senderId === auth.user.id) return
+
+         if (data.action === "create_item") {
+            update({ id: data.orderId, status: "processing" })
+            return createItem({ ...data.item, orderId: data.orderId })
+         }
+
+         if (data.action === "update_item") return updateItem(data.item)
+
+         if (data.action === "delete_item")
+            return deleteItem({
+               orderId: data.orderId,
+               orderItemId: data.orderItemId,
+            })
 
          if (data.action === "create_assignee") {
             await update({ id: data.orderId, status: "processing" })

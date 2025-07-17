@@ -1,32 +1,32 @@
-import { ProcurementForm } from "@/procurement/components/procurement-form"
-import { useUpdateProcurement } from "@/procurement/mutations/use-update-procurement"
+import { OrderItemForm } from "@/order/item/components/order-item-form"
+import { useUpdateOrderItem } from "@/order/item/mutations/use-update-order-item"
 import type { OrderItem } from "@unfiddle/core/order/types"
-import type { Procurement } from "@unfiddle/core/procurement/types"
 import { Button } from "@unfiddle/ui/components/button"
 import {
    Drawer,
-   DrawerClose,
    DrawerFooter,
    DrawerPopup,
    DrawerTitle,
 } from "@unfiddle/ui/components/drawer"
 
-export function UpdateProcurement({
-   procurement,
+export function UpdateOrderItem({
+   children,
    finalFocus,
    open,
    setOpen,
+   orderItem,
+   orderId,
    orderName,
-   orderItems,
 }: {
-   procurement: Procurement
+   children?: React.ReactNode
+   orderItem: OrderItem
    finalFocus: React.RefObject<HTMLButtonElement | null>
    open: boolean
    setOpen: (open: boolean) => void
+   orderId: string
    orderName: string
-   orderItems: OrderItem[]
 }) {
-   const mutation = useUpdateProcurement({
+   const mutation = useUpdateOrderItem({
       onMutate: () => setOpen(false),
       onError: () => setOpen(true),
    })
@@ -36,26 +36,24 @@ export function UpdateProcurement({
          open={open}
          onOpenChange={setOpen}
       >
+         {children}
          <DrawerPopup finalFocus={finalFocus}>
-            <DrawerTitle>Редагувати закупівлю</DrawerTitle>
-            <ProcurementForm
-               orderItems={orderItems}
+            <DrawerTitle>Новий товар</DrawerTitle>
+            <OrderItemForm
+               orderItem={orderItem}
                orderName={orderName}
+               orderId={orderId}
                onSubmit={(data) =>
                   mutation.mutate({
                      ...data,
-                     id: procurement.id,
+                     id: orderItem.id,
                   })
                }
-               procurement={procurement}
             >
                <DrawerFooter>
                   <Button>Зберегти</Button>
-                  <DrawerClose
-                     render={<Button variant={"secondary"}>Відмінити</Button>}
-                  />
                </DrawerFooter>
-            </ProcurementForm>
+            </OrderItemForm>
          </DrawerPopup>
       </Drawer>
    )

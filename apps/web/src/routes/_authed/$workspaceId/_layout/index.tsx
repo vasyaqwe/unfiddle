@@ -5,6 +5,9 @@ import { useDeleteOrderAssignee } from "@/order/assignee/mutations/use-delete-or
 import { CreateOrder } from "@/order/components/create-order"
 import { SeverityIcon } from "@/order/components/severity-icon"
 import { UpdateOrder } from "@/order/components/update-order"
+import { CreateOrderItem } from "@/order/item/components/create-order-item"
+import { UpdateOrderItem } from "@/order/item/components/update-order-item"
+import { useDeleteOrderItem } from "@/order/item/mutations/use-delete-order-item"
 import { useDeleteOrder } from "@/order/mutations/use-delete-order"
 import { useUpdateOrder } from "@/order/mutations/use-update-order"
 import { useOrderQueryOptions } from "@/order/queries"
@@ -961,7 +964,7 @@ function OrderRow({
             </Menu>
          </CollapsibleTrigger>
          <CollapsiblePanel
-            key={`${order.procurements.length}_${!!order.note}_${order.analogs.length}`}
+            key={`${order.procurements.length}_${!!order.note}_${order.analogs.length}_${order.items.length}`}
             render={
                <div className="border-neutral border-t bg-surface-3/60 pt-2">
                   <div className="container mb-4">
@@ -1052,31 +1055,31 @@ function OrderRow({
                         {order.note}
                      </p>
                      <div>
-                        <p className="mb-2 font-medium text-lg">Товари</p>
+                        <div className="mb-2 flex items-center justify-between">
+                           <p className="font-medium text-lg">Товари</p>
+                           <CreateOrderItem
+                              orderId={order.id}
+                              orderName={order.name}
+                           >
+                              <DrawerTrigger
+                                 render={
+                                    <Button variant={"secondary"}>
+                                       <Icons.plus className="md:size-6" />
+                                       Додати
+                                    </Button>
+                                 }
+                              />
+                           </CreateOrderItem>
+                        </div>
                         <div className="mb-4 flex flex-wrap gap-1">
                            {order.items.map((item) => (
-                              <Card
+                              <OrderItemCard
                                  key={item.id}
-                                 className="relative z-[2] flex w-full gap-2 rounded-lg border-surface-12/15 px-3 py-2 max-lg:flex-col lg:items-center"
-                              >
-                                 {item.name}
-                                 <Separator className="w-full lg:mx-1 lg:h-4 lg:w-px" />
-                                 <span className="flex items-center gap-2">
-                                    <span className="font-mono">
-                                       {" "}
-                                       {item.quantity} шт.
-                                    </span>
-                                    {item.desiredPrice ? (
-                                       <>
-                                          <Separator className="mx-1 h-4 w-px" />
-                                          <span className="font-mono">
-                                             Бажано по{" "}
-                                             {formatCurrency(item.desiredPrice)}
-                                          </span>
-                                       </>
-                                    ) : null}
-                                 </span>
-                              </Card>
+                                 item={item}
+                                 orderId={order.id}
+                                 ordersLength={order.items.length}
+                                 orderName={order.name}
+                              />
                            ))}
                         </div>
                      </div>
@@ -1152,6 +1155,101 @@ function OrderRow({
             }
          />
       </Collapsible>
+   )
+}
+
+function OrderItemCard({
+   item,
+   orderId,
+   ordersLength,
+   orderName,
+}: {
+   item: OrderItem
+   orderId: string
+   ordersLength: number
+   orderName: string
+}) {
+   const params = Route.useParams()
+   const [editOpen, setEditOpen] = React.useState(false)
+   const menuTriggerRef = React.useRef<HTMLButtonElement>(null)
+
+   const deleteItem = useDeleteOrderItem()
+
+   return (
+      <Card
+         key={item.id}
+         className="relative z-[2] flex w-full gap-2 rounded-lg border-surface-12/15 px-3 py-2 max-lg:flex-col lg:items-center lg:p-2 lg:pl-3"
+      >
+         <span className="max-lg:w-[calc(100%-2rem)]"> {item.name}</span>
+         <Separator className="w-full lg:mx-1 lg:h-4 lg:w-px" />
+         <span className="flex items-center gap-2">
+            <span className="font-mono"> {item.quantity} шт.</span>
+            {item.desiredPrice ? (
+               <>
+                  <Separator className="mx-1 h-4 w-px" />
+                  <span className="font-mono">
+                     Бажано по {formatCurrency(item.desiredPrice)}
+                  </span>
+               </>
+            ) : null}
+         </span>
+         <div
+            className="absolute"
+            onClick={(e) => e.stopPropagation()}
+         >
+            <UpdateOrderItem
+               orderId={orderId}
+               orderItem={item}
+               orderName={orderName}
+               open={editOpen}
+               setOpen={setEditOpen}
+               finalFocus={menuTriggerRef}
+            />
+         </div>
+         <Menu>
+            <MenuTrigger
+               render={
+                  <Button
+                     variant={"ghost"}
+                     kind={"icon"}
+                     className="shrink-0 justify-self-end max-lg:absolute max-lg:top-1 max-lg:right-1 lg:ml-auto"
+                  >
+                     <Icons.ellipsisHorizontal />
+                  </Button>
+               }
+            />
+            <MenuPopup
+               align="end"
+               onClick={(e) => {
+                  e.stopPropagation()
+               }}
+            >
+               <MenuItem
+                  onClick={() => {
+                     setEditOpen(true)
+                  }}
+               >
+                  <Icons.pencil />
+                  Редагувати
+               </MenuItem>
+               {ordersLength === 1 ? null : (
+                  <MenuItem
+                     destructive
+                     onClick={() =>
+                        deleteItem.mutate({
+                           workspaceId: params.workspaceId,
+                           orderId,
+                           orderItemId: item.id,
+                        })
+                     }
+                  >
+                     <Icons.trash />
+                     Видалити
+                  </MenuItem>
+               )}
+            </MenuPopup>
+         </Menu>
+      </Card>
    )
 }
 

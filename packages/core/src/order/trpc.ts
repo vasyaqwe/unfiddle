@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server"
 import { orderAssigneeRouter } from "@unfiddle/core/order/assignee/trpc"
 import { orderFilterSchema } from "@unfiddle/core/order/filter"
+import { orderItemRouter } from "@unfiddle/core/order/item/trpc"
 import {
    order,
    orderAssignee,
@@ -29,6 +30,7 @@ import { z } from "zod"
 
 export const orderRouter = t.router({
    assignee: orderAssigneeRouter,
+   item: orderItemRouter,
    list: t.procedure
       .use(workspaceMemberMiddleware)
       .input(
@@ -281,7 +283,12 @@ export const orderRouter = t.router({
                        ? null
                        : new Date(input.deletedAt),
             })
-            .where(eq(order.id, input.id))
+            .where(
+               and(
+                  eq(order.id, input.id),
+                  eq(order.workspaceId, input.workspaceId),
+               ),
+            )
       }),
    delete: t.procedure
       .use(workspaceMemberMiddleware)
@@ -292,7 +299,14 @@ export const orderRouter = t.router({
             ctx.db
                .delete(orderAssignee)
                .where(eq(orderAssignee.orderId, input.id)),
-            ctx.db.delete(order).where(eq(order.id, input.id)),
+            ctx.db
+               .delete(order)
+               .where(
+                  and(
+                     eq(order.id, input.id),
+                     eq(order.workspaceId, input.workspaceId),
+                  ),
+               ),
          ])
       }),
 })
