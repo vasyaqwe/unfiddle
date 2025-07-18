@@ -1,3 +1,7 @@
+import { TRPCError } from "@trpc/server"
+import { CURRENCIES } from "@unfiddle/core/currency/constants"
+import { getExchangeRates } from "@unfiddle/core/currency/exchange"
+import { getSqlTimezoneOffset } from "@unfiddle/core/date"
 import { order } from "@unfiddle/core/order/schema"
 import { procurement } from "@unfiddle/core/procurement/schema"
 import { t } from "@unfiddle/core/trpc/context"
@@ -33,8 +37,44 @@ type StatsResultGroup = Record<string, StatsResult>
 export const workspaceAnalyticsRouter = t.router({
    stats: t.procedure
       .use(workspaceMemberMiddleware)
-      .input(workspaceAnalyticsFilterSchema.extend({ id: z.string() }))
+      .input(
+         workspaceAnalyticsFilterSchema.extend({
+            id: z.string(),
+            currency: z.enum(CURRENCIES).default("UAH"),
+         }),
+      )
       .query(async ({ ctx, input }) => {
+         const rates = await getExchangeRates(ctx.vars.KV, input.currency)
+         if (!rates)
+            throw new TRPCError({
+               code: "INTERNAL_SERVER_ERROR",
+               message: "Failed to get exchange rates",
+            })
+
+         const baseProfitCalculationExpr = sql`CASE
+${sql.join(
+   CURRENCIES.map(
+      (currency) =>
+         sql`WHEN ${order.currency} = ${currency} THEN ${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice}) / ${rates[currency]}`,
+   ),
+   sql` `,
+)}
+ELSE ${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice})
+END`
+         const basePurchasePriceCalculationExpr = sql`CASE
+${sql.join(
+   CURRENCIES.map(
+      (currency) =>
+         sql`WHEN ${order.currency} = ${currency} THEN ${procurement.quantity} * ${procurement.purchasePrice} / ${rates[currency]}`,
+   ),
+   sql` `,
+)}
+ELSE ${procurement.quantity} * ${procurement.purchasePrice}
+END`
+
+         const profitExpr = sql`CASE WHEN ${order.status} = 'successful' THEN ${baseProfitCalculationExpr} ELSE 0 END`
+         const purchasePriceExpr = sql`CASE WHEN ${order.status} = 'successful' THEN ${basePurchasePriceCalculationExpr} ELSE 0 END`
+
          const selectFields = {
             totalOrders: count(order.id),
             successfulOrders: count(
@@ -45,11 +85,11 @@ export const workspaceAnalyticsRouter = t.router({
             ),
             averageProfitPercentage: sql<
                number | null
-            >`(sum(CASE WHEN ${order.status} = 'successful' THEN ${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice}) ELSE 0 END) * 100.0) / nullif(sum(CASE WHEN ${order.status} = 'successful' THEN ${procurement.quantity} * ${procurement.purchasePrice} ELSE 0 END), 0)`.mapWith(
+            >`(sum(CASE WHEN ${order.status} = 'successful' THEN ${profitExpr} ELSE 0 END) * 100.0) / nullif(sum(CASE WHEN ${order.status} = 'successful' THEN ${purchasePriceExpr} ELSE 0 END), 0)`.mapWith(
                Number,
             ),
             totalProfit: sum(
-               sql`CASE WHEN ${order.status} = 'successful' THEN ${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice}) ELSE 0 END`,
+               sql`CASE WHEN ${order.status} = 'successful' THEN ${profitExpr} ELSE 0 END`,
             ).mapWith(Number),
          }
 
@@ -155,11 +195,31 @@ export const workspaceAnalyticsRouter = t.router({
       }),
    profit: t.procedure
       .use(workspaceMemberMiddleware)
-      .input(workspaceAnalyticsFilterSchema.extend({ id: z.string() }))
+      .input(
+         workspaceAnalyticsFilterSchema.extend({
+            id: z.string(),
+            currency: z.enum(CURRENCIES).default("UAH"),
+            timezoneOffset: z.number().optional().default(0),
+         }),
+      )
       .query(async ({ ctx, input }) => {
-         const profitExpr = sql`${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice})`
-         const formattedDateExpr = sql<string>`strftime('%Y-%m-%d', ${order.createdAt}, 'unixepoch')`
-         const formattedMonthlyDateExpr = sql<string>`strftime('%Y-%m', ${order.createdAt}, 'unixepoch')`
+         const rates = await getExchangeRates(ctx.vars.KV, input.currency)
+         if (!rates) return
+
+         const profitExpr = sql`CASE WHEN ${order.status} = 'successful' THEN (CASE
+${sql.join(
+   CURRENCIES.map(
+      (currency) =>
+         sql`WHEN ${order.currency} = ${currency} THEN ${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice}) / ${rates[currency]}`,
+   ),
+   sql` `,
+)}
+ELSE ${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice})
+END) ELSE 0 END`
+
+         const offsetStr = getSqlTimezoneOffset(input.timezoneOffset)
+         const formattedDateExpr = sql<string>`strftime('%Y-%m-%d', ${order.createdAt}, 'unixepoch', ${offsetStr})`
+         const formattedMonthlyDateExpr = sql<string>`strftime('%Y-%m', ${order.createdAt}, 'unixepoch', ${offsetStr})`
 
          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
          const selectFields: Record<string, SQL.Aliased | SQL<any> | Column> =
@@ -232,9 +292,15 @@ export const workspaceAnalyticsRouter = t.router({
       }),
    orders: t.procedure
       .use(workspaceMemberMiddleware)
-      .input(workspaceAnalyticsFilterSchema.extend({ id: z.string() }))
+      .input(
+         workspaceAnalyticsFilterSchema.extend({
+            id: z.string(),
+            timezoneOffset: z.number().optional().default(0),
+         }),
+      )
       .query(async ({ ctx, input }) => {
-         const formattedDateExpr = sql<string>`strftime('%Y-%m-%d', ${order.createdAt}, 'unixepoch')`
+         const offsetStr = getSqlTimezoneOffset(input.timezoneOffset)
+         const formattedDateExpr = sql<string>`strftime('%Y-%m-%d', ${order.createdAt}, 'unixepoch', ${offsetStr})`
 
          const selectFields = {
             date: formattedDateExpr,

@@ -4,7 +4,7 @@ import { isChartDataEmpty } from "@/workspace/analytics/utils"
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
 import { CatchBoundary, useParams, useSearch } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
-import { formatDate } from "@unfiddle/core/date"
+import { formatDate, getUserTimezoneOffset } from "@unfiddle/core/date"
 import { formatOrderDate } from "@unfiddle/core/order/utils"
 import { Button } from "@unfiddle/ui/components/button"
 import {
@@ -87,6 +87,7 @@ function ChartContent() {
    const profit = useSuspenseQuery(
       trpc.workspace.analytics.profit.queryOptions({
          id: params.workspaceId,
+         timezoneOffset: getUserTimezoneOffset(),
          ...search,
       }),
    )
@@ -214,7 +215,7 @@ function ChartContent() {
                      <LineChart
                         accessibilityLayer
                         data={zoom.zoomedData()}
-                        margin={{ top: 12, right: 32, bottom: 4, left: 12 }}
+                        margin={{ top: 12, right: 32, bottom: 4, left: 22 }}
                         onMouseDown={zoom.onMouseDown}
                         onMouseMove={zoom.onMouseMove}
                         onMouseUp={zoom.onMouseUp}
@@ -251,15 +252,20 @@ function ChartContent() {
                         <YAxis
                            axisLine={false}
                            tickLine={false}
-                           tickMargin={12}
+                           tickMargin={10}
                            allowDataOverflow={true}
                            // domain={domain}
+                           tick={{
+                              // @ts-expect-error ...
+                              whiteSpace: "nowrap",
+                           }}
                            tickFormatter={(value) => {
                               if (value === 0) return "0 ₴"
                               return formatCurrency(value, {
                                  notation: "compact",
                                  style: "decimal",
-                              })
+                                 currency: search.currency,
+                              }).replace(/\s/g, "\u00A0")
                            }}
                         />
                         <ChartTooltip
@@ -269,7 +275,9 @@ function ChartContent() {
                                     `За ${new Date(value).getDate() === new Date().getDate() ? "сьогодні" : formatOrderDate(value)}`
                                  }
                                  valueFormatter={(value) =>
-                                    formatCurrency(+value)
+                                    formatCurrency(+value, {
+                                       currency: search.currency,
+                                    })
                                  }
                               />
                            }

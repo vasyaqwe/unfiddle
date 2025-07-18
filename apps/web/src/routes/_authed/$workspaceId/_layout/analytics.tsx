@@ -9,6 +9,7 @@ import {
 } from "@/routes/_authed/$workspaceId/-components/header"
 import { trpc } from "@/trpc"
 import { validator } from "@/validator"
+import { CurrencySelect } from "@/workspace/analytics/components/currency-select"
 import { OrdersChart } from "@/workspace/analytics/components/orders-chart"
 import { PeriodSelect } from "@/workspace/analytics/components/period-select"
 import { ProfitChart } from "@/workspace/analytics/components/profit-chart"
@@ -16,7 +17,8 @@ import { QuickStats } from "@/workspace/analytics/components/quick-stats"
 import { WhoCombobox } from "@/workspace/analytics/components/who-combobox"
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
-import { formatDate } from "@unfiddle/core/date"
+import { CURRENCIES } from "@unfiddle/core/currency/constants"
+import { formatDate, getUserTimezoneOffset } from "@unfiddle/core/date"
 import { formatOrderDate } from "@unfiddle/core/order/utils"
 import {
    PERIOD_COMPARISON_FILTERS,
@@ -46,6 +48,7 @@ import {
    SegmentedProgressValue,
 } from "@unfiddle/ui/components/segmented-progress"
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts"
+import { z } from "zod"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
    {
@@ -80,6 +83,7 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
             trpc.workspace.analytics.profit.queryOptions(
                {
                   id: params.workspaceId,
+                  timezoneOffset: getUserTimezoneOffset(),
                   ...deps.search,
                },
                {
@@ -91,6 +95,7 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
             trpc.workspace.analytics.orders.queryOptions(
                {
                   id: params.workspaceId,
+                  timezoneOffset: getUserTimezoneOffset(),
                   ...deps.search,
                },
                {
@@ -106,6 +111,7 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
                workspaceAnalyticsFilterSchema.shape.period.catch("last_week"),
             period_comparison:
                workspaceAnalyticsFilterSchema.shape.period_comparison.catch([]),
+            currency: z.enum(CURRENCIES).catch("UAH"),
          }),
       ),
    },
@@ -194,6 +200,19 @@ function RouteComponent() {
                      <WhoCombobox />
                   ) : null}
                   <PeriodSelect searchKey={"period"} />
+                  <CurrencySelect
+                     value={search.currency}
+                     onValueChange={(currency) => {
+                        navigate({
+                           to: ".",
+                           search: (prev) => ({
+                              ...prev,
+                              currency,
+                              replace: true,
+                           }),
+                        })
+                     }}
+                  />
                </div>
             </header>
             <QuickStats />
@@ -220,8 +239,10 @@ function _StatsChart() {
 
 function _ProfitComparisonChart({
    title,
+   search,
 }: {
    title: string
+   search: ReturnType<typeof Route.useSearch>
 }) {
    const data = [
       { date: "Ivan", value: 15400 },
@@ -276,7 +297,7 @@ function _ProfitComparisonChart({
                <ChartTooltip
                   content={<ChartTooltipContent hideIndicator />}
                   labelFormatter={(value) => formatOrderDate(value)}
-                  formatter={(value) => formatCurrency(+value)}
+                  formatter={(value) => formatCurrency(+value, search.currency)}
                />
                <Bar
                   dataKey="value"
@@ -299,7 +320,9 @@ function _ProfitComparisonChart({
                      offset={8}
                      className="fill-foreground"
                      fontSize={12}
-                     formatter={(value: string) => formatCurrency(+value)}
+                     formatter={(value: string) =>
+                        formatCurrency(+value, search.currency)
+                     }
                   />
                </Bar>
             </BarChart>

@@ -1,3 +1,9 @@
+export const getUserTimezoneOffset = () => -new Date().getTimezoneOffset() / 60
+export const getSqlTimezoneOffset = (offsetHours: number): string => {
+   if (offsetHours === 0) return "utc"
+   return offsetHours >= 0 ? `+${offsetHours} hours` : `${offsetHours} hours`
+}
+
 export const formatDateRelative = (
    date: Date | number | string,
    style?: Intl.RelativeTimeFormatStyle,
