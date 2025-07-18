@@ -1,4 +1,5 @@
 import { user } from "@unfiddle/core/auth/schema"
+import { CURRENCIES } from "@unfiddle/core/currency/constants"
 import { d } from "@unfiddle/core/database"
 import { good } from "@unfiddle/core/good/schema"
 import { orderAssignee } from "@unfiddle/core/order/assignee/schema"
@@ -40,6 +41,12 @@ export const order = d.table(
       normalizedName: d.text().notNull().default(""),
       name: d.text().notNull(),
       quantity: d.integer().notNull(),
+      currency: d
+         .text({
+            enum: CURRENCIES,
+         })
+         .notNull()
+         .default("UAH"),
       sellingPrice: d.numeric({ mode: "number" }).notNull(),
       desiredPrice: d.numeric({ mode: "number" }),
       severity: d.text({ enum: ORDER_SEVERITIES }).notNull().default("low"),
@@ -99,6 +106,7 @@ export const updateOrderSchema = createUpdateSchema(order)
       vat: true,
       client: true,
       deliversAt: true,
+      currency: true,
    })
    .required({ id: true, workspaceId: true })
    .extend({

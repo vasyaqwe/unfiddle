@@ -106,6 +106,13 @@
       "when": 1752757723317,
       "tag": "0017_minor_strong_guy",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "6",
+      "when": 1752824589320,
+      "tag": "0018_flowery_ultimates",
+      "breakpoints": true
     }
   ]
 }

@@ -333,7 +333,9 @@ function _OrderRow({
                            {ORDER_STATUSES_TRANSLATION[order.status] ??
                               "Без статусу"}{" "}
                            {order.status === "successful"
-                              ? `(${formatCurrency(totalProfit)})`
+                              ? `(${formatCurrency(totalProfit, {
+                                   currency: order.currency,
+                                })})`
                               : ""}
                         </Badge>
                      </ComboboxTrigger>
@@ -588,7 +590,9 @@ function _OrderRow({
                            <TableRow className="border-surface-4 font-medium">
                               <TableCell className="font-mono first:pl-0 last:pr-0">
                                  {order.sellingPrice
-                                    ? formatCurrency(order.sellingPrice)
+                                    ? formatCurrency(order.sellingPrice, {
+                                         currency: order.currency,
+                                      })
                                     : "—"}
                               </TableCell>
                               <TableCell className="first:pl-0 last:pr-0">
@@ -614,6 +618,7 @@ function _OrderRow({
                         <div className="mb-2 flex items-center justify-between">
                            <p className="font-medium text-lg">Товари</p>
                            <CreateOrderItem
+                              orderCurrency={order.currency}
                               orderId={order.id}
                               orderName={order.name}
                            >
@@ -632,9 +637,8 @@ function _OrderRow({
                               <OrderItem
                                  key={item.id}
                                  item={item}
-                                 orderId={order.id}
                                  ordersLength={order.items.length}
-                                 orderName={order.name}
+                                 order={order}
                               />
                            ))}
                         </div>
@@ -682,6 +686,7 @@ function _OrderRow({
                      <div className="my-2 flex items-center justify-between">
                         <p className="font-medium text-lg">Закупівлі</p>
                         <CreateProcurement
+                           orderCurrency={order.currency}
                            orderItems={order.items}
                            orderName={order.name}
                            orderId={order.id}
@@ -698,10 +703,7 @@ function _OrderRow({
                               <ProcurementRow
                                  key={p.id}
                                  item={p}
-                                 sellingPrice={order.sellingPrice ?? 0}
-                                 orderId={order.id}
-                                 orderName={order.name}
-                                 orderItems={order.items}
+                                 order={order}
                               />
                            ))}
                         </Card>
@@ -718,14 +720,12 @@ const OrderRow = React.memo(_OrderRow)
 
 function OrderItem({
    item,
-   orderId,
+   order,
    ordersLength,
-   orderName,
 }: {
    item: OrderItemType
-   orderId: string
+   order: RouterOutput["order"]["list"][number]
    ordersLength: number
-   orderName: string
 }) {
    const params = Route.useParams()
    const [editOpen, setEditOpen] = React.useState(false)
@@ -746,7 +746,10 @@ function OrderItem({
                <>
                   <Separator className="mx-1 h-4 w-px" />
                   <span className="font-mono">
-                     Бажано по {formatCurrency(item.desiredPrice)}
+                     Бажано по{" "}
+                     {formatCurrency(item.desiredPrice, {
+                        currency: order.currency,
+                     })}
                   </span>
                </>
             ) : null}
@@ -756,9 +759,10 @@ function OrderItem({
             onClick={(e) => e.stopPropagation()}
          >
             <UpdateOrderItem
-               orderId={orderId}
+               orderCurrency={order.currency}
+               orderId={order.id}
                orderItem={item}
-               orderName={orderName}
+               orderName={order.name}
                open={editOpen}
                setOpen={setEditOpen}
                finalFocus={menuTriggerRef}
@@ -796,7 +800,7 @@ function OrderItem({
                      onClick={() =>
                         deleteItem.mutate({
                            workspaceId: params.workspaceId,
-                           orderId,
+                           orderId: order.id,
                            orderItemId: item.id,
                         })
                      }
@@ -873,16 +877,10 @@ function CreateAnalog({
 
 function ProcurementRow({
    item,
-   sellingPrice,
-   orderId,
-   orderName,
-   orderItems,
+   order,
 }: {
    item: Procurement
-   sellingPrice: number
-   orderId: string
-   orderName: string
-   orderItems: OrderItemType[]
+   order: RouterOutput["order"]["list"][number]
 }) {
    const params = Route.useParams()
    const theme = useTheme()
@@ -890,7 +888,7 @@ function ProcurementRow({
       item.status,
       theme.resolvedTheme ?? "light",
    )
-   const _profit = (sellingPrice - item.purchasePrice) * item.quantity
+   const _profit = (order.sellingPrice - item.purchasePrice) * item.quantity
    const update = useUpdateProcurement()
    const deleteItem = useDeleteProcurement()
 
@@ -907,7 +905,7 @@ function ProcurementRow({
          ) : null}
          <div className="flex w-full items-center gap-3 max-lg:mt-2 lg:gap-4">
             <AlignedColumn
-               id={`${orderId}_p_creator`}
+               id={`${order.id}_p_creator`}
                className="flex items-center gap-1.5 whitespace-nowrap font-medium"
             >
                <UserAvatar
@@ -919,24 +917,26 @@ function ProcurementRow({
             </AlignedColumn>
             {item.orderItem ? (
                <AlignedColumn
-                  id={`${orderId}_p_item_name`}
+                  id={`${order.id}_p_item_name`}
                   className="font-medium font-mono max-lg:hidden lg:text-sm"
                >
                   {item.orderItem.name}
                </AlignedColumn>
             ) : null}
             <AlignedColumn
-               id={`${orderId}_p_quantity`}
+               id={`${order.id}_p_quantity`}
                className="whitespace-nowrap font-medium font-mono lg:text-sm"
             >
                {formatNumber(item.quantity)} шт.
             </AlignedColumn>
             <Separator className={"h-4 w-px bg-surface-7 lg:hidden"} />
             <AlignedColumn
-               id={`${orderId}_p_price`}
+               id={`${order.id}_p_price`}
                className="whitespace-nowrap font-medium font-mono lg:text-sm"
             >
-               {formatCurrency(item.purchasePrice)}
+               {formatCurrency(item.purchasePrice, {
+                  currency: order.currency,
+               })}
             </AlignedColumn>
             <Combobox
                value={item.status}
@@ -1046,8 +1046,9 @@ function ProcurementRow({
             onClick={(e) => e.stopPropagation()}
          >
             <UpdateProcurement
-               orderItems={orderItems}
-               orderName={orderName}
+               orderCurrency={order.currency}
+               orderItems={order.items}
+               orderName={order.name}
                procurement={item}
                open={editOpen}
                setOpen={setEditOpen}

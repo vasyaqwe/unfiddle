@@ -1,4 +1,5 @@
 import { useAuth } from "@/auth/hooks"
+import { CURRENCIES, CURRENCY_SYMBOLS } from "@unfiddle/core/currency/constants"
 import { ORDER_SEVERITIES_TRANSLATION } from "@unfiddle/core/order/constants"
 import { ORDER_SEVERITIES } from "@unfiddle/core/order/constants"
 import type { OrderSeverity } from "@unfiddle/core/order/types"
@@ -39,10 +40,8 @@ export function OrderForm({
    children: React.ReactNode
 }) {
    const auth = useAuth()
-   const [severity, setSeverity] = React.useState<OrderSeverity>(
-      order?.severity ?? "low",
-   )
    const [deliversAt, setDeliversAt] = React.useState(order?.deliversAt ?? null)
+   const [currency, setCurrency] = React.useState(order?.currency ?? "UAH")
    const [items, setItems] = React.useState<
       {
          name: string
@@ -79,6 +78,7 @@ export function OrderForm({
                   desiredPrice: string
                   note: string
                   client: string
+                  severity: OrderSeverity
                   vat: "on" | "off"
                }>(e.target)
 
@@ -90,23 +90,52 @@ export function OrderForm({
                   client: form.client.length === 0 ? null : form.client,
                   vat: form.vat === "on",
                   deliversAt,
-                  severity,
+                  severity: form.severity,
                   items,
+                  currency,
                   quantity: 1,
                   desiredPrice: null,
                })
             })
          }}
       >
-         <Field>
-            <FieldLabel>Назва</FieldLabel>
-            <FieldControl
-               required
-               placeholder="Уведіть назву"
-               name="name"
-               defaultValue={order?.name ?? ""}
-            />
-         </Field>
+         <FieldGroup className="grid-cols-[1fr_4rem] md:grid-cols-[1fr_4rem]">
+            <Field>
+               <FieldLabel>Назва</FieldLabel>
+               <FieldControl
+                  required
+                  placeholder="Уведіть назву"
+                  name="name"
+                  defaultValue={order?.name ?? ""}
+               />
+            </Field>
+            <Field>
+               <FieldLabel className={"mb-2"}>Валюта</FieldLabel>
+               <Select
+                  value={currency}
+                  onValueChange={setCurrency}
+               >
+                  <SelectTrigger
+                     render={
+                        <Button variant={"secondary"}>
+                           <SelectValue>{(label) => label}</SelectValue>
+                           <SelectTriggerIcon />
+                        </Button>
+                     }
+                  />
+                  <SelectPopup align="start">
+                     {CURRENCIES.map((item) => (
+                        <SelectItem
+                           key={item}
+                           value={item}
+                        >
+                           {item}
+                        </SelectItem>
+                     ))}
+                  </SelectPopup>
+               </Select>
+            </Field>
+         </FieldGroup>
          {order ? null : (
             <Fieldset className={"space-y-2"}>
                <FieldsetLegend className={"md:mb-4"}>Товари</FieldsetLegend>
@@ -155,7 +184,7 @@ export function OrderForm({
                      </Field>
                      <Field>
                         <NumberField
-                           placeholder="₴"
+                           placeholder={CURRENCY_SYMBOLS[currency]}
                            value={item.desiredPrice}
                            onValueChange={(desiredPrice) =>
                               setItems(
@@ -188,7 +217,11 @@ export function OrderForm({
                   onClick={() =>
                      setItems([
                         ...items,
-                        { name: "", quantity: 1, desiredPrice: null },
+                        {
+                           name: "",
+                           quantity: 1,
+                           desiredPrice: null,
+                        },
                      ])
                   }
                   type="button"
@@ -212,7 +245,7 @@ export function OrderForm({
                            : order?.sellingPrice
                      }
                      name="sellingPrice"
-                     placeholder="₴"
+                     placeholder={CURRENCY_SYMBOLS[currency]}
                   />
                </Field>
                <Field>
@@ -228,8 +261,8 @@ export function OrderForm({
                <Field>
                   <FieldLabel className={"mb-2.5"}>Пріоритет</FieldLabel>
                   <Select
-                     value={severity}
-                     onValueChange={(s) => setSeverity(s)}
+                     name="severity"
+                     defaultValue={order?.severity ?? "low"}
                   >
                      <SelectTrigger
                         render={
@@ -281,30 +314,15 @@ export function OrderForm({
                   }
                />
             </Field>
-
-            {/* <Field>
-               <FieldLabel>До замовлення</FieldLabel>
-               <div className="relative">
-                  <span className="absolute bottom-[7px] left-0 mt-2 text-[1rem]">
-                     №
-                  </span>
-                  <FieldControl
-                     placeholder="000"
-                     name="groupId"
-                     inputMode="numeric"
-                     className={"pl-6"}
-                     defaultValue={order?.groupId ?? ""}
+            <div>
+               <Field className={"mt-3 flex flex-row items-center gap-2"}>
+                  <Checkbox
+                     name="vat"
+                     defaultChecked={order?.vat ?? false}
                   />
-               </div>
-            </Field> */}
-
-            <Field className={"flex flex-row items-center gap-2"}>
-               <Checkbox
-                  name="vat"
-                  defaultChecked={order?.vat ?? false}
-               />
-               <FieldLabel>З ПДВ</FieldLabel>
-            </Field>
+                  <FieldLabel>З ПДВ</FieldLabel>
+               </Field>
+            </div>
          </Fieldset>
          {children}
       </form>

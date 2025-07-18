@@ -1,4 +1,6 @@
 import { useAuth } from "@/auth/hooks"
+import { CURRENCY_SYMBOLS } from "@unfiddle/core/currency/constants"
+import type { Currency } from "@unfiddle/core/currency/types"
 import type { OrderItem } from "@unfiddle/core/order/item/types"
 import type { Procurement } from "@unfiddle/core/procurement/types"
 import type { RouterInput } from "@unfiddle/core/trpc/types"
@@ -23,6 +25,7 @@ export function ProcurementForm({
    children,
    orderName,
    orderItems,
+   orderCurrency,
 }: {
    procurement?: Procurement | undefined
    onSubmit: (
@@ -32,6 +35,7 @@ export function ProcurementForm({
    ) => void
    children: React.ReactNode
    orderName: string
+   orderCurrency: Currency
    orderItems: OrderItem[]
 }) {
    const auth = useAuth()
@@ -123,7 +127,7 @@ export function ProcurementForm({
                   required
                   defaultValue={procurement?.purchasePrice}
                   name="purchasePrice"
-                  placeholder="₴"
+                  placeholder={CURRENCY_SYMBOLS[orderCurrency]}
                   min={1}
                />
             </Field>

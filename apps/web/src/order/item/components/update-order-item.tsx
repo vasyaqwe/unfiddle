@@ -1,5 +1,6 @@
 import { OrderItemForm } from "@/order/item/components/order-item-form"
 import { useUpdateOrderItem } from "@/order/item/mutations/use-update-order-item"
+import type { Currency } from "@unfiddle/core/currency/types"
 import type { OrderItem } from "@unfiddle/core/order/item/types"
 import { Button } from "@unfiddle/ui/components/button"
 import {
@@ -17,6 +18,7 @@ export function UpdateOrderItem({
    orderItem,
    orderId,
    orderName,
+   orderCurrency,
 }: {
    children?: React.ReactNode
    orderItem: OrderItem
@@ -25,6 +27,7 @@ export function UpdateOrderItem({
    setOpen: (open: boolean) => void
    orderId: string
    orderName: string
+   orderCurrency: Currency
 }) {
    const mutation = useUpdateOrderItem({
       onMutate: () => setOpen(false),
@@ -40,6 +43,7 @@ export function UpdateOrderItem({
          <DrawerPopup finalFocus={finalFocus}>
             <DrawerTitle>Новий товар</DrawerTitle>
             <OrderItemForm
+               orderCurrency={orderCurrency}
                orderItem={orderItem}
                orderName={orderName}
                orderId={orderId}

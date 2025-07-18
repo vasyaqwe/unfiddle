@@ -29,7 +29,7 @@ export function useCreateOrder({
                id: crypto.randomUUID(),
                shortId: 0,
                sellingPrice: input.sellingPrice ?? null,
-               desiredPrice: input.desiredPrice ?? null,
+               currency: input.currency ?? "UAH",
                severity: input.severity ?? "low",
                creatorId: auth.user.id,
                creator: auth.user,

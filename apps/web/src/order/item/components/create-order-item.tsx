@@ -1,5 +1,6 @@
 import { OrderItemForm } from "@/order/item/components/order-item-form"
 import { useCreateOrderItem } from "@/order/item/mutations/use-create-order-item"
+import type { Currency } from "@unfiddle/core/currency/types"
 import { Button } from "@unfiddle/ui/components/button"
 import {
    Drawer,
@@ -12,8 +13,14 @@ import * as React from "react"
 export function CreateOrderItem({
    children,
    orderId,
+   orderCurrency,
    orderName,
-}: { children?: React.ReactNode; orderId: string; orderName: string }) {
+}: {
+   children?: React.ReactNode
+   orderId: string
+   orderName: string
+   orderCurrency: Currency
+}) {
    const [open, setOpen] = React.useState(false)
    const mutation = useCreateOrderItem({
       onMutate: () => setOpen(false),
@@ -29,6 +36,7 @@ export function CreateOrderItem({
          <DrawerPopup>
             <DrawerTitle>Новий товар</DrawerTitle>
             <OrderItemForm
+               orderCurrency={orderCurrency}
                orderName={orderName}
                orderId={orderId}
                onSubmit={mutation.mutate}

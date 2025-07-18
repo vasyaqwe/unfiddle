@@ -6,6 +6,7 @@ export const formatCurrency = (
       style: "currency",
       currency: options.currency ?? "UAH",
       notation: options.notation ?? "standard",
+      currencyDisplay: "code",
       ...options,
    })
       .format(Number(price))

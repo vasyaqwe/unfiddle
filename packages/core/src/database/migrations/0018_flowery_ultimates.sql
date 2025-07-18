@@ -1,0 +1,1 @@
+ALTER TABLE `order` ADD `currency` text DEFAULT 'UAH' NOT NULL;

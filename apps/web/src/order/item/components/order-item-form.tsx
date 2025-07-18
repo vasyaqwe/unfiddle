@@ -1,4 +1,6 @@
 import { useAuth } from "@/auth/hooks"
+import { CURRENCY_SYMBOLS } from "@unfiddle/core/currency/constants"
+import type { Currency } from "@unfiddle/core/currency/types"
 import type { RouterInput, RouterOutput } from "@unfiddle/core/trpc/types"
 import {
    Field,
@@ -16,12 +18,14 @@ export function OrderItemForm({
    onSubmit,
    children,
    orderName,
+   orderCurrency,
 }: {
    orderItem?:
       | RouterOutput["order"]["list"][number]["items"][number]
       | undefined
    orderId: string
    orderName: string
+   orderCurrency: Currency
    onSubmit: (data: RouterInput["order"]["item"]["create"]) => void
    children: React.ReactNode
 }) {
@@ -87,7 +91,7 @@ export function OrderItemForm({
             <Field>
                <FieldLabel>Баж. ціна</FieldLabel>
                <NumberField
-                  placeholder="₴"
+                  placeholder={CURRENCY_SYMBOLS[orderCurrency]}
                   name="desiredPrice"
                   defaultValue={
                      orderItem?.desiredPrice === 0

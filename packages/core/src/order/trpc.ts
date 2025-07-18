@@ -84,8 +84,6 @@ export const orderRouter = t.router({
                 OR
                 ${order.shortId} LIKE ${searchTerm}
                 OR
-                ${order.quantity} LIKE ${searchTerm}
-                OR
                 ${order.sellingPrice} LIKE ${searchTerm}
               )`,
             )
@@ -98,9 +96,8 @@ export const orderRouter = t.router({
                shortId: true,
                name: true,
                severity: true,
-               quantity: true,
+               currency: true,
                sellingPrice: true,
-               desiredPrice: true,
                status: true,
                note: true,
                vat: true,
