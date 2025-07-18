@@ -15,6 +15,8 @@ export function AlignedColumn({
 }) {
    const [columnWidths, setColumnWidths] = useAtom(columnWidthsAtom)
    const [isMobile, setIsMobile] = React.useState(true)
+   const elementRef = React.useRef<HTMLDivElement>(null)
+   const timeoutRef = React.useRef<NodeJS.Timeout | null>(null)
 
    React.useEffect(() => {
       const checkDevice = (event: MediaQueryList | MediaQueryListEvent) =>
@@ -27,19 +29,41 @@ export function AlignedColumn({
       }
    }, [])
 
-   return (
-      <div
-         ref={(el) => {
-            if (!el || isMobile) return
+   React.useEffect(() => {
+      if (!elementRef.current || isMobile) return
 
-            const width = el.getBoundingClientRect().width
-            if (!columnWidths[id] || width > columnWidths[id]) {
+      const element = elementRef.current
+      const resizeObserver = new ResizeObserver((entries) => {
+         if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current)
+         }
+
+         timeoutRef.current = setTimeout(() => {
+            const width = entries[0]?.contentRect.width
+            const currentWidth = columnWidths[id] || 0
+
+            if (width && width > currentWidth) {
                setColumnWidths((prev) => ({
                   ...prev,
                   [id]: width,
                }))
             }
-         }}
+         }, 10) // Small debounce
+      })
+
+      resizeObserver.observe(element)
+
+      return () => {
+         resizeObserver.disconnect()
+         if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current)
+         }
+      }
+   }, [id, columnWidths, isMobile, setColumnWidths])
+
+   return (
+      <div
+         ref={elementRef}
          className={cn(
             "max-lg:![--min-width:auto] min-w-(--min-width)",
             className,

@@ -265,19 +265,14 @@ function _OrderRow({
                <p className="whitespace-nowrap font-medium font-mono text-foreground/75 text-sm">
                   №{String(order.shortId).padStart(3, "0")}
                </p>
-               <AlignedColumn
-                  id={`o_creator`}
-                  className="flex items-center gap-1.5 whitespace-nowrap font-medium text-sm"
-               >
+               <p className="flex w-[108px] items-center gap-1.5 font-medium text-sm">
                   <UserAvatar
                      size={25}
                      user={order.creator}
                      className="inline-block"
                   />
-                  <span className="whitespace-nowrap">
-                     {order.creator.name}
-                  </span>
-               </AlignedColumn>
+                  <span className="line-clamp-1">{order.creator.name}</span>
+               </p>
             </div>
             <p
                data-vat={order.vat ? "" : undefined}
