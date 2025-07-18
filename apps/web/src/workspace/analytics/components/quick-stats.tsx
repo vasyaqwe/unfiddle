@@ -237,7 +237,7 @@ export function QuickStats() {
                   <Stat key={m.id}>
                      <StatLabel>{m.label}</StatLabel>
                      <StatValue>
-                        {formatCurrency(m.profit, { notation: "compact" })}
+                        {formatCurrency(m.profit, { currency: search.currency, notation: "compact" })}
                      </StatValue>
                   </Stat>
                ))}

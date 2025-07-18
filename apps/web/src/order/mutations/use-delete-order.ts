@@ -3,6 +3,7 @@ import { useOrderQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useSearch } from "@tanstack/react-router"
 import type { RouterInput } from "@unfiddle/core/trpc/types"
 import { toast } from "sonner"
 
@@ -10,6 +11,7 @@ export function useDeleteOrder({
    onMutate,
    onError,
 }: { onMutate?: () => void; onError?: () => void } = {}) {
+   const search = useSearch({ strict: false })
    const queryClient = useQueryClient()
    const auth = useAuth()
    const socket = useSocket()
@@ -48,11 +50,13 @@ export function useDeleteOrder({
             queryClient.invalidateQueries(
                trpc.workspace.analytics.stats.queryOptions({
                   id: auth.workspace.id,
+                  currency: search.currency ?? "UAH",
                }),
             )
             queryClient.invalidateQueries(
                trpc.workspace.analytics.profit.queryOptions({
                   id: auth.workspace.id,
+                  currency: search.currency ?? "UAH",
                }),
             )
             queryClient.invalidateQueries(

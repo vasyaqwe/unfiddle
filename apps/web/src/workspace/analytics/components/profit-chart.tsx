@@ -259,6 +259,7 @@ function ChartContent() {
                               return formatCurrency(value, {
                                  notation: "compact",
                                  style: "decimal",
+                                 currency: search.currency,
                               })
                            }}
                         />
@@ -269,7 +270,9 @@ function ChartContent() {
                                     `За ${new Date(value).getDate() === new Date().getDate() ? "сьогодні" : formatOrderDate(value)}`
                                  }
                                  valueFormatter={(value) =>
-                                    formatCurrency(+value)
+                                    formatCurrency(+value, {
+                                       currency: search.currency,
+                                    })
                                  }
                               />
                            }
