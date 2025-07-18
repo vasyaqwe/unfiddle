@@ -50,7 +50,7 @@ export const workspaceAnalyticsRouter = t.router({
                message: "Failed to get exchange rates",
             })
 
-         const profitExpr = sql`CASE
+         const baseProfitCalculationExpr = sql`CASE
 ${sql.join(
             CURRENCIES.map(
                (currency) =>
@@ -60,7 +60,7 @@ ${sql.join(
          )}
 ELSE ${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice})
 END`
-         const purchasePriceExpr = sql`CASE
+         const basePurchasePriceCalculationExpr = sql`CASE
 ${sql.join(
             CURRENCIES.map(
                (currency) =>
@@ -70,6 +70,9 @@ ${sql.join(
          )}
 ELSE ${procurement.quantity} * ${procurement.purchasePrice}
 END`
+
+         const profitExpr = sql`CASE WHEN ${order.status} = 'successful' THEN ${baseProfitCalculationExpr} ELSE 0 END`
+         const purchasePriceExpr = sql`CASE WHEN ${order.status} = 'successful' THEN ${basePurchasePriceCalculationExpr} ELSE 0 END`
 
          const selectFields = {
             totalOrders: count(order.id),
@@ -201,7 +204,7 @@ END`
          const rates = await getExchangeRates(ctx.vars.KV, input.currency)
          if (!rates) return
 
-         const profitExpr = sql`CASE
+         const profitExpr = sql`CASE WHEN ${order.status} = 'successful' THEN (CASE
 ${sql.join(
             CURRENCIES.map(
                (currency) =>
@@ -210,7 +213,7 @@ ${sql.join(
             sql` `,
          )}
 ELSE ${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice})
-END`
+END) ELSE 0 END`
 
          const formattedDateExpr = sql<string>`strftime('%Y-%m-%d', ${order.createdAt}, 'unixepoch')`
          const formattedMonthlyDateExpr = sql<string>`strftime('%Y-%m', ${order.createdAt}, 'unixepoch')`

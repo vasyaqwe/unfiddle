@@ -45,7 +45,6 @@ export const getExchangeRates = async (
 ) => {
    const cachedRates = await getExchangeRatesFromKV(KV, baseCurrency)
    if (cachedRates) return cachedRates
-
    const apiRates = await getExchangeRatesFromApi(baseCurrency)
    if (!apiRates) return null
 
