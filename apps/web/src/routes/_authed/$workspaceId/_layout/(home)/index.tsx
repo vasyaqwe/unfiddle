@@ -129,6 +129,7 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/(home)/")({
 
 function RouteComponent() {
    const auth = useAuth()
+   const scrollAreaRef = React.useRef<HTMLDivElement>(null)
 
    // if (auth.user.email !== "vasylpolishchuk22@gmail.com")
    // return (
@@ -150,6 +151,7 @@ function RouteComponent() {
          <MainScrollArea
             className="pt-0 lg:pt-0"
             container={false}
+            ref={scrollAreaRef}
          >
             <CreateOrder>
                <DrawerTrigger
@@ -161,43 +163,56 @@ function RouteComponent() {
                   }
                />
             </CreateOrder>
-            <div className="mb-16">
-               <div className="sticky top-0 z-[5] flex min-h-12 items-center gap-1 border-surface-12/13 border-b bg-background px-1.5 shadow-xs/4 lg:min-h-10">
-                  <ToggleAll />
-                  <ToggleArchived />
-                  <DateFilter />
-                  <FilterMenu />
-                  <Search />
-               </div>
-               <SuspenseBoundary>
-                  <Content />
-               </SuspenseBoundary>
+            <div className="sticky top-0 z-[5] flex min-h-12 items-center gap-1 border-surface-12/13 border-b bg-background px-1.5 shadow-xs/4 lg:min-h-10">
+               <ToggleAll />
+               <ToggleArchived />
+               <DateFilter />
+               <FilterMenu />
+               <Search />
             </div>
+            <SuspenseBoundary>
+               <Content scrollAreaRef={scrollAreaRef} />
+            </SuspenseBoundary>
          </MainScrollArea>
       </>
    )
 }
 
-function Content() {
+function Content({
+   scrollAreaRef: _,
+}: { scrollAreaRef: React.RefObject<HTMLDivElement | null> }) {
    const queryOptions = useOrderQueryOptions()
    const query = useSuspenseQuery(queryOptions.list)
+
+   // const virtualizer = useVirtualizer({
+   //    count: query.data.length,
+   //    getScrollElement: () => scrollAreaRef.current,
+   //    estimateSize: (_idx) => {
+   //       return window.innerWidth < 1024 ? 90 : 43
+   //    },
+   // })
+   // const data = virtualizer.getVirtualItems()
+   // useForceUpdate()
+
    if (query.data.length === 0) return <Empty />
 
    return (
-      <div className="group relative border-surface-5 border-b">
-         <div className={"divide-y divide-surface-5"}>
-            {query.data.map((order) => (
-               <OrderRow
-                  key={order.id}
-                  order={order}
-               />
-            ))}
+      <div className="relative mb-20 w-full">
+         <div className="divide-y divide-surface-5 border-surface-5 border-b">
+            {query.data.map((order) => {
+               return (
+                  <OrderRow
+                     key={order.id}
+                     order={order}
+                  />
+               )
+            })}
          </div>
       </div>
    )
 }
 
-function OrderRow({
+function _OrderRow({
    order,
 }: {
    order: RouterOutput["order"]["list"][number]
@@ -210,7 +225,6 @@ function OrderRow({
       order.status ?? "canceled",
       theme.resolvedTheme ?? "light",
    )
-
    const update = useUpdateOrder()
    const deleteItem = useDeleteOrder()
    const createAssignee = useCreateOrderAssignee()
@@ -704,6 +718,8 @@ function OrderRow({
       </Collapsible>
    )
 }
+
+const OrderRow = React.memo(_OrderRow)
 
 function OrderItem({
    item,

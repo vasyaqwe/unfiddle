@@ -15,7 +15,7 @@ export function ScrollArea({
             )}
             {...props}
          >
-            <ScrollAreaPrimitive.Content>
+            <ScrollAreaPrimitive.Content className={"flex grow flex-col"}>
                {children}
             </ScrollAreaPrimitive.Content>
          </ScrollAreaPrimitive.Viewport>
@@ -23,26 +23,6 @@ export function ScrollArea({
       </ScrollAreaPrimitive.Root>
    )
 }
-
-// export function ScrollArea({
-//    className,
-//    children,
-//    ...props
-// }: React.ComponentProps<"div">) {
-//    return (
-//       <div className="relative grow">
-//          <div
-//             className={cn(
-//                "absolute inset-0 overflow-y-auto overscroll-contain",
-//                className,
-//             )}
-//             {...props}
-//          >
-//             {children}
-//          </div>
-//       </div>
-//    )
-// }
 
 export function ScrollAreaScrollbar({
    className,

@@ -22,7 +22,7 @@ export function VList(
       ),
    })
 
-   return element
+   return element.renderElement()
 }
 
 export function VListContent(
@@ -45,5 +45,5 @@ export function VListContent(
       ),
    })
 
-   return element
+   return element.renderElement()
 }
