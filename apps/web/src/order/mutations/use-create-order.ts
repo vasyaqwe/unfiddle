@@ -11,7 +11,6 @@ export function useCreateOrder({
    onMutate,
    onError,
 }: { onMutate?: () => void; onError?: () => void } = {}) {
-   const search = useSearch({ strict: false })
    const queryClient = useQueryClient()
    const auth = useAuth()
    const socket = useSocket()
@@ -84,7 +83,6 @@ export function useCreateOrder({
             queryClient.invalidateQueries(
                trpc.workspace.analytics.stats.queryOptions({
                   id: auth.workspace.id,
-                  currency: search.currency ?? "UAH",
                }),
             )
             queryClient.invalidateQueries(

@@ -16,9 +16,9 @@ import { ProfitChart } from "@/workspace/analytics/components/profit-chart"
 import { QuickStats } from "@/workspace/analytics/components/quick-stats"
 import { WhoCombobox } from "@/workspace/analytics/components/who-combobox"
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router"
-import { CURRENCIES } from "@unfiddle/core/currency/constants"
 import { formatCurrency } from "@unfiddle/core/currency"
-import { formatDate } from "@unfiddle/core/date"
+import { CURRENCIES } from "@unfiddle/core/currency/constants"
+import { formatDate, getUserTimezoneOffset } from "@unfiddle/core/date"
 import { formatOrderDate } from "@unfiddle/core/order/utils"
 import {
    PERIOD_COMPARISON_FILTERS,
@@ -83,6 +83,7 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
             trpc.workspace.analytics.profit.queryOptions(
                {
                   id: params.workspaceId,
+                  timezoneOffset: getUserTimezoneOffset(),
                   ...deps.search,
                },
                {
@@ -94,6 +95,7 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
             trpc.workspace.analytics.orders.queryOptions(
                {
                   id: params.workspaceId,
+                  timezoneOffset: getUserTimezoneOffset(),
                   ...deps.search,
                },
                {
@@ -214,7 +216,7 @@ function RouteComponent() {
                </div>
             </header>
             <QuickStats />
-            <ProfitChart search={search} />
+            <ProfitChart />
             <OrdersChart />
          </MainScrollArea>
       </>
@@ -318,7 +320,9 @@ function _ProfitComparisonChart({
                      offset={8}
                      className="fill-foreground"
                      fontSize={12}
-                     formatter={(value: string) => formatCurrency(+value, search.currency)}
+                     formatter={(value: string) =>
+                        formatCurrency(+value, search.currency)
+                     }
                   />
                </Bar>
             </BarChart>

@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server"
 import { CURRENCIES } from "@unfiddle/core/currency/constants"
 import { getExchangeRates } from "@unfiddle/core/currency/exchange"
+import { getSqlTimezoneOffset } from "@unfiddle/core/date"
 import { order } from "@unfiddle/core/order/schema"
 import { procurement } from "@unfiddle/core/procurement/schema"
 import { t } from "@unfiddle/core/trpc/context"
@@ -39,7 +40,7 @@ export const workspaceAnalyticsRouter = t.router({
       .input(
          workspaceAnalyticsFilterSchema.extend({
             id: z.string(),
-            currency: z.enum(CURRENCIES),
+            currency: z.enum(CURRENCIES).default("UAH"),
          }),
       )
       .query(async ({ ctx, input }) => {
@@ -197,7 +198,8 @@ END`
       .input(
          workspaceAnalyticsFilterSchema.extend({
             id: z.string(),
-            currency: z.enum(CURRENCIES),
+            currency: z.enum(CURRENCIES).default("UAH"),
+            timezoneOffset: z.number().optional().default(0),
          }),
       )
       .query(async ({ ctx, input }) => {
@@ -215,8 +217,9 @@ ${sql.join(
 ELSE ${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice})
 END) ELSE 0 END`
 
-         const formattedDateExpr = sql<string>`strftime('%Y-%m-%d', ${order.createdAt}, 'unixepoch')`
-         const formattedMonthlyDateExpr = sql<string>`strftime('%Y-%m', ${order.createdAt}, 'unixepoch')`
+         const offsetStr = getSqlTimezoneOffset(input.timezoneOffset)
+         const formattedDateExpr = sql<string>`strftime('%Y-%m-%d', ${order.createdAt}, 'unixepoch', ${offsetStr})`
+         const formattedMonthlyDateExpr = sql<string>`strftime('%Y-%m', ${order.createdAt}, 'unixepoch', ${offsetStr})`
 
          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
          const selectFields: Record<string, SQL.Aliased | SQL<any> | Column> =
@@ -292,10 +295,12 @@ END) ELSE 0 END`
       .input(
          workspaceAnalyticsFilterSchema.extend({
             id: z.string(),
+            timezoneOffset: z.number().optional().default(0),
          }),
       )
       .query(async ({ ctx, input }) => {
-         const formattedDateExpr = sql<string>`strftime('%Y-%m-%d', ${order.createdAt}, 'unixepoch')`
+         const offsetStr = getSqlTimezoneOffset(input.timezoneOffset)
+         const formattedDateExpr = sql<string>`strftime('%Y-%m-%d', ${order.createdAt}, 'unixepoch', ${offsetStr})`
 
          const selectFields = {
             date: formattedDateExpr,

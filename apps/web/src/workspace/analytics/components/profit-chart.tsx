@@ -4,7 +4,7 @@ import { isChartDataEmpty } from "@/workspace/analytics/utils"
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
 import { CatchBoundary, useParams, useSearch } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
-import { formatDate } from "@unfiddle/core/date"
+import { formatDate, getUserTimezoneOffset } from "@unfiddle/core/date"
 import { formatOrderDate } from "@unfiddle/core/order/utils"
 import { Button } from "@unfiddle/ui/components/button"
 import {
@@ -87,6 +87,7 @@ function ChartContent() {
    const profit = useSuspenseQuery(
       trpc.workspace.analytics.profit.queryOptions({
          id: params.workspaceId,
+         timezoneOffset: getUserTimezoneOffset(),
          ...search,
       }),
    )

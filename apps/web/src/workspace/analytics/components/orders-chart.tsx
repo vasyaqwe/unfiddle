@@ -5,7 +5,7 @@ import { useSuspenseQuery } from "@tanstack/react-query"
 import { CatchBoundary } from "@tanstack/react-router"
 import { useParams, useSearch } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
-import { formatDate } from "@unfiddle/core/date"
+import { formatDate, getUserTimezoneOffset } from "@unfiddle/core/date"
 import { formatNumber } from "@unfiddle/core/number"
 import { formatOrderDate } from "@unfiddle/core/order/utils"
 import {
@@ -54,6 +54,7 @@ function ChartContent() {
    const orders = useSuspenseQuery(
       trpc.workspace.analytics.orders.queryOptions({
          id: params.workspaceId,
+         timezoneOffset: getUserTimezoneOffset(),
          ...search,
       }),
    )
