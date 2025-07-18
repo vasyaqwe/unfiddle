@@ -52,22 +52,22 @@ export const workspaceAnalyticsRouter = t.router({
 
          const baseProfitCalculationExpr = sql`CASE
 ${sql.join(
-            CURRENCIES.map(
-               (currency) =>
-                  sql`WHEN ${order.currency} = ${currency} THEN ${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice}) / ${rates[currency]}`,
-            ),
-            sql` `,
-         )}
+   CURRENCIES.map(
+      (currency) =>
+         sql`WHEN ${order.currency} = ${currency} THEN ${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice}) / ${rates[currency]}`,
+   ),
+   sql` `,
+)}
 ELSE ${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice})
 END`
          const basePurchasePriceCalculationExpr = sql`CASE
 ${sql.join(
-            CURRENCIES.map(
-               (currency) =>
-                  sql`WHEN ${order.currency} = ${currency} THEN ${procurement.quantity} * ${procurement.purchasePrice} / ${rates[currency]}`,
-            ),
-            sql` `,
-         )}
+   CURRENCIES.map(
+      (currency) =>
+         sql`WHEN ${order.currency} = ${currency} THEN ${procurement.quantity} * ${procurement.purchasePrice} / ${rates[currency]}`,
+   ),
+   sql` `,
+)}
 ELSE ${procurement.quantity} * ${procurement.purchasePrice}
 END`
 
@@ -206,12 +206,12 @@ END`
 
          const profitExpr = sql`CASE WHEN ${order.status} = 'successful' THEN (CASE
 ${sql.join(
-            CURRENCIES.map(
-               (currency) =>
-                  sql`WHEN ${order.currency} = ${currency} THEN ${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice}) / ${rates[currency]}`,
-            ),
-            sql` `,
-         )}
+   CURRENCIES.map(
+      (currency) =>
+         sql`WHEN ${order.currency} = ${currency} THEN ${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice}) / ${rates[currency]}`,
+   ),
+   sql` `,
+)}
 ELSE ${procurement.quantity} * (${order.sellingPrice} - ${procurement.purchasePrice})
 END) ELSE 0 END`
 
