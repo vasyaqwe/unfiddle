@@ -4,7 +4,6 @@ import { isChartDataEmpty } from "@/workspace/analytics/utils"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { CatchBoundary } from "@tanstack/react-router"
 import { useParams, useSearch } from "@tanstack/react-router"
-import { formatCurrency } from "@unfiddle/core/currency"
 import { formatDate, getUserTimezoneOffset } from "@unfiddle/core/date"
 import { formatNumber } from "@unfiddle/core/number"
 import { formatOrderDate } from "@unfiddle/core/order/utils"
@@ -151,13 +150,7 @@ function ChartContent() {
                   tickMargin={12}
                   allowDataOverflow={true}
                   domain={[`dataMin - ${maxValue / 100}`, "dataMax"]}
-                  tickFormatter={(value) => {
-                     if (value === 0) return "0 ₴"
-                     return formatCurrency(Math.floor(value), {
-                        notation: "compact",
-                        style: "decimal",
-                     })
-                  }}
+                  tickFormatter={(value) => formatNumber(Math.round(+value))}
                />
                <ChartTooltip
                   content={
