@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server"
 import { formatCurrency } from "@unfiddle/core/currency"
+import { CURRENCIES } from "@unfiddle/core/currency/constants"
 import { orderAssignee, orderItem } from "@unfiddle/core/database/schema"
 import { orderAssigneeRouter } from "@unfiddle/core/order/assignee/trpc"
 import {
@@ -79,7 +80,7 @@ export const orderRouter = t.router({
             Номер: order.shortId,
             Назва: order.name,
             Статус: ORDER_STATUSES_TRANSLATION[order.status],
-            Приорітет: ORDER_SEVERITIES_TRANSLATION[order.severity],
+            Пріоритет: ORDER_SEVERITIES_TRANSLATION[order.severity],
             Валюта: order.currency,
             Ціна: formatCurrency(order.sellingPrice, {
                currency: order.currency,
@@ -109,6 +110,197 @@ export const orderRouter = t.router({
          return {
             data: Array.from(buffer),
             filename: `замовлення-${new Date().toLocaleDateString("uk-UA")}.xlsx`,
+         }
+      }),
+   import: t.procedure
+      .use(workspaceMemberMiddleware)
+      .input(
+         z.object({
+            workspaceId: z.string(),
+            data: z.array(z.number()),
+         }),
+      )
+      .mutation(async ({ ctx, input }) => {
+         const buffer = Buffer.from(input.data)
+         const workbook = XLSX.read(buffer, { type: "buffer" })
+         const sheetName = workbook.SheetNames[0]
+
+         if (!sheetName)
+            throw new TRPCError({
+               code: "BAD_REQUEST",
+               message: "Файл не містить листів для імпорту",
+            })
+
+         const worksheet = workbook.Sheets[sheetName]
+
+         if (!worksheet)
+            throw new TRPCError({
+               code: "BAD_REQUEST",
+               message: "Файл не містить даних для імпорту",
+            })
+
+         const rawData = XLSX.utils.sheet_to_json(worksheet)
+
+         if (!rawData.length)
+            throw new TRPCError({
+               code: "BAD_REQUEST",
+               message: "Файл порожній або не містить рядків з даними",
+            })
+
+         const statusTranslationValues = Object.values(
+            ORDER_STATUSES_TRANSLATION,
+         ) as [string, ...string[]]
+         const severityTranslationValues = Object.values(
+            ORDER_SEVERITIES_TRANSLATION,
+         ) as [string, ...string[]]
+
+         const priceSchema = z.union([
+            z.number(),
+            z.string().transform((val) => {
+               const numStr = val.replace(/[^\d.,]/g, "").replace(",", ".")
+               const num = parseFloat(numStr)
+               if (Number.isNaN(num) || num <= 0) {
+                  throw new Error("Невірна ціна")
+               }
+               return num
+            }),
+         ])
+
+         const importSchema = z
+            .object({
+               Назва: z.string().min(1, "Назва замовлення обов'язкова"),
+               Статус: z
+                  .enum(statusTranslationValues)
+                  .default(ORDER_STATUSES_TRANSLATION.pending),
+               Пріоритет: z
+                  .enum(severityTranslationValues)
+                  .default(ORDER_SEVERITIES_TRANSLATION.low),
+               Валюта: z.enum(CURRENCIES).default("UAH"),
+               Ціна: priceSchema,
+               "З ПДВ": z
+                  .union([z.boolean(), z.string()])
+                  .transform((val) => {
+                     if (typeof val === "boolean") return val
+                     return (
+                        val.toLowerCase() === "так" ||
+                        val.toLowerCase() === "true" ||
+                        val === "1"
+                     )
+                  })
+                  .default(false),
+               Клієнт: z.string().optional(),
+               Коментар: z.string().default(""),
+            })
+            .partial()
+            .required({ Назва: true, Ціна: true })
+
+         const statusMap = Object.fromEntries(
+            Object.entries(ORDER_STATUSES_TRANSLATION).map(([key, value]) => [
+               value,
+               key,
+            ]),
+         ) as Record<string, keyof typeof ORDER_STATUSES_TRANSLATION>
+
+         const severityMap = Object.fromEntries(
+            Object.entries(ORDER_SEVERITIES_TRANSLATION).map(([key, value]) => [
+               value,
+               key,
+            ]),
+         ) as Record<string, keyof typeof ORDER_SEVERITIES_TRANSLATION>
+         const validatedData = []
+         const errors = []
+
+         for (let i = 0; i < rawData.length; i++) {
+            try {
+               const row = importSchema.parse(rawData[i])
+               validatedData.push({
+                  name: row.Назва,
+                  status: statusMap[row.Статус || "Без статусу"],
+                  severity: severityMap[row.Пріоритет || "Звичайно"],
+                  currency: row.Валюта || "UAH",
+                  sellingPrice: row.Ціна,
+                  vat: row["З ПДВ"] || false,
+                  client: row.Клієнт || null,
+                  note: row.Коментар || "",
+                  quantity: 1,
+                  workspaceId: input.workspaceId,
+                  creatorId: ctx.user.id,
+               })
+            } catch (error) {
+               if (error instanceof z.ZodError) {
+                  const fieldErrors = error.errors
+                     .map((e) => `${e.path.join(".")}: ${e.message}`)
+                     .join(", ")
+                  errors.push(`Рядок ${i + 2}: ${fieldErrors}`)
+               } else {
+                  errors.push(
+                     `Рядок ${i + 2}: ${error instanceof Error ? error.message : "Невідома помилка"}`,
+                  )
+               }
+            }
+         }
+
+         if (errors.length > 0)
+            throw new TRPCError({
+               code: "BAD_REQUEST",
+               message: `Помилки валідації:\n${errors.slice(0, 10).join("\n")}${errors.length > 10 ? `\n... та ще ${errors.length - 10} помилок` : ""}`,
+            })
+
+         if (validatedData.length === 0)
+            throw new TRPCError({
+               code: "BAD_REQUEST",
+               message: "Немає валідних рядків для імпорту",
+            })
+
+         const existingCounter = await ctx.db.query.orderCounter.findFirst({
+            where: eq(orderCounter.workspaceId, input.workspaceId),
+         })
+         let lastId = existingCounter?.lastId ?? 0
+
+         const ordersToInsert = validatedData.map((orderData) => {
+            lastId += 1
+            return {
+               ...orderData,
+               shortId: lastId,
+               normalizedName: orderData.name
+                  .normalize("NFC")
+                  .toLocaleLowerCase("uk"),
+            }
+         })
+
+         const batchQueries: BatchItem[] = [
+            ctx.db.insert(order).values(ordersToInsert),
+         ]
+
+         if (!existingCounter) {
+            batchQueries.push(
+               ctx.db
+                  .insert(orderCounter)
+                  .values({
+                     workspaceId: input.workspaceId,
+                     lastId,
+                  })
+                  .onConflictDoNothing(),
+            )
+         } else {
+            batchQueries.push(
+               ctx.db
+                  .update(orderCounter)
+                  .set({ lastId })
+                  .where(eq(orderCounter.workspaceId, input.workspaceId)),
+            )
+         }
+
+         await ctx.db.batch(
+            batchQueries as unknown as readonly [
+               BatchItem<"sqlite">,
+               ...BatchItem<"sqlite">[],
+            ],
+         )
+
+         return {
+            imported: validatedData.length,
+            message: `Успішно імпортовано ${validatedData.length} замовлень`,
          }
       }),
    list: t.procedure
@@ -371,6 +563,11 @@ export const orderRouter = t.router({
       .use(workspaceMemberMiddleware)
       .input(z.object({ id: z.string(), workspaceId: z.string() }))
       .mutation(async ({ ctx, input }) => {
+         if (ctx.membership.role !== "owner" && ctx.membership.role !== "admin")
+            throw new TRPCError({
+               code: "FORBIDDEN",
+            })
+
          await ctx.db.batch([
             ctx.db
                .delete(procurement)

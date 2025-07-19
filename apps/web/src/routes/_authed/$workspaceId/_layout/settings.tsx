@@ -212,9 +212,16 @@ function RouteComponent() {
                   {exportEmails.includes(auth.user.email) ? (
                      <div className="grid grid-cols-[100px_1fr] items-center py-4">
                         <p>Дані</p>
-                        <ExportOrdersButton workspaceId={auth.workspace.id} />
+                        <div className="flex flex-wrap gap-2">
+                           <ExportOrdersButton
+                              workspaceId={auth.workspace.id}
+                           />
+                           <ImportOrdersButton
+                              workspaceId={auth.workspace.id}
+                           />
+                        </div>
                      </div>
-                  ) : null}
+                  ) : null}{" "}
                </TabsPanel>
                <TabsPanel
                   className={"mt-3"}
@@ -395,5 +402,64 @@ function ExportOrdersButton({ workspaceId }: { workspaceId: string }) {
       >
          {exportOrders.isPending ? "Зачекайте..." : "Експортувати замовлення"}
       </Button>
+   )
+}
+
+function ImportOrdersButton({ workspaceId }: { workspaceId: string }) {
+   const queryClient = useQueryClient()
+   const orderQueryOptions = useOrderQueryOptions()
+
+   const importOrders = useMutation(
+      trpc.order.import.mutationOptions({
+         onSuccess: (result) => {
+            toast.success(result.message)
+            queryClient.invalidateQueries(orderQueryOptions.list)
+         },
+         onError: (error) => {
+            toast.error(error.message)
+         },
+      }),
+   )
+
+   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0]
+      if (!file) return
+
+      if (!file.name.endsWith(".xlsx") && !file.name.endsWith(".xls"))
+         return toast.error("Будь ласка, оберіть Excel файл (.xlsx або .xls)")
+
+      try {
+         const arrayBuffer = await file.arrayBuffer()
+         const data = Array.from(new Uint8Array(arrayBuffer))
+
+         importOrders.mutate({ workspaceId, data })
+      } catch (_error) {
+         toast.error("Помилка читання файлу")
+      }
+
+      e.target.value = ""
+   }
+
+   return (
+      <div className="flex items-center gap-2">
+         <input
+            type="file"
+            accept=".xlsx,.xls"
+            onChange={handleFileChange}
+            disabled={importOrders.isPending}
+            className="hidden"
+            id={`import-orders-${workspaceId}`}
+         />
+         <Button
+            variant="secondary"
+            className="w-fit"
+            disabled={importOrders.isPending}
+            onClick={() =>
+               document.getElementById(`import-orders-${workspaceId}`)?.click()
+            }
+         >
+            {importOrders.isPending ? "Зачекайте..." : "Імпортувати замовлення"}
+         </Button>
+      </div>
    )
 }
