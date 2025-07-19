@@ -95,7 +95,7 @@ export const orderRouter = t.router({
             "Термін постачання": order.deliversAt
                ? new Date(order.deliversAt).toLocaleDateString("uk-UA")
                : null,
-            Створено: new Date(order.createdAt).toLocaleDateString("uk-UA"),
+            Створене: new Date(order.createdAt).toLocaleDateString("uk-UA"),
          }))
 
          const worksheet = XLSX.utils.json_to_sheet(exportData)
@@ -190,6 +190,33 @@ export const orderRouter = t.router({
                   .default(false),
                Клієнт: z.string().optional(),
                Коментар: z.string().default(""),
+               "Термін постачання": z
+                  .union([z.string(), z.date()])
+                  .transform((val) => {
+                     if (val instanceof Date) return val
+                     if (!val || val.trim() === "") return null
+
+                     // Try parsing Ukrainian date format (DD.MM.YYYY)
+                     const ukDateMatch = val.match(
+                        /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/,
+                     )
+                     if (ukDateMatch?.[1] && ukDateMatch[2] && ukDateMatch[3]) {
+                        const day = parseInt(ukDateMatch[1])
+                        const month = parseInt(ukDateMatch[2])
+                        const year = parseInt(ukDateMatch[3])
+                        const date = new Date(year, month - 1, day)
+                        if (!Number.isNaN(date.getTime())) return date
+                     }
+
+                     // Try parsing ISO date or other formats
+                     const date = new Date(val)
+                     if (!Number.isNaN(date.getTime())) return date
+
+                     throw new Error(
+                        "Невірний формат дати. Використовуйте ДД.ММ.РРРР",
+                     )
+                  })
+                  .optional(),
             })
             .partial()
             .required({ Назва: true, Ціна: true })
@@ -222,6 +249,7 @@ export const orderRouter = t.router({
                   vat: row["З ПДВ"] || false,
                   client: row.Клієнт || null,
                   note: row.Коментар || "",
+                  deliversAt: row["Термін постачання"] || null,
                   quantity: 1,
                   workspaceId: input.workspaceId,
                   creatorId: ctx.user.id,

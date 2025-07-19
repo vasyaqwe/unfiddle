@@ -17,6 +17,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
 import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
 import { FileTrigger } from "@unfiddle/ui/components/file-trigger"
+import { Icons } from "@unfiddle/ui/components/icons"
 import {
    Tabs,
    TabsList,
@@ -210,15 +211,22 @@ function RouteComponent() {
                      </Button>
                   </div>
                   {exportEmails.includes(auth.user.email) ? (
-                     <div className="grid grid-cols-[100px_1fr] items-center py-4">
+                     <div className="grid grid-cols-[100px_1fr] py-4">
                         <p>Дані</p>
-                        <div className="flex flex-wrap gap-2">
-                           <ExportOrdersButton
-                              workspaceId={auth.workspace.id}
-                           />
-                           <ImportOrdersButton
-                              workspaceId={auth.workspace.id}
-                           />
+                        <div>
+                           <div className="flex flex-wrap gap-2">
+                              <ExportOrdersButton
+                                 workspaceId={auth.workspace.id}
+                              />
+                              <ImportOrdersButton
+                                 workspaceId={auth.workspace.id}
+                              />
+                           </div>
+                           <p className="mt-7 text-foreground/75 text-xs">
+                              <Icons.info className="mr-1 mb-1 inline-block size-4" />
+                              Коли імпортуєте, колонки Номер, Товари та Створене
+                              будуть ігноровані.
+                           </p>
                         </div>
                      </div>
                   ) : null}{" "}
