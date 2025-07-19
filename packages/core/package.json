@@ -23,6 +23,7 @@
     "partykit": "^0.0.114",
     "remeda": "^2.17.4",
     "superjson": "^2.2.2",
+    "xlsx": "^0.18.5",
     "zod": "^3.24.3"
   },
   "devDependencies": {

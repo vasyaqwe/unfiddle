@@ -90,6 +90,12 @@ function RouteComponent() {
 
    const theme = useTheme()
 
+   const exportEmails = [
+      "denluluckys@gmail.com",
+      "enot.ghaster@gmail.com",
+      "vasylpolishchuk22@gmail.com",
+   ]
+
    return (
       <>
          <Header>
@@ -154,7 +160,7 @@ function RouteComponent() {
                                     fill="currentColor"
                                  />
                                  <path
-                                    d="M6.99902 11.6431C7.24064 11.6431 7.43652 11.8389 7.43652 12.0806V12.9692C7.43652 13.2108 7.24064 13.4067 6.99902 13.4067C6.75741 13.4067 6.56152 13.2108 6.56152 12.9692V12.0806C6.56152 11.8389 6.75741 11.6431 6.99902 11.6431Z"
+                                    d="M6.99902 11.6431C7.24064 11.6431 7.43652 11.8389 7.43652 12.0806V12.9692C7.43652 13.2108 7.24064 13.4067 6.99902 13.4067C6.75741 13.4067 6.56152 13.2108 6.56152 12.0806C6.56152 11.8389 6.75741 11.6431 6.99902 11.6431Z"
                                     fill="currentColor"
                                  />
                                  <path
@@ -203,6 +209,12 @@ function RouteComponent() {
                         )}
                      </Button>
                   </div>
+                  {exportEmails.includes(auth.user.email) ? (
+                     <div className="grid grid-cols-[100px_1fr] items-center py-4">
+                        <p>Дані</p>
+                        <ExportOrdersButton workspaceId={auth.workspace.id} />
+                     </div>
+                  ) : null}
                </TabsPanel>
                <TabsPanel
                   className={"mt-3"}
@@ -346,5 +358,42 @@ function RouteComponent() {
             </Tabs>
          </MainScrollArea>
       </>
+   )
+}
+
+function ExportOrdersButton({ workspaceId }: { workspaceId: string }) {
+   const exportOrders = useMutation(
+      trpc.order.export.mutationOptions({
+         onSuccess: (result) => {
+            // @ts-expect-error ...
+            const blob = new Blob([new Uint8Array(result.data)], {
+               type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            })
+
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement("a")
+            a.href = url
+            a.download = result.filename
+            document.body.appendChild(a)
+            a.click()
+            document.body.removeChild(a)
+            URL.revokeObjectURL(url)
+
+            toast.success("Експорт завершено")
+         },
+         onError: () => {
+            toast.error("Помилка експорту")
+         },
+      }),
+   )
+
+   return (
+      <Button
+         className="w-fit"
+         disabled={exportOrders.isPending}
+         onClick={() => exportOrders.mutate({ workspaceId })}
+      >
+         {exportOrders.isPending ? "Зачекайте..." : "Експортувати замовлення"}
+      </Button>
    )
 }

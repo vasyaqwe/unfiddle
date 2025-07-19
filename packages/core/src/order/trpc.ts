@@ -1,6 +1,11 @@
 import { TRPCError } from "@trpc/server"
+import { formatCurrency } from "@unfiddle/core/currency"
 import { orderAssignee, orderItem } from "@unfiddle/core/database/schema"
 import { orderAssigneeRouter } from "@unfiddle/core/order/assignee/trpc"
+import {
+   ORDER_SEVERITIES_TRANSLATION,
+   ORDER_STATUSES_TRANSLATION,
+} from "@unfiddle/core/order/constants"
 import { orderFilterSchema } from "@unfiddle/core/order/filter"
 import { orderItemRouter } from "@unfiddle/core/order/item/trpc"
 import {
@@ -25,11 +30,87 @@ import {
 } from "drizzle-orm"
 import type { BatchItem } from "drizzle-orm/batch"
 import { createInsertSchema } from "drizzle-zod"
+import * as XLSX from "xlsx"
 import { z } from "zod"
 
 export const orderRouter = t.router({
    assignee: orderAssigneeRouter,
    item: orderItemRouter,
+   export: t.procedure
+      .use(workspaceMemberMiddleware)
+      .input(z.object({ workspaceId: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+         const orders = await ctx.db.query.order.findMany({
+            where: and(
+               eq(order.workspaceId, input.workspaceId),
+               isNull(order.deletedAt),
+            ),
+            columns: {
+               shortId: true,
+               name: true,
+               currency: true,
+               sellingPrice: true,
+               status: true,
+               severity: true,
+               note: true,
+               vat: true,
+               client: true,
+               deliversAt: true,
+               createdAt: true,
+            },
+            with: {
+               items: {
+                  columns: {
+                     name: true,
+                     quantity: true,
+                     desiredPrice: true,
+                  },
+               },
+               creator: {
+                  columns: {
+                     name: true,
+                  },
+               },
+            },
+            orderBy: [desc(order.createdAt)],
+         })
+
+         const exportData = orders.map((order) => ({
+            Номер: order.shortId,
+            Назва: order.name,
+            Статус: ORDER_STATUSES_TRANSLATION[order.status],
+            Приорітет: ORDER_SEVERITIES_TRANSLATION[order.severity],
+            Валюта: order.currency,
+            Ціна: formatCurrency(order.sellingPrice, {
+               currency: order.currency,
+            }),
+            "З ПДВ": order.vat ? "Так" : "Ні",
+            Клієнт: order.client,
+            Коментар: order.note,
+            Менеджер: order.creator?.name,
+            Товари: order.items
+               .map((item) => `${item.name} (${item.quantity} шт.)`)
+               .join(", "),
+            "Термін постачання": order.deliversAt
+               ? new Date(order.deliversAt).toLocaleDateString("uk-UA")
+               : null,
+            Створено: new Date(order.createdAt).toLocaleDateString("uk-UA"),
+         }))
+
+         const worksheet = XLSX.utils.json_to_sheet(exportData)
+         const workbook = XLSX.utils.book_new()
+         XLSX.utils.book_append_sheet(workbook, worksheet, "Orders")
+
+         const buffer = XLSX.write(workbook, {
+            type: "buffer",
+            bookType: "xlsx",
+         })
+
+         return {
+            data: Array.from(buffer),
+            filename: `замовлення-${new Date().toLocaleDateString("uk-UA")}.xlsx`,
+         }
+      }),
    list: t.procedure
       .use(workspaceMemberMiddleware)
       .input(
