@@ -7,6 +7,8 @@ const badge = cva(
       variants: {
          variant: {
             primary: "border-surface-12/11 bg-background text-foreground/80",
+            success: `border-transparent text-green-11 bg-green-4/40`,
+            destructive: `border-transparent text-red-11 bg-red-4/40`,
          },
          size: {
             sm: "h-[26px] rounded-sm px-1.5",

@@ -1,5 +1,6 @@
 import { useAuth } from "@/auth/hooks"
 import { useOrder } from "@/order/hooks"
+import { useOrderQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -15,6 +16,7 @@ export function useUpdateProcurement({
    const auth = useAuth()
    const socket = useSocket()
    const update = useOptimisticUpdateProcurement()
+   const orderQueryOptions = useOrderQueryOptions()
 
    const queryOptions = trpc.procurement.list.queryOptions({
       orderId: order.id,
@@ -24,18 +26,31 @@ export function useUpdateProcurement({
    return useMutation(
       trpc.procurement.update.mutationOptions({
          onMutate: async (input) => {
-            await queryClient.cancelQueries(queryOptions)
+            await Promise.all([
+               queryClient.cancelQueries(orderQueryOptions.list),
+               queryClient.cancelQueries(queryOptions),
+            ])
 
-            const data = queryClient.getQueryData(queryOptions.queryKey)
+            const procurements = queryClient.getQueryData(queryOptions.queryKey)
+            const orders = queryClient.getQueryData(
+               orderQueryOptions.list.queryKey,
+            )
 
             update({ ...input, orderId: order.id })
 
             onMutate?.()
 
-            return { data }
+            return { procurements, orders }
          },
          onError: (error, _data, context) => {
-            queryClient.setQueryData(queryOptions.queryKey, context?.data)
+            queryClient.setQueryData(
+               queryOptions.queryKey,
+               context?.procurements,
+            )
+            queryClient.setQueryData(
+               orderQueryOptions.list.queryKey,
+               context?.orders,
+            )
             toast.error("Ой-ой!", {
                description: error.message,
             })
@@ -62,6 +77,7 @@ export function useUpdateProcurement({
                }),
             )
             queryClient.invalidateQueries(queryOptions)
+            queryClient.invalidateQueries(orderQueryOptions.list)
          },
       }),
    )
@@ -70,6 +86,7 @@ export function useUpdateProcurement({
 export function useOptimisticUpdateProcurement() {
    const auth = useAuth()
    const queryClient = useQueryClient()
+   const queryOptions = useOrderQueryOptions()
 
    return (input: Partial<Procurement> & { orderId: string }) => {
       const queryKey = trpc.procurement.list.queryOptions({
@@ -81,6 +98,20 @@ export function useOptimisticUpdateProcurement() {
          return oldData.map((p) => {
             if (p.id === input.id) return { ...p, ...input }
             return p
+         })
+      })
+      queryClient.setQueryData(queryOptions.list.queryKey, (oldData) => {
+         if (!oldData) return oldData
+         return oldData.map((item) => {
+            if (item.id === input.orderId)
+               return {
+                  ...item,
+                  procurements: item.procurements.map((p) => {
+                     if (p.id === input.id) return { ...p, ...input }
+                     return p
+                  }),
+               }
+            return item
          })
       })
    }

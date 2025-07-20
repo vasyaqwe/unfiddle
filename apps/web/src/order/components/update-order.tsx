@@ -14,7 +14,7 @@ import {
 import { number } from "@unfiddle/ui/utils"
 
 interface Props {
-   order: RouterOutput["order"]["list"][number]
+   order: Omit<RouterOutput["order"]["list"][number], "procurements">
    finalFocus: React.RefObject<HTMLButtonElement | null>
    open: boolean
    setOpen: (open: boolean) => void

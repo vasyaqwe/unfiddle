@@ -57,6 +57,7 @@ import {
    ComboboxTrigger,
 } from "@unfiddle/ui/components/combobox"
 import { DrawerTrigger } from "@unfiddle/ui/components/drawer"
+import { Expandable } from "@unfiddle/ui/components/expandable"
 import { Icons } from "@unfiddle/ui/components/icons"
 import {
    Menu,
@@ -178,15 +179,29 @@ function RouteComponent() {
                </div>
             </Header>
             <MainScrollArea>
-               <p className="whitespace-pre-wrap">{order.note}</p>
+               <Expandable expanded={order.deletedAt !== null}>
+                  <Badge
+                     variant={"destructive"}
+                     className="mb-1.5 text-base"
+                  >
+                     <Icons.archive className="mb-[2px] inline-block size-5.5" />
+                     Замовлення у архіві
+                  </Badge>
+               </Expandable>
+               <SuspenseBoundary
+                  fallback={null}
+                  errorComponent={null}
+               >
+                  <TotalProfit />
+               </SuspenseBoundary>
+               <p className="mt-2 mb-3 font-semibold text-xl md:text-2xl">
+                  {order.name}
+               </p>
+               <p className="mb-7 whitespace-pre-wrap">{order.note}</p>
                <div>
                   <div className="mb-2 flex items-center justify-between">
                      <p className="font-medium text-lg">Товари</p>
-                     <CreateOrderItem
-                        orderCurrency={order.currency}
-                        orderId={order.id}
-                        orderName={order.name}
-                     >
+                     <CreateOrderItem>
                         <DrawerTrigger
                            render={
                               <Button variant={"secondary"}>
@@ -197,7 +212,7 @@ function RouteComponent() {
                         />
                      </CreateOrderItem>
                   </div>
-                  <div className="relative mt-2">
+                  <div className="relative">
                      {order.items.map((item) => (
                         <OrderItem
                            key={item.id}
@@ -205,21 +220,18 @@ function RouteComponent() {
                         />
                      ))}
                   </div>
+               </div>
+               <div className="mt-5">
                   <div className="my-2 flex items-center justify-between">
                      <p className="font-medium text-lg">Закупівлі</p>
-                     <CreateProcurement
-                        orderCurrency={order.currency}
-                        orderItems={order.items}
-                        orderName={order.name}
-                        orderId={order.id}
-                     />
+                     <CreateProcurement />
                   </div>
                   <SuspenseBoundary>
                      <Procurements />
                   </SuspenseBoundary>
                </div>
                {order.analogs.length === 0 ? null : (
-                  <div>
+                  <div className="mt-5">
                      <div className="my-2 flex items-center justify-between">
                         <p className="font-medium text-lg">Аналоги</p>
                      </div>
@@ -231,7 +243,7 @@ function RouteComponent() {
                            >
                               {name}
                               <Button
-                                 className="absolute right-0.75 opacity-0 transition-opacity group-hover/analog:opacity-100"
+                                 className="absolute right-0.75 z-[2] opacity-0 transition-opacity group-hover/analog:opacity-100"
                                  size={"sm"}
                                  kind={"icon"}
                                  variant={"ghost"}
@@ -265,7 +277,7 @@ function RouteComponent() {
                <div className="flex h-(--header-height) items-center gap-1">
                   <p className="text-foreground/75">Деталі</p>
                </div>
-               <section className="group/section flex flex-col space-y-2.5 py-3">
+               <section className="group/section flex flex-col py-3">
                   <Combobox
                      canBeEmpty
                      value={order.status}
@@ -334,7 +346,7 @@ function RouteComponent() {
                         render={
                            <Button
                               variant={"ghost"}
-                              className="-ml-2 !gap-1.75 w-fit justify-start"
+                              className="-ml-2 !gap-1.75 mt-2.5 w-fit justify-start"
                            >
                               <SeverityIcon
                                  severity={order.severity}
@@ -519,12 +531,38 @@ function RouteComponent() {
    )
 }
 
+function TotalProfit() {
+   const params = Route.useParams()
+   const order = useOrder()
+   const query = useSuspenseQuery(trpc.procurement.list.queryOptions(params))
+   const procurements = query.data
+
+   const totalProfit = procurements.reduce(
+      (acc, p) =>
+         acc + ((order.sellingPrice ?? 0) - p.purchasePrice) * p.quantity,
+      0,
+   )
+
+   return (
+      <Expandable expanded={order.status === "successful"}>
+         <Badge
+            variant={"success"}
+            className="mb-1.5 text-base"
+         >
+            <Icons.checkAll className="size-5" />
+            Замовлення успішне. Профіт:{" "}
+            {`${formatCurrency(totalProfit as number, {
+               currency: order.currency,
+            })}`}{" "}
+         </Badge>
+      </Expandable>
+   )
+}
+
 function Actions() {
    const params = Route.useParams()
    const auth = useAuth()
-   const query = useSuspenseQuery(trpc.order.one.queryOptions(params))
-   const order = query.data
-   if (!order) return null
+   const order = useOrder()
    const update = useUpdateOrder()
    const deleteItem = useDeleteOrder()
 

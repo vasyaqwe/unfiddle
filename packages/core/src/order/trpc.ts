@@ -439,7 +439,7 @@ export const orderRouter = t.router({
             )
          }
 
-         return await ctx.db.query.order.findMany({
+         const orders = await ctx.db.query.order.findMany({
             where: and(...whereConditions),
             columns: {
                id: true,
@@ -479,9 +479,18 @@ export const orderRouter = t.router({
                   },
                   orderBy: [desc(orderAssignee.createdAt)],
                },
+               procurements: {
+                  columns: {
+                     id: true,
+                     purchasePrice: true,
+                     quantity: true,
+                  },
+               },
             },
             orderBy: [desc(order.createdAt)],
          })
+
+         return orders
       }),
    create: t.procedure
       .use(workspaceMemberMiddleware)

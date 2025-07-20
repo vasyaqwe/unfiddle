@@ -35,6 +35,7 @@ export function useCreateOrder({
                status: "pending",
                vat: input.vat ?? false,
                assignees: [],
+               procurements: [],
                deletedAt: null,
                createdAt: new Date(),
                client: input.client ?? null,
@@ -63,6 +64,7 @@ export function useCreateOrder({
                   ...order,
                   creator: auth.user,
                   assignees: [],
+                  procurements: [],
                },
             })
             // notify({

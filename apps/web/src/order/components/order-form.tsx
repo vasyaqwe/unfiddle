@@ -51,19 +51,25 @@ export function OrderForm({
    onSubmit,
    children,
 }: {
-   order?: RouterOutput["order"]["list"][number] | undefined
+   order?:
+      | (Omit<RouterOutput["order"]["list"][number], "procurements"> & {
+           items?: OrderItem[]
+        })
+      | undefined
    onSubmit: (data: FormData) => void
    children: React.ReactNode
 }) {
    const [deliversAt, setDeliversAt] = React.useState(order?.deliversAt ?? null)
    const [currency, setCurrency] = React.useState(order?.currency ?? "UAH")
-   const [items, setItems] = React.useState<BareOrderItem[]>([
-      {
-         name: "",
-         quantity: 1,
-         desiredPrice: null,
-      },
-   ])
+   const [items, setItems] = React.useState<BareOrderItem[]>(
+      order?.items ?? [
+         {
+            name: "",
+            quantity: 1,
+            desiredPrice: null,
+         },
+      ],
+   )
    const formRef = React.useRef<HTMLFormElement>(null)
 
    return (

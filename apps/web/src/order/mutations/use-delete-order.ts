@@ -3,7 +3,7 @@ import { useOrderQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useParams } from "@tanstack/react-router"
+import { useNavigate, useParams } from "@tanstack/react-router"
 import type { RouterInput } from "@unfiddle/core/trpc/types"
 import { toast } from "sonner"
 
@@ -100,6 +100,7 @@ export function useDeleteOrder({
 export function useOptimisticDeleteOrder() {
    const queryClient = useQueryClient()
    const queryOptions = useOrderQueryOptions()
+   const navigate = useNavigate()
 
    return (input: RouterInput["order"]["delete"]) => {
       const oneQueryKey = trpc.order.one.queryOptions(input).queryKey
@@ -110,6 +111,10 @@ export function useOptimisticDeleteOrder() {
       })
       queryClient.setQueryData(oneQueryKey, (oldData) => {
          if (!oldData) return oldData
+         navigate({
+            to: "/$workspaceId",
+            params: { workspaceId: input.workspaceId },
+         })
          return null
       })
    }

@@ -1,6 +1,6 @@
 import { useAuth } from "@/auth/hooks"
 import { useOrder } from "@/order/hooks"
-import { useOrderOneQueryOptions } from "@/order/queries"
+import { useOrderOneQueryOptions, useOrderQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -15,7 +15,8 @@ export function useCreateProcurement({
    const queryClient = useQueryClient()
    const auth = useAuth()
    const socket = useSocket()
-   const oneQueryOptions = useOrderOneQueryOptions()
+   const orderQueryOptions = useOrderQueryOptions()
+   const orderOneQueryOptions = useOrderOneQueryOptions()
    const create = useOptimisticCreateProcurement()
 
    const queryOptions = trpc.procurement.list.queryOptions({
@@ -26,13 +27,22 @@ export function useCreateProcurement({
    return useMutation(
       trpc.procurement.create.mutationOptions({
          onMutate: async (input) => {
-            await queryClient.cancelQueries(oneQueryOptions)
+            await Promise.all([
+               queryClient.cancelQueries(orderOneQueryOptions),
+               queryClient.cancelQueries(orderQueryOptions.list),
+               queryClient.cancelQueries(queryOptions),
+            ])
 
-            const order = queryClient.getQueryData(oneQueryOptions.queryKey)
-            const data = queryClient.getQueryData(queryOptions.queryKey)
+            const order = queryClient.getQueryData(
+               orderOneQueryOptions.queryKey,
+            )
+            const procurements = queryClient.getQueryData(queryOptions.queryKey)
+            const orders = queryClient.getQueryData(
+               orderQueryOptions.list.queryKey,
+            )
             const orderItems = order?.items ?? []
             const orderItem = orderItems.find((i) => i.id === input.orderItemId)
-            if (!orderItem) return { data }
+            if (!orderItem) return { procurements, orders }
 
             create({
                ...input,
@@ -48,10 +58,17 @@ export function useCreateProcurement({
 
             onMutate?.()
 
-            return { data }
+            return { procurements, orders }
          },
          onError: (error, _data, context) => {
-            queryClient.setQueryData(queryOptions.queryKey, context?.data)
+            queryClient.setQueryData(
+               queryOptions.queryKey,
+               context?.procurements,
+            )
+            queryClient.setQueryData(
+               orderQueryOptions.list.queryKey,
+               context?.orders,
+            )
             toast.error("Ой-ой!", {
                description: error.message,
             })
@@ -76,6 +93,7 @@ export function useCreateProcurement({
                }),
             )
             queryClient.invalidateQueries(queryOptions)
+            queryClient.invalidateQueries(orderQueryOptions.list)
          },
       }),
    )
@@ -84,6 +102,7 @@ export function useCreateProcurement({
 export function useOptimisticCreateProcurement() {
    const auth = useAuth()
    const queryClient = useQueryClient()
+   const queryOptions = useOrderQueryOptions()
 
    return (
       input: Procurement & {
@@ -97,6 +116,14 @@ export function useOptimisticCreateProcurement() {
       queryClient.setQueryData(queryKey, (oldData) => {
          if (!oldData) return oldData
          return [input, ...oldData]
+      })
+      queryClient.setQueryData(queryOptions.list.queryKey, (oldData) => {
+         if (!oldData) return oldData
+         return oldData.map((item) => {
+            if (item.id === input.orderId)
+               return { ...item, procurements: [input, ...item.procurements] }
+            return item
+         })
       })
    }
 }

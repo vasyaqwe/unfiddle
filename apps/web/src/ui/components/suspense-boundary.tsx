@@ -16,17 +16,21 @@ export function SuspenseBoundary({
       <CatchBoundary
          getResetKey={() => "reset"}
          errorComponent={
-            errorComponent
-               ? () => errorComponent
-               : (props) => (
-                    <ErrorComponent
-                       error={props.error}
-                       reset={props.reset}
-                    />
-                 )
+            errorComponent === null
+               ? () => null
+               : errorComponent
+                 ? () => errorComponent
+                 : (props) => (
+                      <ErrorComponent
+                         error={props.error}
+                         reset={props.reset}
+                      />
+                   )
          }
       >
-         <React.Suspense fallback={fallback ?? <SuspenseFallback />}>
+         <React.Suspense
+            fallback={fallback === null ? null : <SuspenseFallback />}
+         >
             {children}
          </React.Suspense>
       </CatchBoundary>
