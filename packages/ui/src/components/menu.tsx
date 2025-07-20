@@ -69,15 +69,20 @@ export function MenuCheckboxItem({
          {...props}
       >
          {children}
-         <MenuPrimitive.CheckboxItemIndicator
-            className={"-mr-1 md:-mr-0.5 ml-auto"}
-         >
-            <Icons.check
-               strokeWidth={2.5}
-               className={"size-[25px] text-white/90 md:size-[22px]"}
-            />
-         </MenuPrimitive.CheckboxItemIndicator>
       </MenuPrimitive.CheckboxItem>
+   )
+}
+
+export function MenuCheckboxItemIndicator() {
+   return (
+      <MenuPrimitive.CheckboxItemIndicator
+         className={"-mr-1 md:-mr-0.5 ml-auto"}
+      >
+         <Icons.check
+            strokeWidth={2.5}
+            className={"size-[25px] text-white/90 md:size-[22px]"}
+         />
+      </MenuPrimitive.CheckboxItemIndicator>
    )
 }
 

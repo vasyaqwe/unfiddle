@@ -78,7 +78,7 @@ export function Procurement({
                   user={procurement.creator}
                   className="inline-block"
                />
-               {procurement.creator.name}
+               <span className="line-clamp-1">{procurement.creator.name}</span>
             </AlignedColumn>
             {procurement.orderItem ? (
                <AlignedColumn

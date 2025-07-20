@@ -145,7 +145,16 @@ export function useOptimisticUpdateOrder() {
    }
 
    return async (input: Partial<RouterOutput["order"]["list"][number]>) => {
+      const oneQueryKey = trpc.order.one.queryOptions({
+         orderId: input.id ?? "",
+         workspaceId: auth.workspace.id,
+      }).queryKey
+
       if (input.deletedAt === null) {
+         queryClient.setQueryData(oneQueryKey, (oldData) => {
+            if (!oldData) return oldData
+            return { ...oldData, deletedAt: null }
+         })
          return await moveItemBetweenQueries(
             queryOptions.listArchived,
             queryOptions.listNotArchived,
@@ -155,6 +164,10 @@ export function useOptimisticUpdateOrder() {
       }
 
       if (input.deletedAt) {
+         queryClient.setQueryData(oneQueryKey, (oldData) => {
+            if (!oldData) return oldData
+            return { ...oldData, deletedAt: new Date() }
+         })
          return await moveItemBetweenQueries(
             queryOptions.listNotArchived,
             queryOptions.listArchived,
@@ -162,10 +175,7 @@ export function useOptimisticUpdateOrder() {
             { deletedAt: new Date().toString() },
          )
       }
-      const oneQueryKey = trpc.order.one.queryOptions({
-         orderId: input.id ?? "",
-         workspaceId: auth.workspace.id,
-      }).queryKey
+
       queryClient.setQueryData(oneQueryKey, (oldData) => {
          if (!oldData) return oldData
          return { ...oldData, ...input }

@@ -31,7 +31,7 @@ export function OrderItem({
    const deleteItem = useDeleteOrderItem()
 
    return (
-      <Card className="mt-1 items-center border-surface-12/15 p-3 text-left lg:flex lg:gap-2 lg:p-2 lg:pl-3">
+      <Card className="mt-1 items-center p-3 text-left lg:flex lg:gap-2 lg:p-2 lg:pl-3">
          <span className="line-clamp-1 font-medium max-lg:w-[calc(100%-2rem)]">
             {" "}
             {item.name}

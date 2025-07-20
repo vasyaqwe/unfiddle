@@ -239,7 +239,7 @@ function RouteComponent() {
                         {order.analogs.map((name, idx) => (
                            <Card
                               key={name}
-                              className="group/analog before:mask-l-from-[2rem] relative flex items-center rounded-md border-surface-12/15 px-3 py-1.5 before:pointer-events-none before:absolute before:inset-0 before:z-[1] before:bg-background before:opacity-0 before:transition-opacity hover:before:opacity-100"
+                              className="group/analog before:mask-l-from-[2rem] relative flex items-center px-3 py-1.5 before:pointer-events-none before:absolute before:inset-0 before:z-[1] before:bg-background before:opacity-0 before:transition-opacity hover:before:opacity-100"
                            >
                               {name}
                               <Button
@@ -674,7 +674,7 @@ function Procurements() {
       )
 
    return (
-      <Card className="relative mt-2 rounded-lg border-surface-12/15 p-0">
+      <Card className="relative mt-2 p-0">
          {query.data.map((p) => (
             <Procurement
                key={p.id}

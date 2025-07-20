@@ -1,5 +1,7 @@
 import { useAuth } from "@/auth/hooks"
 import { MainScrollArea } from "@/layout/components/main"
+import { useCreateOrderAssignee } from "@/order/assignee/mutations/use-create-order-assignee"
+import { useDeleteOrderAssignee } from "@/order/assignee/mutations/use-delete-order-assignee"
 import { ArchiveOrderAlert } from "@/order/components/archive-order-alert"
 import { CreateOrder } from "@/order/components/create-order"
 import { DeleteOrderAlert } from "@/order/components/delete-order-alert"
@@ -52,8 +54,10 @@ import { DrawerTrigger } from "@unfiddle/ui/components/drawer"
 import { Icons } from "@unfiddle/ui/components/icons"
 import {
    Menu,
+   MenuCheckboxItem,
    MenuItem,
    MenuPopup,
+   MenuSeparator,
    MenuTrigger,
 } from "@unfiddle/ui/components/menu"
 import {
@@ -187,6 +191,9 @@ function _OrderRow({
          acc + ((order.sellingPrice ?? 0) - p.purchasePrice) * p.quantity,
       0,
    )
+   const assigned = order.assignees.some((a) => a.user.id === auth.user.id)
+   const createAssignee = useCreateOrderAssignee()
+   const deleteAssignee = useDeleteOrderAssignee()
 
    return (
       <Link
@@ -366,6 +373,35 @@ function _OrderRow({
                   e.stopPropagation()
                }}
             >
+               <MenuCheckboxItem
+                  closeOnClick
+                  onClick={() => {
+                     if (assigned)
+                        return deleteAssignee.mutate({
+                           orderId: order.id,
+                           userId: auth.user.id,
+                           workspaceId: auth.workspace.id,
+                        })
+
+                     createAssignee.mutate({
+                        orderId: order.id,
+                        userId: auth.user.id,
+                        workspaceId: auth.workspace.id,
+                     })
+                  }}
+               >
+                  {assigned ? (
+                     <>
+                        <Icons.undo className="size-[18px]" />
+                        Залишити
+                     </>
+                  ) : (
+                     <>
+                        <Icons.pin className="size-5" />
+                        Зайняти
+                     </>
+                  )}
+               </MenuCheckboxItem>
                <MenuItem
                   onClick={() => {
                      setUpdateOpen(true)
@@ -374,6 +410,7 @@ function _OrderRow({
                   <Icons.pencil />
                   Редагувати
                </MenuItem>
+               <MenuSeparator />
                {order.deletedAt === null ? (
                   <MenuItem
                      destructive
