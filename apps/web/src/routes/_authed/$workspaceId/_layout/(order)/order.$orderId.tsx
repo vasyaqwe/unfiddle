@@ -162,7 +162,7 @@ function RouteComponent() {
                                     }}
                                  >
                                     {state.pressed ? (
-                                       <Icons.undo className="!-ml-0.5 mr-px size-[18px]" />
+                                       <Icons.undo className="size-[18px]" />
                                     ) : (
                                        <Icons.pin className="size-5" />
                                     )}
@@ -273,7 +273,7 @@ function RouteComponent() {
                "relative flex w-full shrink-0 grow flex-col border-neutral bg-surface-1 max-lg:hidden lg:max-w-[15rem] lg:border-l xl:max-w-[19rem]"
             }
          >
-            <ScrollArea className="px-5 py-4 pt-0">
+            <ScrollArea className="px-5 pb-4">
                <div className="flex h-(--header-height) items-center gap-1">
                   <p className="text-foreground/75">Деталі</p>
                </div>
@@ -346,7 +346,7 @@ function RouteComponent() {
                         render={
                            <Button
                               variant={"ghost"}
-                              className="-ml-2 !gap-1.75 mt-2.5 w-fit justify-start"
+                              className="-ml-2 !gap-1.75 mt-2 w-fit justify-start"
                            >
                               <SeverityIcon
                                  severity={order.severity}
@@ -374,7 +374,7 @@ function RouteComponent() {
                      </ComboboxPopup>
                   </Combobox>
                   {order.assignees.length === 0 ? null : (
-                     <AvatarStack className="mt-1.5 flex">
+                     <AvatarStack className="mt-3 flex">
                         {order.assignees.map((assignee) => (
                            <AvatarStackItem key={assignee.user.id}>
                               <Tooltip delay={0}>

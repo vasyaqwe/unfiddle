@@ -186,7 +186,7 @@ export function Procurement({
          <div className="mt-2 flex lg:mt-1">
             {procurement.provider ? (
                <>
-                  <p className="lg:!max-w-[80ch] empty:hidden max-lg:mr-auto">
+                  <p className="lg:!max-w-[80ch] empty:hidden">
                      {procurement.provider}
                   </p>
                   <Separator className="mx-2.5 my-auto h-4 w-px" />
