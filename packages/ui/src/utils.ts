@@ -11,8 +11,9 @@ export const cn = (...inputs: Parameters<typeof cx>) => twMerge(cx(inputs))
 
 export const number = (str: string) => {
    if (!str) return 0
-   // Remove all commas, spaces, and any currency symbols
-   const cleanedStr = str.replace(/[,\s$£€]/g, "")
-   const result = parseFloat(cleanedStr)
-   return Number.isNaN(result) ? 0 : result
+   return +str
+   // // Remove all commas, spaces, and any currency symbols
+   // const cleanedStr = str.replace(/[,\s$£€]/g, "")
+   // const result = parseFloat(cleanedStr)
+   // return Number.isNaN(result) ? 0 : result
 }

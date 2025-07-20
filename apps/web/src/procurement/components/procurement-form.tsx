@@ -73,7 +73,9 @@ export function ProcurementForm({
                         variant={"secondary"}
                         className="w-full justify-start"
                      >
-                        <SelectValue>{(label) => label}</SelectValue>
+                        <SelectValue placeholder={"Оберіть товар"}>
+                           {(label) => label}
+                        </SelectValue>
                         <SelectTriggerIcon />
                      </Button>
                   }

@@ -24,7 +24,7 @@ export const CurrencySelect = ({
                   variant="secondary"
                   className="min-w-24"
                >
-                  <SelectValue />
+                  <SelectValue placeholder={value} />
                   <SelectTriggerIcon />
                </Button>
             }

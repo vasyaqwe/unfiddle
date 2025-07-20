@@ -85,7 +85,6 @@ export function OrderForm({
 
             requestAnimationFrame(() => {
                const form = formData<FormData>(e.target)
-
                onSubmit({
                   ...form,
                   deliversAt,
@@ -114,7 +113,9 @@ export function OrderForm({
                   <SelectTrigger
                      render={
                         <Button variant={"secondary"}>
-                           <SelectValue>{(label) => label}</SelectValue>
+                           <SelectValue placeholder={currency}>
+                              {(label) => label}
+                           </SelectValue>
                            <SelectTriggerIcon />
                         </Button>
                      }
@@ -266,7 +267,15 @@ export function OrderForm({
                               variant={"secondary"}
                               className="w-full justify-start"
                            >
-                              <SelectValue>{(label) => label}</SelectValue>
+                              <SelectValue
+                                 placeholder={
+                                    ORDER_SEVERITIES_TRANSLATION[
+                                       order?.severity ?? "low"
+                                    ]
+                                 }
+                              >
+                                 {(label) => label}
+                              </SelectValue>
                               <SelectTriggerIcon />
                            </Button>
                         }
@@ -310,15 +319,13 @@ export function OrderForm({
                   }
                />
             </Field>
-            <div>
-               <Field className={"mt-3 flex flex-row items-center gap-2"}>
-                  <Checkbox
-                     name="vat"
-                     defaultChecked={order?.vat ?? false}
-                  />
-                  <FieldLabel>З ПДВ</FieldLabel>
-               </Field>
-            </div>
+            <Field className={"mt-3 flex flex-row items-center gap-2"}>
+               <Checkbox
+                  name="vat"
+                  defaultChecked={order?.vat ?? false}
+               />
+               <FieldLabel className={"mt-px"}>З ПДВ</FieldLabel>
+            </Field>
          </Fieldset>
          {children}
       </form>

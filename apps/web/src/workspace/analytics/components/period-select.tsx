@@ -41,7 +41,9 @@ export function PeriodSelect({
                      "min-w-32 disabled:cursor-default disabled:bg-surface-3"
                   }
                >
-                  <SelectValue>{(label) => label}</SelectValue>
+                  <SelectValue placeholder={search[searchKey]}>
+                     {(label) => label}
+                  </SelectValue>
                   <SelectTriggerIcon />
                </Button>
             }

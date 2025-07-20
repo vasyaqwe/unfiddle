@@ -272,7 +272,9 @@ function MemberRow({
                            variant={"ghost"}
                            className="-ml-2 disabled:cursor-auto disabled:opacity-100 disabled:hover:bg-transparent"
                         >
-                           <SelectValue>{(label) => label}</SelectValue>
+                           <SelectValue placeholder={member.role}>
+                              {(label) => label}
+                           </SelectValue>
                         </Button>
                      }
                   />
