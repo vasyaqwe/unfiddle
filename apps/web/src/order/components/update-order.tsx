@@ -1,3 +1,4 @@
+import { useAuth } from "@/auth/hooks"
 import { OrderForm } from "@/order/components/order-form"
 import { useUpdateOrder } from "@/order/mutations/use-update-order"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"
@@ -10,6 +11,7 @@ import {
    DrawerPopup,
    DrawerTitle,
 } from "@unfiddle/ui/components/drawer"
+import { number } from "@unfiddle/ui/utils"
 
 interface Props {
    order: RouterOutput["order"]["list"][number]
@@ -19,6 +21,7 @@ interface Props {
 }
 
 export function UpdateOrder({ order, finalFocus, open, setOpen }: Props) {
+   const auth = useAuth()
    const mutation = useUpdateOrder({
       onMutate: () => setOpen(false),
       onError: () => setOpen(true),
@@ -37,10 +40,14 @@ export function UpdateOrder({ order, finalFocus, open, setOpen }: Props) {
          >
             <DrawerTitle>Редагувати замовлення</DrawerTitle>
             <OrderForm
-               onSubmit={(data) =>
+               onSubmit={(form) =>
                   mutation.mutate({
-                     ...data,
+                     ...form,
                      id: order.id,
+                     workspaceId: auth.workspace.id,
+                     sellingPrice: number(form.sellingPrice),
+                     client: form.client.length === 0 ? null : form.client,
+                     vat: form.vat === "on",
                   })
                }
                order={order}

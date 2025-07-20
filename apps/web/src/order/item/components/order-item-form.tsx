@@ -1,7 +1,6 @@
-import { useAuth } from "@/auth/hooks"
+import { useOrder } from "@/order/hooks"
 import { CURRENCY_SYMBOLS } from "@unfiddle/core/currency/constants"
-import type { Currency } from "@unfiddle/core/currency/types"
-import type { RouterInput, RouterOutput } from "@unfiddle/core/trpc/types"
+import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import {
    Field,
    FieldControl,
@@ -9,27 +8,27 @@ import {
    FieldLabel,
 } from "@unfiddle/ui/components/field"
 import { NumberField } from "@unfiddle/ui/components/number-field"
-import { formData, number } from "@unfiddle/ui/utils"
+import { formData } from "@unfiddle/ui/utils"
 import * as React from "react"
+
+type FormData = {
+   name: string
+   quantity: string
+   desiredPrice: string
+}
 
 export function OrderItemForm({
    orderItem,
-   orderId,
    onSubmit,
    children,
-   orderName,
-   orderCurrency,
 }: {
    orderItem?:
       | NonNullable<RouterOutput["order"]["one"]>["items"][number]
       | undefined
-   orderId: string
-   orderName: string
-   orderCurrency: Currency
-   onSubmit: (data: RouterInput["order"]["item"]["create"]) => void
+   onSubmit: (data: FormData) => void
    children: React.ReactNode
 }) {
-   const auth = useAuth()
+   const order = useOrder()
    const formRef = React.useRef<HTMLFormElement>(null)
 
    return (
@@ -44,26 +43,14 @@ export function OrderItemForm({
             }
 
             requestAnimationFrame(() => {
-               const form = formData<{
-                  name: string
-                  quantity: string
-                  desiredPrice: string
-               }>(e.target)
-
-               onSubmit({
-                  orderId,
-                  workspaceId: auth.workspace.id,
-                  name: form.name,
-                  quantity: number(form.quantity),
-                  desiredPrice: number(form.desiredPrice),
-               })
+               onSubmit(formData<FormData>(e.target))
             })
          }}
       >
          <Field>
             <FieldLabel>Замовлення</FieldLabel>
             <FieldControl
-               defaultValue={orderName}
+               defaultValue={order.name}
                readOnly
                disabled
             />
@@ -91,7 +78,7 @@ export function OrderItemForm({
             <Field>
                <FieldLabel>Баж. ціна</FieldLabel>
                <NumberField
-                  placeholder={CURRENCY_SYMBOLS[orderCurrency]}
+                  placeholder={CURRENCY_SYMBOLS[order.currency]}
                   name="desiredPrice"
                   defaultValue={
                      orderItem?.desiredPrice === 0

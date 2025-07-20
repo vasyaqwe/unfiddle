@@ -1,3 +1,4 @@
+import { useOrder } from "@/order/hooks"
 import { UpdateProcurement } from "@/procurement/components/update-procurement"
 import { PROCUREMENT_STATUSES_TRANSLATION } from "@/procurement/constants"
 import { useDeleteProcurement } from "@/procurement/mutations/use-delete-procurement"
@@ -10,7 +11,6 @@ import { formatCurrency } from "@unfiddle/core/currency"
 import { formatNumber } from "@unfiddle/core/number"
 import { PROCUREMENT_STATUSES } from "@unfiddle/core/procurement/constants"
 import type { Procurement as ProcurementType } from "@unfiddle/core/procurement/types"
-import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import { Badge } from "@unfiddle/ui/components/badge"
 import { Button } from "@unfiddle/ui/components/button"
 import {
@@ -40,21 +40,20 @@ import { useTheme } from "next-themes"
 import * as React from "react"
 
 export function Procurement({
-   item,
-   order,
+   procurement,
 }: {
-   item: ProcurementType
-   order: RouterOutput["order"]["list"][number]
+   procurement: ProcurementType
 }) {
    const params = useParams({
       from: "/_authed/$workspaceId/_layout/(order)/order/$orderId",
    })
+   const order = useOrder()
    const theme = useTheme()
    const [from, to] = procurementStatusGradient(
-      item.status,
+      procurement.status,
       theme.resolvedTheme ?? "light",
    )
-   const _profit = (order.sellingPrice - item.purchasePrice) * item.quantity
+   // const _profit = (order.sellingPrice - procurement.purchasePrice) * procurement.quantity
    const update = useUpdateProcurement()
    const deleteItem = useDeleteProcurement()
 
@@ -64,9 +63,9 @@ export function Procurement({
 
    return (
       <div className="gap-3 border-neutral border-t p-3 text-left first:border-none lg:gap-4 lg:p-2 lg:pl-3">
-         {item.orderItem?.name ? (
+         {procurement.orderItem?.name ? (
             <p className="line-clamp-1 font-medium font-mono max-lg:w-[calc(100%-2rem)] lg:hidden lg:text-sm">
-               {item.orderItem.name}
+               {procurement.orderItem.name}
             </p>
          ) : null}
          <div className="flex w-full items-center gap-3 max-lg:mt-2 lg:gap-4">
@@ -76,39 +75,39 @@ export function Procurement({
             >
                <UserAvatar
                   size={16}
-                  user={item.creator}
+                  user={procurement.creator}
                   className="inline-block"
                />
-               {item.creator.name}
+               {procurement.creator.name}
             </AlignedColumn>
-            {item.orderItem ? (
+            {procurement.orderItem ? (
                <AlignedColumn
                   id={`${order.id}_p_item_name`}
                   className="font-medium font-mono max-lg:hidden lg:text-sm"
                >
-                  {item.orderItem.name}
+                  {procurement.orderItem.name}
                </AlignedColumn>
             ) : null}
             <AlignedColumn
                id={`${order.id}_p_quantity`}
                className="whitespace-nowrap font-medium font-mono lg:text-sm"
             >
-               {formatNumber(item.quantity)} шт.
+               {formatNumber(procurement.quantity)} шт.
             </AlignedColumn>
             <Separator className={"h-4 w-px bg-surface-7 lg:hidden"} />
             <AlignedColumn
                id={`${order.id}_p_price`}
                className="whitespace-nowrap font-medium font-mono lg:text-sm"
             >
-               {formatCurrency(item.purchasePrice, {
+               {formatCurrency(procurement.purchasePrice, {
                   currency: order.currency,
                })}
             </AlignedColumn>
             <Combobox
-               value={item.status}
+               value={procurement.status}
                onValueChange={(status) =>
                   update.mutate({
-                     id: item.id,
+                     id: procurement.id,
                      workspaceId: params.workspaceId,
                      status: status as never,
                   })
@@ -126,7 +125,7 @@ export function Procurement({
                         background: `linear-gradient(140deg, ${from}, ${to})`,
                      }}
                   >
-                     {PROCUREMENT_STATUSES_TRANSLATION[item.status]}
+                     {PROCUREMENT_STATUSES_TRANSLATION[procurement.status]}
                   </Badge>
                </ComboboxTrigger>
                <ComboboxPopup
@@ -185,16 +184,16 @@ export function Procurement({
             </Menu>
          </div>
          <div className="mt-2 flex lg:mt-1">
-            {item.provider ? (
+            {procurement.provider ? (
                <>
                   <p className="lg:!max-w-[80ch] empty:hidden max-lg:mr-auto">
-                     {item.provider}
+                     {procurement.provider}
                   </p>
                   <Separator className="mx-2.5 my-auto h-4 w-px" />
                </>
             ) : null}
             <p className="lg:!max-w-[80ch] whitespace-pre-wrap empty:hidden">
-               {item.note}
+               {procurement.note}
             </p>
          </div>
          {/* <p className="col-start-1 whitespace-nowrap font-medium font-mono text-[1rem] max-lg:order-3 max-lg:self-center lg:mt-1 lg:ml-auto lg:text-right">
@@ -212,10 +211,7 @@ export function Procurement({
             onClick={(e) => e.stopPropagation()}
          >
             <UpdateProcurement
-               orderCurrency={order.currency}
-               orderItems={order.items}
-               orderName={order.name}
-               procurement={item}
+               procurement={procurement}
                open={updateOpen}
                setOpen={setUpdateOpen}
                finalFocus={menuTriggerRef}
@@ -242,7 +238,7 @@ export function Procurement({
                               variant={"destructive"}
                               onClick={() =>
                                  deleteItem.mutate({
-                                    id: item.id,
+                                    id: procurement.id,
                                     workspaceId: params.workspaceId,
                                  })
                               }

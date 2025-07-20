@@ -1,4 +1,5 @@
 import { useAuth } from "@/auth/hooks"
+import { useOrder } from "@/order/hooks"
 import { useOrderOneQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
@@ -10,6 +11,7 @@ export function useUpdateOrderItem({
    onMutate,
    onError,
 }: { onMutate?: () => void; onError?: () => void } = {}) {
+   const order = useOrder()
    const queryClient = useQueryClient()
    const auth = useAuth()
    const socket = useSocket()
@@ -23,7 +25,7 @@ export function useUpdateOrderItem({
 
             const data = queryClient.getQueryData(oneQueryOptions.queryKey)
 
-            update(input)
+            update({ ...input, orderId: order.id })
 
             onMutate?.()
 
@@ -42,6 +44,7 @@ export function useUpdateOrderItem({
                action: "update_item",
                senderId: auth.user.id,
                item,
+               orderId: order.id,
             })
          },
          onSettled: () => {
@@ -53,9 +56,13 @@ export function useUpdateOrderItem({
 
 export function useOptimisticUpdateOrderItem() {
    const queryClient = useQueryClient()
+   const auth = useAuth()
 
-   return (input: Partial<OrderItem>) => {
-      const queryKey = trpc.order.one.queryOptions(input).queryKey
+   return (input: Partial<OrderItem> & { orderId: string }) => {
+      const queryKey = trpc.order.one.queryOptions({
+         orderId: input.orderId,
+         workspaceId: auth.workspace.id,
+      }).queryKey
       queryClient.setQueryData(queryKey, (oldData) => {
          if (!oldData) return oldData
          return {

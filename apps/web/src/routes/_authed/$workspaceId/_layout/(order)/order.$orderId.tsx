@@ -6,6 +6,7 @@ import { ArchiveOrderAlert } from "@/order/components/archive-order-alert"
 import { DeleteOrderAlert } from "@/order/components/delete-order-alert"
 import { SeverityIcon } from "@/order/components/severity-icon"
 import { UpdateOrder } from "@/order/components/update-order"
+import { useOrder } from "@/order/hooks"
 import { CreateOrderItem } from "@/order/item/components/create-order-item"
 import { useDeleteOrder } from "@/order/mutations/use-delete-order"
 import { useUpdateOrder } from "@/order/mutations/use-update-order"
@@ -20,7 +21,10 @@ import { OrderItem } from "@/routes/_authed/$workspaceId/_layout/(order)/-compon
 import { Procurement } from "@/routes/_authed/$workspaceId/_layout/(order)/-components/procurement"
 import { trpc } from "@/trpc"
 import { ErrorComponent } from "@/ui/components/error"
-import { SuspenseFallback } from "@/ui/components/suspense-boundary"
+import {
+   SuspenseBoundary,
+   SuspenseFallback,
+} from "@/ui/components/suspense-boundary"
 import { UserAvatar } from "@/user/components/user-avatar"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { notFound } from "@tanstack/react-router"
@@ -107,14 +111,11 @@ export const Route = createFileRoute(
 function RouteComponent() {
    const params = Route.useParams()
    const auth = useAuth()
-   const query = useSuspenseQuery(trpc.order.one.queryOptions(params))
-   const order = query.data
+   const order = useOrder()
    const theme = useTheme()
    const update = useUpdateOrder()
    const createAssignee = useCreateOrderAssignee()
    const deleteAssignee = useDeleteOrderAssignee()
-
-   if (!order) return null
 
    const [from, to] = orderStatusGradient(
       order.status ?? "canceled",
@@ -173,10 +174,7 @@ function RouteComponent() {
                         {pressed ? "Залишити" : "Зайняти"}
                      </TooltipPopup>
                   </Tooltip>
-                  <CreateAnalog
-                     orderId={order.id}
-                     analogs={order.analogs}
-                  />
+                  <CreateAnalog />
                </div>
             </Header>
             <MainScrollArea>
@@ -199,13 +197,11 @@ function RouteComponent() {
                         />
                      </CreateOrderItem>
                   </div>
-                  <div className="relative z-[2] mt-2">
+                  <div className="relative mt-2">
                      {order.items.map((item) => (
                         <OrderItem
                            key={item.id}
                            item={item}
-                           ordersLength={order.items.length}
-                           order={order}
                         />
                      ))}
                   </div>
@@ -216,24 +212,11 @@ function RouteComponent() {
                         orderItems={order.items}
                         orderName={order.name}
                         orderId={order.id}
-                        empty={order.procurements.length === 0}
                      />
                   </div>
-                  {order.procurements.length === 0 ? (
-                     <p className="font-medium text-foreground/75">
-                        Ще немає закупівель.
-                     </p>
-                  ) : (
-                     <Card className="relative z-[2] mt-2 rounded-lg border-surface-12/15 p-0">
-                        {order.procurements.map((p) => (
-                           <Procurement
-                              key={p.id}
-                              item={p}
-                              order={order}
-                           />
-                        ))}
-                     </Card>
-                  )}
+                  <SuspenseBoundary>
+                     <Procurements />
+                  </SuspenseBoundary>
                </div>
                {order.analogs.length === 0 ? null : (
                   <div>
@@ -248,7 +231,7 @@ function RouteComponent() {
                            >
                               {name}
                               <Button
-                                 className="absolute right-0.75 z-[2] opacity-0 transition-opacity group-hover/analog:opacity-100"
+                                 className="absolute right-0.75 opacity-0 transition-opacity group-hover/analog:opacity-100"
                                  size={"sm"}
                                  kind={"icon"}
                                  variant={"ghost"}
@@ -640,5 +623,26 @@ function Actions() {
             }
          />
       </>
+   )
+}
+
+function Procurements() {
+   const params = Route.useParams()
+   const query = useSuspenseQuery(trpc.procurement.list.queryOptions(params))
+
+   if (query.data.length === 0)
+      return (
+         <p className="font-medium text-foreground/75">Ще немає закупівель.</p>
+      )
+
+   return (
+      <Card className="relative mt-2 rounded-lg border-surface-12/15 p-0">
+         {query.data.map((p) => (
+            <Procurement
+               key={p.id}
+               procurement={p}
+            />
+         ))}
+      </Card>
    )
 }

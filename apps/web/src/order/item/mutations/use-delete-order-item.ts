@@ -52,10 +52,14 @@ export function useDeleteOrderItem({
 }
 
 export function useOptimisticDeleteOrderItem() {
+   const auth = useAuth()
    const queryClient = useQueryClient()
 
    return (input: { orderId: string; orderItemId: string }) => {
-      const queryKey = trpc.order.one.queryOptions(input).queryKey
+      const queryKey = trpc.order.one.queryOptions({
+         orderId: input.orderId,
+         workspaceId: auth.workspace.id,
+      }).queryKey
       queryClient.setQueryData(queryKey, (oldData) => {
          if (!oldData) return oldData
 

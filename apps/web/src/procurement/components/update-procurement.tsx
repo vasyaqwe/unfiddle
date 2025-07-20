@@ -1,7 +1,6 @@
+import { useAuth } from "@/auth/hooks"
 import { ProcurementForm } from "@/procurement/components/procurement-form"
 import { useUpdateProcurement } from "@/procurement/mutations/use-update-procurement"
-import type { Currency } from "@unfiddle/core/currency/types"
-import type { OrderItem } from "@unfiddle/core/order/item/types"
 import type { Procurement } from "@unfiddle/core/procurement/types"
 import { Button } from "@unfiddle/ui/components/button"
 import {
@@ -11,24 +10,20 @@ import {
    DrawerPopup,
    DrawerTitle,
 } from "@unfiddle/ui/components/drawer"
+import { number } from "@unfiddle/ui/utils"
 
 export function UpdateProcurement({
    procurement,
    finalFocus,
    open,
    setOpen,
-   orderName,
-   orderItems,
-   orderCurrency,
 }: {
    procurement: Procurement
    finalFocus: React.RefObject<HTMLButtonElement | null>
    open: boolean
    setOpen: (open: boolean) => void
-   orderName: string
-   orderCurrency: Currency
-   orderItems: OrderItem[]
 }) {
+   const auth = useAuth()
    const mutation = useUpdateProcurement({
       onMutate: () => setOpen(false),
       onError: () => setOpen(true),
@@ -42,13 +37,13 @@ export function UpdateProcurement({
          <DrawerPopup finalFocus={finalFocus}>
             <DrawerTitle>Редагувати закупівлю</DrawerTitle>
             <ProcurementForm
-               orderCurrency={orderCurrency}
-               orderItems={orderItems}
-               orderName={orderName}
-               onSubmit={(data) =>
+               onSubmit={(form) =>
                   mutation.mutate({
-                     ...data,
+                     ...form,
                      id: procurement.id,
+                     workspaceId: auth.workspace.id,
+                     purchasePrice: number(form.purchasePrice),
+                     quantity: number(form.quantity),
                   })
                }
                procurement={procurement}

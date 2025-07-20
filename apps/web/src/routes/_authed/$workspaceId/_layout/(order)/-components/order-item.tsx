@@ -1,9 +1,9 @@
+import { useOrder } from "@/order/hooks"
 import { UpdateOrderItem } from "@/order/item/components/update-order-item"
 import { useDeleteOrderItem } from "@/order/item/mutations/use-delete-order-item"
 import { useParams } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
 import type { OrderItem as OrderItemType } from "@unfiddle/core/order/item/types"
-import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import { Button } from "@unfiddle/ui/components/button"
 import { Card } from "@unfiddle/ui/components/card"
 import { Icons } from "@unfiddle/ui/components/icons"
@@ -18,16 +18,13 @@ import * as React from "react"
 
 export function OrderItem({
    item,
-   order,
-   ordersLength,
 }: {
    item: OrderItemType
-   order: RouterOutput["order"]["list"][number]
-   ordersLength: number
 }) {
    const params = useParams({
       from: "/_authed/$workspaceId/_layout/(order)/order/$orderId",
    })
+   const order = useOrder()
    const [updateOpen, setUpdateOpen] = React.useState(false)
    const menuTriggerRef = React.useRef<HTMLButtonElement>(null)
 
@@ -59,10 +56,7 @@ export function OrderItem({
             onClick={(e) => e.stopPropagation()}
          >
             <UpdateOrderItem
-               orderCurrency={order.currency}
-               orderId={order.id}
                orderItem={item}
-               orderName={order.name}
                open={updateOpen}
                setOpen={setUpdateOpen}
                finalFocus={menuTriggerRef}
@@ -94,7 +88,7 @@ export function OrderItem({
                   <Icons.pencil />
                   Редагувати
                </MenuItem>
-               {ordersLength === 1 ? null : (
+               {order.items.length === 1 ? null : (
                   <MenuItem
                      destructive
                      onClick={() =>

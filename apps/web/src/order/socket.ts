@@ -36,7 +36,8 @@ export function useOrderSocket() {
             return createItem({ ...data.item, orderId: data.orderId })
          }
 
-         if (data.action === "update_item") return updateItem(data.item)
+         if (data.action === "update_item")
+            return updateItem({ ...data.item, orderId: data.orderId })
 
          if (data.action === "delete_item")
             return deleteItem({

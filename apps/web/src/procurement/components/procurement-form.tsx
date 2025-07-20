@@ -1,9 +1,6 @@
-import { useAuth } from "@/auth/hooks"
+import { useOrder } from "@/order/hooks"
 import { CURRENCY_SYMBOLS } from "@unfiddle/core/currency/constants"
-import type { Currency } from "@unfiddle/core/currency/types"
-import type { OrderItem } from "@unfiddle/core/order/item/types"
 import type { Procurement } from "@unfiddle/core/procurement/types"
-import type { RouterInput } from "@unfiddle/core/trpc/types"
 import { Button } from "@unfiddle/ui/components/button"
 import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
 import { NumberField } from "@unfiddle/ui/components/number-field"
@@ -16,29 +13,27 @@ import {
    SelectValue,
 } from "@unfiddle/ui/components/select"
 import { Textarea } from "@unfiddle/ui/components/textarea"
-import { formData, number } from "@unfiddle/ui/utils"
+import { formData } from "@unfiddle/ui/utils"
 import * as React from "react"
+
+type FormData = {
+   note: string
+   quantity: string
+   purchasePrice: string
+   provider: string
+   orderItemId: string
+}
 
 export function ProcurementForm({
    procurement,
    onSubmit,
    children,
-   orderName,
-   orderItems,
-   orderCurrency,
 }: {
    procurement?: Procurement | undefined
-   onSubmit: (
-      data: Omit<RouterInput["procurement"]["create"], "orderId"> & {
-         orderId?: string
-      },
-   ) => void
+   onSubmit: (data: FormData) => void
    children: React.ReactNode
-   orderName: string
-   orderCurrency: Currency
-   orderItems: OrderItem[]
 }) {
-   const auth = useAuth()
+   const order = useOrder()
    const formRef = React.useRef<HTMLFormElement>(null)
 
    return (
@@ -53,29 +48,14 @@ export function ProcurementForm({
             }
 
             requestAnimationFrame(() => {
-               const form = formData<{
-                  note: string
-                  quantity: string
-                  purchasePrice: string
-                  provider: string
-                  orderItemId: string
-               }>(e.target)
-
-               onSubmit({
-                  workspaceId: auth.workspace.id,
-                  quantity: number(form.quantity),
-                  purchasePrice: number(form.purchasePrice),
-                  note: form.note,
-                  provider: form.provider.length === 0 ? null : form.provider,
-                  orderItemId: form.orderItemId,
-               })
+               onSubmit(formData<FormData>(e.target))
             })
          }}
       >
          <Field>
             <FieldLabel>Замовлення</FieldLabel>
             <FieldControl
-               defaultValue={orderName}
+               defaultValue={order.name}
                readOnly
                disabled
             />
@@ -85,7 +65,7 @@ export function ProcurementForm({
             <Select
                required
                name="orderItemId"
-               defaultValue={orderItems[0]?.id}
+               defaultValue={order.items[0]?.id}
             >
                <SelectTrigger
                   render={
@@ -99,7 +79,7 @@ export function ProcurementForm({
                   }
                />
                <SelectPopup align="start">
-                  {orderItems.map((item) => (
+                  {order.items.map((item) => (
                      <SelectItem
                         key={item.id}
                         value={item.id}
@@ -127,7 +107,7 @@ export function ProcurementForm({
                   required
                   defaultValue={procurement?.purchasePrice}
                   name="purchasePrice"
-                  placeholder={CURRENCY_SYMBOLS[orderCurrency]}
+                  placeholder={CURRENCY_SYMBOLS[order.currency]}
                   min={1}
                />
             </Field>

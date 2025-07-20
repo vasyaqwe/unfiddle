@@ -44,6 +44,7 @@ export type OrderEvent =
    | {
         action: "update_item"
         item: z.infer<typeof updateOrderItemSchema>
+        orderId: string
         senderId: string
      }
    | {

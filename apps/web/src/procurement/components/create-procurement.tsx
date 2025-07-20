@@ -1,7 +1,7 @@
+import { useAuth } from "@/auth/hooks"
+import { useOrder } from "@/order/hooks"
 import { ProcurementForm } from "@/procurement/components/procurement-form"
 import { useCreateProcurement } from "@/procurement/mutations/use-create-procurement"
-import type { Currency } from "@unfiddle/core/currency/types"
-import type { OrderItem } from "@unfiddle/core/order/item/types"
 import { Button } from "@unfiddle/ui/components/button"
 import {
    Drawer,
@@ -11,21 +11,12 @@ import {
    DrawerTrigger,
 } from "@unfiddle/ui/components/drawer"
 import { Icons } from "@unfiddle/ui/components/icons"
+import { number } from "@unfiddle/ui/utils"
 import * as React from "react"
 
-export function CreateProcurement({
-   orderName,
-   orderId,
-   empty,
-   orderItems,
-   orderCurrency,
-}: {
-   orderName: string
-   orderId: string
-   empty: boolean
-   orderItems: OrderItem[]
-   orderCurrency: Currency
-}) {
+export function CreateProcurement() {
+   const auth = useAuth()
+   const order = useOrder()
    const [open, setOpen] = React.useState(false)
    const mutation = useCreateProcurement({
       onMutate: () => setOpen(false),
@@ -41,20 +32,20 @@ export function CreateProcurement({
             render={
                <Button variant={"secondary"}>
                   <Icons.plus />
-                  Додати {empty ? "першу" : ""}
+                  Додати
                </Button>
             }
          />
          <DrawerPopup>
             <DrawerTitle>Нова закупівля</DrawerTitle>
             <ProcurementForm
-               orderItems={orderItems}
-               orderName={orderName}
-               orderCurrency={orderCurrency}
-               onSubmit={(data) =>
+               onSubmit={(form) =>
                   mutation.mutate({
-                     ...data,
-                     orderId,
+                     ...form,
+                     workspaceId: auth.workspace.id,
+                     orderId: order.id,
+                     purchasePrice: number(form.purchasePrice),
+                     quantity: number(form.quantity),
                   })
                }
             >

@@ -58,9 +58,13 @@ export function useCreateOrderItem({
 
 export function useOptimisticCreateOrderItem() {
    const queryClient = useQueryClient()
+   const auth = useAuth()
 
    return (input: OrderItem & { orderId: string }) => {
-      const queryKey = trpc.order.one.queryOptions(input).queryKey
+      const queryKey = trpc.order.one.queryOptions({
+         orderId: input.orderId,
+         workspaceId: auth.workspace.id,
+      }).queryKey
       queryClient.setQueryData(queryKey, (oldData) => {
          if (!oldData) return oldData
 

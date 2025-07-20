@@ -37,6 +37,10 @@ export function useCreateOrder({
                assignees: [],
                deletedAt: null,
                createdAt: new Date(),
+               client: input.client ?? null,
+               sellingPrice: input.sellingPrice ?? 0,
+               deliversAt: input.deliversAt ?? null,
+               note: input.note ?? "",
             })
 
             onMutate?.()

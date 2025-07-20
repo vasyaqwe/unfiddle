@@ -1,3 +1,4 @@
+import { useOrder } from "@/order/hooks"
 import { useUpdateOrder } from "@/order/mutations/use-update-order"
 import { useParams } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
@@ -16,13 +17,11 @@ import {
 import { formData } from "@unfiddle/ui/utils"
 import * as React from "react"
 
-export function CreateAnalog({
-   orderId,
-   analogs,
-}: { orderId: string; analogs: string[] }) {
+export function CreateAnalog() {
    const params = useParams({
       from: "/_authed/$workspaceId/_layout/(order)/order/$orderId",
    })
+   const order = useOrder()
    const update = useUpdateOrder({ onMutate: () => setOpen(false) })
    const [open, setOpen] = React.useState(false)
 
@@ -54,9 +53,9 @@ export function CreateAnalog({
                   e.preventDefault()
                   const form = formData<{ name: string }>(e.target)
                   update.mutate({
-                     id: orderId,
+                     id: order.id,
                      workspaceId: params.workspaceId,
-                     analogs: [...analogs, form.name],
+                     analogs: [...order.analogs, form.name],
                   })
                }}
             >

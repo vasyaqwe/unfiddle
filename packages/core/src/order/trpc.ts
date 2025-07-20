@@ -450,8 +450,13 @@ export const orderRouter = t.router({
                status: true,
                vat: true,
                creatorId: true,
+               deliversAt: true,
+               client: true,
+               quantity: true,
+               sellingPrice: true,
                deletedAt: true,
                createdAt: true,
+               note: true,
             },
             with: {
                creator: {
