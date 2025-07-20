@@ -1,5 +1,5 @@
 import { useAuth } from "@/auth/hooks"
-import { useOrderQueryOptions } from "@/order/queries"
+import { useOrderOneQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -13,15 +13,15 @@ export function useUpdateOrderItem({
    const queryClient = useQueryClient()
    const auth = useAuth()
    const socket = useSocket()
-   const queryOptions = useOrderQueryOptions()
+   const oneQueryOptions = useOrderOneQueryOptions()
    const update = useOptimisticUpdateOrderItem()
 
    return useMutation(
       trpc.order.item.update.mutationOptions({
          onMutate: async (input) => {
-            await queryClient.cancelQueries(queryOptions.list)
+            await queryClient.cancelQueries(oneQueryOptions)
 
-            const data = queryClient.getQueryData(queryOptions.list.queryKey)
+            const data = queryClient.getQueryData(oneQueryOptions.queryKey)
 
             update(input)
 
@@ -30,7 +30,7 @@ export function useUpdateOrderItem({
             return { data }
          },
          onError: (error, _data, context) => {
-            queryClient.setQueryData(queryOptions.list.queryKey, context?.data)
+            queryClient.setQueryData(oneQueryOptions.queryKey, context?.data)
             toast.error("Ой-ой!", {
                description: error.message,
             })
@@ -45,7 +45,7 @@ export function useUpdateOrderItem({
             })
          },
          onSettled: () => {
-            queryClient.invalidateQueries(queryOptions.list)
+            queryClient.invalidateQueries(oneQueryOptions)
          },
       }),
    )
@@ -53,18 +53,18 @@ export function useUpdateOrderItem({
 
 export function useOptimisticUpdateOrderItem() {
    const queryClient = useQueryClient()
-   const queryOptions = useOrderQueryOptions()
 
    return (input: Partial<OrderItem>) => {
-      queryClient.setQueryData(queryOptions.list.queryKey, (oldData) => {
+      const queryKey = trpc.order.one.queryOptions(input).queryKey
+      queryClient.setQueryData(queryKey, (oldData) => {
          if (!oldData) return oldData
-         return oldData.map((item) => ({
-            ...item,
-            items: item.items.map((item) => {
+         return {
+            ...oldData,
+            items: oldData.items.map((item) => {
                if (item.id === input.id) return { ...item, ...input }
                return item
             }),
-         }))
+         }
       })
    }
 }

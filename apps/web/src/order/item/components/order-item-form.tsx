@@ -21,7 +21,7 @@ export function OrderItemForm({
    orderCurrency,
 }: {
    orderItem?:
-      | RouterOutput["order"]["list"][number]["items"][number]
+      | NonNullable<RouterOutput["order"]["one"]>["items"][number]
       | undefined
    orderId: string
    orderName: string

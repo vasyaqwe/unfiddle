@@ -339,7 +339,7 @@ export const orderRouter = t.router({
          }),
       )
       .query(async ({ ctx, input }) => {
-         return await ctx.db.query.order.findFirst({
+         const found = await ctx.db.query.order.findFirst({
             where: eq(order.id, input.orderId),
             with: {
                items: {
@@ -398,6 +398,7 @@ export const orderRouter = t.router({
             },
             orderBy: [desc(order.createdAt)],
          })
+         return found ?? null
       }),
    list: t.procedure
       .use(workspaceMemberMiddleware)
@@ -466,26 +467,13 @@ export const orderRouter = t.router({
                name: true,
                severity: true,
                currency: true,
-               sellingPrice: true,
                status: true,
-               note: true,
                vat: true,
-               client: true,
-               analogs: true,
                creatorId: true,
                deletedAt: true,
-               deliversAt: true,
                createdAt: true,
             },
             with: {
-               items: {
-                  columns: {
-                     id: true,
-                     name: true,
-                     quantity: true,
-                     desiredPrice: true,
-                  },
-               },
                creator: {
                   columns: {
                      id: true,
@@ -505,31 +493,6 @@ export const orderRouter = t.router({
                      },
                   },
                   orderBy: [desc(orderAssignee.createdAt)],
-               },
-               procurements: {
-                  columns: {
-                     id: true,
-                     quantity: true,
-                     purchasePrice: true,
-                     status: true,
-                     note: true,
-                     provider: true,
-                  },
-                  with: {
-                     orderItem: {
-                        columns: {
-                           name: true,
-                        },
-                     },
-                     creator: {
-                        columns: {
-                           id: true,
-                           name: true,
-                           image: true,
-                        },
-                     },
-                  },
-                  orderBy: [desc(procurement.createdAt)],
                },
             },
             orderBy: [desc(order.createdAt)],
@@ -570,16 +533,13 @@ export const orderRouter = t.router({
             .get()
 
          const createdOrderItems = await tryCatch(
-            ctx.db
-               .insert(orderItem)
-               .values(
-                  input.items.map((item) => ({
-                     ...item,
-                     workspaceId: input.workspaceId,
-                     orderId: createdOrder.id,
-                  })),
-               )
-               .returning(),
+            ctx.db.insert(orderItem).values(
+               input.items.map((item) => ({
+                  ...item,
+                  workspaceId: input.workspaceId,
+                  orderId: createdOrder.id,
+               })),
+            ),
          )
 
          if (createdOrderItems.error) {
@@ -626,7 +586,7 @@ export const orderRouter = t.router({
             throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" })
          }
 
-         return { ...createdOrder, items: createdOrderItems.data }
+         return createdOrder
       }),
    update: t.procedure
       .use(workspaceMemberMiddleware)
