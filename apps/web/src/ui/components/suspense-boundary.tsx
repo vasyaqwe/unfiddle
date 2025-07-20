@@ -26,18 +26,18 @@ export function SuspenseBoundary({
                  )
          }
       >
-         <React.Suspense
-            fallback={
-               fallback ?? (
-                  <Loading
-                     size={"xl"}
-                     className="-translate-y-5 !absolute inset-0 m-auto"
-                  />
-               )
-            }
-         >
+         <React.Suspense fallback={fallback ?? <SuspenseFallback />}>
             {children}
          </React.Suspense>
       </CatchBoundary>
+   )
+}
+
+export function SuspenseFallback() {
+   return (
+      <Loading
+         size={"xl"}
+         className="-translate-y-5 !absolute inset-0 m-auto"
+      />
    )
 }

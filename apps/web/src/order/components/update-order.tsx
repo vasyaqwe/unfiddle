@@ -11,17 +11,14 @@ import {
    DrawerTitle,
 } from "@unfiddle/ui/components/drawer"
 
-export function UpdateOrder({
-   order,
-   finalFocus,
-   open,
-   setOpen,
-}: {
+interface Props {
    order: RouterOutput["order"]["list"][number]
    finalFocus: React.RefObject<HTMLButtonElement | null>
    open: boolean
    setOpen: (open: boolean) => void
-}) {
+}
+
+export function UpdateOrder({ order, finalFocus, open, setOpen }: Props) {
    const mutation = useUpdateOrder({
       onMutate: () => setOpen(false),
       onError: () => setOpen(true),

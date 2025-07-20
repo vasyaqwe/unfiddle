@@ -37,7 +37,6 @@ export function ToggleArchived() {
                         kind={"icon"}
                         variant={"ghost"}
                         size={"sm"}
-                        className="-ml-0.5"
                      >
                         {state.pressed ? (
                            <Icons.arrowLeft className="size-5" />

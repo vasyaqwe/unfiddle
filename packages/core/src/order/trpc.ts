@@ -331,6 +331,74 @@ export const orderRouter = t.router({
             message: `Успішно імпортовано ${validatedData.length} замовлень`,
          }
       }),
+   one: t.procedure
+      .use(workspaceMemberMiddleware)
+      .input(
+         z.object({
+            orderId: z.string(),
+         }),
+      )
+      .query(async ({ ctx, input }) => {
+         return await ctx.db.query.order.findFirst({
+            where: eq(order.id, input.orderId),
+            with: {
+               items: {
+                  columns: {
+                     id: true,
+                     name: true,
+                     quantity: true,
+                     desiredPrice: true,
+                  },
+               },
+               creator: {
+                  columns: {
+                     id: true,
+                     name: true,
+                     image: true,
+                  },
+               },
+               assignees: {
+                  columns: {},
+                  with: {
+                     user: {
+                        columns: {
+                           id: true,
+                           name: true,
+                           image: true,
+                        },
+                     },
+                  },
+                  orderBy: [desc(orderAssignee.createdAt)],
+               },
+               procurements: {
+                  columns: {
+                     id: true,
+                     quantity: true,
+                     purchasePrice: true,
+                     status: true,
+                     note: true,
+                     provider: true,
+                  },
+                  with: {
+                     orderItem: {
+                        columns: {
+                           name: true,
+                        },
+                     },
+                     creator: {
+                        columns: {
+                           id: true,
+                           name: true,
+                           image: true,
+                        },
+                     },
+                  },
+                  orderBy: [desc(procurement.createdAt)],
+               },
+            },
+            orderBy: [desc(order.createdAt)],
+         })
+      }),
    list: t.procedure
       .use(workspaceMemberMiddleware)
       .input(
@@ -589,7 +657,7 @@ export const orderRouter = t.router({
       }),
    delete: t.procedure
       .use(workspaceMemberMiddleware)
-      .input(z.object({ id: z.string(), workspaceId: z.string() }))
+      .input(z.object({ orderId: z.string(), workspaceId: z.string() }))
       .mutation(async ({ ctx, input }) => {
          if (ctx.membership.role !== "owner" && ctx.membership.role !== "admin")
             throw new TRPCError({
@@ -601,7 +669,7 @@ export const orderRouter = t.router({
                .delete(procurement)
                .where(
                   and(
-                     eq(procurement.orderId, input.id),
+                     eq(procurement.orderId, input.orderId),
                      eq(procurement.workspaceId, input.workspaceId),
                   ),
                ),
@@ -609,7 +677,7 @@ export const orderRouter = t.router({
                .delete(orderAssignee)
                .where(
                   and(
-                     eq(orderAssignee.orderId, input.id),
+                     eq(orderAssignee.orderId, input.orderId),
                      eq(orderAssignee.workspaceId, input.workspaceId),
                   ),
                ),
@@ -617,7 +685,7 @@ export const orderRouter = t.router({
                .delete(order)
                .where(
                   and(
-                     eq(order.id, input.id),
+                     eq(order.id, input.orderId),
                      eq(order.workspaceId, input.workspaceId),
                   ),
                ),

@@ -36,9 +36,9 @@ export const Route = createFileRoute("/join/$code")({
             search: { invite_code: opts.params.code },
          })
    },
-   loader: async ({ params }) => {
+   loader: async (opts) => {
       const res = await api.workspace[":code"].$get({
-         param: params,
+         param: opts.params,
       })
       const found = await res.json()
       if (!found) throw notFound()

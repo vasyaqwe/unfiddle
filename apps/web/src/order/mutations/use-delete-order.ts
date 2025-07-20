@@ -37,11 +37,11 @@ export function useDeleteOrder({
 
             onError?.()
          },
-         onSuccess: (_, order) => {
+         onSuccess: (_, data) => {
             socket.order.send({
                action: "delete",
                senderId: auth.user.id,
-               orderId: order.id,
+               orderId: data.orderId,
             })
          },
          onSettled: () => {
@@ -73,7 +73,7 @@ export function useOptimisticDeleteOrder() {
    return (input: RouterInput["order"]["delete"]) => {
       queryClient.setQueryData(queryOptions.list.queryKey, (oldData) => {
          if (!oldData) return oldData
-         return oldData.filter((item) => item.id !== input.id)
+         return oldData.filter((item) => item.id !== input.orderId)
       })
    }
 }

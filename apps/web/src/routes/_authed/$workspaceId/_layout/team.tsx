@@ -62,11 +62,9 @@ import { toast } from "sonner"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/team")({
    component: RouteComponent,
-   loader: async ({ context, params }) => {
-      context.queryClient.prefetchQuery(
-         trpc.workspace.member.list.queryOptions({
-            workspaceId: params.workspaceId,
-         }),
+   loader: async (opts) => {
+      opts.context.queryClient.prefetchQuery(
+         trpc.workspace.member.list.queryOptions(opts.params),
       )
    },
 })

@@ -64,7 +64,7 @@ export function useOrderSocket() {
 
          if (data.action === "delete")
             return deleteOrder({
-               id: data.orderId,
+               orderId: data.orderId,
                workspaceId: auth.workspace.id,
             })
       },
