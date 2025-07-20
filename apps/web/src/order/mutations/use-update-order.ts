@@ -18,6 +18,7 @@ export function useUpdateOrder({
    const queryOptions = useOrderQueryOptions()
    const update = useOptimisticUpdateOrder()
    const orderId = maybeParams.orderId
+   const workspaceId = auth.workspace.id
 
    return useMutation(
       trpc.order.update.mutationOptions({
@@ -25,7 +26,7 @@ export function useUpdateOrder({
             await queryClient.cancelQueries(queryOptions.list)
             if (orderId) {
                await queryClient.cancelQueries(
-                  trpc.order.one.queryOptions({ orderId }),
+                  trpc.order.one.queryOptions({ orderId, workspaceId }),
                )
             }
 
@@ -34,7 +35,8 @@ export function useUpdateOrder({
             )
             const oneData = orderId
                ? queryClient.getQueryData(
-                    trpc.order.one.queryOptions({ orderId }).queryKey,
+                    trpc.order.one.queryOptions({ orderId, workspaceId })
+                       .queryKey,
                  )
                : null
 
@@ -51,7 +53,8 @@ export function useUpdateOrder({
             )
             if (orderId) {
                queryClient.setQueryData(
-                  trpc.order.one.queryOptions({ orderId }).queryKey,
+                  trpc.order.one.queryOptions({ orderId, workspaceId })
+                     .queryKey,
                   context?.oneData,
                )
             }
@@ -82,7 +85,7 @@ export function useUpdateOrder({
             queryClient.invalidateQueries(queryOptions.list)
             if (orderId) {
                queryClient.invalidateQueries(
-                  trpc.order.one.queryOptions({ orderId }),
+                  trpc.order.one.queryOptions({ orderId, workspaceId }),
                )
             }
             if (input.deletedAt)
@@ -97,6 +100,7 @@ export function useUpdateOrder({
 }
 
 export function useOptimisticUpdateOrder() {
+   const auth = useAuth()
    const queryClient = useQueryClient()
    const queryOptions = useOrderQueryOptions()
 
@@ -160,6 +164,7 @@ export function useOptimisticUpdateOrder() {
       }
       const oneQueryKey = trpc.order.one.queryOptions({
          orderId: input.id ?? "",
+         workspaceId: auth.workspace.id,
       }).queryKey
       queryClient.setQueryData(oneQueryKey, (oldData) => {
          if (!oldData) return oldData

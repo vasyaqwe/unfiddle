@@ -35,7 +35,9 @@ export function useOrderOneQueryOptions() {
    const params = useParams({
       from: "/_authed/$workspaceId/_layout/(order)/order/$orderId",
    })
+   const auth = useAuth()
    return trpc.order.one.queryOptions({
       orderId: params.orderId,
+      workspaceId: auth.workspace.id,
    })
 }

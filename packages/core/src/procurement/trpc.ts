@@ -6,11 +6,50 @@ import {
 } from "@unfiddle/core/procurement/schema"
 import { t } from "@unfiddle/core/trpc/context"
 import { workspaceMemberMiddleware } from "@unfiddle/core/workspace/middleware"
-import { and, eq } from "drizzle-orm"
+import { and, desc, eq } from "drizzle-orm"
 import { createInsertSchema } from "drizzle-zod"
 import { z } from "zod"
 
 export const procurementRouter = t.router({
+   list: t.procedure
+      .use(workspaceMemberMiddleware)
+      .input(
+         z.object({
+            orderId: z.string(),
+            workspaceId: z.string(),
+         }),
+      )
+      .query(async ({ ctx, input }) => {
+         return await ctx.db.query.procurement.findMany({
+            where: and(
+               eq(procurement.orderId, input.orderId),
+               eq(procurement.workspaceId, input.workspaceId),
+            ),
+            columns: {
+               id: true,
+               quantity: true,
+               purchasePrice: true,
+               status: true,
+               note: true,
+               provider: true,
+            },
+            with: {
+               orderItem: {
+                  columns: {
+                     name: true,
+                  },
+               },
+               creator: {
+                  columns: {
+                     id: true,
+                     name: true,
+                     image: true,
+                  },
+               },
+            },
+            orderBy: [desc(procurement.createdAt)],
+         })
+      }),
    create: t.procedure
       .use(workspaceMemberMiddleware)
       .input(createInsertSchema(procurement).omit({ creatorId: true }))

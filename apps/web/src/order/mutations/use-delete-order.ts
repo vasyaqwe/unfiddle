@@ -18,6 +18,7 @@ export function useDeleteOrder({
    const queryOptions = useOrderQueryOptions()
    const deleteItem = useOptimisticDeleteOrder()
    const orderId = maybeParams.orderId
+   const workspaceId = auth.workspace.id
 
    return useMutation(
       trpc.order.delete.mutationOptions({
@@ -25,7 +26,7 @@ export function useDeleteOrder({
             await queryClient.cancelQueries(queryOptions.list)
             if (orderId) {
                await queryClient.cancelQueries(
-                  trpc.order.one.queryOptions({ orderId }),
+                  trpc.order.one.queryOptions({ orderId, workspaceId }),
                )
             }
 
@@ -34,7 +35,8 @@ export function useDeleteOrder({
             )
             const oneData = orderId
                ? queryClient.getQueryData(
-                    trpc.order.one.queryOptions({ orderId }).queryKey,
+                    trpc.order.one.queryOptions({ orderId, workspaceId })
+                       .queryKey,
                  )
                : null
 
@@ -51,7 +53,8 @@ export function useDeleteOrder({
             )
             if (orderId) {
                queryClient.setQueryData(
-                  trpc.order.one.queryOptions({ orderId }).queryKey,
+                  trpc.order.one.queryOptions({ orderId, workspaceId })
+                     .queryKey,
                   context?.oneData,
                )
             }
@@ -86,7 +89,7 @@ export function useDeleteOrder({
             queryClient.invalidateQueries(queryOptions.list)
             if (orderId) {
                queryClient.invalidateQueries(
-                  trpc.order.one.queryOptions({ orderId }),
+                  trpc.order.one.queryOptions({ orderId, workspaceId }),
                )
             }
          },

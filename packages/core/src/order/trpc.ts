@@ -336,11 +336,15 @@ export const orderRouter = t.router({
       .input(
          z.object({
             orderId: z.string(),
+            workspaceId: z.string(),
          }),
       )
       .query(async ({ ctx, input }) => {
          const found = await ctx.db.query.order.findFirst({
-            where: eq(order.id, input.orderId),
+            where: and(
+               eq(order.id, input.orderId),
+               eq(order.workspaceId, input.workspaceId),
+            ),
             with: {
                items: {
                   columns: {
@@ -370,34 +374,10 @@ export const orderRouter = t.router({
                   },
                   orderBy: [desc(orderAssignee.createdAt)],
                },
-               procurements: {
-                  columns: {
-                     id: true,
-                     quantity: true,
-                     purchasePrice: true,
-                     status: true,
-                     note: true,
-                     provider: true,
-                  },
-                  with: {
-                     orderItem: {
-                        columns: {
-                           name: true,
-                        },
-                     },
-                     creator: {
-                        columns: {
-                           id: true,
-                           name: true,
-                           image: true,
-                        },
-                     },
-                  },
-                  orderBy: [desc(procurement.createdAt)],
-               },
             },
             orderBy: [desc(order.createdAt)],
          })
+
          return found ?? null
       }),
    list: t.procedure

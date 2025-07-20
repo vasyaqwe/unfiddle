@@ -20,6 +20,7 @@ export function useCreateOrderAssignee({
    const create = useOptimisticCreateOrderAssignee()
    const update = useOptimisticUpdateOrder()
    const orderId = maybeParams.orderId
+   const workspaceId = auth.workspace.id
 
    return useMutation(
       trpc.order.assignee.create.mutationOptions({
@@ -27,7 +28,7 @@ export function useCreateOrderAssignee({
             await queryClient.cancelQueries(queryOptions.list)
             if (orderId) {
                await queryClient.cancelQueries(
-                  trpc.order.one.queryOptions({ orderId }),
+                  trpc.order.one.queryOptions({ orderId, workspaceId }),
                )
             }
 
@@ -36,7 +37,8 @@ export function useCreateOrderAssignee({
             )
             const oneData = orderId
                ? queryClient.getQueryData(
-                    trpc.order.one.queryOptions({ orderId }).queryKey,
+                    trpc.order.one.queryOptions({ orderId, workspaceId })
+                       .queryKey,
                  )
                : null
 
@@ -54,7 +56,8 @@ export function useCreateOrderAssignee({
             )
             if (orderId) {
                queryClient.setQueryData(
-                  trpc.order.one.queryOptions({ orderId }).queryKey,
+                  trpc.order.one.queryOptions({ orderId, workspaceId })
+                     .queryKey,
                   context?.oneData,
                )
             }
@@ -75,7 +78,7 @@ export function useCreateOrderAssignee({
             queryClient.invalidateQueries(queryOptions.list)
             if (orderId) {
                queryClient.invalidateQueries(
-                  trpc.order.one.queryOptions({ orderId }),
+                  trpc.order.one.queryOptions({ orderId, workspaceId }),
                )
             }
          },
@@ -84,12 +87,14 @@ export function useCreateOrderAssignee({
 }
 
 export function useOptimisticCreateOrderAssignee() {
+   const auth = useAuth()
    const queryClient = useQueryClient()
    const queryOptions = useOrderQueryOptions()
 
    return (input: { orderId: string; assignee: OrderAssignee }) => {
       const oneQueryKey = trpc.order.one.queryOptions({
          orderId: input.orderId,
+         workspaceId: auth.workspace.id,
       }).queryKey
       queryClient.setQueryData(oneQueryKey, (oldData) => {
          if (!oldData) return oldData
