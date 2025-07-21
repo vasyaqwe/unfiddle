@@ -75,7 +75,6 @@ export function useUpdateOrder({
                   id: auth.workspace.id,
                }),
             )
-            queryClient.invalidateQueries(queryOptions.list)
             queryClient.invalidateQueries(trpc.order.one.queryOptions(input))
             if (input.deletedAt)
                return queryClient.invalidateQueries(queryOptions.listArchived)
@@ -83,6 +82,8 @@ export function useUpdateOrder({
                return queryClient.invalidateQueries(
                   queryOptions.listNotArchived,
                )
+
+            queryClient.invalidateQueries(queryOptions.list)
          },
       }),
    )
