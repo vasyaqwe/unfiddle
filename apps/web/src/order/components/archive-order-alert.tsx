@@ -10,7 +10,7 @@ import {
 
 interface Props extends React.ComponentProps<typeof AlertDialog> {
    orderName: string
-   finalFocus: React.RefObject<HTMLButtonElement | null>
+   finalFocus: React.RefObject<HTMLElement | null>
    action: () => void
 }
 

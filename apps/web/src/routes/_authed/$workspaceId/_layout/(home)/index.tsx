@@ -52,14 +52,14 @@ import {
 } from "@unfiddle/ui/components/combobox"
 import { DrawerTrigger } from "@unfiddle/ui/components/drawer"
 import { Icons } from "@unfiddle/ui/components/icons"
+import { MenuSeparator } from "@unfiddle/ui/components/menu"
 import {
-   Menu,
-   MenuCheckboxItem,
-   MenuItem,
-   MenuPopup,
-   MenuSeparator,
-   MenuTrigger,
-} from "@unfiddle/ui/components/menu"
+   ContextMenu,
+   ContextMenuCheckboxItem,
+   ContextMenuItem,
+   ContextMenuPopup,
+   ContextMenuTrigger,
+} from "@unfiddle/ui/components/menu/context"
 import {
    Tooltip,
    TooltipPopup,
@@ -184,7 +184,7 @@ function _OrderRow({
    const [updateOpen, setUpdateOpen] = React.useState(false)
    const [archiveAlertOpen, setArchiveAlertOpen] = React.useState(false)
    const [deleteAlertOpen, setDeleteAlertOpen] = React.useState(false)
-   const menuTriggerRef = React.useRef<HTMLButtonElement>(null)
+   const menuTriggerRef = React.useRef<HTMLDivElement>(null)
 
    const totalProfit = order.procurements.reduce(
       (acc, p) =>
@@ -196,257 +196,241 @@ function _OrderRow({
    const deleteAssignee = useDeleteOrderAssignee()
 
    return (
-      <Link
-         to="/$workspaceId/order/$orderId"
-         params={{
-            workspaceId: params.workspaceId,
-            orderId: order.id,
-         }}
-         className="relative grid grid-cols-[1fr_auto] grid-rows-[1fr_auto] items-center gap-x-2.5 gap-y-1.5 py-2 pr-1.5 pl-2.5 text-left transition-colors duration-50 hover:bg-surface-1 has-data-[popup-open]:bg-surface-1 lg:flex lg:py-[0.4rem]"
-      >
-         <div className="flex items-center gap-2 max-lg:w-full">
-            <SeverityIcon
-               severity={order.severity}
-               className="mr-[2px] shrink-0"
-            />
-            <p className="whitespace-nowrap font-medium font-mono text-foreground/75 text-sm">
-               {makeShortId(order.shortId)}
-            </p>
-            <p className="flex items-center gap-1.5 font-medium text-sm lg:w-[108px]">
-               <UserAvatar
-                  size={25}
-                  user={order.creator}
-                  className="inline-block"
-               />
-               <span className="line-clamp-1">{order.creator.name}</span>
-            </p>
-         </div>
-         <p
-            data-vat={order.vat ? "" : undefined}
-            className="lg:!max-w-[80%] col-span-2 col-start-1 row-start-2 mt-px w-[calc(100%-36px)] break-normal font-semibold data-vat:text-orange-10 max-lg:pl-1"
-         >
-            {order.name}
-         </p>
-         <div className="ml-auto flex items-center gap-4">
-            <AvatarStack className="max-md:hidden">
-               {order.assignees.map((assignee) => (
-                  <AvatarStackItem key={assignee.user.id}>
-                     <Tooltip delay={0}>
-                        <TooltipTrigger
-                           render={
-                              <UserAvatar
-                                 size={25}
-                                 user={assignee.user}
-                              />
-                           }
-                        />
-                        <TooltipPopup>{assignee.user.name}</TooltipPopup>
-                     </Tooltip>
-                  </AvatarStackItem>
-               ))}
-            </AvatarStack>
-            {order.status &&
-            order.status !== "pending" &&
-            ORDER_STATUSES_TRANSLATION[order.status] ? (
-               <Combobox
-                  canBeEmpty
-                  value={order.status}
-                  onValueChange={(status) => {
-                     if (order.status === status)
-                        return update.mutate({
-                           id: order.id,
-                           workspaceId: params.workspaceId,
-                           status: "pending",
-                        })
-
-                     update.mutate({
-                        id: order.id,
-                        workspaceId: params.workspaceId,
-                        status: status as never,
-                     })
-                  }}
+      <ContextMenu>
+         <ContextMenuTrigger ref={menuTriggerRef}>
+            <Link
+               to="/$workspaceId/order/$orderId"
+               params={{
+                  workspaceId: params.workspaceId,
+                  orderId: order.id,
+               }}
+               className="relative grid h-[71px] grid-cols-[1fr_auto] grid-rows-[1fr_auto] items-center gap-x-2.5 gap-y-1.5 py-2 pr-1.5 pl-2.5 text-left transition-colors duration-50 hover:bg-surface-1 has-data-[popup-open]:bg-surface-1 lg:flex lg:h-[44px]"
+            >
+               <div className="flex items-center gap-2 max-lg:w-full">
+                  <SeverityIcon
+                     severity={order.severity}
+                     className="mr-[2px] shrink-0"
+                  />
+                  <p className="whitespace-nowrap font-medium font-mono text-foreground/75 text-sm">
+                     {makeShortId(order.shortId)}
+                  </p>
+                  <p className="flex items-center gap-1.5 font-medium text-sm lg:w-[108px]">
+                     <UserAvatar
+                        size={25}
+                        user={order.creator}
+                        className="inline-block"
+                     />
+                     <span className="line-clamp-1">{order.creator.name}</span>
+                  </p>
+               </div>
+               <p
+                  data-vat={order.vat ? "" : undefined}
+                  className="lg:!max-w-[80%] col-span-2 col-start-1 row-start-2 mt-px w-[calc(100%-36px)] break-normal font-semibold data-vat:text-orange-10"
                >
-                  <ComboboxTrigger
-                     onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                     }}
-                     className={"cursor-pointer"}
-                  >
-                     <Badge
-                        style={{
-                           background: `linear-gradient(140deg, ${from}, ${to})`,
+                  {order.name}
+               </p>
+               <div className="ml-auto flex items-center gap-4">
+                  <AvatarStack className="max-md:hidden">
+                     {order.assignees.map((assignee) => (
+                        <AvatarStackItem key={assignee.user.id}>
+                           <Tooltip delay={0}>
+                              <TooltipTrigger
+                                 render={
+                                    <UserAvatar
+                                       size={25}
+                                       user={assignee.user}
+                                    />
+                                 }
+                              />
+                              <TooltipPopup>{assignee.user.name}</TooltipPopup>
+                           </Tooltip>
+                        </AvatarStackItem>
+                     ))}
+                  </AvatarStack>
+                  {order.status &&
+                  order.status !== "pending" &&
+                  ORDER_STATUSES_TRANSLATION[order.status] ? (
+                     <Combobox
+                        canBeEmpty
+                        value={order.status}
+                        onValueChange={(status) => {
+                           if (order.status === status)
+                              return update.mutate({
+                                 id: order.id,
+                                 workspaceId: params.workspaceId,
+                                 status: "pending",
+                              })
+
+                           update.mutate({
+                              id: order.id,
+                              workspaceId: params.workspaceId,
+                              status: status as never,
+                           })
                         }}
                      >
-                        {ORDER_STATUSES_TRANSLATION[order.status] ??
-                           "Без статусу"}{" "}
-                        {order.status === "successful"
-                           ? `(${formatCurrency(totalProfit, {
-                                currency: order.currency,
-                             })})`
-                           : ""}
-                     </Badge>
-                  </ComboboxTrigger>
-                  <ComboboxPopup
-                     sideOffset={4}
-                     align="end"
-                     onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                     }}
-                  >
-                     <ComboboxInput />
-                     {ORDER_STATUSES.map((s) =>
-                        s === "pending" ? null : (
-                           <ComboboxItem
-                              key={s}
-                              value={s}
-                              keywords={[ORDER_STATUSES_TRANSLATION[s]]}
+                        <ComboboxTrigger
+                           onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                           }}
+                           className={"cursor-pointer"}
+                        >
+                           <Badge
+                              style={{
+                                 background: `linear-gradient(140deg, ${from}, ${to})`,
+                              }}
                            >
-                              {ORDER_STATUSES_TRANSLATION[s]}
-                           </ComboboxItem>
-                        ),
-                     )}
-                  </ComboboxPopup>
-               </Combobox>
-            ) : null}
-         </div>
-         <p className="min-w-[60px] text-foreground/75 max-lg:hidden">
-            {formatOrderDate(order.createdAt)}
-         </p>
-         <div
-            className="absolute"
-            onClick={(e) => {
-               e.preventDefault()
-               e.stopPropagation()
-            }}
-         >
-            <UpdateOrder
-               open={updateOpen}
-               setOpen={setUpdateOpen}
-               order={order}
-               finalFocus={menuTriggerRef}
-            />
-            <ArchiveOrderAlert
-               open={archiveAlertOpen}
-               onOpenChange={setArchiveAlertOpen}
-               orderName={order.name}
-               finalFocus={menuTriggerRef}
-               action={() =>
-                  update.mutate({
-                     id: order.id,
-                     workspaceId: params.workspaceId,
-                     deletedAt: new Date(),
-                  })
-               }
-            />
-            <DeleteOrderAlert
-               open={deleteAlertOpen}
-               onOpenChange={setDeleteAlertOpen}
-               orderName={order.name}
-               finalFocus={menuTriggerRef}
-               action={() =>
-                  deleteItem.mutate({
-                     orderId: order.id,
-                     workspaceId: params.workspaceId,
-                  })
-               }
-            />
-         </div>
-         <Menu>
-            <MenuTrigger
-               onClick={(e) => e.stopPropagation()}
-               ref={menuTriggerRef}
-               render={
-                  <Button
-                     variant={"ghost"}
-                     kind={"icon"}
-                     className="col-start-2 row-start-2 shrink-0 justify-self-end max-lg:self-end"
-                  >
-                     <Icons.ellipsisHorizontal />
-                  </Button>
-               }
-            />
-            <MenuPopup
-               align="end"
-               onClick={(e) => {
-                  e.stopPropagation()
-               }}
-            >
-               <MenuCheckboxItem
-                  closeOnClick
-                  onClick={() => {
-                     if (assigned)
-                        return deleteAssignee.mutate({
-                           orderId: order.id,
-                           userId: auth.user.id,
-                           workspaceId: auth.workspace.id,
+                              {ORDER_STATUSES_TRANSLATION[order.status] ??
+                                 "Без статусу"}{" "}
+                              {order.status === "successful"
+                                 ? `(${formatCurrency(totalProfit, {
+                                      currency: order.currency,
+                                   })})`
+                                 : ""}
+                           </Badge>
+                        </ComboboxTrigger>
+                        <ComboboxPopup
+                           sideOffset={4}
+                           align="end"
+                           onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                           }}
+                        >
+                           <ComboboxInput />
+                           {ORDER_STATUSES.map((s) =>
+                              s === "pending" ? null : (
+                                 <ComboboxItem
+                                    key={s}
+                                    value={s}
+                                    keywords={[ORDER_STATUSES_TRANSLATION[s]]}
+                                 >
+                                    {ORDER_STATUSES_TRANSLATION[s]}
+                                 </ComboboxItem>
+                              ),
+                           )}
+                        </ComboboxPopup>
+                     </Combobox>
+                  ) : null}
+               </div>
+               <p className="min-w-[60px] text-foreground/75 max-lg:hidden">
+                  {formatOrderDate(order.createdAt)}
+               </p>
+               <div
+                  className="absolute"
+                  onClick={(e) => {
+                     e.preventDefault()
+                     e.stopPropagation()
+                  }}
+               >
+                  <UpdateOrder
+                     open={updateOpen}
+                     setOpen={setUpdateOpen}
+                     order={order}
+                     finalFocus={menuTriggerRef}
+                  />
+                  <ArchiveOrderAlert
+                     open={archiveAlertOpen}
+                     onOpenChange={setArchiveAlertOpen}
+                     orderName={order.name}
+                     finalFocus={menuTriggerRef}
+                     action={() =>
+                        update.mutate({
+                           id: order.id,
+                           workspaceId: params.workspaceId,
+                           deletedAt: new Date(),
                         })
-
-                     createAssignee.mutate({
+                     }
+                  />
+                  <DeleteOrderAlert
+                     open={deleteAlertOpen}
+                     onOpenChange={setDeleteAlertOpen}
+                     orderName={order.name}
+                     finalFocus={menuTriggerRef}
+                     action={() =>
+                        deleteItem.mutate({
+                           orderId: order.id,
+                           workspaceId: params.workspaceId,
+                        })
+                     }
+                  />
+               </div>
+            </Link>
+         </ContextMenuTrigger>
+         <ContextMenuPopup>
+            <ContextMenuCheckboxItem
+               closeOnClick
+               onClick={() => {
+                  if (assigned)
+                     return deleteAssignee.mutate({
                         orderId: order.id,
                         userId: auth.user.id,
                         workspaceId: auth.workspace.id,
                      })
-                  }}
-               >
-                  {assigned ? (
-                     <>
-                        <Icons.undo className="size-[18px]" />
-                        Залишити
-                     </>
-                  ) : (
-                     <>
-                        <Icons.pin className="size-5" />
-                        Зайняти
-                     </>
-                  )}
-               </MenuCheckboxItem>
-               <MenuItem
-                  onClick={() => {
-                     setUpdateOpen(true)
-                  }}
-               >
-                  <Icons.pencil />
-                  Редагувати
-               </MenuItem>
-               <MenuSeparator />
-               {order.deletedAt === null ? (
-                  <MenuItem
-                     destructive
-                     onClick={() => setArchiveAlertOpen(true)}
-                  >
-                     <Icons.archive />
-                     Архівувати
-                  </MenuItem>
+
+                  createAssignee.mutate({
+                     orderId: order.id,
+                     userId: auth.user.id,
+                     workspaceId: auth.workspace.id,
+                  })
+               }}
+            >
+               {assigned ? (
+                  <>
+                     <Icons.undo className="size-[18px]" />
+                     Залишити
+                  </>
                ) : (
-                  <MenuItem
-                     onClick={() =>
-                        update.mutate({
-                           id: order.id,
-                           workspaceId: params.workspaceId,
-                           deletedAt: null,
-                        })
-                     }
-                  >
-                     <Icons.undo />
-                     Відновити
-                  </MenuItem>
+                  <>
+                     <Icons.pin className="size-5" />
+                     Зайняти
+                  </>
                )}
-               {order.deletedAt &&
-               (auth.workspace.role === "owner" ||
-                  auth.workspace.role === "admin") ? (
-                  <MenuItem
-                     destructive
-                     onClick={() => setDeleteAlertOpen(true)}
-                  >
-                     <Icons.trash />
-                     Видалити
-                  </MenuItem>
-               ) : null}
-            </MenuPopup>
-         </Menu>
-      </Link>
+            </ContextMenuCheckboxItem>
+            <ContextMenuItem
+               onClick={() => {
+                  setUpdateOpen(true)
+               }}
+            >
+               <Icons.pencil />
+               Редагувати
+            </ContextMenuItem>
+            <MenuSeparator />
+            {order.deletedAt === null ? (
+               <ContextMenuItem
+                  destructive
+                  onClick={() => setArchiveAlertOpen(true)}
+               >
+                  <Icons.archive />
+                  Архівувати
+               </ContextMenuItem>
+            ) : (
+               <ContextMenuItem
+                  onClick={() =>
+                     update.mutate({
+                        id: order.id,
+                        workspaceId: params.workspaceId,
+                        deletedAt: null,
+                     })
+                  }
+               >
+                  <Icons.undo />
+                  Відновити
+               </ContextMenuItem>
+            )}
+            {order.deletedAt &&
+            (auth.workspace.role === "owner" ||
+               auth.workspace.role === "admin") ? (
+               <ContextMenuItem
+                  destructive
+                  onClick={() => setDeleteAlertOpen(true)}
+               >
+                  <Icons.trash />
+                  Видалити
+               </ContextMenuItem>
+            ) : null}
+         </ContextMenuPopup>
+      </ContextMenu>
    )
 }
 
