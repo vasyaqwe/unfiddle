@@ -376,7 +376,7 @@ function RouteComponent() {
                   {order.assignees.length === 0 ? null : (
                      <AvatarStack
                         size={26}
-                        className="mt-3 flex"
+                        className="mt-3"
                      >
                         {order.assignees.map((assignee) => (
                            <AvatarStackItem key={assignee.user.id}>
