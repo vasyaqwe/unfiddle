@@ -18,6 +18,7 @@ import { Icons } from "@unfiddle/ui/components/icons"
 import {
    Menu,
    MenuCheckboxItem,
+   MenuCheckboxItemIndicator,
    MenuPopup,
    MenuSubmenuTrigger,
    MenuTrigger,
@@ -60,7 +61,7 @@ export function FilterMenu() {
 
    const selectedLength = Object.values(search)
       .filter((value) => Array.isArray(value))
-      .reduce((total, arr) => total + arr.length, 0)
+      .reduce((total, arr) => total + (arr?.length ?? 0), 0)
 
    const membersQ = useQuery(
       trpc.workspace.member.list.queryOptions({
@@ -112,6 +113,7 @@ export function FilterMenu() {
                            key={status}
                         >
                            {ORDER_STATUSES_TRANSLATION[status]}
+                           <MenuCheckboxItemIndicator />
                         </MenuCheckboxItem>
                      ))}
                   </MenuPopup>
@@ -133,6 +135,7 @@ export function FilterMenu() {
                            key={severity}
                         >
                            {ORDER_SEVERITIES_TRANSLATION[severity]}
+                           <MenuCheckboxItemIndicator />
                         </MenuCheckboxItem>
                      ))}
                   </MenuPopup>
@@ -155,6 +158,7 @@ export function FilterMenu() {
                               key={creator.id}
                            >
                               {creator.name}
+                              <MenuCheckboxItemIndicator />
                            </MenuCheckboxItem>
                         ))}
                      </MenuPopup>

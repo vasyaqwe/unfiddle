@@ -21,7 +21,6 @@ const router = createRouter({
    context: { queryClient, trpc },
    defaultPreload: "intent",
    defaultPendingMs: 150,
-   defaultPendingMinMs: 200,
    defaultPreloadStaleTime: 0,
    defaultNotFoundComponent: NotFound,
    defaultErrorComponent: ({ error }) => (

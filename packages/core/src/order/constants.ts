@@ -14,7 +14,7 @@ export const ORDER_SEVERITIES = ["low", "high", "critical"] as const
 type TailwindColor = keyof typeof tailwindColors
 
 export const ORDER_STATUSES_COLORS: Record<OrderStatus, TailwindColor> = {
-   pending: "blue",
+   pending: "stone",
    processing: "blue",
    en_route: "orange",
    successful: "green",

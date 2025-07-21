@@ -62,11 +62,9 @@ import { toast } from "sonner"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/team")({
    component: RouteComponent,
-   loader: async ({ context, params }) => {
-      context.queryClient.prefetchQuery(
-         trpc.workspace.member.list.queryOptions({
-            workspaceId: params.workspaceId,
-         }),
+   loader: async (opts) => {
+      opts.context.queryClient.prefetchQuery(
+         trpc.workspace.member.list.queryOptions(opts.params),
       )
    },
 })
@@ -274,7 +272,9 @@ function MemberRow({
                            variant={"ghost"}
                            className="-ml-2 disabled:cursor-auto disabled:opacity-100 disabled:hover:bg-transparent"
                         >
-                           <SelectValue>{(label) => label}</SelectValue>
+                           <SelectValue placeholder={member.role}>
+                              {(label) => label}
+                           </SelectValue>
                         </Button>
                      }
                   />

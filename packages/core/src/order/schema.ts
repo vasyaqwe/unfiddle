@@ -40,7 +40,6 @@ export const order = d.table(
       groupId: d.text(),
       normalizedName: d.text().notNull().default(""),
       name: d.text().notNull(),
-      quantity: d.integer().notNull(),
       currency: d
          .text({
             enum: CURRENCIES,
@@ -48,7 +47,6 @@ export const order = d.table(
          .notNull()
          .default("UAH"),
       sellingPrice: d.numeric({ mode: "number" }).notNull(),
-      desiredPrice: d.numeric({ mode: "number" }),
       severity: d.text({ enum: ORDER_SEVERITIES }).notNull().default("low"),
       note: d.text().notNull().default(""),
       status: d.text({ enum: ORDER_STATUSES }).notNull().default("pending"),
@@ -94,13 +92,10 @@ export const orderRelations = relations(order, ({ one, many }) => ({
 
 export const updateOrderSchema = createUpdateSchema(order)
    .pick({
-      id: true,
       workspaceId: true,
       name: true,
       note: true,
-      quantity: true,
       sellingPrice: true,
-      desiredPrice: true,
       status: true,
       severity: true,
       vat: true,
@@ -108,8 +103,9 @@ export const updateOrderSchema = createUpdateSchema(order)
       deliversAt: true,
       currency: true,
    })
-   .required({ id: true, workspaceId: true })
+   .required({ workspaceId: true })
    .extend({
+      orderId: z.string(),
       deletedAt: z.date().nullable().optional(),
       analogs: z.array(z.string()).optional(),
    })

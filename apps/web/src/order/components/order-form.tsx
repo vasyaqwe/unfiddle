@@ -1,13 +1,13 @@
-import { useAuth } from "@/auth/hooks"
 import { CURRENCIES, CURRENCY_SYMBOLS } from "@unfiddle/core/currency/constants"
+import type { Currency } from "@unfiddle/core/currency/types"
 import { ORDER_SEVERITIES_TRANSLATION } from "@unfiddle/core/order/constants"
 import { ORDER_SEVERITIES } from "@unfiddle/core/order/constants"
+import type { OrderItem } from "@unfiddle/core/order/item/types"
 import type { OrderSeverity } from "@unfiddle/core/order/types"
-import type { RouterInput, RouterOutput } from "@unfiddle/core/trpc/types"
+import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import { Button } from "@unfiddle/ui/components/button"
 import { Checkbox } from "@unfiddle/ui/components/checkbox"
 import { DateInput } from "@unfiddle/ui/components/date-input"
-import {} from "@unfiddle/ui/components/drawer"
 import {
    Field,
    FieldControl,
@@ -27,28 +27,39 @@ import {
    SelectValue,
 } from "@unfiddle/ui/components/select"
 import { Textarea } from "@unfiddle/ui/components/textarea"
-import { formData, number } from "@unfiddle/ui/utils"
+import { formData } from "@unfiddle/ui/utils"
 import * as React from "react"
+
+type BareOrderItem = Omit<OrderItem, "id">
+
+type FormData = {
+   name: string
+   sellingPrice: string
+   note: string
+   client: string
+   severity: OrderSeverity
+   vat: "on" | "off"
+   deliversAt: Date | null
+   currency: Currency
+   items: BareOrderItem[]
+}
 
 export function OrderForm({
    order,
    onSubmit,
    children,
 }: {
-   order?: RouterOutput["order"]["list"][number] | undefined
-   onSubmit: (data: RouterInput["order"]["create"]) => void
+   order?:
+      | (Omit<RouterOutput["order"]["list"][number], "procurements"> & {
+           items?: OrderItem[]
+        })
+      | undefined
+   onSubmit: (data: FormData) => void
    children: React.ReactNode
 }) {
-   const auth = useAuth()
    const [deliversAt, setDeliversAt] = React.useState(order?.deliversAt ?? null)
    const [currency, setCurrency] = React.useState(order?.currency ?? "UAH")
-   const [items, setItems] = React.useState<
-      {
-         name: string
-         quantity: number
-         desiredPrice: number | null
-      }[]
-   >(
+   const [items, setItems] = React.useState<BareOrderItem[]>(
       order?.items ?? [
          {
             name: "",
@@ -71,30 +82,12 @@ export function OrderForm({
             }
 
             requestAnimationFrame(() => {
-               const form = formData<{
-                  name: string
-                  quantity: string
-                  sellingPrice: string
-                  desiredPrice: string
-                  note: string
-                  client: string
-                  severity: OrderSeverity
-                  vat: "on" | "off"
-               }>(e.target)
-
+               const form = formData<FormData>(e.target)
                onSubmit({
-                  workspaceId: auth.workspace.id,
-                  name: form.name,
-                  sellingPrice: number(form.sellingPrice),
-                  note: form.note,
-                  client: form.client.length === 0 ? null : form.client,
-                  vat: form.vat === "on",
+                  ...form,
                   deliversAt,
-                  severity: form.severity,
-                  items,
                   currency,
-                  quantity: 1,
-                  desiredPrice: null,
+                  items,
                })
             })
          }}
@@ -118,7 +111,9 @@ export function OrderForm({
                   <SelectTrigger
                      render={
                         <Button variant={"secondary"}>
-                           <SelectValue>{(label) => label}</SelectValue>
+                           <SelectValue placeholder={currency}>
+                              {(label) => label}
+                           </SelectValue>
                            <SelectTriggerIcon />
                         </Button>
                      }
@@ -270,7 +265,15 @@ export function OrderForm({
                               variant={"secondary"}
                               className="w-full justify-start"
                            >
-                              <SelectValue>{(label) => label}</SelectValue>
+                              <SelectValue
+                                 placeholder={
+                                    ORDER_SEVERITIES_TRANSLATION[
+                                       order?.severity ?? "low"
+                                    ]
+                                 }
+                              >
+                                 {(label) => label}
+                              </SelectValue>
                               <SelectTriggerIcon />
                            </Button>
                         }
@@ -314,15 +317,13 @@ export function OrderForm({
                   }
                />
             </Field>
-            <div>
-               <Field className={"mt-3 flex flex-row items-center gap-2"}>
-                  <Checkbox
-                     name="vat"
-                     defaultChecked={order?.vat ?? false}
-                  />
-                  <FieldLabel>З ПДВ</FieldLabel>
-               </Field>
-            </div>
+            <Field className={"mt-3 flex flex-row items-center gap-2"}>
+               <Checkbox
+                  name="vat"
+                  defaultChecked={order?.vat ?? false}
+               />
+               <FieldLabel className={"mt-px"}>З ПДВ</FieldLabel>
+            </Field>
          </Fieldset>
          {children}
       </form>

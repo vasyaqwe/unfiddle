@@ -28,26 +28,20 @@ export function useCreateOrder({
                ...input,
                id: crypto.randomUUID(),
                shortId: 0,
-               sellingPrice: input.sellingPrice ?? null,
                currency: input.currency ?? "UAH",
                severity: input.severity ?? "low",
                creatorId: auth.user.id,
                creator: auth.user,
                status: "pending",
-               note: input.note ?? "",
                vat: input.vat ?? false,
-               client: input.client ?? null,
-               deliversAt: input.deliversAt ?? null,
-               procurements: [],
                assignees: [],
-               analogs: [],
+               procurements: [],
                deletedAt: null,
                createdAt: new Date(),
-               items: input.items.map((item) => ({
-                  ...item,
-                  id: crypto.randomUUID(),
-                  desiredPrice: item.desiredPrice ?? null,
-               })),
+               client: input.client ?? null,
+               sellingPrice: input.sellingPrice ?? 0,
+               deliversAt: input.deliversAt ?? null,
+               note: input.note ?? "",
             })
 
             onMutate?.()
@@ -69,8 +63,8 @@ export function useCreateOrder({
                order: {
                   ...order,
                   creator: auth.user,
-                  procurements: [],
                   assignees: [],
+                  procurements: [],
                },
             })
             // notify({

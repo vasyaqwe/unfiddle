@@ -5,8 +5,7 @@ import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 import tsconfigPaths from "vite-tsconfig-paths"
 
-// https://vitejs.dev/config/
-export default defineConfig(() => {
+export default defineConfig(({ mode }) => {
    return {
       plugins: [
          tanstackRouter({ target: "react", autoCodeSplitting: true }),
@@ -21,7 +20,7 @@ export default defineConfig(() => {
             authToken: process.env.SENTRY_AUTH_TOKEN,
             org: "unfiddle",
             project: "unfiddle-web",
-            disable: process.env.NODE_ENV === "development",
+            disable: mode === "development",
             telemetry: false,
          }),
       ],

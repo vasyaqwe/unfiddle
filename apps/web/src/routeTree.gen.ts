@@ -25,6 +25,7 @@ import { Route as AuthedWorkspaceIdLayoutSettingsRouteImport } from './routes/_a
 import { Route as AuthedWorkspaceIdLayoutSearchRouteImport } from './routes/_authed/$workspaceId/_layout/search'
 import { Route as AuthedWorkspaceIdLayoutAnalyticsRouteImport } from './routes/_authed/$workspaceId/_layout/analytics'
 import { Route as AuthedWorkspaceIdLayouthomeIndexRouteImport } from './routes/_authed/$workspaceId/_layout/(home)/index'
+import { Route as AuthedWorkspaceIdLayoutorderOrderOrderIdRouteImport } from './routes/_authed/$workspaceId/_layout/(order)/order.$orderId'
 
 const AuthedWorkspaceIdRouteImport = createFileRoute('/_authed/$workspaceId')()
 
@@ -106,6 +107,12 @@ const AuthedWorkspaceIdLayouthomeIndexRoute =
     path: '/',
     getParentRoute: () => AuthedWorkspaceIdLayoutRoute,
   } as any)
+const AuthedWorkspaceIdLayoutorderOrderOrderIdRoute =
+  AuthedWorkspaceIdLayoutorderOrderOrderIdRouteImport.update({
+    id: '/(order)/order/$orderId',
+    path: '/order/$orderId',
+    getParentRoute: () => AuthedWorkspaceIdLayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
@@ -121,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/$workspaceId/settings': typeof AuthedWorkspaceIdLayoutSettingsRoute
   '/$workspaceId/team': typeof AuthedWorkspaceIdLayoutTeamRoute
   '/$workspaceId/': typeof AuthedWorkspaceIdLayouthomeIndexRoute
+  '/$workspaceId/order/$orderId': typeof AuthedWorkspaceIdLayoutorderOrderOrderIdRoute
 }
 export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
@@ -135,6 +143,7 @@ export interface FileRoutesByTo {
   '/$workspaceId/search': typeof AuthedWorkspaceIdLayoutSearchRoute
   '/$workspaceId/settings': typeof AuthedWorkspaceIdLayoutSettingsRoute
   '/$workspaceId/team': typeof AuthedWorkspaceIdLayoutTeamRoute
+  '/$workspaceId/order/$orderId': typeof AuthedWorkspaceIdLayoutorderOrderOrderIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -153,6 +162,7 @@ export interface FileRoutesById {
   '/_authed/$workspaceId/_layout/settings': typeof AuthedWorkspaceIdLayoutSettingsRoute
   '/_authed/$workspaceId/_layout/team': typeof AuthedWorkspaceIdLayoutTeamRoute
   '/_authed/$workspaceId/_layout/(home)/': typeof AuthedWorkspaceIdLayouthomeIndexRoute
+  '/_authed/$workspaceId/_layout/(order)/order/$orderId': typeof AuthedWorkspaceIdLayoutorderOrderOrderIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -170,6 +180,7 @@ export interface FileRouteTypes {
     | '/$workspaceId/settings'
     | '/$workspaceId/team'
     | '/$workspaceId/'
+    | '/$workspaceId/order/$orderId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/forgot-password'
@@ -184,6 +195,7 @@ export interface FileRouteTypes {
     | '/$workspaceId/search'
     | '/$workspaceId/settings'
     | '/$workspaceId/team'
+    | '/$workspaceId/order/$orderId'
   id:
     | '__root__'
     | '/_authed'
@@ -201,6 +213,7 @@ export interface FileRouteTypes {
     | '/_authed/$workspaceId/_layout/settings'
     | '/_authed/$workspaceId/_layout/team'
     | '/_authed/$workspaceId/_layout/(home)/'
+    | '/_authed/$workspaceId/_layout/(order)/order/$orderId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -319,6 +332,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedWorkspaceIdLayouthomeIndexRouteImport
       parentRoute: typeof AuthedWorkspaceIdLayoutRoute
     }
+    '/_authed/$workspaceId/_layout/(order)/order/$orderId': {
+      id: '/_authed/$workspaceId/_layout/(order)/order/$orderId'
+      path: '/order/$orderId'
+      fullPath: '/$workspaceId/order/$orderId'
+      preLoaderRoute: typeof AuthedWorkspaceIdLayoutorderOrderOrderIdRouteImport
+      parentRoute: typeof AuthedWorkspaceIdLayoutRoute
+    }
   }
 }
 
@@ -328,6 +348,7 @@ interface AuthedWorkspaceIdLayoutRouteChildren {
   AuthedWorkspaceIdLayoutSettingsRoute: typeof AuthedWorkspaceIdLayoutSettingsRoute
   AuthedWorkspaceIdLayoutTeamRoute: typeof AuthedWorkspaceIdLayoutTeamRoute
   AuthedWorkspaceIdLayouthomeIndexRoute: typeof AuthedWorkspaceIdLayouthomeIndexRoute
+  AuthedWorkspaceIdLayoutorderOrderOrderIdRoute: typeof AuthedWorkspaceIdLayoutorderOrderOrderIdRoute
 }
 
 const AuthedWorkspaceIdLayoutRouteChildren: AuthedWorkspaceIdLayoutRouteChildren =
@@ -339,6 +360,8 @@ const AuthedWorkspaceIdLayoutRouteChildren: AuthedWorkspaceIdLayoutRouteChildren
     AuthedWorkspaceIdLayoutTeamRoute: AuthedWorkspaceIdLayoutTeamRoute,
     AuthedWorkspaceIdLayouthomeIndexRoute:
       AuthedWorkspaceIdLayouthomeIndexRoute,
+    AuthedWorkspaceIdLayoutorderOrderOrderIdRoute:
+      AuthedWorkspaceIdLayoutorderOrderOrderIdRoute,
   }
 
 const AuthedWorkspaceIdLayoutRouteWithChildren =

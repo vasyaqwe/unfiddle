@@ -1,51 +1,53 @@
 import { useAuth } from "@/auth/hooks"
-import { useOrderQueryOptions } from "@/order/queries"
+import { useOrder } from "@/order/hooks"
+import { useOrderOneQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import type { OrderItem } from "@unfiddle/core/order/item/types"
+import type { RouterInput } from "@unfiddle/core/trpc/types"
 import { toast } from "sonner"
 
 export function useUpdateOrderItem({
    onMutate,
    onError,
 }: { onMutate?: () => void; onError?: () => void } = {}) {
+   const order = useOrder()
    const queryClient = useQueryClient()
    const auth = useAuth()
    const socket = useSocket()
-   const queryOptions = useOrderQueryOptions()
+   const oneQueryOptions = useOrderOneQueryOptions()
    const update = useOptimisticUpdateOrderItem()
 
    return useMutation(
       trpc.order.item.update.mutationOptions({
          onMutate: async (input) => {
-            await queryClient.cancelQueries(queryOptions.list)
+            await queryClient.cancelQueries(oneQueryOptions)
 
-            const data = queryClient.getQueryData(queryOptions.list.queryKey)
+            const data = queryClient.getQueryData(oneQueryOptions.queryKey)
 
-            update(input)
+            update({ ...input, orderId: order.id })
 
             onMutate?.()
 
             return { data }
          },
          onError: (error, _data, context) => {
-            queryClient.setQueryData(queryOptions.list.queryKey, context?.data)
+            queryClient.setQueryData(oneQueryOptions.queryKey, context?.data)
             toast.error("Ой-ой!", {
                description: error.message,
             })
-
             onError?.()
          },
-         onSuccess: (_, item) => {
+         onSuccess: (_data, item) => {
             socket.order.send({
                action: "update_item",
                senderId: auth.user.id,
                item,
+               orderId: order.id,
             })
          },
          onSettled: () => {
-            queryClient.invalidateQueries(queryOptions.list)
+            queryClient.invalidateQueries(oneQueryOptions)
          },
       }),
    )
@@ -53,18 +55,23 @@ export function useUpdateOrderItem({
 
 export function useOptimisticUpdateOrderItem() {
    const queryClient = useQueryClient()
-   const queryOptions = useOrderQueryOptions()
+   const auth = useAuth()
 
-   return (input: Partial<OrderItem>) => {
-      queryClient.setQueryData(queryOptions.list.queryKey, (oldData) => {
+   return (input: RouterInput["order"]["item"]["update"]) => {
+      const orderOneQueryKey = trpc.order.one.queryOptions({
+         orderId: input.orderId,
+         workspaceId: auth.workspace.id,
+      }).queryKey
+
+      queryClient.setQueryData(orderOneQueryKey, (oldData) => {
          if (!oldData) return oldData
-         return oldData.map((item) => ({
-            ...item,
-            items: item.items.map((item) => {
-               if (item.id === input.id) return { ...item, ...input }
+         return {
+            ...oldData,
+            items: oldData.items.map((item) => {
+               if (item.id === input.orderItemId) return { ...item, ...input }
                return item
             }),
-         }))
+         }
       })
    }
 }

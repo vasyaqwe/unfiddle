@@ -331,6 +331,55 @@ export const orderRouter = t.router({
             message: `Успішно імпортовано ${validatedData.length} замовлень`,
          }
       }),
+   one: t.procedure
+      .use(workspaceMemberMiddleware)
+      .input(
+         z.object({
+            orderId: z.string(),
+            workspaceId: z.string(),
+         }),
+      )
+      .query(async ({ ctx, input }) => {
+         const found = await ctx.db.query.order.findFirst({
+            where: and(
+               eq(order.id, input.orderId),
+               eq(order.workspaceId, input.workspaceId),
+            ),
+            with: {
+               items: {
+                  columns: {
+                     id: true,
+                     name: true,
+                     quantity: true,
+                     desiredPrice: true,
+                  },
+               },
+               creator: {
+                  columns: {
+                     id: true,
+                     name: true,
+                     image: true,
+                  },
+               },
+               assignees: {
+                  columns: {},
+                  with: {
+                     user: {
+                        columns: {
+                           id: true,
+                           name: true,
+                           image: true,
+                        },
+                     },
+                  },
+                  orderBy: [desc(orderAssignee.createdAt)],
+               },
+            },
+            orderBy: [desc(order.createdAt)],
+         })
+
+         return found ?? null
+      }),
    list: t.procedure
       .use(workspaceMemberMiddleware)
       .input(
@@ -390,7 +439,7 @@ export const orderRouter = t.router({
             )
          }
 
-         return await ctx.db.query.order.findMany({
+         const orders = await ctx.db.query.order.findMany({
             where: and(...whereConditions),
             columns: {
                id: true,
@@ -398,26 +447,17 @@ export const orderRouter = t.router({
                name: true,
                severity: true,
                currency: true,
-               sellingPrice: true,
                status: true,
-               note: true,
                vat: true,
-               client: true,
-               analogs: true,
                creatorId: true,
-               deletedAt: true,
                deliversAt: true,
+               client: true,
+               sellingPrice: true,
+               deletedAt: true,
                createdAt: true,
+               note: true,
             },
             with: {
-               items: {
-                  columns: {
-                     id: true,
-                     name: true,
-                     quantity: true,
-                     desiredPrice: true,
-                  },
-               },
                creator: {
                   columns: {
                      id: true,
@@ -441,31 +481,15 @@ export const orderRouter = t.router({
                procurements: {
                   columns: {
                      id: true,
-                     quantity: true,
                      purchasePrice: true,
-                     status: true,
-                     note: true,
-                     provider: true,
+                     quantity: true,
                   },
-                  with: {
-                     orderItem: {
-                        columns: {
-                           name: true,
-                        },
-                     },
-                     creator: {
-                        columns: {
-                           id: true,
-                           name: true,
-                           image: true,
-                        },
-                     },
-                  },
-                  orderBy: [desc(procurement.createdAt)],
                },
             },
             orderBy: [desc(order.createdAt)],
          })
+
+         return orders
       }),
    create: t.procedure
       .use(workspaceMemberMiddleware)
@@ -502,16 +526,13 @@ export const orderRouter = t.router({
             .get()
 
          const createdOrderItems = await tryCatch(
-            ctx.db
-               .insert(orderItem)
-               .values(
-                  input.items.map((item) => ({
-                     ...item,
-                     workspaceId: input.workspaceId,
-                     orderId: createdOrder.id,
-                  })),
-               )
-               .returning(),
+            ctx.db.insert(orderItem).values(
+               input.items.map((item) => ({
+                  ...item,
+                  workspaceId: input.workspaceId,
+                  orderId: createdOrder.id,
+               })),
+            ),
          )
 
          if (createdOrderItems.error) {
@@ -558,7 +579,7 @@ export const orderRouter = t.router({
             throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" })
          }
 
-         return { ...createdOrder, items: createdOrderItems.data }
+         return createdOrder
       }),
    update: t.procedure
       .use(workspaceMemberMiddleware)
@@ -582,14 +603,14 @@ export const orderRouter = t.router({
             })
             .where(
                and(
-                  eq(order.id, input.id),
+                  eq(order.id, input.orderId),
                   eq(order.workspaceId, input.workspaceId),
                ),
             )
       }),
    delete: t.procedure
       .use(workspaceMemberMiddleware)
-      .input(z.object({ id: z.string(), workspaceId: z.string() }))
+      .input(z.object({ orderId: z.string(), workspaceId: z.string() }))
       .mutation(async ({ ctx, input }) => {
          if (ctx.membership.role !== "owner" && ctx.membership.role !== "admin")
             throw new TRPCError({
@@ -601,7 +622,7 @@ export const orderRouter = t.router({
                .delete(procurement)
                .where(
                   and(
-                     eq(procurement.orderId, input.id),
+                     eq(procurement.orderId, input.orderId),
                      eq(procurement.workspaceId, input.workspaceId),
                   ),
                ),
@@ -609,7 +630,7 @@ export const orderRouter = t.router({
                .delete(orderAssignee)
                .where(
                   and(
-                     eq(orderAssignee.orderId, input.id),
+                     eq(orderAssignee.orderId, input.orderId),
                      eq(orderAssignee.workspaceId, input.workspaceId),
                   ),
                ),
@@ -617,7 +638,7 @@ export const orderRouter = t.router({
                .delete(order)
                .where(
                   and(
-                     eq(order.id, input.id),
+                     eq(order.id, input.orderId),
                      eq(order.workspaceId, input.workspaceId),
                   ),
                ),

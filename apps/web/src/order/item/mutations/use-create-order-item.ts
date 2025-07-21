@@ -1,5 +1,5 @@
 import { useAuth } from "@/auth/hooks"
-import { useOrderQueryOptions } from "@/order/queries"
+import { useOrderOneQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -13,20 +13,24 @@ export function useCreateOrderItem({
    const queryClient = useQueryClient()
    const auth = useAuth()
    const socket = useSocket()
-   const queryOptions = useOrderQueryOptions()
+   const oneQueryOptions = useOrderOneQueryOptions()
    const create = useOptimisticCreateOrderItem()
 
    return useMutation(
       trpc.order.item.create.mutationOptions({
          onMutate: async (input) => {
-            await queryClient.cancelQueries(queryOptions.list)
+            await queryClient.cancelQueries(oneQueryOptions)
 
-            const data = queryClient.getQueryData(queryOptions.list.queryKey)
+            const data = queryClient.getQueryData(oneQueryOptions.queryKey)
 
             create({
-               ...input,
-               id: crypto.randomUUID(),
-               desiredPrice: input.desiredPrice ?? null,
+               orderId: input.orderId,
+               item: {
+                  id: crypto.randomUUID(),
+                  name: input.name,
+                  quantity: input.quantity,
+                  desiredPrice: input.desiredPrice ?? null,
+               },
             })
 
             onMutate?.()
@@ -34,7 +38,7 @@ export function useCreateOrderItem({
             return { data }
          },
          onError: (error, _data, context) => {
-            queryClient.setQueryData(queryOptions.list.queryKey, context?.data)
+            queryClient.setQueryData(oneQueryOptions.queryKey, context?.data)
             toast.error("Ой-ой!", {
                description: error.message,
             })
@@ -45,12 +49,13 @@ export function useCreateOrderItem({
             socket.order.send({
                action: "create_item",
                senderId: auth.user.id,
+               workspaceId: auth.workspace.id,
                orderId: item.orderId,
                item,
             })
          },
          onSettled: () => {
-            queryClient.invalidateQueries(queryOptions.list)
+            queryClient.invalidateQueries(oneQueryOptions)
          },
       }),
    )
@@ -58,20 +63,20 @@ export function useCreateOrderItem({
 
 export function useOptimisticCreateOrderItem() {
    const queryClient = useQueryClient()
-   const queryOptions = useOrderQueryOptions()
+   const auth = useAuth()
 
-   return (input: OrderItem & { orderId: string }) => {
-      queryClient.setQueryData(queryOptions.list.queryKey, (oldData) => {
+   return (input: { orderId: string; item: OrderItem }) => {
+      const queryKey = trpc.order.one.queryOptions({
+         orderId: input.orderId,
+         workspaceId: auth.workspace.id,
+      }).queryKey
+      queryClient.setQueryData(queryKey, (oldData) => {
          if (!oldData) return oldData
 
-         return oldData.map((item) => {
-            if (item.id === input.orderId)
-               return {
-                  ...item,
-                  items: [...item.items, input],
-               }
-            return item
-         })
+         return {
+            ...oldData,
+            items: [...oldData.items, input.item],
+         }
       })
    }
 }

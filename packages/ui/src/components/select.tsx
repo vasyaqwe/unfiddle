@@ -1,6 +1,6 @@
 import { Select as SelectPrimitive } from "@base-ui-components/react/select"
 import { Icons } from "@unfiddle/ui/components/icons"
-import { MENU_ITEM_STYLES } from "@unfiddle/ui/components/menu"
+import { MENU_ITEM_STYLES } from "@unfiddle/ui/components/menu/constants"
 import { POPUP_STYLES } from "@unfiddle/ui/constants"
 import { cn } from "../utils"
 

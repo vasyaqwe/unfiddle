@@ -6,6 +6,7 @@ import { PROCUREMENT_STATUSES } from "@unfiddle/core/procurement/constants"
 import { workspace } from "@unfiddle/core/workspace/schema"
 import { relations } from "drizzle-orm"
 import { createUpdateSchema } from "drizzle-zod"
+import z from "zod"
 
 export const procurement = d.table(
    "procurement",
@@ -58,12 +59,16 @@ export const procurementRelations = relations(procurement, ({ one }) => ({
 
 export const updateProcurementSchema = createUpdateSchema(procurement)
    .pick({
-      id: true,
       note: true,
       quantity: true,
       status: true,
       purchasePrice: true,
       provider: true,
       workspaceId: true,
+      orderItemId: true,
+      orderId: true,
    })
-   .required({ id: true, workspaceId: true })
+   .required({ workspaceId: true, orderId: true })
+   .extend({
+      procurementId: z.string(),
+   })

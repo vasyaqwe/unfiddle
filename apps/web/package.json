@@ -9,7 +9,7 @@
     "generate-pwa-assets": "pwa-assets-generator --preset minimal-2023 public/icon.svg"
   },
   "dependencies": {
-    "@base-ui-components/react": "1.0.0-alpha.8",
+    "@base-ui-components/react": "1.0.0-beta.0",
     "@oslojs/encoding": "^1.1.0",
     "@sentry/react": "^9.25.1",
     "@sentry/vite-plugin": "^3.5.0",

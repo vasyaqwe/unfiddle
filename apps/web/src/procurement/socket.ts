@@ -25,11 +25,7 @@ export function useProcurementSocket() {
 
          if (data.action === "update") return update(data.procurement)
 
-         if (data.action === "delete")
-            return deleteProcurement({
-               id: data.procurementId,
-               workspaceId: auth.workspace.id,
-            })
+         if (data.action === "delete") return deleteProcurement(data)
       },
    })
 }

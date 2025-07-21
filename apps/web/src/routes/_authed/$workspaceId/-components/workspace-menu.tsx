@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "@tanstack/react-router"
 import { Icons } from "@unfiddle/ui/components/icons"
 import {
    MenuCheckboxItem,
+   MenuCheckboxItemIndicator,
    MenuItem,
    MenuPopup,
    MenuSeparator,
@@ -53,6 +54,7 @@ export function WorkspaceMenuPopup() {
                      }
                   >
                      {membership.workspace.name}
+                     <MenuCheckboxItemIndicator />
                   </MenuCheckboxItem>
                ))}
                <MenuSeparator />

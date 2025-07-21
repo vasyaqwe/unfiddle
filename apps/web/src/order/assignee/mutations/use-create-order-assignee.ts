@@ -4,6 +4,7 @@ import { useOrderQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useParams } from "@tanstack/react-router"
 import type { OrderAssignee } from "@unfiddle/core/order/assignee/types"
 import { toast } from "sonner"
 
@@ -11,33 +12,55 @@ export function useCreateOrderAssignee({
    onMutate,
    onError,
 }: { onMutate?: () => void; onError?: () => void } = {}) {
+   const maybeParams = useParams({ strict: false })
    const queryClient = useQueryClient()
    const auth = useAuth()
    const socket = useSocket()
    const queryOptions = useOrderQueryOptions()
    const create = useOptimisticCreateOrderAssignee()
    const update = useOptimisticUpdateOrder()
+   const orderId = maybeParams.orderId
 
    return useMutation(
       trpc.order.assignee.create.mutationOptions({
          onMutate: async (input) => {
-            await queryClient.cancelQueries(queryOptions.list)
+            await Promise.all([
+               queryClient.cancelQueries(queryOptions.list),
+               queryClient.cancelQueries(trpc.order.one.queryOptions(input)),
+            ])
 
-            const data = queryClient.getQueryData(queryOptions.list.queryKey)
+            const listData = queryClient.getQueryData(
+               queryOptions.list.queryKey,
+            )
+            const oneData = orderId
+               ? queryClient.getQueryData(
+                    trpc.order.one.queryOptions(input).queryKey,
+                 )
+               : null
 
-            update({ id: input.orderId, status: "processing" })
-            create({ ...input, assignee: { user: auth.user } })
+            update({
+               orderId: input.orderId,
+               status: "processing",
+               workspaceId: input.workspaceId,
+            })
+            create({ orderId: input.orderId, assignee: { user: auth.user } })
 
             onMutate?.()
 
-            return { data }
+            return { listData, oneData }
          },
-         onError: (error, _data, context) => {
-            queryClient.setQueryData(queryOptions.list.queryKey, context?.data)
+         onError: (error, input, context) => {
+            queryClient.setQueryData(
+               queryOptions.list.queryKey,
+               context?.listData,
+            )
+            queryClient.setQueryData(
+               trpc.order.one.queryOptions(input).queryKey,
+               context?.oneData,
+            )
             toast.error("Ой-ой!", {
                description: error.message,
             })
-
             onError?.()
          },
          onSuccess: (_, assignee) => {
@@ -45,29 +68,51 @@ export function useCreateOrderAssignee({
                action: "create_assignee",
                senderId: auth.user.id,
                orderId: assignee.orderId,
+               workspaceId: auth.workspace.id,
                assignee: { user: auth.user },
             })
          },
-         onSettled: () => {
+         onSettled: (_data, _error, input) => {
             queryClient.invalidateQueries(queryOptions.list)
+            queryClient.invalidateQueries(trpc.order.one.queryOptions(input))
          },
       }),
    )
 }
 
 export function useOptimisticCreateOrderAssignee() {
+   const auth = useAuth()
    const queryClient = useQueryClient()
    const queryOptions = useOrderQueryOptions()
 
    return (input: { orderId: string; assignee: OrderAssignee }) => {
+      const oneQueryKey = trpc.order.one.queryOptions({
+         orderId: input.orderId,
+         workspaceId: auth.workspace.id,
+      }).queryKey
+      queryClient.setQueryData(oneQueryKey, (oldData) => {
+         if (!oldData) return oldData
+         return {
+            ...oldData,
+            assignees: oldData.assignees.some(
+               (a) => a.user.id === input.assignee.user.id,
+            )
+               ? oldData.assignees
+               : [input.assignee, ...oldData.assignees],
+         }
+      })
+
       queryClient.setQueryData(queryOptions.list.queryKey, (oldData) => {
          if (!oldData) return oldData
-
          return oldData.map((item) => {
             if (item.id === input.orderId)
                return {
                   ...item,
-                  assignees: [input.assignee, ...item.assignees],
+                  assignees: item.assignees.some(
+                     (a) => a.user.id === input.assignee.user.id,
+                  )
+                     ? item.assignees
+                     : [input.assignee, ...item.assignees],
                }
             return item
          })

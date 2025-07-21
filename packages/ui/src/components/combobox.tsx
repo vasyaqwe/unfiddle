@@ -1,4 +1,4 @@
-import { MENU_ITEM_STYLES } from "@unfiddle/ui/components/menu"
+import { MENU_ITEM_STYLES } from "@unfiddle/ui/components/menu/constants"
 import {
    Command,
    CommandEmpty,

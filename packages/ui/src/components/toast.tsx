@@ -1,3 +1,4 @@
+import { Icons } from "@unfiddle/ui/components/icons"
 import { isMobileAtom } from "@unfiddle/ui/store"
 import { useAtomValue } from "jotai"
 import type * as React from "react"
@@ -88,6 +89,12 @@ export function Toaster(props: React.ComponentProps<typeof Sonner>) {
                   />
                </svg>
             ),
+            close: (
+               <Icons.xMark
+                  className="!size-4 text-foreground/80"
+                  strokeWidth={3}
+               />
+            ),
          }}
          toastOptions={{
             unstyled: true,
@@ -95,6 +102,8 @@ export function Toaster(props: React.ComponentProps<typeof Sonner>) {
                title: "!text-[1rem] !font-[550] ml-6 -mt-1",
                description: "!text-sm line-clamp-2 mt-0.5 !font-normal",
                icon: "!absolute top-[0.75rem] left-4",
+               closeButton:
+                  "!size-6.5 absolute -top-2 -right-2 bg-background border-primary-12/12 z-[2] hover:bg-surface-2 !duration-75 !transition-colors border cursor-pointer shadow-2xs grid place-items-center rounded-full",
             },
             className:
                "font-primary px-3 py-3 items-center gap-2 w-full shadow-[inset_0_-1px_2px_0_rgb(0_0_0_/_0.12)] flex select-none border border-neutral bg-background pointer-events-auto rounded-2xl",

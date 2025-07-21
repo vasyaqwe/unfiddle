@@ -62,41 +62,41 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
             throw redirect({ to: ".", search: { who: [opts.context.user.id] } })
       },
       loaderDeps: (opts) => ({ search: opts.search }),
-      loader: async ({ context, params, deps }) => {
-         context.queryClient.prefetchQuery(
+      loader: async (opts) => {
+         opts.context.queryClient.prefetchQuery(
             trpc.workspace.member.list.queryOptions({
-               workspaceId: params.workspaceId,
+               workspaceId: opts.params.workspaceId,
             }),
          )
-         context.queryClient.prefetchQuery(
+         opts.context.queryClient.prefetchQuery(
             trpc.workspace.analytics.stats.queryOptions(
                {
-                  id: params.workspaceId,
-                  ...deps.search,
+                  id: opts.params.workspaceId,
+                  ...opts.deps.search,
                },
                {
                   staleTime: CACHE_SHORT,
                },
             ),
          )
-         context.queryClient.prefetchQuery(
+         opts.context.queryClient.prefetchQuery(
             trpc.workspace.analytics.profit.queryOptions(
                {
-                  id: params.workspaceId,
+                  id: opts.params.workspaceId,
                   timezoneOffset: getUserTimezoneOffset(),
-                  ...deps.search,
+                  ...opts.deps.search,
                },
                {
                   staleTime: CACHE_SHORT,
                },
             ),
          )
-         context.queryClient.prefetchQuery(
+         opts.context.queryClient.prefetchQuery(
             trpc.workspace.analytics.orders.queryOptions(
                {
-                  id: params.workspaceId,
+                  id: opts.params.workspaceId,
                   timezoneOffset: getUserTimezoneOffset(),
-                  ...deps.search,
+                  ...opts.deps.search,
                },
                {
                   staleTime: CACHE_SHORT,
