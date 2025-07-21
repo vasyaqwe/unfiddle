@@ -199,7 +199,7 @@ function RouteComponent() {
                   auth.workspace.role === "admin" ? (
                      <WhoCombobox />
                   ) : null}
-                  <PeriodSelect searchKey={"period"} />
+                  <PeriodSelect />
                   <CurrencySelect
                      value={search.currency}
                      onValueChange={(currency) => {
