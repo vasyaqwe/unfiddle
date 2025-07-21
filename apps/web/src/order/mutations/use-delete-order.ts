@@ -91,6 +91,7 @@ export function useOptimisticDeleteOrder() {
    const queryClient = useQueryClient()
    const queryOptions = useOrderQueryOptions()
    const navigate = useNavigate()
+   const params = useParams({ strict: false })
 
    return (input: RouterInput["order"]["delete"]) => {
       const oneQueryKey = trpc.order.one.queryOptions(input).queryKey
@@ -101,10 +102,12 @@ export function useOptimisticDeleteOrder() {
       })
       queryClient.setQueryData(oneQueryKey, (oldData) => {
          if (!oldData) return oldData
-         navigate({
-            to: "/$workspaceId",
-            params: { workspaceId: input.workspaceId },
-         })
+         if (params.orderId) {
+            navigate({
+               to: "/$workspaceId",
+               params: { workspaceId: input.workspaceId },
+            })
+         }
          return null
       })
    }
