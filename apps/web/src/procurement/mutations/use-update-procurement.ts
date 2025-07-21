@@ -4,7 +4,7 @@ import { useOrderQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import type { Procurement } from "@unfiddle/core/procurement/types"
+import type { RouterInput } from "@unfiddle/core/trpc/types"
 import { toast } from "sonner"
 
 export function useUpdateProcurement({
@@ -57,7 +57,7 @@ export function useUpdateProcurement({
 
             onError?.()
          },
-         onSuccess: (procurement) => {
+         onSuccess: (_data, procurement) => {
             socket.procurement.send({
                action: "update",
                senderId: auth.user.id,
@@ -87,7 +87,7 @@ export function useOptimisticUpdateProcurement() {
    const queryClient = useQueryClient()
    const queryOptions = useOrderQueryOptions()
 
-   return (input: Partial<Procurement> & { orderId: string }) => {
+   return async (input: RouterInput["procurement"]["update"]) => {
       const queryKey = trpc.procurement.list.queryOptions({
          orderId: input.orderId,
          workspaceId: auth.workspace.id,
@@ -95,7 +95,7 @@ export function useOptimisticUpdateProcurement() {
       queryClient.setQueryData(queryKey, (oldData) => {
          if (!oldData) return oldData
          return oldData.map((p) => {
-            if (p.id === input.id) return { ...p, ...input }
+            if (p.id === input.procurementId) return { ...p, ...input }
             return p
          })
       })
@@ -106,7 +106,7 @@ export function useOptimisticUpdateProcurement() {
                return {
                   ...item,
                   procurements: item.procurements.map((p) => {
-                     if (p.id === input.id) return { ...p, ...input }
+                     if (p.id === input.procurementId) return { ...p, ...input }
                      return p
                   }),
                }

@@ -20,47 +20,44 @@ export function useCreateOrderAssignee({
    const create = useOptimisticCreateOrderAssignee()
    const update = useOptimisticUpdateOrder()
    const orderId = maybeParams.orderId
-   const workspaceId = auth.workspace.id
 
    return useMutation(
       trpc.order.assignee.create.mutationOptions({
          onMutate: async (input) => {
-            await queryClient.cancelQueries(queryOptions.list)
-            if (orderId) {
-               await queryClient.cancelQueries(
-                  trpc.order.one.queryOptions({ orderId, workspaceId }),
-               )
-            }
+            await Promise.all([
+               queryClient.cancelQueries(queryOptions.list),
+               queryClient.cancelQueries(trpc.order.one.queryOptions(input)),
+            ])
 
             const listData = queryClient.getQueryData(
                queryOptions.list.queryKey,
             )
             const oneData = orderId
                ? queryClient.getQueryData(
-                    trpc.order.one.queryOptions({ orderId, workspaceId })
-                       .queryKey,
+                    trpc.order.one.queryOptions(input).queryKey,
                  )
                : null
 
-            update({ id: input.orderId, status: "processing" })
-            create({ ...input, assignee: { user: auth.user } })
+            update({
+               orderId: input.orderId,
+               status: "processing",
+               workspaceId: input.workspaceId,
+            })
+            create({ orderId: input.orderId, assignee: { user: auth.user } })
 
             onMutate?.()
 
             return { listData, oneData }
          },
-         onError: (error, _data, context) => {
+         onError: (error, input, context) => {
             queryClient.setQueryData(
                queryOptions.list.queryKey,
                context?.listData,
             )
-            if (orderId) {
-               queryClient.setQueryData(
-                  trpc.order.one.queryOptions({ orderId, workspaceId })
-                     .queryKey,
-                  context?.oneData,
-               )
-            }
+            queryClient.setQueryData(
+               trpc.order.one.queryOptions(input).queryKey,
+               context?.oneData,
+            )
             toast.error("Ой-ой!", {
                description: error.message,
             })
@@ -71,16 +68,13 @@ export function useCreateOrderAssignee({
                action: "create_assignee",
                senderId: auth.user.id,
                orderId: assignee.orderId,
+               workspaceId: auth.workspace.id,
                assignee: { user: auth.user },
             })
          },
-         onSettled: () => {
+         onSettled: (_data, _error, input) => {
             queryClient.invalidateQueries(queryOptions.list)
-            if (orderId) {
-               queryClient.invalidateQueries(
-                  trpc.order.one.queryOptions({ orderId, workspaceId }),
-               )
-            }
+            queryClient.invalidateQueries(trpc.order.one.queryOptions(input))
          },
       }),
    )
@@ -100,18 +94,25 @@ export function useOptimisticCreateOrderAssignee() {
          if (!oldData) return oldData
          return {
             ...oldData,
-            assignees: [input.assignee, ...oldData.assignees],
+            assignees: oldData.assignees.some(
+               (a) => a.user.id === input.assignee.user.id,
+            )
+               ? oldData.assignees
+               : [input.assignee, ...oldData.assignees],
          }
       })
 
       queryClient.setQueryData(queryOptions.list.queryKey, (oldData) => {
          if (!oldData) return oldData
-
          return oldData.map((item) => {
             if (item.id === input.orderId)
                return {
                   ...item,
-                  assignees: [input.assignee, ...item.assignees],
+                  assignees: item.assignees.some(
+                     (a) => a.user.id === input.assignee.user.id,
+                  )
+                     ? item.assignees
+                     : [input.assignee, ...item.assignees],
                }
             return item
          })

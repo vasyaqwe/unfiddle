@@ -3,6 +3,7 @@ import { useOrderOneQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import type { RouterInput } from "@unfiddle/core/trpc/types"
 import { toast } from "sonner"
 
 export function useDeleteOrderItem({
@@ -42,6 +43,7 @@ export function useDeleteOrderItem({
                senderId: auth.user.id,
                orderId: item.orderId,
                orderItemId: item.orderItemId,
+               workspaceId: auth.workspace.id,
             })
          },
          onSettled: () => {
@@ -55,7 +57,7 @@ export function useOptimisticDeleteOrderItem() {
    const auth = useAuth()
    const queryClient = useQueryClient()
 
-   return (input: { orderId: string; orderItemId: string }) => {
+   return (input: RouterInput["order"]["item"]["delete"]) => {
       const queryKey = trpc.order.one.queryOptions({
          orderId: input.orderId,
          workspaceId: auth.workspace.id,

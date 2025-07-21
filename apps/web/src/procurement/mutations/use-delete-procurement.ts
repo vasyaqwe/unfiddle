@@ -36,7 +36,7 @@ export function useDeleteProcurement({
                orderQueryOptions.list.queryKey,
             )
 
-            deleteItem({ ...input, orderId: order.id })
+            deleteItem(input)
 
             onMutate?.()
 
@@ -62,7 +62,7 @@ export function useDeleteProcurement({
                action: "delete",
                senderId: auth.user.id,
                procurementId: procurement.procurementId,
-               orderId: order.id,
+               orderId: procurement.orderId,
                workspaceId: auth.workspace.id,
             })
          },
@@ -89,9 +89,7 @@ export function useOptimisticDeleteProcurement() {
    const queryClient = useQueryClient()
    const queryOptions = useOrderQueryOptions()
 
-   return (
-      input: RouterInput["procurement"]["delete"] & { orderId: string },
-   ) => {
+   return (input: RouterInput["procurement"]["delete"]) => {
       const queryKey = trpc.procurement.list.queryOptions({
          orderId: input.orderId,
          workspaceId: auth.workspace.id,

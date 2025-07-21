@@ -31,12 +31,13 @@ export const orderItemRelations = relations(orderItem, ({ one }) => ({
 
 export const updateOrderItemSchema = createUpdateSchema(orderItem)
    .pick({
-      id: true,
       name: true,
       quantity: true,
       desiredPrice: true,
+      orderId: true,
    })
-   .required({ id: true })
+   .required({ orderId: true })
    .extend({
       workspaceId: z.string(),
+      orderItemId: z.string(),
    })

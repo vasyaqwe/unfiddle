@@ -4,7 +4,7 @@ import { useOrderOneQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import type { OrderItem } from "@unfiddle/core/order/item/types"
+import type { RouterInput } from "@unfiddle/core/trpc/types"
 import { toast } from "sonner"
 
 export function useUpdateOrderItem({
@@ -38,7 +38,7 @@ export function useUpdateOrderItem({
             })
             onError?.()
          },
-         onSuccess: (item) => {
+         onSuccess: (_data, item) => {
             socket.order.send({
                action: "update_item",
                senderId: auth.user.id,
@@ -57,7 +57,7 @@ export function useOptimisticUpdateOrderItem() {
    const queryClient = useQueryClient()
    const auth = useAuth()
 
-   return (input: Partial<OrderItem> & { orderId: string }) => {
+   return (input: RouterInput["order"]["item"]["update"]) => {
       const orderOneQueryKey = trpc.order.one.queryOptions({
          orderId: input.orderId,
          workspaceId: auth.workspace.id,
@@ -68,7 +68,7 @@ export function useOptimisticUpdateOrderItem() {
          return {
             ...oldData,
             items: oldData.items.map((item) => {
-               if (item.id === input.id) return { ...item, ...input }
+               if (item.id === input.orderItemId) return { ...item, ...input }
                return item
             }),
          }

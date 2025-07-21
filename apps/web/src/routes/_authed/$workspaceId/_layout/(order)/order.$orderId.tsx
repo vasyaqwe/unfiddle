@@ -250,7 +250,7 @@ function RouteComponent() {
                                  onClick={(e) => {
                                     e.stopPropagation()
                                     update.mutate({
-                                       id: order.id,
+                                       orderId: order.id,
                                        workspaceId: params.workspaceId,
                                        analogs: order.analogs.filter(
                                           (_, existingIdx) =>
@@ -284,13 +284,13 @@ function RouteComponent() {
                      onValueChange={(status) => {
                         if (order.status === status)
                            return update.mutate({
-                              id: order.id,
+                              orderId: order.id,
                               workspaceId: params.workspaceId,
                               status: "pending",
                            })
 
                         update.mutate({
-                           id: order.id,
+                           orderId: order.id,
                            workspaceId: params.workspaceId,
                            status: status as never,
                         })
@@ -336,7 +336,7 @@ function RouteComponent() {
                      value={order.severity}
                      onValueChange={(severity) => {
                         update.mutate({
-                           id: order.id,
+                           orderId: order.id,
                            workspaceId: params.workspaceId,
                            severity: severity as never,
                         })
@@ -606,7 +606,7 @@ function Actions() {
                   <MenuItem
                      onClick={() =>
                         update.mutate({
-                           id: order.id,
+                           orderId: order.id,
                            workspaceId: params.workspaceId,
                            deletedAt: null,
                         })
@@ -642,7 +642,7 @@ function Actions() {
             finalFocus={menuTriggerRef}
             action={() =>
                update.mutate({
-                  id: order.id,
+                  orderId: order.id,
                   workspaceId: params.workspaceId,
                   deletedAt: new Date(),
                })

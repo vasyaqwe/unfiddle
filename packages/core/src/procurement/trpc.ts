@@ -68,7 +68,7 @@ export const procurementRouter = t.router({
             .set(input)
             .where(
                and(
-                  eq(procurement.id, input.id),
+                  eq(procurement.id, input.procurementId),
                   eq(procurement.workspaceId, input.workspaceId),
                ),
             )
@@ -77,7 +77,13 @@ export const procurementRouter = t.router({
       }),
    delete: t.procedure
       .use(workspaceMemberMiddleware)
-      .input(z.object({ procurementId: z.string(), workspaceId: z.string() }))
+      .input(
+         z.object({
+            procurementId: z.string(),
+            workspaceId: z.string(),
+            orderId: z.string(),
+         }),
+      )
       .mutation(async ({ ctx, input }) => {
          await ctx.db
             .delete(procurement)

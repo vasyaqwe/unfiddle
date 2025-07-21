@@ -24,9 +24,13 @@ export function useCreateOrderItem({
             const data = queryClient.getQueryData(oneQueryOptions.queryKey)
 
             create({
-               ...input,
-               id: crypto.randomUUID(),
-               desiredPrice: input.desiredPrice ?? null,
+               orderId: input.orderId,
+               item: {
+                  id: crypto.randomUUID(),
+                  name: input.name,
+                  quantity: input.quantity,
+                  desiredPrice: input.desiredPrice ?? null,
+               },
             })
 
             onMutate?.()
@@ -45,6 +49,8 @@ export function useCreateOrderItem({
             socket.order.send({
                action: "create_item",
                senderId: auth.user.id,
+               workspaceId: auth.workspace.id,
+               orderId: item.orderId,
                item,
             })
          },
@@ -59,7 +65,7 @@ export function useOptimisticCreateOrderItem() {
    const queryClient = useQueryClient()
    const auth = useAuth()
 
-   return (input: OrderItem & { orderId: string }) => {
+   return (input: { orderId: string; item: OrderItem }) => {
       const queryKey = trpc.order.one.queryOptions({
          orderId: input.orderId,
          workspaceId: auth.workspace.id,
@@ -69,7 +75,7 @@ export function useOptimisticCreateOrderItem() {
 
          return {
             ...oldData,
-            items: [...oldData.items, input],
+            items: [...oldData.items, input.item],
          }
       })
    }

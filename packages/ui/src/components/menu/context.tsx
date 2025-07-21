@@ -61,7 +61,7 @@ export function ContextMenuCheckboxItem({
 }: React.ComponentProps<typeof ContextMenuPrimitive.CheckboxItem>) {
    return (
       <ContextMenuPrimitive.CheckboxItem
-         className={cn(MENU_ITEM_STYLES.base, "", className)}
+         className={cn(MENU_ITEM_STYLES.base, className)}
          {...props}
       >
          {children}

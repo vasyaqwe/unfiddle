@@ -603,7 +603,7 @@ export const orderRouter = t.router({
             })
             .where(
                and(
-                  eq(order.id, input.id),
+                  eq(order.id, input.orderId),
                   eq(order.workspaceId, input.workspaceId),
                ),
             )

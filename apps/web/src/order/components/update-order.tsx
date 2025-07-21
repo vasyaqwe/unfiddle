@@ -42,7 +42,7 @@ export function UpdateOrder({ order, finalFocus, open, setOpen }: Props) {
             <OrderForm
                onSubmit={(form) =>
                   mutation.mutate({
-                     id: order.id,
+                     orderId: order.id,
                      workspaceId: auth.workspace.id,
                      name: form.name,
                      sellingPrice: number(form.sellingPrice),

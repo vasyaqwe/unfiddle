@@ -15,9 +15,7 @@ export type ProcurementEvent =
      }
    | {
         action: "update"
-        procurement: z.infer<typeof updateProcurementSchema> & {
-           orderId: string
-        }
+        procurement: z.infer<typeof updateProcurementSchema>
         senderId: string
      }
    | {

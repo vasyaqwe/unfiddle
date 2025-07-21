@@ -78,9 +78,10 @@ export function Procurement({
                   value={procurement.status}
                   onValueChange={(status) =>
                      update.mutate({
-                        id: procurement.id,
+                        procurementId: procurement.id,
                         workspaceId: params.workspaceId,
                         status: status as never,
+                        orderId: order.id,
                      })
                   }
                >
@@ -229,6 +230,7 @@ export function Procurement({
                                  deleteItem.mutate({
                                     procurementId: procurement.id,
                                     workspaceId: params.workspaceId,
+                                    orderId: order.id,
                                  })
                               }
                            >

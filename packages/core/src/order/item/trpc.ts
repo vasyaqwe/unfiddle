@@ -26,7 +26,7 @@ export const orderItemRouter = t.router({
             .set(input)
             .where(
                and(
-                  eq(orderItem.id, input.id),
+                  eq(orderItem.id, input.orderItemId),
                   eq(orderItem.workspaceId, input.workspaceId),
                ),
             )

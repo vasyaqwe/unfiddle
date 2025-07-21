@@ -4,6 +4,7 @@ import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useParams } from "@tanstack/react-router"
+import type { RouterInput } from "@unfiddle/core/trpc/types"
 import { toast } from "sonner"
 
 export function useDeleteOrderAssignee({
@@ -17,25 +18,21 @@ export function useDeleteOrderAssignee({
    const queryOptions = useOrderQueryOptions()
    const deleteItem = useOptimisticDeleteOrderAssignee()
    const orderId = maybeParams.orderId
-   const workspaceId = auth.workspace.id
 
    return useMutation(
       trpc.order.assignee.delete.mutationOptions({
          onMutate: async (input) => {
-            await queryClient.cancelQueries(queryOptions.list)
-            if (orderId) {
-               await queryClient.cancelQueries(
-                  trpc.order.one.queryOptions({ orderId, workspaceId }),
-               )
-            }
+            await Promise.all([
+               queryClient.cancelQueries(queryOptions.list),
+               queryClient.cancelQueries(trpc.order.one.queryOptions(input)),
+            ])
 
             const listData = queryClient.getQueryData(
                queryOptions.list.queryKey,
             )
             const oneData = orderId
                ? queryClient.getQueryData(
-                    trpc.order.one.queryOptions({ orderId, workspaceId })
-                       .queryKey,
+                    trpc.order.one.queryOptions(input).queryKey,
                  )
                : null
 
@@ -45,18 +42,15 @@ export function useDeleteOrderAssignee({
 
             return { listData, oneData }
          },
-         onError: (error, _data, context) => {
+         onError: (error, input, context) => {
             queryClient.setQueryData(
                queryOptions.list.queryKey,
                context?.listData,
             )
-            if (orderId) {
-               queryClient.setQueryData(
-                  trpc.order.one.queryOptions({ orderId, workspaceId })
-                     .queryKey,
-                  context?.oneData,
-               )
-            }
+            queryClient.setQueryData(
+               trpc.order.one.queryOptions(input).queryKey,
+               context?.oneData,
+            )
             toast.error("Ой-ой!", {
                description: error.message,
             })
@@ -68,15 +62,12 @@ export function useDeleteOrderAssignee({
                senderId: auth.user.id,
                orderId: assignee.orderId,
                userId: assignee.userId,
+               workspaceId: auth.workspace.id,
             })
          },
-         onSettled: () => {
+         onSettled: (_data, _error, input) => {
             queryClient.invalidateQueries(queryOptions.list)
-            if (orderId) {
-               queryClient.invalidateQueries(
-                  trpc.order.one.queryOptions({ orderId, workspaceId }),
-               )
-            }
+            queryClient.invalidateQueries(trpc.order.one.queryOptions(input))
          },
       }),
    )
@@ -87,7 +78,7 @@ export function useOptimisticDeleteOrderAssignee() {
    const queryClient = useQueryClient()
    const queryOptions = useOrderQueryOptions()
 
-   return (input: { orderId: string; userId: string }) => {
+   return (input: RouterInput["order"]["assignee"]["delete"]) => {
       const oneQueryKey = trpc.order.one.queryOptions({
          orderId: input.orderId,
          workspaceId: auth.workspace.id,

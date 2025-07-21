@@ -1,4 +1,5 @@
 import { useAuth } from "@/auth/hooks"
+import { useOrder } from "@/order/hooks"
 import { OrderItemForm } from "@/order/item/components/order-item-form"
 import { useUpdateOrderItem } from "@/order/item/mutations/use-update-order-item"
 import type { OrderItem } from "@unfiddle/core/order/item/types"
@@ -25,6 +26,7 @@ export function UpdateOrderItem({
    setOpen: (open: boolean) => void
 }) {
    const auth = useAuth()
+   const order = useOrder()
    const mutation = useUpdateOrderItem({
       onMutate: () => setOpen(false),
       onError: () => setOpen(true),
@@ -45,7 +47,8 @@ export function UpdateOrderItem({
                      ...form,
                      desiredPrice: number(form.desiredPrice),
                      quantity: number(form.quantity),
-                     id: orderItem.id,
+                     orderItemId: orderItem.id,
+                     orderId: order.id,
                      workspaceId: auth.workspace.id,
                   })
                }

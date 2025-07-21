@@ -27,22 +27,26 @@ export type OrderEvent =
         action: "create_assignee"
         assignee: OrderAssignee
         orderId: string
+        workspaceId: string
         senderId: string
      }
    | {
         action: "delete_assignee"
         orderId: string
         userId: string
+        workspaceId: string
         senderId: string
      }
    | {
         action: "create_item"
-        item: OrderItem & { orderId: string }
+        item: OrderItem
+        orderId: string
+        workspaceId: string
         senderId: string
      }
    | {
         action: "update_item"
-        item: z.infer<typeof updateOrderItemSchema> & { orderId: string }
+        item: z.infer<typeof updateOrderItemSchema>
         orderId: string
         senderId: string
      }
@@ -50,6 +54,7 @@ export type OrderEvent =
         action: "delete_item"
         orderId: string
         orderItemId: string
+        workspaceId: string
         senderId: string
      }
    | {

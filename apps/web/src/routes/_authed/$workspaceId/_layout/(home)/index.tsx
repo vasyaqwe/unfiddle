@@ -1,6 +1,7 @@
 import { useAuth } from "@/auth/hooks"
 import { useTip } from "@/interactions/use-tip"
 import { MainScrollArea } from "@/layout/components/main"
+import {} from "@/layout/components/vlist"
 import { useCreateOrderAssignee } from "@/order/assignee/mutations/use-create-order-assignee"
 import { useDeleteOrderAssignee } from "@/order/assignee/mutations/use-delete-order-assignee"
 import { ArchiveOrderAlert } from "@/order/components/archive-order-alert"
@@ -66,7 +67,7 @@ import {
    TooltipPopup,
    TooltipTrigger,
 } from "@unfiddle/ui/components/tooltip"
-import { atom, useAtom } from "jotai"
+import {} from "jotai"
 import { useTheme } from "next-themes"
 import * as React from "react"
 
@@ -133,7 +134,52 @@ function RouteComponent() {
       </>
    )
 }
+// function Content({
+//    scrollAreaRef,
+// }: { scrollAreaRef: React.RefObject<HTMLDivElement | null> }) {
+//    const queryOptions = useOrderQueryOptions()
+//    const query = useSuspenseQuery(queryOptions.list)
+//    useTip({
+//       key: "order_context_menu",
+//       message:
+//          "Клацніть на замовлення правою кнопкою миші, щоб відкрити менюшку",
+//       autoTrigger: true,
+//    })
+//    const virtualizer = useVirtualizer({
+//       count: query.data.length,
+//       getScrollElement: () => scrollAreaRef.current,
+//       estimateSize: () => {
+//          return window.innerWidth < 1024 ? 71 : 44
+//       },
+//    })
+//    const data = virtualizer.getVirtualItems()
+//    useForceUpdate()
 
+//    if (data.length === 0) return <Empty />
+
+//    return (
+//       <VList
+//          className="relative mb-20 w-full"
+//          totalSize={virtualizer.getTotalSize()}
+//       >
+//          <VListContent
+//             className="border-surface-5 border-b"
+//             start={data[0]?.start ?? 0}
+//          >
+//             {data.map((row) => {
+//                const order = query.data[row.index]
+//                if (!order) return null
+//                return (
+//                   <OrderRow
+//                      key={order.id}
+//                      order={order}
+//                   />
+//                )
+//             })}
+//          </VListContent>
+//       </VList>
+//    )
+// }
 function Content({
    scrollAreaRef: _,
 }: { scrollAreaRef: React.RefObject<HTMLDivElement | null> }) {
@@ -173,8 +219,6 @@ function Content({
    )
 }
 
-const lastContexedOrderIdAtom = atom<string | null>(null)
-
 function _OrderRow({
    order,
 }: {
@@ -194,9 +238,7 @@ function _OrderRow({
    const [archiveAlertOpen, setArchiveAlertOpen] = React.useState(false)
    const [deleteAlertOpen, setDeleteAlertOpen] = React.useState(false)
    const menuTriggerRef = React.useRef<HTMLDivElement>(null)
-   const [lastContexedOrderId, setLastContexedOrderId] = useAtom(
-      lastContexedOrderIdAtom,
-   )
+   const [contextMenuOpen, setContextMenuOpen] = React.useState(false)
 
    const totalProfit = order.procurements.reduce(
       (acc, p) =>
@@ -209,17 +251,15 @@ function _OrderRow({
 
    return (
       <ContextMenu
-         onOpenChange={(open) => {
-            if (open) return setLastContexedOrderId(order.id)
-            setLastContexedOrderId(null)
-         }}
+         open={contextMenuOpen}
+         onOpenChange={setContextMenuOpen}
       >
          <ContextMenuTrigger
             className={
                "border-surface-5 border-t transition-colors duration-[50ms] first:border-0 hover:bg-surface-1 data-active:bg-surface-2"
             }
             ref={menuTriggerRef}
-            data-active={lastContexedOrderId === order.id ? "" : undefined}
+            data-active={contextMenuOpen ? "" : undefined}
          >
             <Link
                to="/$workspaceId/order/$orderId"
@@ -279,13 +319,13 @@ function _OrderRow({
                         onValueChange={(status) => {
                            if (order.status === status)
                               return update.mutate({
-                                 id: order.id,
+                                 orderId: order.id,
                                  workspaceId: params.workspaceId,
                                  status: "pending",
                               })
 
                            update.mutate({
-                              id: order.id,
+                              orderId: order.id,
                               workspaceId: params.workspaceId,
                               status: status as never,
                            })
@@ -359,7 +399,7 @@ function _OrderRow({
                      finalFocus={menuTriggerRef}
                      action={() =>
                         update.mutate({
-                           id: order.id,
+                           orderId: order.id,
                            workspaceId: params.workspaceId,
                            deletedAt: new Date(),
                         })
@@ -431,7 +471,7 @@ function _OrderRow({
                <ContextMenuItem
                   onClick={() =>
                      update.mutate({
-                        id: order.id,
+                        orderId: order.id,
                         workspaceId: params.workspaceId,
                         deletedAt: null,
                      })

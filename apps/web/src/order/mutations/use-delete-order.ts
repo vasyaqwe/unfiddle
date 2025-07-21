@@ -18,25 +18,21 @@ export function useDeleteOrder({
    const queryOptions = useOrderQueryOptions()
    const deleteItem = useOptimisticDeleteOrder()
    const orderId = maybeParams.orderId
-   const workspaceId = auth.workspace.id
 
    return useMutation(
       trpc.order.delete.mutationOptions({
          onMutate: async (input) => {
-            await queryClient.cancelQueries(queryOptions.list)
-            if (orderId) {
-               await queryClient.cancelQueries(
-                  trpc.order.one.queryOptions({ orderId, workspaceId }),
-               )
-            }
+            await Promise.all([
+               queryClient.cancelQueries(queryOptions.list),
+               queryClient.cancelQueries(trpc.order.one.queryOptions(input)),
+            ])
 
             const listData = queryClient.getQueryData(
                queryOptions.list.queryKey,
             )
             const oneData = orderId
                ? queryClient.getQueryData(
-                    trpc.order.one.queryOptions({ orderId, workspaceId })
-                       .queryKey,
+                    trpc.order.one.queryOptions(input).queryKey,
                  )
                : null
 
@@ -46,18 +42,15 @@ export function useDeleteOrder({
 
             return { listData, oneData }
          },
-         onError: (error, _data, context) => {
+         onError: (error, input, context) => {
             queryClient.setQueryData(
                queryOptions.list.queryKey,
                context?.listData,
             )
-            if (orderId) {
-               queryClient.setQueryData(
-                  trpc.order.one.queryOptions({ orderId, workspaceId })
-                     .queryKey,
-                  context?.oneData,
-               )
-            }
+            queryClient.setQueryData(
+               trpc.order.one.queryOptions(input).queryKey,
+               context?.oneData,
+            )
             toast.error("Ой-ой!", {
                description: error.message,
             })
@@ -71,7 +64,7 @@ export function useDeleteOrder({
                workspaceId: auth.workspace.id,
             })
          },
-         onSettled: () => {
+         onSettled: (_data, _error, input) => {
             queryClient.invalidateQueries(
                trpc.workspace.analytics.stats.queryOptions({
                   id: auth.workspace.id,
@@ -88,11 +81,7 @@ export function useDeleteOrder({
                }),
             )
             queryClient.invalidateQueries(queryOptions.list)
-            if (orderId) {
-               queryClient.invalidateQueries(
-                  trpc.order.one.queryOptions({ orderId, workspaceId }),
-               )
-            }
+            queryClient.invalidateQueries(trpc.order.one.queryOptions(input))
          },
       }),
    )

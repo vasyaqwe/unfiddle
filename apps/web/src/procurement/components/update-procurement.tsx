@@ -1,4 +1,5 @@
 import { useAuth } from "@/auth/hooks"
+import { useOrder } from "@/order/hooks"
 import { ProcurementForm } from "@/procurement/components/procurement-form"
 import { useUpdateProcurement } from "@/procurement/mutations/use-update-procurement"
 import type { Procurement } from "@unfiddle/core/procurement/types"
@@ -24,6 +25,7 @@ export function UpdateProcurement({
    setOpen: (open: boolean) => void
 }) {
    const auth = useAuth()
+   const order = useOrder()
    const mutation = useUpdateProcurement({
       onMutate: () => setOpen(false),
       onError: () => setOpen(true),
@@ -40,10 +42,11 @@ export function UpdateProcurement({
                onSubmit={(form) => {
                   mutation.mutate({
                      ...form,
-                     id: procurement.id,
+                     procurementId: procurement.id,
                      workspaceId: auth.workspace.id,
                      purchasePrice: number(form.purchasePrice),
                      quantity: number(form.quantity),
+                     orderId: order.id,
                   })
                }}
                procurement={procurement}

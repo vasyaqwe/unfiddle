@@ -92,7 +92,6 @@ export const orderRelations = relations(order, ({ one, many }) => ({
 
 export const updateOrderSchema = createUpdateSchema(order)
    .pick({
-      id: true,
       workspaceId: true,
       name: true,
       note: true,
@@ -104,8 +103,9 @@ export const updateOrderSchema = createUpdateSchema(order)
       deliversAt: true,
       currency: true,
    })
-   .required({ id: true, workspaceId: true })
+   .required({ workspaceId: true })
    .extend({
+      orderId: z.string(),
       deletedAt: z.date().nullable().optional(),
       analogs: z.array(z.string()).optional(),
    })

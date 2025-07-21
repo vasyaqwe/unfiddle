@@ -31,17 +31,18 @@ export function useOrderSocket() {
 
          if (data.senderId === auth.user.id) return
 
-         if (data.action === "create_item") {
-            update({ id: data.item.orderId, status: "processing" })
-            return createItem(data.item)
-         }
+         if (data.action === "create_item") return createItem(data)
 
          if (data.action === "update_item") return updateItem(data.item)
 
          if (data.action === "delete_item") return deleteItem(data)
 
          if (data.action === "create_assignee") {
-            await update({ id: data.orderId, status: "processing" })
+            await update({
+               orderId: data.orderId,
+               status: "processing",
+               workspaceId: data.workspaceId,
+            })
             return createAssignee(data)
          }
 

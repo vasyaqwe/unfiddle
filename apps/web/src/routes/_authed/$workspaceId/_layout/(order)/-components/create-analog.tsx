@@ -53,7 +53,7 @@ export function CreateAnalog() {
                   e.preventDefault()
                   const form = formData<{ name: string }>(e.target)
                   update.mutate({
-                     id: order.id,
+                     orderId: order.id,
                      workspaceId: params.workspaceId,
                      analogs: [...order.analogs, form.name],
                   })
