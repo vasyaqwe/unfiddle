@@ -1,3 +1,7 @@
+import { Attachment } from "@/attachment/components/attachment"
+import { useAttachments } from "@/attachment/hooks"
+import { useAuth } from "@/auth/hooks"
+import { FileUploader } from "@/file/components/uploader"
 import { CURRENCIES, CURRENCY_SYMBOLS } from "@unfiddle/core/currency/constants"
 import type { Currency } from "@unfiddle/core/currency/types"
 import { ORDER_SEVERITIES_TRANSLATION } from "@unfiddle/core/order/constants"
@@ -57,6 +61,7 @@ export function OrderForm({
    onSubmit: (data: FormData) => void
    children: React.ReactNode
 }) {
+   const auth = useAuth()
    const [deliversAt, setDeliversAt] = React.useState(order?.deliversAt ?? null)
    const [currency, setCurrency] = React.useState(order?.currency ?? "UAH")
    const [items, setItems] = React.useState<BareOrderItem[]>(
@@ -69,6 +74,8 @@ export function OrderForm({
       ],
    )
    const formRef = React.useRef<HTMLFormElement>(null)
+   const fileUploaderRef = React.useRef<HTMLDivElement>(null)
+   const attachments = useAttachments({ subjectId: auth.workspace.id })
 
    return (
       <form
@@ -305,18 +312,43 @@ export function OrderForm({
                   />
                </div>
             </FieldGroup>
-            <Field>
-               <FieldLabel>Комент</FieldLabel>
-               <FieldControl
-                  render={
-                     <Textarea
-                        name="note"
-                        placeholder="Додайте комент"
-                        defaultValue={order?.note}
+            <div>
+               <Field>
+                  <FieldLabel>Комент</FieldLabel>
+                  <div className="relative w-full">
+                     <FieldControl
+                        render={
+                           <Textarea
+                              name="note"
+                              placeholder="Додайте комент"
+                              defaultValue={order?.note}
+                              onPaste={(e) => attachments.onPaste(e)}
+                           />
+                        }
                      />
-                  }
-               />
-            </Field>
+                     <Button
+                        type="button"
+                        onClick={() => {
+                           fileUploaderRef.current?.click()
+                        }}
+                        kind={"icon"}
+                        variant={"ghost"}
+                        className="absolute top-1 right-1"
+                     >
+                        <Icons.paperClip />
+                     </Button>
+                  </div>
+               </Field>
+               <div className="mt-4 flex flex-wrap gap-2 empty:hidden">
+                  {attachments.uploaded.map((file, idx) => (
+                     <Attachment
+                        key={idx}
+                        file={file}
+                        onRemove={() => attachments.remove(file.id)}
+                     />
+                  ))}
+               </div>
+            </div>
             <Field className={"mt-3 flex flex-row items-center gap-2"}>
                <Checkbox
                   name="vat"
@@ -325,6 +357,11 @@ export function OrderForm({
                <FieldLabel className={"mt-px"}>З ПДВ</FieldLabel>
             </Field>
          </Fieldset>
+         <FileUploader
+            ref={fileUploaderRef}
+            className="absolute inset-0 z-[9] h-full"
+            onUpload={attachments.upload.mutateAsync}
+         />
          {children}
       </form>
    )

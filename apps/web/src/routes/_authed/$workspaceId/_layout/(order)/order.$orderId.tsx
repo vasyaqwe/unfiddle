@@ -259,7 +259,7 @@ function RouteComponent() {
                      ))}
                   </div>
                </div>
-               <div className="mt-5">
+               <div className="relative mt-5">
                   <div className="my-2 flex items-center justify-between">
                      <p className="font-medium text-lg">Закупівлі</p>
                      <CreateProcurement />

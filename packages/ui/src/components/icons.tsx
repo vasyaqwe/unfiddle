@@ -3,6 +3,58 @@ import { cn } from "../utils"
 type IconProps = React.ComponentProps<"svg">
 
 export const Icons = {
+   paperClip: ({ className, ...props }: IconProps) => (
+      <svg
+         className={cn("size-[22px] md:size-5", className)}
+         viewBox="0 0 20 20"
+         {...props}
+      >
+         <g fill="currentColor">
+            <path
+               d="m8,7v4c0,1.105.895,2,2,2h0c1.105,0,2-.895,2-2v-4c0-2.209-1.791-4-4-4h0c-2.209,0-4,1.791-4,4v4c0,3.314,2.686,6,6,6h0c3.314,0,6-2.686,6-6v-4"
+               fill="none"
+               stroke="currentColor"
+               strokeLinecap="round"
+               strokeLinejoin="round"
+               strokeWidth="1.5"
+            />
+         </g>
+      </svg>
+   ),
+   attachment: ({ className, ...props }: IconProps) => (
+      <svg
+         className={cn("size-5 shrink-0", className)}
+         xmlns="http://www.w3.org/2000/svg"
+         viewBox="0 0 20 20"
+         {...props}
+      >
+         <g fill="currentColor">
+            <path
+               d="m4,7h3c.552,0,1-.448,1-1v-3"
+               stroke="currentColor"
+               strokeLinejoin="round"
+               strokeWidth="1.5"
+               fill="currentColor"
+            />
+            <path
+               d="m16,8.943v-2.943c0-1.657-1.343-3-3-3h-4.586c-.265,0-.52.105-.707.293l-3.414,3.414c-.188.188-.293.442-.293.707v6.586c0,1.657,1.343,3,3,3h1.24"
+               fill="none"
+               stroke="currentColor"
+               strokeLinecap="round"
+               strokeLinejoin="round"
+               strokeWidth="1.5"
+            />
+            <path
+               d="m14,14v-1.5c0-.828-.672-1.5-1.5-1.5h0c-.828,0-1.5.672-1.5,1.5v1.5c0,1.657,1.343,3,3,3h0c1.657,0,3-1.343,3-3v-1"
+               fill="none"
+               stroke="currentColor"
+               strokeLinecap="round"
+               strokeLinejoin="round"
+               strokeWidth="2"
+            />
+         </g>
+      </svg>
+   ),
    info: (props: IconProps) => (
       <svg
          viewBox="0 0 24 24"
