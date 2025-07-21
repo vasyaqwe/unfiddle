@@ -32,13 +32,9 @@ export const procurementRouter = t.router({
                status: true,
                note: true,
                provider: true,
+               orderItemId: true,
             },
             with: {
-               orderItem: {
-                  columns: {
-                     name: true,
-                  },
-               },
                creator: {
                   columns: {
                      id: true,

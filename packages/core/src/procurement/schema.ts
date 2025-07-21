@@ -65,5 +65,6 @@ export const updateProcurementSchema = createUpdateSchema(procurement)
       purchasePrice: true,
       provider: true,
       workspaceId: true,
+      orderItemId: true,
    })
    .required({ id: true, workspaceId: true })

@@ -59,11 +59,12 @@ export function useOptimisticUpdateOrderItem() {
    const auth = useAuth()
 
    return (input: Partial<OrderItem> & { orderId: string }) => {
-      const queryKey = trpc.order.one.queryOptions({
+      const orderOneQueryKey = trpc.order.one.queryOptions({
          orderId: input.orderId,
          workspaceId: auth.workspace.id,
       }).queryKey
-      queryClient.setQueryData(queryKey, (oldData) => {
+
+      queryClient.setQueryData(orderOneQueryKey, (oldData) => {
          if (!oldData) return oldData
          return {
             ...oldData,

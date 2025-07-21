@@ -37,7 +37,7 @@ export function UpdateProcurement({
          <DrawerPopup finalFocus={finalFocus}>
             <DrawerTitle>Редагувати закупівлю</DrawerTitle>
             <ProcurementForm
-               onSubmit={(form) =>
+               onSubmit={(form) => {
                   mutation.mutate({
                      ...form,
                      id: procurement.id,
@@ -45,7 +45,7 @@ export function UpdateProcurement({
                      purchasePrice: number(form.purchasePrice),
                      quantity: number(form.quantity),
                   })
-               }
+               }}
                procurement={procurement}
             >
                <DrawerFooter>

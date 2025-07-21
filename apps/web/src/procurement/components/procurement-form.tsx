@@ -65,7 +65,7 @@ export function ProcurementForm({
             <Select
                required
                name="orderItemId"
-               defaultValue={order.items[0]?.id}
+               defaultValue={procurement?.orderItemId ?? order.items[0]?.id}
             >
                <SelectTrigger
                   render={
