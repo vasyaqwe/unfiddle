@@ -1,4 +1,5 @@
 import { useAuth } from "@/auth/hooks"
+import { useTip } from "@/interactions/use-tip"
 import { MainScrollArea } from "@/layout/components/main"
 import { useCreateOrderAssignee } from "@/order/assignee/mutations/use-create-order-assignee"
 import { useDeleteOrderAssignee } from "@/order/assignee/mutations/use-delete-order-assignee"
@@ -65,6 +66,7 @@ import {
    TooltipPopup,
    TooltipTrigger,
 } from "@unfiddle/ui/components/tooltip"
+import { atom, useAtom } from "jotai"
 import { useTheme } from "next-themes"
 import * as React from "react"
 
@@ -137,7 +139,12 @@ function Content({
 }: { scrollAreaRef: React.RefObject<HTMLDivElement | null> }) {
    const queryOptions = useOrderQueryOptions()
    const query = useSuspenseQuery(queryOptions.list)
-
+   useTip({
+      key: "order_context_menu",
+      message:
+         "Клацніть на замовлення правою кнопкою миші, щоб відкрити менюшку",
+      autoTrigger: true,
+   })
    // const virtualizer = useVirtualizer({
    //    count: query.data.length,
    //    getScrollElement: () => scrollAreaRef.current,
@@ -152,7 +159,7 @@ function Content({
 
    return (
       <div className="relative mb-20 w-full">
-         <div className="divide-y divide-surface-5 border-surface-5 border-b">
+         <div className="border-surface-5 border-b">
             {query.data.map((order) => {
                return (
                   <OrderRow
@@ -165,6 +172,8 @@ function Content({
       </div>
    )
 }
+
+const lastContexedOrderIdAtom = atom<string | null>(null)
 
 function _OrderRow({
    order,
@@ -185,6 +194,9 @@ function _OrderRow({
    const [archiveAlertOpen, setArchiveAlertOpen] = React.useState(false)
    const [deleteAlertOpen, setDeleteAlertOpen] = React.useState(false)
    const menuTriggerRef = React.useRef<HTMLDivElement>(null)
+   const [lastContexedOrderId, setLastContexedOrderId] = useAtom(
+      lastContexedOrderIdAtom,
+   )
 
    const totalProfit = order.procurements.reduce(
       (acc, p) =>
@@ -196,15 +208,26 @@ function _OrderRow({
    const deleteAssignee = useDeleteOrderAssignee()
 
    return (
-      <ContextMenu>
-         <ContextMenuTrigger ref={menuTriggerRef}>
+      <ContextMenu
+         onOpenChange={(open) => {
+            if (open) return setLastContexedOrderId(order.id)
+            setLastContexedOrderId(null)
+         }}
+      >
+         <ContextMenuTrigger
+            className={
+               "border-surface-5 border-t transition-colors duration-[50ms] first:border-0 hover:bg-surface-1 data-active:bg-surface-2"
+            }
+            ref={menuTriggerRef}
+            data-active={lastContexedOrderId === order.id ? "" : undefined}
+         >
             <Link
                to="/$workspaceId/order/$orderId"
                params={{
                   workspaceId: params.workspaceId,
                   orderId: order.id,
                }}
-               className="relative grid h-[71px] grid-cols-[1fr_auto] grid-rows-[1fr_auto] items-center gap-x-2.5 gap-y-1.5 py-2 pr-1.5 pl-2.5 text-left transition-colors duration-50 hover:bg-surface-1 has-data-[popup-open]:bg-surface-1 lg:flex lg:h-[44px]"
+               className="relative grid h-[71px] grid-cols-[1fr_auto] grid-rows-[1fr_auto] items-center gap-x-2.5 gap-y-1.5 px-2.5 py-2 text-left lg:flex lg:h-[44px]"
             >
                <div className="flex items-center gap-2 max-lg:w-full">
                   <SeverityIcon
