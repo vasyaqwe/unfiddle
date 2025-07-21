@@ -72,6 +72,7 @@ import {
    TooltipPopup,
    TooltipTrigger,
 } from "@unfiddle/ui/components/tooltip"
+import { cn } from "@unfiddle/ui/utils"
 import { useTheme } from "next-themes"
 import * as React from "react"
 
@@ -113,15 +114,9 @@ function RouteComponent() {
    const params = Route.useParams()
    const auth = useAuth()
    const order = useOrder()
-   const theme = useTheme()
    const update = useUpdateOrder()
    const createAssignee = useCreateOrderAssignee()
    const deleteAssignee = useDeleteOrderAssignee()
-
-   const [from, to] = orderStatusGradient(
-      order.status ?? "canceled",
-      theme.resolvedTheme ?? "light",
-   )
 
    const pressed = order.assignees.some((a) => a.user.id === auth.user.id)
 
@@ -197,7 +192,50 @@ function RouteComponent() {
                <p className="mt-2 mb-3 font-semibold text-xl md:text-2xl">
                   {order.name}
                </p>
-               <p className="mb-7 whitespace-pre-wrap">{order.note}</p>
+               <p className="mb-5 whitespace-pre-wrap lg:mb-7">{order.note}</p>
+               <div className="mb-3 flex gap-1 lg:hidden">
+                  <StatusCombobox />
+                  <SeverityCombobox />
+               </div>
+               <div className="mb-6 grid grid-cols-[40%_1fr] gap-y-4 lg:hidden">
+                  <section className="group/section">
+                     <p className="text-foreground/75 text-sm">Ціна</p>
+                     <p className="mt-1.5 font-medium font-mono text-lg">
+                        {order.sellingPrice
+                           ? formatCurrency(order.sellingPrice, {
+                                currency: order.currency,
+                             })
+                           : "—"}
+                     </p>
+                  </section>
+                  <section className="group/section">
+                     <p className="text-foreground/75 text-sm">
+                        Термін постачання
+                     </p>
+                     <p className="mt-1.5">
+                        {order.deliversAt ? formatDate(order.deliversAt) : "—"}
+                     </p>
+                  </section>
+                  <section className="group/section">
+                     <p className="text-foreground/75 text-sm">Клієнт</p>
+                     <p className="mt-1.5">{order.client ?? "—"}</p>
+                  </section>
+                  <section className="group/section">
+                     <p className="text-foreground/75 text-sm">Створене</p>
+                     <p className="mt-2 flex items-center gap-2">
+                        <UserAvatar
+                           size={22}
+                           user={order.creator}
+                        />
+                        {order.creator.name} —{" "}
+                        {new Date(order.createdAt).getDate() ===
+                        new Date().getDate()
+                           ? "Сьогодні о "
+                           : ""}
+                        {formatOrderDate(order.createdAt)}
+                     </p>
+                  </section>
+               </div>
                <div>
                   <div className="mb-2 flex items-center justify-between">
                      <p className="font-medium text-lg">Товари</p>
@@ -278,101 +316,8 @@ function RouteComponent() {
                   <p className="text-foreground/75">Деталі</p>
                </div>
                <section className="group/section flex flex-col py-3">
-                  <Combobox
-                     canBeEmpty
-                     value={order.status}
-                     onValueChange={(status) => {
-                        if (order.status === status)
-                           return update.mutate({
-                              orderId: order.id,
-                              workspaceId: params.workspaceId,
-                              status: "pending",
-                           })
-
-                        update.mutate({
-                           orderId: order.id,
-                           workspaceId: params.workspaceId,
-                           status: status as never,
-                        })
-                     }}
-                  >
-                     <ComboboxTrigger
-                        render={
-                           <Button
-                              variant={"ghost"}
-                              className="-ml-2 w-fit justify-start gap-2.5"
-                           >
-                              <Badge
-                                 className="size-3.5 shrink-0 rounded-full px-0"
-                                 style={{
-                                    background: `linear-gradient(140deg, ${from}, ${to})`,
-                                 }}
-                              />
-                              {ORDER_STATUSES_TRANSLATION[order.status] ??
-                                 "Без статусу"}{" "}
-                           </Button>
-                        }
-                     />
-                     <ComboboxPopup
-                        sideOffset={4}
-                        align="start"
-                        side="left"
-                     >
-                        <ComboboxInput />
-                        {ORDER_STATUSES.map((s) =>
-                           s === "pending" ? null : (
-                              <ComboboxItem
-                                 key={s}
-                                 value={s}
-                                 keywords={[ORDER_STATUSES_TRANSLATION[s]]}
-                              >
-                                 {ORDER_STATUSES_TRANSLATION[s]}
-                              </ComboboxItem>
-                           ),
-                        )}
-                     </ComboboxPopup>
-                  </Combobox>
-                  <Combobox
-                     value={order.severity}
-                     onValueChange={(severity) => {
-                        update.mutate({
-                           orderId: order.id,
-                           workspaceId: params.workspaceId,
-                           severity: severity as never,
-                        })
-                     }}
-                  >
-                     <ComboboxTrigger
-                        render={
-                           <Button
-                              variant={"ghost"}
-                              className="-ml-2 !gap-1.75 mt-2 w-fit justify-start"
-                           >
-                              <SeverityIcon
-                                 severity={order.severity}
-                                 className="!-ml-[3px]"
-                              />
-                              {ORDER_SEVERITIES_TRANSLATION[order.severity]}
-                           </Button>
-                        }
-                     />
-                     <ComboboxPopup
-                        sideOffset={4}
-                        align="start"
-                        side="left"
-                     >
-                        <ComboboxInput />
-                        {ORDER_SEVERITIES.map((s) => (
-                           <ComboboxItem
-                              key={s}
-                              value={s}
-                              keywords={[ORDER_SEVERITIES_TRANSLATION[s]]}
-                           >
-                              {ORDER_SEVERITIES_TRANSLATION[s]}
-                           </ComboboxItem>
-                        ))}
-                     </ComboboxPopup>
-                  </Combobox>
+                  <StatusCombobox />
+                  <SeverityCombobox className="-ml-2 mt-2 " />
                   {order.assignees.length === 0 ? null : (
                      <AvatarStack
                         size={26}
@@ -531,6 +476,125 @@ function RouteComponent() {
             </ScrollArea>
          </div>
       </div>
+   )
+}
+
+function SeverityCombobox({ className }: React.ComponentProps<typeof Button>) {
+   const params = Route.useParams()
+   const order = useOrder()
+   const update = useUpdateOrder()
+
+   return (
+      <Combobox
+         value={order.severity}
+         onValueChange={(severity) => {
+            update.mutate({
+               orderId: order.id,
+               workspaceId: params.workspaceId,
+               severity: severity as never,
+            })
+         }}
+      >
+         <ComboboxTrigger
+            render={
+               <Button
+                  variant={"ghost"}
+                  className={cn("!gap-1.75 w-fit justify-start", className)}
+               >
+                  <SeverityIcon
+                     severity={order.severity}
+                     className="!-ml-[3px]"
+                  />
+                  {ORDER_SEVERITIES_TRANSLATION[order.severity]}
+               </Button>
+            }
+         />
+         <ComboboxPopup
+            sideOffset={4}
+            align="start"
+            side="left"
+         >
+            <ComboboxInput />
+            {ORDER_SEVERITIES.map((s) => (
+               <ComboboxItem
+                  key={s}
+                  value={s}
+                  keywords={[ORDER_SEVERITIES_TRANSLATION[s]]}
+               >
+                  {ORDER_SEVERITIES_TRANSLATION[s]}
+               </ComboboxItem>
+            ))}
+         </ComboboxPopup>
+      </Combobox>
+   )
+}
+
+function StatusCombobox() {
+   const params = Route.useParams()
+   const order = useOrder()
+   const theme = useTheme()
+   const update = useUpdateOrder()
+
+   const [from, to] = orderStatusGradient(
+      order.status ?? "canceled",
+      theme.resolvedTheme ?? "light",
+   )
+
+   return (
+      <Combobox
+         canBeEmpty
+         value={order.status}
+         onValueChange={(status) => {
+            if (order.status === status)
+               return update.mutate({
+                  orderId: order.id,
+                  workspaceId: params.workspaceId,
+                  status: "pending",
+               })
+
+            update.mutate({
+               orderId: order.id,
+               workspaceId: params.workspaceId,
+               status: status as never,
+            })
+         }}
+      >
+         <ComboboxTrigger
+            render={
+               <Button
+                  variant={"ghost"}
+                  className="-ml-2 w-fit justify-start gap-2.5"
+               >
+                  <Badge
+                     className="size-3.5 shrink-0 rounded-full px-0"
+                     style={{
+                        background: `linear-gradient(140deg, ${from}, ${to})`,
+                     }}
+                  />
+                  {ORDER_STATUSES_TRANSLATION[order.status] ??
+                     "Без статусу"}{" "}
+               </Button>
+            }
+         />
+         <ComboboxPopup
+            sideOffset={4}
+            align="start"
+            side="left"
+         >
+            <ComboboxInput />
+            {ORDER_STATUSES.map((s) =>
+               s === "pending" ? null : (
+                  <ComboboxItem
+                     key={s}
+                     value={s}
+                     keywords={[ORDER_STATUSES_TRANSLATION[s]]}
+                  >
+                     {ORDER_STATUSES_TRANSLATION[s]}
+                  </ComboboxItem>
+               ),
+            )}
+         </ComboboxPopup>
+      </Combobox>
    )
 }
 

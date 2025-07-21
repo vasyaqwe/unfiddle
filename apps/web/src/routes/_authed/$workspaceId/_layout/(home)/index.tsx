@@ -267,7 +267,7 @@ function _OrderRow({
                   workspaceId: params.workspaceId,
                   orderId: order.id,
                }}
-               className="relative grid h-[71px] grid-cols-[1fr_auto] grid-rows-[1fr_auto] items-center gap-x-2.5 gap-y-1.5 px-2.5 py-2 text-left lg:flex lg:h-[44px]"
+               className="relative grid h-[72px] grid-cols-[1fr_auto] grid-rows-[1fr_auto] items-center gap-x-2.5 gap-y-2 px-2.5 py-2 text-left lg:flex lg:h-[44px]"
             >
                <div className="flex items-center gap-2 max-lg:w-full">
                   <SeverityIcon
@@ -288,7 +288,7 @@ function _OrderRow({
                </div>
                <p
                   data-vat={order.vat ? "" : undefined}
-                  className="lg:!max-w-[80%] col-span-2 col-start-1 row-start-2 mt-px w-[calc(100%-36px)] break-normal font-semibold data-vat:text-orange-10"
+                  className="col-span-2 col-start-1 row-start-2 mt-px line-clamp-1 break-normal font-semibold data-vat:text-orange-10"
                >
                   {order.name}
                </p>
