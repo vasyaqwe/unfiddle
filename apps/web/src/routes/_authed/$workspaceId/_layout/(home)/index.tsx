@@ -1,7 +1,8 @@
 import { useAuth } from "@/auth/hooks"
+import { useForceUpdate } from "@/interactions/use-force-update"
 import { useTip } from "@/interactions/use-tip"
 import { MainScrollArea } from "@/layout/components/main"
-import {} from "@/layout/components/vlist"
+import { VList, VListContent } from "@/layout/components/vlist"
 import { useCreateOrderAssignee } from "@/order/assignee/mutations/use-create-order-assignee"
 import { useDeleteOrderAssignee } from "@/order/assignee/mutations/use-delete-order-assignee"
 import { ArchiveOrderAlert } from "@/order/components/archive-order-alert"
@@ -29,6 +30,7 @@ import { UserAvatar } from "@/user/components/user-avatar"
 import { validator } from "@/validator"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { Link, createFileRoute } from "@tanstack/react-router"
+import { useVirtualizer } from "@tanstack/react-virtual"
 import { formatCurrency } from "@unfiddle/core/currency"
 import { ORDER_STATUSES_TRANSLATION } from "@unfiddle/core/order/constants"
 import { ORDER_STATUSES } from "@unfiddle/core/order/constants"
@@ -134,54 +136,9 @@ function RouteComponent() {
       </>
    )
 }
-// function Content({
-//    scrollAreaRef,
-// }: { scrollAreaRef: React.RefObject<HTMLDivElement | null> }) {
-//    const queryOptions = useOrderQueryOptions()
-//    const query = useSuspenseQuery(queryOptions.list)
-//    useTip({
-//       key: "order_context_menu",
-//       message:
-//          "Клацніть на замовлення правою кнопкою миші, щоб відкрити менюшку",
-//       autoTrigger: true,
-//    })
-//    const virtualizer = useVirtualizer({
-//       count: query.data.length,
-//       getScrollElement: () => scrollAreaRef.current,
-//       estimateSize: () => {
-//          return window.innerWidth < 1024 ? 71 : 44
-//       },
-//    })
-//    const data = virtualizer.getVirtualItems()
-//    useForceUpdate()
 
-//    if (data.length === 0) return <Empty />
-
-//    return (
-//       <VList
-//          className="relative mb-20 w-full"
-//          totalSize={virtualizer.getTotalSize()}
-//       >
-//          <VListContent
-//             className="border-surface-5 border-b"
-//             start={data[0]?.start ?? 0}
-//          >
-//             {data.map((row) => {
-//                const order = query.data[row.index]
-//                if (!order) return null
-//                return (
-//                   <OrderRow
-//                      key={order.id}
-//                      order={order}
-//                   />
-//                )
-//             })}
-//          </VListContent>
-//       </VList>
-//    )
-// }
 function Content({
-   scrollAreaRef: _,
+   scrollAreaRef,
 }: { scrollAreaRef: React.RefObject<HTMLDivElement | null> }) {
    const queryOptions = useOrderQueryOptions()
    const query = useSuspenseQuery(queryOptions.list)
@@ -191,22 +148,31 @@ function Content({
          "Клацніть на замовлення правою кнопкою миші, щоб відкрити менюшку",
       autoTrigger: true,
    })
-   // const virtualizer = useVirtualizer({
-   //    count: query.data.length,
-   //    getScrollElement: () => scrollAreaRef.current,
-   //    estimateSize: (_idx) => {
-   //       return window.innerWidth < 1024 ? 90 : 43
-   //    },
-   // })
-   // const data = virtualizer.getVirtualItems()
-   // useForceUpdate()
+   const virtualizer = useVirtualizer({
+      count: query.data.length,
+      getScrollElement: () => scrollAreaRef.current,
+      estimateSize: () => {
+         return window.innerWidth < 1024 ? 72 : 44
+      },
+      overscan: 3,
+   })
+   const data = virtualizer.getVirtualItems()
+   useForceUpdate()
 
-   if (query.data.length === 0) return <Empty />
+   if (data.length === 0) return <Empty />
 
    return (
-      <div className="relative mb-20 w-full">
-         <div className="border-surface-5 border-b">
-            {query.data.map((order) => {
+      <VList
+         className="relative mb-20 w-full"
+         totalSize={virtualizer.getTotalSize()}
+      >
+         <VListContent
+            className="border-surface-5 border-b"
+            start={data[0]?.start ?? 0}
+         >
+            {data.map((row) => {
+               const order = query.data[row.index]
+               if (!order) return null
                return (
                   <OrderRow
                      key={order.id}
@@ -214,8 +180,8 @@ function Content({
                   />
                )
             })}
-         </div>
-      </div>
+         </VListContent>
+      </VList>
    )
 }
 
