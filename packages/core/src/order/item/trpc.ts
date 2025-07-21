@@ -21,7 +21,7 @@ export const orderItemRouter = t.router({
       .use(workspaceMemberMiddleware)
       .input(updateOrderItemSchema)
       .mutation(async ({ ctx, input }) => {
-         await ctx.db
+         const res = await ctx.db
             .update(orderItem)
             .set(input)
             .where(
@@ -30,6 +30,16 @@ export const orderItemRouter = t.router({
                   eq(orderItem.workspaceId, input.workspaceId),
                ),
             )
+            .returning()
+            .get()
+         const workspaceId = res.workspaceId
+         if (!workspaceId)
+            throw new TRPCError({
+               code: "INTERNAL_SERVER_ERROR",
+               message: "workspaceId missing from orderItem",
+            })
+
+         return { ...res, workspaceId }
       }),
    delete: t.procedure
       .use(workspaceMemberMiddleware)

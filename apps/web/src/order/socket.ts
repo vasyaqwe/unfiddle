@@ -32,42 +32,26 @@ export function useOrderSocket() {
          if (data.senderId === auth.user.id) return
 
          if (data.action === "create_item") {
-            update({ id: data.orderId, status: "processing" })
-            return createItem({ ...data.item, orderId: data.orderId })
+            update({ id: data.item.orderId, status: "processing" })
+            return createItem(data.item)
          }
 
-         if (data.action === "update_item")
-            return updateItem({ ...data.item, orderId: data.orderId })
+         if (data.action === "update_item") return updateItem(data.item)
 
-         if (data.action === "delete_item")
-            return deleteItem({
-               orderId: data.orderId,
-               orderItemId: data.orderItemId,
-            })
+         if (data.action === "delete_item") return deleteItem(data)
 
          if (data.action === "create_assignee") {
             await update({ id: data.orderId, status: "processing" })
-            return createAssignee({
-               orderId: data.orderId,
-               assignee: data.assignee,
-            })
+            return createAssignee(data)
          }
 
-         if (data.action === "delete_assignee")
-            return deleteAssignee({
-               orderId: data.orderId,
-               userId: data.userId,
-            })
+         if (data.action === "delete_assignee") return deleteAssignee(data)
 
          if (data.action === "create") return create(data.order)
 
          if (data.action === "update") return update(data.order)
 
-         if (data.action === "delete")
-            return deleteOrder({
-               orderId: data.orderId,
-               workspaceId: auth.workspace.id,
-            })
+         if (data.action === "delete") return deleteOrder(data)
       },
    })
 }

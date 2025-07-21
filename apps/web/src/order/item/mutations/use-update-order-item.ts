@@ -36,10 +36,9 @@ export function useUpdateOrderItem({
             toast.error("Ой-ой!", {
                description: error.message,
             })
-
             onError?.()
          },
-         onSuccess: (_, item) => {
+         onSuccess: (item) => {
             socket.order.send({
                action: "update_item",
                senderId: auth.user.id,

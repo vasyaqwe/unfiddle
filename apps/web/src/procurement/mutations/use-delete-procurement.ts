@@ -61,8 +61,9 @@ export function useDeleteProcurement({
             socket.procurement.send({
                action: "delete",
                senderId: auth.user.id,
-               procurementId: procurement.id,
+               procurementId: procurement.procurementId,
                orderId: order.id,
+               workspaceId: auth.workspace.id,
             })
          },
          onSettled: () => {
@@ -97,7 +98,7 @@ export function useOptimisticDeleteProcurement() {
       }).queryKey
       queryClient.setQueryData(queryKey, (oldData) => {
          if (!oldData) return oldData
-         return oldData.filter((p) => p.id !== input.id)
+         return oldData.filter((p) => p.id !== input.procurementId)
       })
       queryClient.setQueryData(queryOptions.list.queryKey, (oldData) => {
          if (!oldData) return oldData
@@ -106,7 +107,7 @@ export function useOptimisticDeleteProcurement() {
                return {
                   ...item,
                   procurements: item.procurements.filter(
-                     (p) => p.id !== input.id,
+                     (p) => p.id !== input.procurementId,
                   ),
                }
             return item

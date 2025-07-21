@@ -68,6 +68,7 @@ export function useDeleteOrder({
                action: "delete",
                senderId: auth.user.id,
                orderId: data.orderId,
+               workspaceId: auth.workspace.id,
             })
          },
          onSettled: () => {

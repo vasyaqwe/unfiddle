@@ -57,12 +57,11 @@ export function useUpdateProcurement({
 
             onError?.()
          },
-         onSuccess: (_, procurement) => {
+         onSuccess: (procurement) => {
             socket.procurement.send({
                action: "update",
                senderId: auth.user.id,
                procurement,
-               orderId: order.id,
             })
          },
          onSettled: () => {

@@ -51,9 +51,7 @@ export function useCreateProcurement({
                creator: auth.user,
                note: input.note ?? "",
                provider: input.provider ?? null,
-               orderItem: {
-                  name: orderItem?.name ?? "",
-               },
+               orderItemId: input.orderItemId ?? null,
             })
 
             onMutate?.()
@@ -83,7 +81,6 @@ export function useCreateProcurement({
                   ...procurement,
                   creator: auth.user,
                },
-               orderId: procurement.orderId,
             })
          },
          onSettled: () => {

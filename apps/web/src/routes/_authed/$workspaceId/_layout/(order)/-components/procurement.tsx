@@ -66,7 +66,7 @@ export function Procurement({
       <div className="gap-3 border-neutral border-t p-3 text-left first:border-none lg:gap-4 lg:p-2 lg:pl-3">
          <div className="max-lg:-mt-1.5 max-lg:-mr-1.5 flex items-center">
             {orderItem?.name ? (
-               <p className="line-clamp-1 font-medium max-lg:w-[calc(100%-2rem)]">
+               <p className="line-clamp-1 font-medium max-lg:w-[calc(100%-2rem)] lg:mr-3">
                   {orderItem.name}
                </p>
             ) : null}
@@ -227,7 +227,7 @@ export function Procurement({
                               variant={"destructive"}
                               onClick={() =>
                                  deleteItem.mutate({
-                                    id: procurement.id,
+                                    procurementId: procurement.id,
                                     workspaceId: params.workspaceId,
                                  })
                               }

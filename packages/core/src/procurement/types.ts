@@ -10,14 +10,14 @@ export type Procurement = RouterOutput["procurement"]["list"][number]
 export type ProcurementEvent =
    | {
         action: "create"
-        procurement: Procurement
-        orderId: string
+        procurement: Procurement & { orderId: string }
         senderId: string
      }
    | {
         action: "update"
-        procurement: z.infer<typeof updateProcurementSchema>
-        orderId: string
+        procurement: z.infer<typeof updateProcurementSchema> & {
+           orderId: string
+        }
         senderId: string
      }
    | {
@@ -25,4 +25,5 @@ export type ProcurementEvent =
         procurementId: string
         orderId: string
         senderId: string
+        workspaceId: string
      }

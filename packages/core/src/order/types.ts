@@ -37,13 +37,12 @@ export type OrderEvent =
      }
    | {
         action: "create_item"
-        item: OrderItem
-        orderId: string
+        item: OrderItem & { orderId: string }
         senderId: string
      }
    | {
         action: "update_item"
-        item: z.infer<typeof updateOrderItemSchema>
+        item: z.infer<typeof updateOrderItemSchema> & { orderId: string }
         orderId: string
         senderId: string
      }
@@ -57,4 +56,5 @@ export type OrderEvent =
         action: "delete"
         orderId: string
         senderId: string
+        workspaceId: string
      }

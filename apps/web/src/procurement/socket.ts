@@ -21,18 +21,11 @@ export function useProcurementSocket() {
 
          if (data.senderId === auth.user.id) return
 
-         if (data.action === "create")
-            return create({ ...data.procurement, orderId: data.orderId })
+         if (data.action === "create") return create(data.procurement)
 
-         if (data.action === "update")
-            return update({ ...data.procurement, orderId: data.orderId })
+         if (data.action === "update") return update(data.procurement)
 
-         if (data.action === "delete")
-            return deleteProcurement({
-               id: data.procurementId,
-               workspaceId: auth.workspace.id,
-               orderId: data.orderId,
-            })
+         if (data.action === "delete") return deleteProcurement(data)
       },
    })
 }

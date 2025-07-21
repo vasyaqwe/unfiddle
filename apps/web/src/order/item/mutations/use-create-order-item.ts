@@ -45,7 +45,6 @@ export function useCreateOrderItem({
             socket.order.send({
                action: "create_item",
                senderId: auth.user.id,
-               orderId: item.orderId,
                item,
             })
          },
