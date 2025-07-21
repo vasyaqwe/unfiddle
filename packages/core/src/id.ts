@@ -4,6 +4,7 @@ import crypto from "node:crypto"
 
 export const ID_PREFIXES = {
    user: "usr",
+   attachment: "att",
    file: "file",
    workspace: "wrk",
    order: "ord",
