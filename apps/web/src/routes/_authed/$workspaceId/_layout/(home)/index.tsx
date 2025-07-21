@@ -202,9 +202,9 @@ function _OrderRow({
             workspaceId: params.workspaceId,
             orderId: order.id,
          }}
-         className="relative grid grid-cols-2 grid-rows-[1fr_auto] items-center gap-x-2.5 gap-y-1.5 py-2 pr-1.5 pl-2.5 text-left transition-colors duration-50 hover:bg-surface-1 has-data-[popup-open]:bg-surface-1 lg:flex lg:py-[0.4rem]"
+         className="relative grid grid-cols-[1fr_auto] grid-rows-[1fr_auto] items-center gap-x-2.5 gap-y-1.5 py-2 pr-1.5 pl-2.5 text-left transition-colors duration-50 hover:bg-surface-1 has-data-[popup-open]:bg-surface-1 lg:flex lg:py-[0.4rem]"
       >
-         <div className="flex items-center gap-2">
+         <div className="flex items-center gap-2 max-lg:w-full">
             <SeverityIcon
                severity={order.severity}
                className="mr-[2px] shrink-0"
@@ -212,7 +212,7 @@ function _OrderRow({
             <p className="whitespace-nowrap font-medium font-mono text-foreground/75 text-sm">
                {makeShortId(order.shortId)}
             </p>
-            <p className="flex w-[108px] items-center gap-1.5 font-medium text-sm">
+            <p className="flex items-center gap-1.5 font-medium text-sm lg:w-[108px]">
                <UserAvatar
                   size={25}
                   user={order.creator}

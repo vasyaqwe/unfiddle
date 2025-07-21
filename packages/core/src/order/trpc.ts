@@ -452,7 +452,6 @@ export const orderRouter = t.router({
                creatorId: true,
                deliversAt: true,
                client: true,
-               quantity: true,
                sellingPrice: true,
                deletedAt: true,
                createdAt: true,

@@ -40,7 +40,6 @@ export const order = d.table(
       groupId: d.text(),
       normalizedName: d.text().notNull().default(""),
       name: d.text().notNull(),
-      quantity: d.integer().notNull(),
       currency: d
          .text({
             enum: CURRENCIES,
@@ -48,7 +47,6 @@ export const order = d.table(
          .notNull()
          .default("UAH"),
       sellingPrice: d.numeric({ mode: "number" }).notNull(),
-      desiredPrice: d.numeric({ mode: "number" }),
       severity: d.text({ enum: ORDER_SEVERITIES }).notNull().default("low"),
       note: d.text().notNull().default(""),
       status: d.text({ enum: ORDER_STATUSES }).notNull().default("pending"),

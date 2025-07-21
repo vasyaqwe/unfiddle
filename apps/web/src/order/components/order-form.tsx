@@ -34,9 +34,7 @@ type BareOrderItem = Omit<OrderItem, "id">
 
 type FormData = {
    name: string
-   quantity: string
    sellingPrice: string
-   desiredPrice: string
    note: string
    client: string
    severity: OrderSeverity

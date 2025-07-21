@@ -1,7 +1,8 @@
 import { Menu as MenuPrimitive } from "@base-ui-components/react/menu"
 import { Icons } from "@unfiddle/ui/components/icons"
+import { MENU_ITEM_STYLES } from "@unfiddle/ui/components/menu/constants"
 import { POPUP_STYLES } from "@unfiddle/ui/constants"
-import { cn } from "../utils"
+import { cn } from "../../utils"
 
 export const Menu = MenuPrimitive.Root
 export const Submenu = MenuPrimitive.Root
@@ -13,11 +14,6 @@ export const MenuPortal = MenuPrimitive.Portal
 export const MenuBackdrop = MenuPrimitive.Backdrop
 export const MenuPositioner = MenuPrimitive.Positioner
 export const MenuArrow = MenuPrimitive.Arrow
-
-export const MENU_ITEM_STYLES = {
-   base: "cursor-pointer text-base h-9 md:h-[1.925rem] flex items-center select-none gap-2 md:gap-1.5 rounded-[calc(var(--popup-radius)-var(--popup-padding))] px-3 md:px-2 data-[highlighted]:border-transparent [&>svg]:size-[22px] md:[&>svg]:size-5 [&>svg]:text-surface-9 data-[highlighted]:[&>svg]:text-white data-[popup-open]:[&>svg]:text-white [&>svg]:shrink-0 focus-visible:outline-hidden data-[highlighted]:bg-primary-6 data-[popup-open]:bg-primary-6 data-[selected=true]:bg-primary-6 data-[selected=true]:shadow-sm data-[selected=true]:[&>svg]:text-white shadow-black/20 data-[highlighted]:shadow-sm md:text-sm",
-   destructive: "data-[highlighted]:bg-red-9",
-}
 
 export function MenuGroupLabel({
    className,

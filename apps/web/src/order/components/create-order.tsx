@@ -35,8 +35,6 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
                      sellingPrice: number(form.sellingPrice),
                      client: form.client.length === 0 ? null : form.client,
                      vat: form.vat === "on",
-                     quantity: 1,
-                     desiredPrice: null,
                   })
                }
             >
