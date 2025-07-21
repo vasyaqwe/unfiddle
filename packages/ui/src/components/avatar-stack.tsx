@@ -4,9 +4,9 @@ import * as React from "react"
 export function AvatarStack({
    className,
    children,
-   size = 24,
+   size,
    ...props
-}: React.ComponentProps<"span"> & { size?: number }) {
+}: React.ComponentProps<"span"> & { size: number }) {
    const length = React.Children.count(children)
 
    return (

@@ -293,7 +293,10 @@ function _OrderRow({
                   {order.name}
                </p>
                <div className="ml-auto flex items-center gap-4">
-                  <AvatarStack className="max-md:hidden">
+                  <AvatarStack
+                     size={25}
+                     className="max-md:hidden"
+                  >
                      {order.assignees.map((assignee) => (
                         <AvatarStackItem key={assignee.user.id}>
                            <Tooltip delay={0}>

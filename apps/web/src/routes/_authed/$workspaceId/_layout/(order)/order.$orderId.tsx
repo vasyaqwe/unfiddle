@@ -374,7 +374,10 @@ function RouteComponent() {
                      </ComboboxPopup>
                   </Combobox>
                   {order.assignees.length === 0 ? null : (
-                     <AvatarStack className="mt-3 flex">
+                     <AvatarStack
+                        size={26}
+                        className="mt-3 flex"
+                     >
                         {order.assignees.map((assignee) => (
                            <AvatarStackItem key={assignee.user.id}>
                               <Tooltip delay={0}>
