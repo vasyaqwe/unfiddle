@@ -140,6 +140,8 @@ function RouteComponent() {
 function Content({
    scrollAreaRef,
 }: { scrollAreaRef: React.RefObject<HTMLDivElement | null> }) {
+   "use no memo"
+
    const queryOptions = useOrderQueryOptions()
    const query = useSuspenseQuery(queryOptions.list)
    useTip({
