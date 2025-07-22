@@ -39,7 +39,10 @@ export function useOrderSocket() {
             data.action === "delete_attachment"
          ) {
             return queryClient.invalidateQueries(
-               trpc.order.one.queryOptions(data),
+               trpc.order.one.queryOptions({
+                  orderId: data.orderId,
+                  workspaceId: data.workspaceId,
+               }),
             )
          }
 

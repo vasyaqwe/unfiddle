@@ -81,7 +81,7 @@ import {
    TooltipPopup,
    TooltipTrigger,
 } from "@unfiddle/ui/components/tooltip"
-import { cn } from "@unfiddle/ui/utils"
+import { cn, cx } from "@unfiddle/ui/utils"
 import { useAtomValue } from "jotai"
 import { useTheme } from "next-themes"
 import * as React from "react"
@@ -506,7 +506,9 @@ function FileItem({
    return (
       <div
          key={attachment.id}
-         className="group -mr-1 -ml-1.5 grid grid-cols-[1fr_auto] items-center gap-1"
+         className={cx(
+            "group -ml-1.5 grid grid-cols-[1fr_auto] items-center gap-1",
+         )}
       >
          <Button
             disabled={download.isPending}
@@ -544,14 +546,16 @@ function FileItem({
             </Button>
          ) : (
             <Tooltip delay={0}>
-               <TooltipTrigger
-                  render={
-                     <UserAvatar
-                        size={24}
-                        user={attachment.creator}
-                     />
-                  }
-               />
+               <div className={"grid size-[31px] place-items-center"}>
+                  <TooltipTrigger
+                     render={
+                        <UserAvatar
+                           size={22}
+                           user={attachment.creator}
+                        />
+                     }
+                  />
+               </div>
                <TooltipPopup>{attachment.creator.name}</TooltipPopup>
             </Tooltip>
          )}

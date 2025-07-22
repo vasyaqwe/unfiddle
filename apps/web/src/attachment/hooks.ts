@@ -51,7 +51,6 @@ export function useAttachments({
    const queryClient = useQueryClient()
    const [uploadedIds, setUploadedIds] = useAtom(uploadedIdsAtom)
    const ids = initialUploadedIds ?? uploadedIds[subjectId] ?? []
-
    const attachments = useQuery(attachmentListQueryOptions({ subjectId, ids }))
 
    const upload = useMutation({
@@ -90,6 +89,7 @@ export function useAttachments({
                description: `Не вдалося завантажити ${attachment.name}`,
             })
          }
+         if (onSuccess) return onSuccess?.(uploaded)
          const succeeded = uploaded
             .filter((r): r is UploadedAttachment => !("error" in r))
             .map((item) => item.id)
@@ -97,7 +97,6 @@ export function useAttachments({
             ...prev,
             [subjectId]: [...(prev[subjectId] ?? []), ...succeeded],
          }))
-         onSuccess?.(uploaded)
       },
    })
 

@@ -328,17 +328,19 @@ export function OrderForm({
                            />
                         }
                      />
-                     <Button
-                        type="button"
-                        onClick={() => {
-                           fileUploaderRef.current?.click()
-                        }}
-                        kind={"icon"}
-                        variant={"ghost"}
-                        className="absolute top-1 right-1"
-                     >
-                        <Icons.paperClip />
-                     </Button>
+                     {order ? null : (
+                        <Button
+                           type="button"
+                           onClick={() => {
+                              fileUploaderRef.current?.click()
+                           }}
+                           kind={"icon"}
+                           variant={"ghost"}
+                           className="absolute top-1 right-1"
+                        >
+                           <Icons.paperClip />
+                        </Button>
+                     )}
                   </div>
                </Field>
                <div className="mt-4 flex flex-wrap gap-2 empty:hidden">
