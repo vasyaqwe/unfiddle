@@ -1,3 +1,4 @@
+import { ImagesCarousel } from "@/attachment/components/images-carousel"
 import { useAttachments, useDownloadAttachment } from "@/attachment/hooks"
 import { useCreateAttachment } from "@/attachment/mutations/use-create-attachment"
 import { useDeleteAttachment } from "@/attachment/mutations/use-delete-attachment"
@@ -81,7 +82,7 @@ import {
    TooltipTrigger,
 } from "@unfiddle/ui/components/tooltip"
 import { cn } from "@unfiddle/ui/utils"
-import { useAtom } from "jotai"
+import { useAtomValue } from "jotai"
 import { useTheme } from "next-themes"
 import * as React from "react"
 
@@ -150,7 +151,13 @@ function RouteComponent() {
          })
       },
    })
-   const createOrderOpen = useAtom(createOrderOpenAtom)
+   const createOrderOpen = useAtomValue(createOrderOpenAtom)
+
+   const imageAttachments = order.attachments.filter(
+      (attachment) =>
+         attachment.type.startsWith("image/") &&
+         !attachment.name.endsWith(".svg"),
+   )
 
    return (
       <div className="flex grow">
@@ -231,7 +238,12 @@ function RouteComponent() {
                <p className="mt-2 mb-3 font-semibold text-xl md:text-2xl">
                   {order.name}
                </p>
-               <p className="mb-5 whitespace-pre-wrap lg:mb-7">{order.note}</p>
+               <p className="mb-1 whitespace-pre-wrap">{order.note}</p>
+               <ImagesCarousel
+                  className="mb-1"
+                  subjectId={order.id}
+                  images={imageAttachments}
+               />
                <div className="mb-3 flex gap-1 lg:hidden">
                   <StatusCombobox />
                   <SeverityCombobox />
@@ -268,14 +280,14 @@ function RouteComponent() {
                         />
                         {order.creator.name} —{" "}
                         {new Date(order.createdAt).getDate() ===
-                        new Date().getDate()
-                           ? "Сьогодні о "
-                           : ""}
+                        new Date().getDate() ? (
+                           <span className="max-md:hidden">Сьогодні о</span>
+                        ) : null}
                         {formatOrderDate(order.createdAt)}
                      </p>
                   </section>
                </div>
-               <div>
+               <div className="mt-5">
                   <div className="mb-2 flex items-center justify-between">
                      <p className="font-medium text-lg">Товари</p>
                      <CreateOrderItem>
@@ -445,11 +457,6 @@ function Files({
 }: { fileUploaderRef: React.RefObject<HTMLDivElement | null> }) {
    const order = useOrder()
 
-   const _imageAttachments = order.attachments.filter(
-      (attachment) =>
-         attachment.type.startsWith("image/") &&
-         !attachment.name.endsWith(".svg"),
-   )
    const otherAttachments = order.attachments.filter(
       (attachment) =>
          !attachment.type.startsWith("image/") ||

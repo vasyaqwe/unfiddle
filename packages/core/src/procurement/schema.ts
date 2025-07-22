@@ -6,7 +6,7 @@ import { PROCUREMENT_STATUSES } from "@unfiddle/core/procurement/constants"
 import { workspace } from "@unfiddle/core/workspace/schema"
 import { relations } from "drizzle-orm"
 import { createUpdateSchema } from "drizzle-zod"
-import z from "zod"
+import { z } from "zod"
 
 export const procurement = d.table(
    "procurement",

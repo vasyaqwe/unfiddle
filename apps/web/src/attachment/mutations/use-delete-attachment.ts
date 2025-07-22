@@ -3,7 +3,9 @@ import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-export function useDeleteAttachment() {
+export function useDeleteAttachment({
+   onSuccess,
+}: { onSuccess?: () => void } = {}) {
    const queryClient = useQueryClient()
    const auth = useAuth()
    const socket = useSocket()
@@ -23,6 +25,7 @@ export function useDeleteAttachment() {
                   workspaceId: auth.workspace.id,
                }),
             )
+            onSuccess?.()
          },
       }),
    )

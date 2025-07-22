@@ -6,10 +6,15 @@ import { BottomNavigation } from "@/routes/_authed/$workspaceId/-components/bott
 import { SidebarContent } from "@/routes/_authed/$workspaceId/-components/sidebar-content"
 import { SocketProvider } from "@/socket/provider"
 import { trpc } from "@/trpc"
+import { validator } from "@/validator"
 import { Outlet, createFileRoute, notFound } from "@tanstack/react-router"
+import { z } from "zod"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout")({
    component: RouteComponent,
+   validateSearch: validator(
+      z.object({ attachmentId: z.optional(z.string()) }),
+   ),
    beforeLoad: async (opts) => {
       const workspace = await opts.context.queryClient
          .ensureQueryData(

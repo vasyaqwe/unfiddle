@@ -3,6 +3,23 @@ import { cn } from "../utils"
 type IconProps = React.ComponentProps<"svg">
 
 export const Icons = {
+   download: ({ className, ...props }: IconProps) => (
+      <svg
+         className={cn("size-5 md:size-4.5", className)}
+         viewBox="0 0 24 24"
+         fill="none"
+         xmlns="http://www.w3.org/2000/svg"
+         {...props}
+      >
+         <path
+            d="M6 21H18M12 3V17M12 17L17 12M12 17L7 12"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+         />
+      </svg>
+   ),
    paperClip: ({ className, ...props }: IconProps) => (
       <svg
          className={cn("size-[22px] md:size-5", className)}
