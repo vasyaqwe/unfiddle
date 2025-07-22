@@ -1,7 +1,7 @@
 import { useAuth } from "@/auth/hooks"
 import { trpc } from "@/trpc"
 import { keepPreviousData } from "@tanstack/react-query"
-import { useParams, useSearch } from "@tanstack/react-router"
+import { useSearch } from "@tanstack/react-router"
 import { useDeferredValue } from "react"
 
 export function useOrderQueryOptions() {
@@ -29,15 +29,4 @@ export function useOrderQueryOptions() {
    })
 
    return { list, listArchived, listNotArchived }
-}
-
-export function useOrderOneQueryOptions() {
-   const params = useParams({
-      from: "/_authed/$workspaceId/_layout/(order)/order/$orderId",
-   })
-   const auth = useAuth()
-   return trpc.order.one.queryOptions({
-      orderId: params.orderId,
-      workspaceId: auth.workspace.id,
-   })
 }

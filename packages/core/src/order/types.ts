@@ -24,6 +24,18 @@ export type OrderEvent =
         senderId: string
      }
    | {
+        action: "create_attachement"
+        orderId: string
+        workspaceId: string
+        senderId: string
+     }
+   | {
+        action: "delete_attachment"
+        orderId: string
+        workspaceId: string
+        senderId: string
+     }
+   | {
         action: "create_assignee"
         assignee: OrderAssignee
         orderId: string

@@ -14,7 +14,6 @@ import {
    useQuery,
    useQueryClient,
 } from "@tanstack/react-query"
-import type { Attachment } from "@unfiddle/core/attachment/types"
 import type { InferResponseType } from "hono"
 import { useAtom } from "jotai"
 import type React from "react"
@@ -41,15 +40,17 @@ const attachmentListQueryOptions = (input: {
 export function useAttachments({
    subjectId,
    onSuccess,
+   uploadedIds: initialUploadedIds,
 }: {
    subjectId: string
    onSuccess?: (
       uploaded: InferResponseType<typeof api.storage.$post>["uploaded"],
    ) => void
+   uploadedIds?: string[]
 }) {
    const queryClient = useQueryClient()
    const [uploadedIds, setUploadedIds] = useAtom(uploadedIdsAtom)
-   const ids = uploadedIds[subjectId] || []
+   const ids = initialUploadedIds ?? uploadedIds[subjectId] ?? []
 
    const attachments = useQuery(attachmentListQueryOptions({ subjectId, ids }))
 
@@ -184,7 +185,7 @@ export function useAttachments({
 }
 
 export function useDownloadAttachment() {
-   const download = async (files: Attachment[]) => {
+   const download = async (files: { name: string; url: string }[]) => {
       if (files.length === 1) {
          const response = await fetch(files[0]?.url ?? "")
          const blob = await response.blob()
@@ -221,7 +222,7 @@ export function useDownloadAttachment() {
       return "Downloaded zip file"
    }
 
-   return useMutation<string, Error, Attachment[]>({
+   return useMutation<string, Error, { name: string; url: string }[]>({
       mutationFn: download,
    })
 }

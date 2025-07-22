@@ -1,4 +1,9 @@
+import { useAttachments, useDownloadAttachment } from "@/attachment/hooks"
+import { useCreateAttachment } from "@/attachment/mutations/use-create-attachment"
+import { useDeleteAttachment } from "@/attachment/mutations/use-delete-attachment"
+import type { UploadedAttachment } from "@/attachment/types"
 import { useAuth } from "@/auth/hooks"
+import { FileUploader } from "@/file/components/uploader"
 import { MainScrollArea } from "@/layout/components/main"
 import { useCreateOrderAssignee } from "@/order/assignee/mutations/use-create-order-assignee"
 import { useDeleteOrderAssignee } from "@/order/assignee/mutations/use-delete-order-assignee"
@@ -10,6 +15,7 @@ import { useOrder } from "@/order/hooks"
 import { CreateOrderItem } from "@/order/item/components/create-order-item"
 import { useDeleteOrder } from "@/order/mutations/use-delete-order"
 import { useUpdateOrder } from "@/order/mutations/use-update-order"
+import { createOrderOpenAtom } from "@/order/store"
 import { CreateProcurement } from "@/procurement/components/create-procurement"
 import {
    Header,
@@ -42,6 +48,7 @@ import {
    makeShortId,
    orderStatusGradient,
 } from "@unfiddle/core/order/utils"
+import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import {
    AvatarStack,
    AvatarStackItem,
@@ -66,6 +73,7 @@ import {
    MenuTrigger,
 } from "@unfiddle/ui/components/menu"
 import { ScrollArea } from "@unfiddle/ui/components/scroll-area"
+import { SVGPreview } from "@unfiddle/ui/components/svg-preview"
 import { Toggle } from "@unfiddle/ui/components/toggle"
 import {
    Tooltip,
@@ -73,6 +81,7 @@ import {
    TooltipTrigger,
 } from "@unfiddle/ui/components/tooltip"
 import { cn } from "@unfiddle/ui/utils"
+import { useAtom } from "jotai"
 import { useTheme } from "next-themes"
 import * as React from "react"
 
@@ -119,6 +128,29 @@ function RouteComponent() {
    const deleteAssignee = useDeleteOrderAssignee()
 
    const pressed = order.assignees.some((a) => a.user.id === auth.user.id)
+
+   const createAttachment = useCreateAttachment()
+
+   const fileUploaderRef = React.useRef<HTMLDivElement>(null)
+   const attachments = useAttachments({
+      subjectId: order.id,
+      onSuccess: async (data) => {
+         const succeeded = data.filter(
+            (r): r is UploadedAttachment => !("error" in r),
+         )
+
+         createAttachment.mutate({
+            attachments: succeeded.map((a) => ({
+               ...a,
+               subjectId: order.id,
+               workspaceId: auth.workspace.id,
+               subjectType: "order",
+            })),
+            workspaceId: auth.workspace.id,
+         })
+      },
+   })
+   const createOrderOpen = useAtom(createOrderOpenAtom)
 
    return (
       <div className="flex grow">
@@ -174,6 +206,13 @@ function RouteComponent() {
                </div>
             </Header>
             <MainScrollArea>
+               {createOrderOpen ? null : (
+                  <FileUploader
+                     ref={fileUploaderRef}
+                     className="absolute inset-0 z-[9] h-full"
+                     onUpload={attachments.upload.mutateAsync}
+                  />
+               )}
                <Expandable expanded={order.deletedAt !== null}>
                   <Badge
                      variant={"destructive"}
@@ -394,87 +433,121 @@ function RouteComponent() {
                      </p>
                   </section>
                ) : null}
-               {/* <section className="group/section py-4">
-                  <div className="flex items-center">
-                     <p className="text-foreground/75">Files </p>
-                     <Button
-                        className="ml-auto group-hover/section:visible md:invisible"
-                        kind={"icon"}
-                        variant={"ghost"}
-                        size={"xs"}
-                        onClick={() => fileUploaderRef.current?.click()}
-                     >
-                        <Icons.plus className="size-4" />
-                     </Button>
-                  </div>
-                  <div className={"mt-3 flex flex-col gap-1"}>
-                     {otherAttachments.length === 0 ? (
-                        <p className="text-foreground/60 text-sm">
-                           No files in this post.
-                        </p>
-                     ) : (
-                        otherAttachments.map((attachment) =>
-                           !attachment.creator ? null : (
-                              <div
-                                 key={attachment.id}
-                                 className="group flex grow items-center gap-1"
-                              >
-                                 <Button
-                                    disabled={download.isMutating}
-                                    onClick={() =>
-                                       download.trigger([attachment])
-                                    }
-                                    variant={"ghost"}
-                                    className="grow cursor-pointer justify-start px-1.5 md:px-1.5"
-                                 >
-                                    {attachment.name.endsWith(".svg") ? (
-                                       <SVGPreview
-                                          className="size-5"
-                                          url={attachment.url}
-                                       />
-                                    ) : (
-                                       <Icons.attachment />
-                                    )}
-                                    <span className="line-clamp-1 font-medium text-foreground/75 text-sm">
-                                       {attachment.name}
-                                    </span>
-                                 </Button>
-                                 {attachment.creatorId === auth.user.id ? (
-                                    <Button
-                                       kind={"icon"}
-                                       variant={"ghost"}
-                                       className="hover:text-destructive group-hover:visible md:invisible"
-                                       onClick={async () => {
-                                          z.mutate.attachment.delete({
-                                             id: attachment.id,
-                                          })
-                                       }}
-                                    >
-                                       <Icons.trash />
-                                    </Button>
-                                 ) : (
-                                    <Tooltip>
-                                       <TooltipTrigger
-                                          render={
-                                             <UserAvatar
-                                                size={24}
-                                                user={attachment.creator}
-                                             />
-                                          }
-                                       />
-                                       <TooltipPopup>
-                                          {attachment.creator.name}
-                                       </TooltipPopup>
-                                    </Tooltip>
-                                 )}
-                              </div>
-                           ),
-                        )
-                     )}
-                  </div>
-               </section> */}
+               <Files fileUploaderRef={fileUploaderRef} />
             </ScrollArea>
          </div>
+      </div>
+   )
+}
+
+function Files({
+   fileUploaderRef,
+}: { fileUploaderRef: React.RefObject<HTMLDivElement | null> }) {
+   const order = useOrder()
+
+   const _imageAttachments = order.attachments.filter(
+      (attachment) =>
+         attachment.type.startsWith("image/") &&
+         !attachment.name.endsWith(".svg"),
+   )
+   const otherAttachments = order.attachments.filter(
+      (attachment) =>
+         !attachment.type.startsWith("image/") ||
+         attachment.name.endsWith(".svg"),
+   )
+
+   return (
+      <section className="group/section py-4">
+         <div className="flex items-center">
+            <p className="text-foreground/75">Файли </p>
+            <Button
+               className="ml-auto"
+               kind={"icon"}
+               variant={"ghost"}
+               size={"xs"}
+               onClick={() => fileUploaderRef.current?.click()}
+            >
+               <Icons.plus className="size-4" />
+            </Button>
+         </div>
+         <div className={"mt-3 flex flex-col gap-1"}>
+            {otherAttachments.length === 0 ? (
+               <p className="text-foreground/60 text-sm">Немає файлів.</p>
+            ) : (
+               otherAttachments.map((attachment) => (
+                  <FileItem
+                     attachment={attachment}
+                     key={attachment.id}
+                  />
+               ))
+            )}
+         </div>
+      </section>
+   )
+}
+
+function FileItem({
+   attachment,
+}: {
+   attachment: NonNullable<RouterOutput["order"]["one"]>["attachments"][number]
+}) {
+   const auth = useAuth()
+   const order = useOrder()
+   const download = useDownloadAttachment()
+   const deleteItem = useDeleteAttachment()
+
+   return (
+      <div
+         key={attachment.id}
+         className="group -mr-1 -ml-1.5 grid grid-cols-[1fr_auto] items-center gap-1"
+      >
+         <Button
+            disabled={download.isPending}
+            onClick={() => download.mutate([attachment])}
+            variant={"ghost"}
+            className="md:!gap-1.5 cursor-pointer justify-start px-1.5 md:px-1.5"
+         >
+            {attachment.name.endsWith(".svg") ? (
+               <SVGPreview
+                  className="size-5"
+                  url={attachment.url}
+               />
+            ) : (
+               <Icons.attachment className="!ml-0" />
+            )}
+            <span className="line-clamp-1 text-foreground/75 text-sm">
+               {attachment.name}
+            </span>
+         </Button>
+         {attachment.creatorId === auth.user.id ? (
+            <Button
+               kind={"icon"}
+               variant={"ghost"}
+               className="group-hover:visible md:invisible"
+               onClick={async () => {
+                  deleteItem.mutate({
+                     attachmentId: attachment.id,
+                     workspaceId: auth.workspace.id,
+                     subjectId: order.id,
+                  })
+               }}
+               disabled={deleteItem.isPending}
+            >
+               <Icons.trash />
+            </Button>
+         ) : (
+            <Tooltip delay={0}>
+               <TooltipTrigger
+                  render={
+                     <UserAvatar
+                        size={24}
+                        user={attachment.creator}
+                     />
+                  }
+               />
+               <TooltipPopup>{attachment.creator.name}</TooltipPopup>
+            </Tooltip>
+         )}
       </div>
    )
 }

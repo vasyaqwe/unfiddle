@@ -1,3 +1,4 @@
+import { attachment } from "@unfiddle/core/attachment/schema"
 import { user } from "@unfiddle/core/auth/schema"
 import { CURRENCIES } from "@unfiddle/core/currency/constants"
 import { d } from "@unfiddle/core/database"
@@ -88,6 +89,7 @@ export const orderRelations = relations(order, ({ one, many }) => ({
    procurements: many(procurement),
    assignees: many(orderAssignee),
    items: many(orderItem),
+   attachments: many(attachment),
 }))
 
 export const updateOrderSchema = createUpdateSchema(order)

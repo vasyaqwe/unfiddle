@@ -169,7 +169,7 @@ export function FileUploader(props: Props) {
             <div
                {...getRootProps()}
                className={cn(
-                  "bg-background/25 backdrop-blur-[5px]",
+                  "z-[50] bg-background/25 backdrop-blur-[5px]",
                   isDragging ? "" : "invisible",
                   isDisabled ? "pointer-events-none opacity-70" : "",
                   className,
@@ -183,8 +183,8 @@ export function FileUploader(props: Props) {
                      Дозволено
                      {maxFileCount > 1
                         ? ` ${maxFileCount === Infinity ? "кілька" : maxFileCount}
-                      файлів (кожен не понад ${formatBytes(maxSize)})`
-                        : `файл розміром не понад ${formatBytes(maxSize)}`}
+                      файлів (кожен максимум ${formatBytes(maxSize)})`
+                        : `файл розміром максимум ${formatBytes(maxSize)}`}
                   </p>
                </div>
             </div>

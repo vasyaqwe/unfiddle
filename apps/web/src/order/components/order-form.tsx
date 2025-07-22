@@ -8,7 +8,7 @@ import { ORDER_SEVERITIES_TRANSLATION } from "@unfiddle/core/order/constants"
 import { ORDER_SEVERITIES } from "@unfiddle/core/order/constants"
 import type { OrderItem } from "@unfiddle/core/order/item/types"
 import type { OrderSeverity } from "@unfiddle/core/order/types"
-import type { RouterOutput } from "@unfiddle/core/trpc/types"
+import type { RouterInput, RouterOutput } from "@unfiddle/core/trpc/types"
 import { Button } from "@unfiddle/ui/components/button"
 import { Checkbox } from "@unfiddle/ui/components/checkbox"
 import { DateInput } from "@unfiddle/ui/components/date-input"
@@ -46,6 +46,7 @@ type FormData = {
    deliversAt: Date | null
    currency: Currency
    items: BareOrderItem[]
+   attachments: RouterInput["order"]["create"]["attachments"]
 }
 
 export function OrderForm({
@@ -95,6 +96,7 @@ export function OrderForm({
                   deliversAt,
                   currency,
                   items,
+                  attachments: attachments.uploaded,
                })
             })
          }}

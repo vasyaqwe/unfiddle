@@ -1,5 +1,4 @@
 import { useAuth } from "@/auth/hooks"
-import { useOrderOneQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -13,15 +12,16 @@ export function useDeleteOrderItem({
    const queryClient = useQueryClient()
    const auth = useAuth()
    const socket = useSocket()
-   const oneQueryOptions = useOrderOneQueryOptions()
    const deleteItem = useOptimisticDeleteOrderItem()
 
    return useMutation(
       trpc.order.item.delete.mutationOptions({
          onMutate: async (input) => {
-            await queryClient.cancelQueries(oneQueryOptions)
+            await queryClient.cancelQueries(trpc.order.one.queryOptions(input))
 
-            const data = queryClient.getQueryData(oneQueryOptions.queryKey)
+            const data = queryClient.getQueryData(
+               trpc.order.one.queryOptions(input).queryKey,
+            )
 
             deleteItem(input)
 
@@ -29,8 +29,11 @@ export function useDeleteOrderItem({
 
             return { data }
          },
-         onError: (error, _data, context) => {
-            queryClient.setQueryData(oneQueryOptions.queryKey, context?.data)
+         onError: (error, input, context) => {
+            queryClient.setQueryData(
+               trpc.order.one.queryOptions(input).queryKey,
+               context?.data,
+            )
             toast.error("Ой-ой!", {
                description: error.message,
             })
@@ -46,8 +49,8 @@ export function useDeleteOrderItem({
                workspaceId: auth.workspace.id,
             })
          },
-         onSettled: () => {
-            queryClient.invalidateQueries(oneQueryOptions)
+         onSettled: (_data, _error, input) => {
+            queryClient.invalidateQueries(trpc.order.one.queryOptions(input))
          },
       }),
    )
