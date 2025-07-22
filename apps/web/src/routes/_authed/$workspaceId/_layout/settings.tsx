@@ -1,6 +1,6 @@
 import { api } from "@/api"
 import { useAuth } from "@/auth/hooks"
-import { fileToBase64, imageDimensions } from "@/file/utils"
+import { fileToBase64, imageDimensions } from "@/file/components/uploader/utils"
 import { MainScrollArea } from "@/layout/components/main"
 import { useOrderQueryOptions } from "@/order/queries"
 import {

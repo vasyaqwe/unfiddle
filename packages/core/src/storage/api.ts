@@ -16,6 +16,45 @@ const base64ToArrayBuffer = (base64: string): Uint8Array => {
 export const storageRouter = createRouter()
    .use(authMiddleware)
    .post(
+      "/list-by-ids",
+      apiValidator(
+         "json",
+         z.object({
+            ids: z.array(z.string()),
+         }),
+      ),
+      async (c) => {
+         const { ids } = c.req.valid("json")
+         if (!ids.length) return c.json({ attachments: [] })
+
+         const PATH = "files/"
+         const attachments = []
+
+         for (const id of ids) {
+            try {
+               const resultPath = `${PATH}${id}`
+               const fileObject = await c.var.env.BUCKET.head(resultPath)
+
+               if (!fileObject) continue
+
+               const metadata = fileObject.customMetadata || {}
+
+               attachments.push({
+                  id,
+                  name: metadata.name || id,
+                  size: parseInt(metadata.size ?? "0"),
+                  type: metadata.type || "application/octet-stream",
+                  width: metadata.width ? parseInt(metadata.width) : null,
+                  height: metadata.height ? parseInt(metadata.height) : null,
+                  url: `${c.var.env.STORAGE_URL}/${resultPath}`,
+               })
+            } catch (_err) {}
+         }
+
+         return c.json({ attachments })
+      },
+   )
+   .post(
       "/",
       apiValidator(
          "json",
@@ -61,7 +100,7 @@ export const storageRouter = createRouter()
 
                if (uploaded.error)
                   return {
-                     id,
+                     id: id as string,
                      name: file.name,
                      size: file.size,
                      type: file.type,
@@ -72,7 +111,7 @@ export const storageRouter = createRouter()
                   }
 
                return {
-                  id,
+                  id: id as string,
                   name: file.name,
                   size: file.size,
                   type: file.type,

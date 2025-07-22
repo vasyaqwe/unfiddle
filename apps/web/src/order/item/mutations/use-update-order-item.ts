@@ -1,6 +1,5 @@
 import { useAuth } from "@/auth/hooks"
 import { useOrder } from "@/order/hooks"
-import { useOrderOneQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -15,15 +14,16 @@ export function useUpdateOrderItem({
    const queryClient = useQueryClient()
    const auth = useAuth()
    const socket = useSocket()
-   const oneQueryOptions = useOrderOneQueryOptions()
    const update = useOptimisticUpdateOrderItem()
 
    return useMutation(
       trpc.order.item.update.mutationOptions({
          onMutate: async (input) => {
-            await queryClient.cancelQueries(oneQueryOptions)
+            await queryClient.cancelQueries(trpc.order.one.queryOptions(input))
 
-            const data = queryClient.getQueryData(oneQueryOptions.queryKey)
+            const data = queryClient.getQueryData(
+               trpc.order.one.queryOptions(input).queryKey,
+            )
 
             update({ ...input, orderId: order.id })
 
@@ -31,8 +31,11 @@ export function useUpdateOrderItem({
 
             return { data }
          },
-         onError: (error, _data, context) => {
-            queryClient.setQueryData(oneQueryOptions.queryKey, context?.data)
+         onError: (error, input, context) => {
+            queryClient.setQueryData(
+               trpc.order.one.queryOptions(input).queryKey,
+               context?.data,
+            )
             toast.error("Ой-ой!", {
                description: error.message,
             })
@@ -46,8 +49,8 @@ export function useUpdateOrderItem({
                orderId: order.id,
             })
          },
-         onSettled: () => {
-            queryClient.invalidateQueries(oneQueryOptions)
+         onSettled: (_data, _error, input) => {
+            queryClient.invalidateQueries(trpc.order.one.queryOptions(input))
          },
       }),
    )

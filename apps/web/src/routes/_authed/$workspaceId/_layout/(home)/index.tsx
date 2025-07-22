@@ -6,13 +6,13 @@ import { VList, VListContent } from "@/layout/components/vlist"
 import { useCreateOrderAssignee } from "@/order/assignee/mutations/use-create-order-assignee"
 import { useDeleteOrderAssignee } from "@/order/assignee/mutations/use-delete-order-assignee"
 import { ArchiveOrderAlert } from "@/order/components/archive-order-alert"
-import { CreateOrder } from "@/order/components/create-order"
 import { DeleteOrderAlert } from "@/order/components/delete-order-alert"
 import { SeverityIcon } from "@/order/components/severity-icon"
 import { UpdateOrder } from "@/order/components/update-order"
 import { useDeleteOrder } from "@/order/mutations/use-delete-order"
 import { useUpdateOrder } from "@/order/mutations/use-update-order"
 import { useOrderQueryOptions } from "@/order/queries"
+import { createOrderOpenAtom } from "@/order/store"
 import {
    Header,
    HeaderTitle,
@@ -54,7 +54,6 @@ import {
    ComboboxPopup,
    ComboboxTrigger,
 } from "@unfiddle/ui/components/combobox"
-import { DrawerTrigger } from "@unfiddle/ui/components/drawer"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { MenuSeparator } from "@unfiddle/ui/components/menu"
 import {
@@ -69,7 +68,7 @@ import {
    TooltipPopup,
    TooltipTrigger,
 } from "@unfiddle/ui/components/tooltip"
-import {} from "jotai"
+import { useSetAtom } from "jotai"
 import { useTheme } from "next-themes"
 import * as React from "react"
 
@@ -99,6 +98,8 @@ function RouteComponent() {
    //    </div>
    // )
 
+   const setCreateOrderOpen = useSetAtom(createOrderOpenAtom)
+
    return (
       <>
          <Header>
@@ -113,16 +114,13 @@ function RouteComponent() {
             container={false}
             ref={scrollAreaRef}
          >
-            <CreateOrder>
-               <DrawerTrigger
-                  render={
-                     <Button className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-[10] overflow-visible shadow-xl md:right-8 md:bottom-8 md:h-9 md:px-3">
-                        <Icons.plus className="md:size-6" />
-                        Замовлення
-                     </Button>
-                  }
-               />
-            </CreateOrder>
+            <Button
+               onClick={() => setCreateOrderOpen(true)}
+               className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-[10] overflow-visible shadow-xl md:right-8 md:bottom-8 md:h-9 md:px-3"
+            >
+               <Icons.plus className="md:size-6" />
+               Замовлення
+            </Button>
             <div className="sticky top-0 z-[5] flex min-h-12 items-center gap-1 border-surface-12/13 border-b bg-background px-1.5 shadow-xs/4 lg:min-h-10">
                <ToggleArchived />
                <DateFilter />

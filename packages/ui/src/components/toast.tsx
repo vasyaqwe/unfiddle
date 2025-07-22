@@ -99,7 +99,7 @@ export function Toaster(props: React.ComponentProps<typeof Sonner>) {
          toastOptions={{
             unstyled: true,
             classNames: {
-               title: "!text-[1rem] !font-[550] ml-6 -mt-1",
+               title: "!text-[1rem] !font-[550] ml-6.5 -mt-1",
                description: "!text-sm line-clamp-2 mt-0.5 !font-normal",
                icon: "!absolute top-[0.75rem] left-4",
                closeButton:

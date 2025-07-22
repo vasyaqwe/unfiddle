@@ -23,16 +23,6 @@ const app = createRouter()
       c.set("email", emailClient(c))
       await next()
    })
-   .get("/r2/*", async (c) => {
-      const key = c.req.path.substring("/r2/".length)
-      const file = await c.var.env.BUCKET.get(key)
-      if (!file) return c.json({ status: 404 })
-      const headers = new Headers()
-      headers.append("etag", file.httpEtag)
-      return new Response(file.body, {
-         headers,
-      })
-   })
    .onError(handleApiError)
 
 const base = createRouter()
@@ -43,6 +33,16 @@ const base = createRouter()
          origin: [c.var.env.WEB_URL],
       })
       return handler(c, next)
+   })
+   .get("/r2/*", async (c) => {
+      const key = c.req.path.substring("/r2/".length)
+      const file = await c.var.env.BUCKET.get(key)
+      if (!file) return c.json({ status: 404 })
+      const headers = new Headers()
+      headers.append("etag", file.httpEtag)
+      return new Response(file.body, {
+         headers,
+      })
    })
    .route("/storage", storageRouter)
    .route("/workspace", workspaceRouter)

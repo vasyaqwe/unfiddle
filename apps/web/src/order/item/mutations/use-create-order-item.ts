@@ -1,5 +1,4 @@
 import { useAuth } from "@/auth/hooks"
-import { useOrderOneQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -13,15 +12,16 @@ export function useCreateOrderItem({
    const queryClient = useQueryClient()
    const auth = useAuth()
    const socket = useSocket()
-   const oneQueryOptions = useOrderOneQueryOptions()
    const create = useOptimisticCreateOrderItem()
 
    return useMutation(
       trpc.order.item.create.mutationOptions({
          onMutate: async (input) => {
-            await queryClient.cancelQueries(oneQueryOptions)
+            await queryClient.cancelQueries(trpc.order.one.queryOptions(input))
 
-            const data = queryClient.getQueryData(oneQueryOptions.queryKey)
+            const data = queryClient.getQueryData(
+               trpc.order.one.queryOptions(input).queryKey,
+            )
 
             create({
                orderId: input.orderId,
@@ -37,8 +37,11 @@ export function useCreateOrderItem({
 
             return { data }
          },
-         onError: (error, _data, context) => {
-            queryClient.setQueryData(oneQueryOptions.queryKey, context?.data)
+         onError: (error, data, context) => {
+            queryClient.setQueryData(
+               trpc.order.one.queryOptions(data).queryKey,
+               context?.data,
+            )
             toast.error("Ой-ой!", {
                description: error.message,
             })
@@ -54,8 +57,8 @@ export function useCreateOrderItem({
                item,
             })
          },
-         onSettled: () => {
-            queryClient.invalidateQueries(oneQueryOptions)
+         onSettled: (_data, _error, input) => {
+            queryClient.invalidateQueries(trpc.order.one.queryOptions(input))
          },
       }),
    )

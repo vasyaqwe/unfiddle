@@ -8,11 +8,14 @@ import { useOptimisticUpdateOrderItem } from "@/order/item/mutations/use-update-
 import { useOptimisticCreateOrder } from "@/order/mutations/use-create-order"
 import { useOptimisticDeleteOrder } from "@/order/mutations/use-delete-order"
 import { useOptimisticUpdateOrder } from "@/order/mutations/use-update-order"
+import { trpc } from "@/trpc"
+import { useQueryClient } from "@tanstack/react-query"
 import type { OrderEvent } from "@unfiddle/core/order/types"
 import usePartySocket from "partysocket/react"
 
 export function useOrderSocket() {
    const auth = useAuth()
+   const queryClient = useQueryClient()
    const create = useOptimisticCreateOrder()
    const update = useOptimisticUpdateOrder()
    const deleteOrder = useOptimisticDeleteOrder()
@@ -31,10 +34,20 @@ export function useOrderSocket() {
 
          if (data.senderId === auth.user.id) return
 
+         if (
+            data.action === "create_attachement" ||
+            data.action === "delete_attachment"
+         ) {
+            return queryClient.invalidateQueries(
+               trpc.order.one.queryOptions({
+                  orderId: data.orderId,
+                  workspaceId: data.workspaceId,
+               }),
+            )
+         }
+
          if (data.action === "create_item") return createItem(data)
-
          if (data.action === "update_item") return updateItem(data.item)
-
          if (data.action === "delete_item") return deleteItem(data)
 
          if (data.action === "create_assignee") {
@@ -45,13 +58,10 @@ export function useOrderSocket() {
             })
             return createAssignee(data)
          }
-
          if (data.action === "delete_assignee") return deleteAssignee(data)
 
          if (data.action === "create") return create(data.order)
-
          if (data.action === "update") return update(data.order)
-
          if (data.action === "delete") return deleteOrder(data)
       },
    })

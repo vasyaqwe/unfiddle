@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server"
+import { attachment } from "@unfiddle/core/attachment/schema"
 import { formatCurrency } from "@unfiddle/core/currency"
 import { CURRENCIES } from "@unfiddle/core/currency/constants"
 import { orderAssignee, orderItem } from "@unfiddle/core/database/schema"
@@ -374,6 +375,28 @@ export const orderRouter = t.router({
                   },
                   orderBy: [desc(orderAssignee.createdAt)],
                },
+               attachments: {
+                  columns: {
+                     id: true,
+                     url: true,
+                     type: true,
+                     size: true,
+                     name: true,
+                     width: true,
+                     height: true,
+                     creatorId: true,
+                  },
+                  with: {
+                     creator: {
+                        columns: {
+                           id: true,
+                           name: true,
+                           image: true,
+                        },
+                     },
+                  },
+                  orderBy: [desc(attachment.createdAt)],
+               },
             },
             orderBy: [desc(order.createdAt)],
          })
@@ -501,6 +524,14 @@ export const orderRouter = t.router({
                items: z
                   .array(createInsertSchema(orderItem).omit({ orderId: true }))
                   .min(1),
+               attachments: z.array(
+                  createInsertSchema(attachment).omit({
+                     creatorId: true,
+                     subjectId: true,
+                     subjectType: true,
+                     workspaceId: true,
+                  }),
+               ),
             }),
       )
       .mutation(async ({ ctx, input }) => {
@@ -561,6 +592,20 @@ export const orderRouter = t.router({
                .set({ lastId: nextId })
                .where(eq(orderCounter.workspaceId, input.workspaceId)),
          )
+
+         if (input.attachments.length > 0) {
+            batchQueries.push(
+               ctx.db.insert(attachment).values(
+                  input.attachments.map((a) => ({
+                     ...a,
+                     subjectId: createdOrder.id,
+                     subjectType: "order" as const,
+                     workspaceId: input.workspaceId,
+                     creatorId: ctx.user.id,
+                  })),
+               ),
+            )
+         }
 
          const batch = await tryCatch(
             ctx.db.batch(
@@ -640,6 +685,14 @@ export const orderRouter = t.router({
                   and(
                      eq(order.id, input.orderId),
                      eq(order.workspaceId, input.workspaceId),
+                  ),
+               ),
+            ctx.db
+               .delete(attachment)
+               .where(
+                  and(
+                     eq(attachment.subjectId, input.orderId),
+                     eq(attachment.workspaceId, input.workspaceId),
                   ),
                ),
          ])

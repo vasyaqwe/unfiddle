@@ -1,3 +1,4 @@
+import { useAttachments } from "@/attachment/hooks"
 import { useAuth } from "@/auth/hooks"
 import { useOrderQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
@@ -16,6 +17,7 @@ export function useCreateOrder({
    const socket = useSocket()
    const queryOptions = useOrderQueryOptions()
    const create = useOptimisticCreateOrder()
+   const attachments = useAttachments({ subjectId: auth.workspace.id })
 
    return useMutation(
       trpc.order.create.mutationOptions({
@@ -67,6 +69,7 @@ export function useCreateOrder({
                   procurements: [],
                },
             })
+            attachments.clear()
             // notify({
             //    title: `➕ ${auth.user.name} додав замовлення`,
             //    body: order.name,

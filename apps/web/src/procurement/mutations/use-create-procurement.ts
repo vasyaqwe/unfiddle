@@ -1,6 +1,6 @@
 import { useAuth } from "@/auth/hooks"
 import { useOrder } from "@/order/hooks"
-import { useOrderOneQueryOptions, useOrderQueryOptions } from "@/order/queries"
+import { useOrderQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -16,7 +16,6 @@ export function useCreateProcurement({
    const auth = useAuth()
    const socket = useSocket()
    const orderQueryOptions = useOrderQueryOptions()
-   const orderOneQueryOptions = useOrderOneQueryOptions()
    const create = useOptimisticCreateProcurement()
 
    const queryOptions = trpc.procurement.list.queryOptions({
@@ -28,13 +27,13 @@ export function useCreateProcurement({
       trpc.procurement.create.mutationOptions({
          onMutate: async (input) => {
             await Promise.all([
-               queryClient.cancelQueries(orderOneQueryOptions),
+               queryClient.cancelQueries(trpc.order.one.queryOptions(input)),
                queryClient.cancelQueries(orderQueryOptions.list),
                queryClient.cancelQueries(queryOptions),
             ])
 
             const order = queryClient.getQueryData(
-               orderOneQueryOptions.queryKey,
+               trpc.order.one.queryOptions(input).queryKey,
             )
             const procurements = queryClient.getQueryData(queryOptions.queryKey)
             const orders = queryClient.getQueryData(

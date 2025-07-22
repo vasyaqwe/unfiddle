@@ -1,6 +1,7 @@
 import { useAuth } from "@/auth/hooks"
 import { OrderForm } from "@/order/components/order-form"
 import { useCreateOrder } from "@/order/mutations/use-create-order"
+import { createOrderOpenAtom } from "@/order/store"
 import { Button } from "@unfiddle/ui/components/button"
 import {
    Drawer,
@@ -9,11 +10,12 @@ import {
    DrawerTitle,
 } from "@unfiddle/ui/components/drawer"
 import { number } from "@unfiddle/ui/utils"
-import * as React from "react"
+import { useAtom } from "jotai"
+import type * as React from "react"
 
 export function CreateOrder({ children }: { children?: React.ReactNode }) {
    const auth = useAuth()
-   const [open, setOpen] = React.useState(false)
+   const [open, setOpen] = useAtom(createOrderOpenAtom)
    const mutation = useCreateOrder({
       onMutate: () => setOpen(false),
       onError: () => setOpen(true),

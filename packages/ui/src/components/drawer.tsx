@@ -35,13 +35,15 @@ function DrawerPopup({
          <DrawerPrimitive.Content
             className={cn(
                DIALOG_STYLES.popup,
-               "fixed bottom-0 z-50 flex h-[86svh] w-full flex-col overflow-y-auto after:hidden max-md:inset-x-0 max-md:rounded-b-none max-md:pt-0 md:inset-[0.6rem_0.6rem_0.6rem_auto] md:h-auto md:max-w-xl md:rounded-xl md:p-5",
+               "fixed bottom-0 z-50 flex h-[86svh] w-full flex-col p-0 after:hidden max-md:inset-x-0 max-md:rounded-b-none md:inset-[0.6rem_0.6rem_0.6rem_auto] md:h-auto md:max-w-xl md:rounded-xl",
                className,
             )}
             {...props}
          >
-            <div className="mx-auto mt-0.5 mb-5 h-[5px] w-8 shrink-0 rounded-full bg-surface-8 md:hidden" />
-            {children}
+            <div className="flex w-full grow flex-col overflow-y-auto p-4 max-md:pt-0 md:pt-5">
+               <div className="mx-auto mt-0.5 mb-5 h-[5px] w-8 shrink-0 rounded-full bg-surface-8 md:hidden" />
+               {children}
+            </div>
          </DrawerPrimitive.Content>
       </DrawerPortal>
    )
