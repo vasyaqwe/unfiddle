@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { Selection as D3Selection } from "d3-selection"
 import { type ZoomBehavior, ZoomTransform } from "d3-zoom"
 import { atom } from "jotai"

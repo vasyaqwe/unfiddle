@@ -35,7 +35,7 @@ export const attachmentRouter = t.router({
          }),
       )
       .mutation(async ({ ctx, input }) => {
-         await ctx.db
+         const res = await ctx.db
             .delete(attachment)
             .where(
                and(
@@ -43,5 +43,11 @@ export const attachmentRouter = t.router({
                   eq(attachment.workspaceId, input.workspaceId),
                ),
             )
+            .returning()
+            .get()
+
+         if (res?.url) {
+            await ctx.vars.BUCKET.delete(res.url)
+         }
       }),
 })
