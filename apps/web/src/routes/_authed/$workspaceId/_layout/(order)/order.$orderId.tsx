@@ -3,6 +3,7 @@ import { useAttachments, useDownloadAttachment } from "@/attachment/hooks"
 import type { UploadedAttachment } from "@/attachment/types"
 import { useAuth } from "@/auth/hooks"
 import { FileUploader } from "@/file/components/uploader"
+import { useTip } from "@/interactions/use-tip"
 import { MainScrollArea } from "@/layout/components/main"
 import { useCreateOrderAssignee } from "@/order/assignee/mutations/use-create-order-assignee"
 import { useDeleteOrderAssignee } from "@/order/assignee/mutations/use-delete-order-assignee"
@@ -136,6 +137,18 @@ function RouteComponent() {
    const deleteAssignee = useDeleteOrderAssignee()
    const socket = useSocket()
    const queryClient = useQueryClient()
+   useTip({
+      key: "attachments",
+      message:
+         "Тепер можна завантажувати файли/фото у закупівлі. Перетягуйте або натикайте на скріпку.",
+      autoTrigger: true,
+   })
+   useTip({
+      key: "attachments_delete",
+      message:
+         "До речі, видалити фото/файл у закупівлі можна через меню (права кнопка миші).",
+      autoTrigger: true,
+   })
 
    const pressed = order.assignees.some((a) => a.user.id === auth.user.id)
 
