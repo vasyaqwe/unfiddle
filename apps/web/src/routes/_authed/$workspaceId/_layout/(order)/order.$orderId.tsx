@@ -1,7 +1,5 @@
 import { ImagesCarousel } from "@/attachment/components/images-carousel"
 import { useAttachments, useDownloadAttachment } from "@/attachment/hooks"
-import { useCreateAttachment } from "@/attachment/mutations/use-create-attachment"
-import { useDeleteAttachment } from "@/attachment/mutations/use-delete-attachment"
 import type { UploadedAttachment } from "@/attachment/types"
 import { useAuth } from "@/auth/hooks"
 import { FileUploader } from "@/file/components/uploader"
@@ -26,6 +24,7 @@ import {
 import { CreateAnalog } from "@/routes/_authed/$workspaceId/_layout/(order)/-components/create-analog"
 import { OrderItem } from "@/routes/_authed/$workspaceId/_layout/(order)/-components/order-item"
 import { Procurement } from "@/routes/_authed/$workspaceId/_layout/(order)/-components/procurement"
+import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { ErrorComponent } from "@/ui/components/error"
 import {
@@ -33,7 +32,11 @@ import {
    SuspenseFallback,
 } from "@/ui/components/suspense-boundary"
 import { UserAvatar } from "@/user/components/user-avatar"
-import { useSuspenseQuery } from "@tanstack/react-query"
+import {
+   useMutation,
+   useQueryClient,
+   useSuspenseQuery,
+} from "@tanstack/react-query"
 import { notFound } from "@tanstack/react-router"
 import { createFileRoute } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
@@ -127,10 +130,14 @@ function RouteComponent() {
    const update = useUpdateOrder()
    const createAssignee = useCreateOrderAssignee()
    const deleteAssignee = useDeleteOrderAssignee()
+   const socket = useSocket()
+   const queryClient = useQueryClient()
 
    const pressed = order.assignees.some((a) => a.user.id === auth.user.id)
 
-   const createAttachment = useCreateAttachment()
+   const createAttachment = useMutation(
+      trpc.attachment.create.mutationOptions(),
+   )
 
    const fileUploaderRef = React.useRef<HTMLDivElement>(null)
    const attachments = useAttachments({
@@ -140,15 +147,33 @@ function RouteComponent() {
             (r): r is UploadedAttachment => !("error" in r),
          )
 
-         createAttachment.mutate({
-            attachments: succeeded.map((a) => ({
-               ...a,
-               subjectId: order.id,
+         createAttachment.mutate(
+            {
+               attachments: succeeded.map((a) => ({
+                  ...a,
+                  subjectId: order.id,
+                  workspaceId: auth.workspace.id,
+                  subjectType: "order",
+               })),
                workspaceId: auth.workspace.id,
-               subjectType: "order",
-            })),
-            workspaceId: auth.workspace.id,
-         })
+            },
+            {
+               onSuccess: (attachment) => {
+                  socket.order.send({
+                     action: "create_attachement",
+                     senderId: auth.user.id,
+                     orderId: attachment.subjectId,
+                     workspaceId: auth.workspace.id,
+                  })
+                  queryClient.invalidateQueries(
+                     trpc.order.one.queryOptions({
+                        orderId: attachment.subjectId,
+                        workspaceId: auth.workspace.id,
+                     }),
+                  )
+               },
+            },
+         )
       },
    })
    const createOrderOpen = useAtomValue(createOrderOpenAtom)
@@ -243,6 +268,20 @@ function RouteComponent() {
                   className="mb-1"
                   subjectId={order.id}
                   images={imageAttachments}
+                  onDelete={() => {
+                     socket.order.send({
+                        action: "delete_attachment",
+                        senderId: auth.user.id,
+                        orderId: order.id,
+                        workspaceId: auth.workspace.id,
+                     })
+                     queryClient.invalidateQueries(
+                        trpc.order.one.queryOptions({
+                           orderId: order.id,
+                           workspaceId: auth.workspace.id,
+                        }),
+                     )
+                  }}
                />
                <div className="mb-3 flex gap-1 lg:hidden">
                   <StatusCombobox />
@@ -501,7 +540,9 @@ function FileItem({
    const auth = useAuth()
    const order = useOrder()
    const download = useDownloadAttachment()
-   const deleteItem = useDeleteAttachment()
+   const deleteItem = useMutation(trpc.attachment.delete.mutationOptions())
+   const socket = useSocket()
+   const queryClient = useQueryClient()
 
    return (
       <div
@@ -534,11 +575,29 @@ function FileItem({
                variant={"ghost"}
                className="group-hover:visible md:invisible"
                onClick={async () => {
-                  deleteItem.mutate({
-                     attachmentId: attachment.id,
-                     workspaceId: auth.workspace.id,
-                     subjectId: order.id,
-                  })
+                  deleteItem.mutate(
+                     {
+                        attachmentId: attachment.id,
+                        workspaceId: auth.workspace.id,
+                        subjectId: order.id,
+                     },
+                     {
+                        onSuccess: () => {
+                           socket.order.send({
+                              action: "delete_attachment",
+                              senderId: auth.user.id,
+                              orderId: order.id,
+                              workspaceId: auth.workspace.id,
+                           })
+                           queryClient.invalidateQueries(
+                              trpc.order.one.queryOptions({
+                                 orderId: order.id,
+                                 workspaceId: auth.workspace.id,
+                              }),
+                           )
+                        },
+                     },
+                  )
                }}
                disabled={deleteItem.isPending}
             >

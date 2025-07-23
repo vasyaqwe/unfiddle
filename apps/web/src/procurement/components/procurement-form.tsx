@@ -1,8 +1,12 @@
+import { UploadedAttachment } from "@/attachment/components/uploaded-attachment"
+import { useAttachments } from "@/attachment/hooks"
+import { FileUploader } from "@/file/components/uploader"
 import { useOrder } from "@/order/hooks"
 import { CURRENCY_SYMBOLS } from "@unfiddle/core/currency/constants"
 import type { Procurement } from "@unfiddle/core/procurement/types"
 import { Button } from "@unfiddle/ui/components/button"
 import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
+import { Icons } from "@unfiddle/ui/components/icons"
 import { NumberField } from "@unfiddle/ui/components/number-field"
 import {
    Select,
@@ -29,12 +33,16 @@ export function ProcurementForm({
    onSubmit,
    children,
 }: {
-   procurement?: Procurement | undefined
+   procurement?: Procurement
    onSubmit: (data: FormData) => void
    children: React.ReactNode
 }) {
    const order = useOrder()
    const formRef = React.useRef<HTMLFormElement>(null)
+   const fileUploaderRef = React.useRef<HTMLDivElement>(null)
+   const attachments = useAttachments({
+      subjectId: procurement?.id ?? `${order.id}_procurement`,
+   })
 
    return (
       <form
@@ -122,18 +130,48 @@ export function ProcurementForm({
                defaultValue={procurement?.provider ?? ""}
             />
          </Field>
-         <Field>
-            <FieldLabel>Комент</FieldLabel>
-            <FieldControl
-               render={
-                  <Textarea
-                     name="note"
-                     placeholder="Додайте комент"
-                     defaultValue={procurement?.note ?? ""}
+         <div>
+            <Field>
+               <FieldLabel>Комент</FieldLabel>
+               <div className="relative w-full">
+                  <FieldControl
+                     render={
+                        <Textarea
+                           name="note"
+                           placeholder="Додайте комент"
+                           defaultValue={procurement?.note ?? ""}
+                           onPaste={(e) => attachments.onPaste(e)}
+                        />
+                     }
                   />
-               }
-            />
-         </Field>
+                  <Button
+                     type="button"
+                     onClick={() => {
+                        fileUploaderRef.current?.click()
+                     }}
+                     kind={"icon"}
+                     variant={"ghost"}
+                     className="absolute top-1 right-1"
+                  >
+                     <Icons.paperClip />
+                  </Button>
+               </div>
+            </Field>
+            <div className="mt-4 flex flex-wrap gap-2 empty:hidden">
+               {attachments.uploaded.map((file, idx) => (
+                  <UploadedAttachment
+                     key={idx}
+                     file={file}
+                     onRemove={() => attachments.remove(file.id)}
+                  />
+               ))}
+            </div>
+         </div>
+         <FileUploader
+            ref={fileUploaderRef}
+            className="absolute inset-0 z-[9] h-full"
+            onUpload={attachments.upload.mutateAsync}
+         />
          {children}
       </form>
    )

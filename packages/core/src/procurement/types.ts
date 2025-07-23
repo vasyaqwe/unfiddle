@@ -25,3 +25,10 @@ export type ProcurementEvent =
         senderId: string
         workspaceId: string
      }
+   | {
+        action: "delete_attachment"
+        procurementId: string
+        orderId: string
+        senderId: string
+        workspaceId: string
+     }

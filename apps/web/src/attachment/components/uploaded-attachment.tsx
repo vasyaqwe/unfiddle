@@ -1,4 +1,4 @@
-import type { UploadedAttachment } from "@/attachment/types"
+import type { UploadedAttachment as UploadedAttachmentType } from "@/attachment/types"
 import { FilePreview } from "@/file/components/uploader"
 import { formatBytes, truncate } from "@/file/components/uploader/utils"
 import { Button } from "@unfiddle/ui/components/button"
@@ -10,11 +10,11 @@ import {
 } from "@unfiddle/ui/components/tooltip"
 import { cx } from "@unfiddle/ui/utils"
 
-export function Attachment({
+export function UploadedAttachment({
    file,
    onRemove,
 }: {
-   file: UploadedAttachment
+   file: UploadedAttachmentType
    onRemove: () => void
 }) {
    const image = file.type.startsWith("image/")

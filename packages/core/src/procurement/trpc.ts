@@ -1,3 +1,5 @@
+import { attachment } from "@unfiddle/core/attachment/schema"
+import type { Attachment } from "@unfiddle/core/attachment/types"
 import {
    procurement,
    updateProcurementSchema,
@@ -40,13 +42,39 @@ export const procurementRouter = t.router({
                      image: true,
                   },
                },
+               attachments: {
+                  columns: {
+                     id: true,
+                     url: true,
+                     type: true,
+                     size: true,
+                     name: true,
+                     width: true,
+                     height: true,
+                     creatorId: true,
+                  },
+                  orderBy: [desc(attachment.createdAt)],
+               },
             },
             orderBy: [desc(procurement.createdAt)],
          })
       }),
    create: t.procedure
       .use(workspaceMemberMiddleware)
-      .input(createInsertSchema(procurement).omit({ creatorId: true }))
+      .input(
+         createInsertSchema(procurement)
+            .omit({ creatorId: true })
+            .extend({
+               attachments: z.array(
+                  createInsertSchema(attachment).omit({
+                     creatorId: true,
+                     subjectId: true,
+                     subjectType: true,
+                     workspaceId: true,
+                  }),
+               ),
+            }),
+      )
       .mutation(async ({ ctx, input }) => {
          const createdProcurement = await ctx.db
             .insert(procurement)
@@ -57,7 +85,24 @@ export const procurementRouter = t.router({
             .returning()
             .get()
 
-         return createdProcurement
+         let createdAttachments: Attachment[] = []
+
+         if (input.attachments.length > 0) {
+            createdAttachments = await ctx.db
+               .insert(attachment)
+               .values(
+                  input.attachments.map((a) => ({
+                     ...a,
+                     subjectId: createdProcurement.id,
+                     subjectType: "procurement" as const,
+                     workspaceId: input.workspaceId,
+                     creatorId: ctx.user.id,
+                  })),
+               )
+               .returning()
+         }
+
+         return { ...createdProcurement, attachments: createdAttachments }
       }),
    update: t.procedure
       .use(workspaceMemberMiddleware)

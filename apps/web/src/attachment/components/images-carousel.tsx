@@ -1,6 +1,7 @@
-import { useDeleteAttachment } from "@/attachment/mutations/use-delete-attachment"
 import type { UploadedAttachment } from "@/attachment/types"
 import { useAuth } from "@/auth/hooks"
+import { trpc } from "@/trpc"
+import { useMutation } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { Icons } from "@unfiddle/ui/components/icons"
 import {
@@ -20,12 +21,14 @@ const AttachmentLightbox = React.lazy(
 interface Props extends React.ComponentProps<"div"> {
    images: UploadedAttachment[]
    subjectId: string
+   onDelete: (attachmentId: string) => void
 }
 
 export function ImagesCarousel({
    images,
    className,
    subjectId,
+   onDelete,
    ...props
 }: Props) {
    if (images.length === 0) return null
@@ -47,6 +50,7 @@ export function ImagesCarousel({
                         key={attachment.id}
                         attachment={attachment}
                         subjectId={subjectId}
+                        onDelete={onDelete}
                      />
                   )
                })}
@@ -59,10 +63,15 @@ export function ImagesCarousel({
 function Image({
    attachment,
    subjectId,
-}: { attachment: UploadedAttachment; subjectId: string }) {
+   onDelete,
+}: {
+   attachment: UploadedAttachment
+   subjectId: string
+   onDelete: (attachmentId: string) => void
+}) {
    const auth = useAuth()
    const navigate = useNavigate()
-   const deleteItem = useDeleteAttachment()
+   const deleteItem = useMutation(trpc.attachment.delete.mutationOptions())
    const [contextMenuOpen, setContextMenuOpen] = React.useState(false)
 
    const { width, height } = attachment
@@ -107,11 +116,18 @@ function Image({
             <ContextMenuItem
                destructive
                onClick={() =>
-                  deleteItem.mutate({
-                     attachmentId: attachment.id,
-                     subjectId,
-                     workspaceId: auth.workspace.id,
-                  })
+                  deleteItem.mutate(
+                     {
+                        attachmentId: attachment.id,
+                        subjectId,
+                        workspaceId: auth.workspace.id,
+                     },
+                     {
+                        onSuccess: () => {
+                           onDelete(attachment.id)
+                        },
+                     },
+                  )
                }
             >
                <Icons.trash />

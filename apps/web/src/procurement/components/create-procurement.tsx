@@ -1,3 +1,4 @@
+import { useAttachments } from "@/attachment/hooks"
 import { useAuth } from "@/auth/hooks"
 import { useOrder } from "@/order/hooks"
 import { ProcurementForm } from "@/procurement/components/procurement-form"
@@ -21,6 +22,9 @@ export function CreateProcurement() {
    const mutation = useCreateProcurement({
       onMutate: () => setOpen(false),
       onError: () => setOpen(true),
+   })
+   const attachments = useAttachments({
+      subjectId: `${order.id}_procurement`,
    })
 
    return (
@@ -46,6 +50,7 @@ export function CreateProcurement() {
                      orderId: order.id,
                      purchasePrice: number(form.purchasePrice),
                      quantity: number(form.quantity),
+                     attachments: attachments.uploaded,
                   })
                }
             >

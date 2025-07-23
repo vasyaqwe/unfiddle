@@ -1,3 +1,4 @@
+import { useAttachments } from "@/attachment/hooks"
 import { useAuth } from "@/auth/hooks"
 import { useOrder } from "@/order/hooks"
 import { useOrderQueryOptions } from "@/order/queries"
@@ -17,6 +18,7 @@ export function useCreateProcurement({
    const socket = useSocket()
    const orderQueryOptions = useOrderQueryOptions()
    const create = useOptimisticCreateProcurement()
+   const attachments = useAttachments({ subjectId: `${order.id}_procurement` })
 
    const queryOptions = trpc.procurement.list.queryOptions({
       orderId: order.id,
@@ -51,6 +53,7 @@ export function useCreateProcurement({
                note: input.note ?? "",
                provider: input.provider ?? null,
                orderItemId: input.orderItemId ?? null,
+               attachments: [],
             })
 
             onMutate?.()
@@ -81,6 +84,7 @@ export function useCreateProcurement({
                   creator: auth.user,
                },
             })
+            attachments.clear()
          },
          onSettled: () => {
             queryClient.invalidateQueries(

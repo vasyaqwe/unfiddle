@@ -1,3 +1,4 @@
+import { attachment } from "@unfiddle/core/attachment/schema"
 import { user } from "@unfiddle/core/auth/schema"
 import { d } from "@unfiddle/core/database"
 import { orderItem } from "@unfiddle/core/database/schema"
@@ -42,7 +43,7 @@ export const procurement = d.table(
    ],
 )
 
-export const procurementRelations = relations(procurement, ({ one }) => ({
+export const procurementRelations = relations(procurement, ({ one, many }) => ({
    creator: one(user, {
       fields: [procurement.creatorId],
       references: [user.id],
@@ -55,6 +56,7 @@ export const procurementRelations = relations(procurement, ({ one }) => ({
       fields: [procurement.orderItemId],
       references: [orderItem.id],
    }),
+   attachments: many(attachment),
 }))
 
 export const updateProcurementSchema = createUpdateSchema(procurement)

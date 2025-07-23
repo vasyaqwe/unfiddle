@@ -1,4 +1,4 @@
-import { Attachment } from "@/attachment/components/attachment"
+import { UploadedAttachment } from "@/attachment/components/uploaded-attachment"
 import { useAttachments } from "@/attachment/hooks"
 import { useAuth } from "@/auth/hooks"
 import { FileUploader } from "@/file/components/uploader"
@@ -345,7 +345,7 @@ export function OrderForm({
                </Field>
                <div className="mt-4 flex flex-wrap gap-2 empty:hidden">
                   {attachments.uploaded.map((file, idx) => (
-                     <Attachment
+                     <UploadedAttachment
                         key={idx}
                         file={file}
                         onRemove={() => attachments.remove(file.id)}
