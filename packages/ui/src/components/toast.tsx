@@ -100,7 +100,7 @@ export function Toaster(props: React.ComponentProps<typeof Sonner>) {
             unstyled: true,
             classNames: {
                title: "!text-[1rem] !font-[550] ml-6.5 -mt-1",
-               description: "!text-sm line-clamp-2 mt-0.5 !font-normal",
+               description: "!text-sm line-clamp-3 mt-0.5 !font-normal",
                icon: "!absolute top-[0.75rem] left-4",
                closeButton:
                   "!size-6.5 absolute -top-2 -right-2 bg-background border-primary-12/12 z-[2] hover:bg-surface-2 !duration-75 !transition-colors border cursor-pointer shadow-2xs grid place-items-center rounded-full",

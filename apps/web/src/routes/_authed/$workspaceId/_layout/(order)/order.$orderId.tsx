@@ -138,15 +138,15 @@ function RouteComponent() {
    const socket = useSocket()
    const queryClient = useQueryClient()
    useTip({
-      key: "attachments",
-      message:
-         "Тепер можна завантажувати файли/фото у закупівлі. Перетягуйте або натикайте на скріпку.",
-      autoTrigger: true,
-   })
-   useTip({
       key: "attachments_delete",
       message:
          "До речі, видалити фото/файл у закупівлі можна через меню (права кнопка миші).",
+      autoTrigger: true,
+   })
+   useTip({
+      key: "attachments",
+      message:
+         "Тепер можна завантажувати файли/фото у закупівлі. Перетягуйте, або у полі Комент, вставляйте чи натискайте на скріпку.",
       autoTrigger: true,
    })
 
