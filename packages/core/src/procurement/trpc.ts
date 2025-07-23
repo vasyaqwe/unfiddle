@@ -1,4 +1,7 @@
-import { attachment } from "@unfiddle/core/attachment/schema"
+import {
+   attachment,
+   createAttachmentsSchema,
+} from "@unfiddle/core/attachment/schema"
 import type { Attachment } from "@unfiddle/core/attachment/types"
 import {
    procurement,
@@ -51,7 +54,6 @@ export const procurementRouter = t.router({
                      name: true,
                      width: true,
                      height: true,
-                     creatorId: true,
                   },
                   orderBy: [desc(attachment.createdAt)],
                },
@@ -62,18 +64,9 @@ export const procurementRouter = t.router({
    create: t.procedure
       .use(workspaceMemberMiddleware)
       .input(
-         createInsertSchema(procurement)
-            .omit({ creatorId: true })
-            .extend({
-               attachments: z.array(
-                  createInsertSchema(attachment).omit({
-                     creatorId: true,
-                     subjectId: true,
-                     subjectType: true,
-                     workspaceId: true,
-                  }),
-               ),
-            }),
+         createInsertSchema(procurement).omit({ creatorId: true }).extend({
+            attachments: createAttachmentsSchema,
+         }),
       )
       .mutation(async ({ ctx, input }) => {
          const createdProcurement = await ctx.db
@@ -108,7 +101,7 @@ export const procurementRouter = t.router({
       .use(workspaceMemberMiddleware)
       .input(updateProcurementSchema)
       .mutation(async ({ ctx, input }) => {
-         return await ctx.db
+         await ctx.db
             .update(procurement)
             .set(input)
             .where(
@@ -117,8 +110,18 @@ export const procurementRouter = t.router({
                   eq(procurement.workspaceId, input.workspaceId),
                ),
             )
-            .returning()
-            .get()
+
+         if (input.attachments.length > 0) {
+            await ctx.db.insert(attachment).values(
+               input.attachments.map((a) => ({
+                  ...a,
+                  subjectId: input.procurementId,
+                  subjectType: "procurement" as const,
+                  workspaceId: input.workspaceId,
+                  creatorId: ctx.user.id,
+               })),
+            )
+         }
       }),
    delete: t.procedure
       .use(workspaceMemberMiddleware)

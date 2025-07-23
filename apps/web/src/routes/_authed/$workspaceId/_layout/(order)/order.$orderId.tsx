@@ -17,6 +17,10 @@ import { useUpdateOrder } from "@/order/mutations/use-update-order"
 import { createOrderOpenAtom } from "@/order/store"
 import { CreateProcurement } from "@/procurement/components/create-procurement"
 import {
+   createProcurementOpenAtom,
+   updateProcurementOpenAtom,
+} from "@/procurement/store"
+import {
    Header,
    HeaderBackButton,
    HeaderTitle,
@@ -177,6 +181,8 @@ function RouteComponent() {
       },
    })
    const createOrderOpen = useAtomValue(createOrderOpenAtom)
+   const createProcurementOpen = useAtomValue(createProcurementOpenAtom)
+   const updateProcurementOpen = useAtomValue(updateProcurementOpenAtom)
 
    const imageAttachments = order.attachments.filter(
       (attachment) =>
@@ -238,7 +244,9 @@ function RouteComponent() {
                </div>
             </Header>
             <MainScrollArea>
-               {createOrderOpen ? null : (
+               {createOrderOpen ||
+               createProcurementOpen ||
+               updateProcurementOpen ? null : (
                   <FileUploader
                      ref={fileUploaderRef}
                      className="absolute inset-0 z-[9] h-full"

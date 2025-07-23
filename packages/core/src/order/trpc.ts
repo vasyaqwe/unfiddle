@@ -1,5 +1,8 @@
 import { TRPCError } from "@trpc/server"
-import { attachment } from "@unfiddle/core/attachment/schema"
+import {
+   attachment,
+   createAttachmentsSchema,
+} from "@unfiddle/core/attachment/schema"
 import { formatCurrency } from "@unfiddle/core/currency"
 import { CURRENCIES } from "@unfiddle/core/currency/constants"
 import { orderAssignee, orderItem } from "@unfiddle/core/database/schema"
@@ -524,14 +527,7 @@ export const orderRouter = t.router({
                items: z
                   .array(createInsertSchema(orderItem).omit({ orderId: true }))
                   .min(1),
-               attachments: z.array(
-                  createInsertSchema(attachment).omit({
-                     creatorId: true,
-                     subjectId: true,
-                     subjectType: true,
-                     workspaceId: true,
-                  }),
-               ),
+               attachments: createAttachmentsSchema,
             }),
       )
       .mutation(async ({ ctx, input }) => {

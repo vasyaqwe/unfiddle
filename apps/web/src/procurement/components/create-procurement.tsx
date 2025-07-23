@@ -3,6 +3,7 @@ import { useAuth } from "@/auth/hooks"
 import { useOrder } from "@/order/hooks"
 import { ProcurementForm } from "@/procurement/components/procurement-form"
 import { useCreateProcurement } from "@/procurement/mutations/use-create-procurement"
+import { createProcurementOpenAtom } from "@/procurement/store"
 import { Button } from "@unfiddle/ui/components/button"
 import {
    Drawer,
@@ -13,12 +14,12 @@ import {
 } from "@unfiddle/ui/components/drawer"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { number } from "@unfiddle/ui/utils"
-import * as React from "react"
+import { useAtom } from "jotai"
 
 export function CreateProcurement() {
    const auth = useAuth()
    const order = useOrder()
-   const [open, setOpen] = React.useState(false)
+   const [open, setOpen] = useAtom(createProcurementOpenAtom)
    const mutation = useCreateProcurement({
       onMutate: () => setOpen(false),
       onError: () => setOpen(true),

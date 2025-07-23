@@ -1,4 +1,7 @@
-import { attachment } from "@unfiddle/core/attachment/schema"
+import {
+   attachment,
+   createAttachmentsSchema,
+} from "@unfiddle/core/attachment/schema"
 import { user } from "@unfiddle/core/auth/schema"
 import { d } from "@unfiddle/core/database"
 import { orderItem } from "@unfiddle/core/database/schema"
@@ -73,4 +76,5 @@ export const updateProcurementSchema = createUpdateSchema(procurement)
    .required({ workspaceId: true, orderId: true })
    .extend({
       procurementId: z.string(),
+      attachments: createAttachmentsSchema,
    })

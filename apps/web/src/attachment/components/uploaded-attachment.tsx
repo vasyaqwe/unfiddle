@@ -15,7 +15,7 @@ export function UploadedAttachment({
    onRemove,
 }: {
    file: UploadedAttachmentType
-   onRemove: () => void
+   onRemove?: () => void
 }) {
    const image = file.type.startsWith("image/")
 
@@ -31,17 +31,19 @@ export function UploadedAttachment({
                />
             }
          >
-            <Button
-               onClick={onRemove}
-               type="button"
-               kind={"icon"}
-               size={"xs"}
-               variant={"secondary"}
-               aria-label={`Remove ${file.name}`}
-               className="-top-2 !rounded-full -right-2 absolute bg-white p-1 text-foreground shadow-none hover:border-red-9 hover:bg-red-9 hover:text-white active:bg-red-9 group-hover:visible max-md:size-8 md:invisible dark:border-transparent dark:bg-primary-6 dark:shadow-xs dark:hover:border-red-9 dark:hover:bg-red-9"
-            >
-               <Icons.xMark />
-            </Button>
+            {onRemove ? (
+               <Button
+                  onClick={onRemove}
+                  type="button"
+                  kind={"icon"}
+                  size={"xs"}
+                  variant={"secondary"}
+                  aria-label={`Remove ${file.name}`}
+                  className="-top-2 !rounded-full -right-2 absolute bg-white p-1 text-foreground shadow-none hover:border-red-9 hover:bg-red-9 hover:text-white active:bg-red-9 group-hover:visible max-md:size-8 md:invisible dark:border-transparent dark:bg-primary-6 dark:shadow-xs dark:hover:border-red-9 dark:hover:bg-red-9"
+               >
+                  <Icons.xMark />
+               </Button>
+            ) : null}
             <FilePreview file={file} />
             {!image ? (
                <span className="mt-1.5 font-medium text-foreground/75 text-xs">

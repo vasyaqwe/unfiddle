@@ -7,6 +7,7 @@ import { UpdateProcurement } from "@/procurement/components/update-procurement"
 import { PROCUREMENT_STATUSES_TRANSLATION } from "@/procurement/constants"
 import { useDeleteProcurement } from "@/procurement/mutations/use-delete-procurement"
 import { useUpdateProcurement } from "@/procurement/mutations/use-update-procurement"
+import { updateProcurementOpenAtom } from "@/procurement/store"
 import { procurementStatusGradient } from "@/procurement/utils"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
@@ -17,7 +18,6 @@ import { formatCurrency } from "@unfiddle/core/currency"
 import { formatNumber } from "@unfiddle/core/number"
 import { PROCUREMENT_STATUSES } from "@unfiddle/core/procurement/constants"
 import type { Procurement as ProcurementType } from "@unfiddle/core/procurement/types"
-import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import { Badge } from "@unfiddle/ui/components/badge"
 import { Button } from "@unfiddle/ui/components/button"
 import {
@@ -50,15 +50,14 @@ import {
 } from "@unfiddle/ui/components/menu/context"
 import { Separator } from "@unfiddle/ui/components/separator"
 import { SVGPreview } from "@unfiddle/ui/components/svg-preview"
+import { useSetAtom } from "jotai"
 import { useTheme } from "next-themes"
 import * as React from "react"
 
 export function Procurement({
    procurement,
 }: {
-   procurement: ProcurementType & {
-      attachments: RouterOutput["procurement"]["list"][number]["attachments"]
-   }
+   procurement: ProcurementType
 }) {
    const params = useParams({
       from: "/_authed/$workspaceId/_layout/(order)/order/$orderId",
@@ -77,6 +76,7 @@ export function Procurement({
    const queryClient = useQueryClient()
 
    const [updateOpen, setUpdateOpen] = React.useState(false)
+   const setStoreUpdateOpen = useSetAtom(updateProcurementOpenAtom)
    const [deleteAlertOpen, setDeleteAlertOpen] = React.useState(false)
    const menuTriggerRef = React.useRef<HTMLButtonElement>(null)
 
@@ -108,6 +108,7 @@ export function Procurement({
                         workspaceId: params.workspaceId,
                         status: status as never,
                         orderId: order.id,
+                        attachments: [],
                      })
                   }
                >
@@ -166,6 +167,7 @@ export function Procurement({
                      <MenuItem
                         onClick={() => {
                            setUpdateOpen(true)
+                           setStoreUpdateOpen(true)
                         }}
                      >
                         <Icons.pencil />
@@ -213,8 +215,16 @@ export function Procurement({
          <p className="lg:!max-w-[80ch] mt-2 whitespace-pre-wrap empty:hidden lg:mt-2.5">
             {procurement.note}
          </p>
+         <div className="mt-3 mb-1 flex flex-wrap gap-1 empty:hidden">
+            {otherAttachments.map((attachment) => (
+               <FileItem
+                  key={attachment.id}
+                  attachment={attachment}
+                  procurement={procurement}
+               />
+            ))}
+         </div>
          <ImagesCarousel
-            className="mb-1"
             subjectId={procurement.id}
             images={procurement.attachments.filter(
                (attachment) =>
@@ -237,15 +247,7 @@ export function Procurement({
                )
             }}
          />
-         <div className="mt-3 mb-1 flex flex-wrap gap-1 empty:hidden">
-            {otherAttachments.map((attachment) => (
-               <FileItem
-                  key={attachment.id}
-                  attachment={attachment}
-                  procurement={procurement}
-               />
-            ))}
-         </div>
+
          {/* <p className="col-start-1 whitespace-nowrap font-medium font-mono text-[1rem] max-lg:order-3 max-lg:self-center lg:mt-1 lg:ml-auto lg:text-right">
             {profit === 0 ? null : (
                <ProfitArrow

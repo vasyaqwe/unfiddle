@@ -158,6 +158,12 @@ export function ProcurementForm({
                </div>
             </Field>
             <div className="mt-4 flex flex-wrap gap-2 empty:hidden">
+               {procurement?.attachments?.map((file) => (
+                  <UploadedAttachment
+                     key={file.id}
+                     file={file}
+                  />
+               ))}
                {attachments.uploaded.map((file, idx) => (
                   <UploadedAttachment
                      key={idx}

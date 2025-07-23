@@ -10,7 +10,12 @@ import { toast } from "sonner"
 export function useUpdateProcurement({
    onMutate,
    onError,
-}: { onMutate?: () => void; onError?: () => void } = {}) {
+   onSuccess,
+}: {
+   onMutate?: () => void
+   onError?: () => void
+   onSuccess?: () => void
+} = {}) {
    const order = useOrder()
    const queryClient = useQueryClient()
    const auth = useAuth()
@@ -63,6 +68,7 @@ export function useUpdateProcurement({
                senderId: auth.user.id,
                procurement,
             })
+            onSuccess?.()
          },
          onSettled: () => {
             queryClient.invalidateQueries(
@@ -95,7 +101,20 @@ export function useOptimisticUpdateProcurement() {
       queryClient.setQueryData(queryKey, (oldData) => {
          if (!oldData) return oldData
          return oldData.map((p) => {
-            if (p.id === input.procurementId) return { ...p, ...input }
+            if (p.id === input.procurementId)
+               return {
+                  ...p,
+                  ...input,
+                  attachments: [
+                     ...input.attachments.map((a) => ({
+                        ...a,
+                        id: crypto.randomUUID(),
+                        width: a.width ?? null,
+                        height: a.height ?? null,
+                     })),
+                     ...p.attachments,
+                  ],
+               }
             return p
          })
       })

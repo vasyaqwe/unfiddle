@@ -40,7 +40,7 @@ export function ImagesCarousel({
          </React.Suspense>
          <ScrollArea
             orientation="horizontal"
-            className={cn("mt-4 max-w-fit", className)}
+            className={cn("mt-3 max-w-fit", className)}
             {...props}
          >
             <div className="flex gap-1 [--base-width:160px] md:[--base-width:220px]">
@@ -107,7 +107,7 @@ function Image({
                            "--aspect-ratio": aspectRatio,
                         } as never
                      }
-                     className="size-full max-h-[320px] min-w-[calc(var(--base-width)*var(--aspect-ratio))] rounded-xl object-cover"
+                     className="size-full max-h-[320px] min-w-[calc(var(--base-width)*var(--aspect-ratio))] rounded-xl border border-neutral object-cover"
                   />
                </div>
             }

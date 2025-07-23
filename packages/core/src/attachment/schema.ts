@@ -1,8 +1,10 @@
 import { ATTACHMENT_SUBJECT_TYPES } from "@unfiddle/core/attachment/constants"
 import { d } from "@unfiddle/core/database"
-import { order, user, procurement } from "@unfiddle/core/database/schema"
+import { order, procurement, user } from "@unfiddle/core/database/schema"
 import { workspace } from "@unfiddle/core/workspace/schema"
 import { relations } from "drizzle-orm"
+import { createInsertSchema } from "drizzle-zod"
+import z from "zod"
 
 export const attachment = d.table(
    "attachment",
@@ -50,3 +52,12 @@ export const attachmentRelations = relations(attachment, ({ one }) => ({
       references: [workspace.id],
    }),
 }))
+
+export const createAttachmentsSchema = z.array(
+   createInsertSchema(attachment).omit({
+      creatorId: true,
+      subjectId: true,
+      subjectType: true,
+      workspaceId: true,
+   }),
+)
