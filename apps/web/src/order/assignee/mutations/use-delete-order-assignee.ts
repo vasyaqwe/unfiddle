@@ -22,23 +22,26 @@ export function useDeleteOrderAssignee({
    return useMutation(
       trpc.order.assignee.delete.mutationOptions({
          onMutate: async (input) => {
+            onMutate?.()
+
+            const oneQueryOptions = trpc.order.one.queryOptions({
+               orderId: input.orderId,
+               workspaceId: input.workspaceId,
+            })
+
             await Promise.all([
                queryClient.cancelQueries(queryOptions.list),
-               queryClient.cancelQueries(trpc.order.one.queryOptions(input)),
+               queryClient.cancelQueries(oneQueryOptions),
             ])
 
             const listData = queryClient.getQueryData(
                queryOptions.list.queryKey,
             )
             const oneData = orderId
-               ? queryClient.getQueryData(
-                    trpc.order.one.queryOptions(input).queryKey,
-                 )
+               ? queryClient.getQueryData(oneQueryOptions.queryKey)
                : null
 
             deleteItem(input)
-
-            onMutate?.()
 
             return { listData, oneData }
          },
@@ -48,7 +51,10 @@ export function useDeleteOrderAssignee({
                context?.listData,
             )
             queryClient.setQueryData(
-               trpc.order.one.queryOptions(input).queryKey,
+               trpc.order.one.queryOptions({
+                  orderId: input.orderId,
+                  workspaceId: input.workspaceId,
+               }).queryKey,
                context?.oneData,
             )
             toast.error("Ой-ой!", {
@@ -67,7 +73,12 @@ export function useDeleteOrderAssignee({
          },
          onSettled: (_data, _error, input) => {
             queryClient.invalidateQueries(queryOptions.list)
-            queryClient.invalidateQueries(trpc.order.one.queryOptions(input))
+            queryClient.invalidateQueries(
+               trpc.order.one.queryOptions({
+                  orderId: input.orderId,
+                  workspaceId: input.workspaceId,
+               }),
+            )
          },
       }),
    )

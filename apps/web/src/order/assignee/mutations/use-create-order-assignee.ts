@@ -24,18 +24,23 @@ export function useCreateOrderAssignee({
    return useMutation(
       trpc.order.assignee.create.mutationOptions({
          onMutate: async (input) => {
+            onMutate?.()
+
+            const oneQueryOptions = trpc.order.one.queryOptions({
+               orderId: input.orderId,
+               workspaceId: input.workspaceId,
+            })
+
             await Promise.all([
                queryClient.cancelQueries(queryOptions.list),
-               queryClient.cancelQueries(trpc.order.one.queryOptions(input)),
+               queryClient.cancelQueries(oneQueryOptions),
             ])
 
             const listData = queryClient.getQueryData(
                queryOptions.list.queryKey,
             )
             const oneData = orderId
-               ? queryClient.getQueryData(
-                    trpc.order.one.queryOptions(input).queryKey,
-                 )
+               ? queryClient.getQueryData(oneQueryOptions.queryKey)
                : null
 
             update({
@@ -45,8 +50,6 @@ export function useCreateOrderAssignee({
             })
             create({ orderId: input.orderId, assignee: { user: auth.user } })
 
-            onMutate?.()
-
             return { listData, oneData }
          },
          onError: (error, input, context) => {
@@ -55,7 +58,10 @@ export function useCreateOrderAssignee({
                context?.listData,
             )
             queryClient.setQueryData(
-               trpc.order.one.queryOptions(input).queryKey,
+               trpc.order.one.queryOptions({
+                  orderId: input.orderId,
+                  workspaceId: input.workspaceId,
+               }).queryKey,
                context?.oneData,
             )
             toast.error("Ой-ой!", {
@@ -74,7 +80,12 @@ export function useCreateOrderAssignee({
          },
          onSettled: (_data, _error, input) => {
             queryClient.invalidateQueries(queryOptions.list)
-            queryClient.invalidateQueries(trpc.order.one.queryOptions(input))
+            queryClient.invalidateQueries(
+               trpc.order.one.queryOptions({
+                  orderId: input.orderId,
+                  workspaceId: input.workspaceId,
+               }),
+            )
          },
       }),
    )

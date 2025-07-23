@@ -22,23 +22,26 @@ export function useUpdateOrder({
    return useMutation(
       trpc.order.update.mutationOptions({
          onMutate: async (input) => {
+            onMutate?.()
+
+            const oneQueryOptions = trpc.order.one.queryOptions({
+               orderId: input.orderId,
+               workspaceId: input.workspaceId,
+            })
+
             await Promise.all([
                queryClient.cancelQueries(queryOptions.list),
-               queryClient.cancelQueries(trpc.order.one.queryOptions(input)),
+               queryClient.cancelQueries(oneQueryOptions),
             ])
 
             const listData = queryClient.getQueryData(
                queryOptions.list.queryKey,
             )
             const oneData = orderId
-               ? queryClient.getQueryData(
-                    trpc.order.one.queryOptions(input).queryKey,
-                 )
+               ? queryClient.getQueryData(oneQueryOptions.queryKey)
                : null
 
             update(input)
-
-            onMutate?.()
 
             return { listData, oneData }
          },
@@ -48,7 +51,10 @@ export function useUpdateOrder({
                context?.listData,
             )
             queryClient.setQueryData(
-               trpc.order.one.queryOptions(input).queryKey,
+               trpc.order.one.queryOptions({
+                  orderId: input.orderId,
+                  workspaceId: input.workspaceId,
+               }).queryKey,
                context?.oneData,
             )
             toast.error("Ой-ой!", {
@@ -75,7 +81,12 @@ export function useUpdateOrder({
                   id: auth.workspace.id,
                }),
             )
-            queryClient.invalidateQueries(trpc.order.one.queryOptions(input))
+            queryClient.invalidateQueries(
+               trpc.order.one.queryOptions({
+                  orderId: input.orderId,
+                  workspaceId: input.workspaceId,
+               }),
+            )
             if (input.deletedAt)
                return queryClient.invalidateQueries(queryOptions.listArchived)
             if (input.deletedAt === null)

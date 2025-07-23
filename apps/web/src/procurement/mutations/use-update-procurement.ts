@@ -31,6 +31,8 @@ export function useUpdateProcurement({
    return useMutation(
       trpc.procurement.update.mutationOptions({
          onMutate: async (input) => {
+            onMutate?.()
+
             await Promise.all([
                queryClient.cancelQueries(orderQueryOptions.list),
                queryClient.cancelQueries(queryOptions),
@@ -42,8 +44,6 @@ export function useUpdateProcurement({
             )
 
             update({ ...input, orderId: order.id })
-
-            onMutate?.()
 
             return { procurements, orders }
          },

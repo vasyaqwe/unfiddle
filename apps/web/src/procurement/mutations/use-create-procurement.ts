@@ -28,14 +28,24 @@ export function useCreateProcurement({
    return useMutation(
       trpc.procurement.create.mutationOptions({
          onMutate: async (input) => {
+            onMutate?.()
+
             await Promise.all([
-               queryClient.cancelQueries(trpc.order.one.queryOptions(input)),
+               queryClient.cancelQueries(
+                  trpc.order.one.queryOptions({
+                     orderId: input.orderId,
+                     workspaceId: input.workspaceId,
+                  }),
+               ),
                queryClient.cancelQueries(orderQueryOptions.list),
                queryClient.cancelQueries(queryOptions),
             ])
 
             const order = queryClient.getQueryData(
-               trpc.order.one.queryOptions(input).queryKey,
+               trpc.order.one.queryOptions({
+                  orderId: input.orderId,
+                  workspaceId: input.workspaceId,
+               }).queryKey,
             )
             const procurements = queryClient.getQueryData(queryOptions.queryKey)
             const orders = queryClient.getQueryData(
@@ -55,8 +65,6 @@ export function useCreateProcurement({
                orderItemId: input.orderItemId ?? null,
                attachments: [],
             })
-
-            onMutate?.()
 
             return { procurements, orders }
          },

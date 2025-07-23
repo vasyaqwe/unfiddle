@@ -19,21 +19,27 @@ export function useUpdateOrderItem({
    return useMutation(
       trpc.order.item.update.mutationOptions({
          onMutate: async (input) => {
-            await queryClient.cancelQueries(trpc.order.one.queryOptions(input))
+            onMutate?.()
 
-            const data = queryClient.getQueryData(
-               trpc.order.one.queryOptions(input).queryKey,
-            )
+            const oneQueryOptions = trpc.order.one.queryOptions({
+               orderId: input.orderId,
+               workspaceId: input.workspaceId,
+            })
+
+            await queryClient.cancelQueries(oneQueryOptions)
+
+            const data = queryClient.getQueryData(oneQueryOptions.queryKey)
 
             update({ ...input, orderId: order.id })
-
-            onMutate?.()
 
             return { data }
          },
          onError: (error, input, context) => {
             queryClient.setQueryData(
-               trpc.order.one.queryOptions(input).queryKey,
+               trpc.order.one.queryOptions({
+                  orderId: input.orderId,
+                  workspaceId: input.workspaceId,
+               }).queryKey,
                context?.data,
             )
             toast.error("Ой-ой!", {
@@ -50,7 +56,12 @@ export function useUpdateOrderItem({
             })
          },
          onSettled: (_data, _error, input) => {
-            queryClient.invalidateQueries(trpc.order.one.queryOptions(input))
+            queryClient.invalidateQueries(
+               trpc.order.one.queryOptions({
+                  orderId: input.orderId,
+                  workspaceId: input.workspaceId,
+               }),
+            )
          },
       }),
    )

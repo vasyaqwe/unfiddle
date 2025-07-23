@@ -17,21 +17,27 @@ export function useDeleteOrderItem({
    return useMutation(
       trpc.order.item.delete.mutationOptions({
          onMutate: async (input) => {
-            await queryClient.cancelQueries(trpc.order.one.queryOptions(input))
+            onMutate?.()
 
-            const data = queryClient.getQueryData(
-               trpc.order.one.queryOptions(input).queryKey,
-            )
+            const oneQueryOptions = trpc.order.one.queryOptions({
+               orderId: input.orderId,
+               workspaceId: input.workspaceId,
+            })
+
+            await queryClient.cancelQueries(oneQueryOptions)
+
+            const data = queryClient.getQueryData(oneQueryOptions.queryKey)
 
             deleteItem(input)
-
-            onMutate?.()
 
             return { data }
          },
          onError: (error, input, context) => {
             queryClient.setQueryData(
-               trpc.order.one.queryOptions(input).queryKey,
+               trpc.order.one.queryOptions({
+                  orderId: input.orderId,
+                  workspaceId: input.workspaceId,
+               }).queryKey,
                context?.data,
             )
             toast.error("Ой-ой!", {
@@ -50,7 +56,12 @@ export function useDeleteOrderItem({
             })
          },
          onSettled: (_data, _error, input) => {
-            queryClient.invalidateQueries(trpc.order.one.queryOptions(input))
+            queryClient.invalidateQueries(
+               trpc.order.one.queryOptions({
+                  orderId: input.orderId,
+                  workspaceId: input.workspaceId,
+               }),
+            )
          },
       }),
    )

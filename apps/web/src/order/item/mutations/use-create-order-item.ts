@@ -17,11 +17,16 @@ export function useCreateOrderItem({
    return useMutation(
       trpc.order.item.create.mutationOptions({
          onMutate: async (input) => {
-            await queryClient.cancelQueries(trpc.order.one.queryOptions(input))
+            onMutate?.()
 
-            const data = queryClient.getQueryData(
-               trpc.order.one.queryOptions(input).queryKey,
-            )
+            const oneQueryOptions = trpc.order.one.queryOptions({
+               orderId: input.orderId,
+               workspaceId: input.workspaceId,
+            })
+
+            await queryClient.cancelQueries(oneQueryOptions)
+
+            const data = queryClient.getQueryData(oneQueryOptions.queryKey)
 
             create({
                orderId: input.orderId,
@@ -33,13 +38,14 @@ export function useCreateOrderItem({
                },
             })
 
-            onMutate?.()
-
             return { data }
          },
          onError: (error, data, context) => {
             queryClient.setQueryData(
-               trpc.order.one.queryOptions(data).queryKey,
+               trpc.order.one.queryOptions({
+                  orderId: data.orderId,
+                  workspaceId: data.workspaceId,
+               }).queryKey,
                context?.data,
             )
             toast.error("Ой-ой!", {
@@ -58,7 +64,12 @@ export function useCreateOrderItem({
             })
          },
          onSettled: (_data, _error, input) => {
-            queryClient.invalidateQueries(trpc.order.one.queryOptions(input))
+            queryClient.invalidateQueries(
+               trpc.order.one.queryOptions({
+                  orderId: input.orderId,
+                  workspaceId: input.workspaceId,
+               }),
+            )
          },
       }),
    )

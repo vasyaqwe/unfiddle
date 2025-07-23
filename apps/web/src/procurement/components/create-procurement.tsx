@@ -14,12 +14,14 @@ import {
 } from "@unfiddle/ui/components/drawer"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { number } from "@unfiddle/ui/utils"
-import { useAtom } from "jotai"
+import { useSetAtom } from "jotai"
+import * as React from "react"
 
 export function CreateProcurement() {
    const auth = useAuth()
    const order = useOrder()
-   const [open, setOpen] = useAtom(createProcurementOpenAtom)
+   const createProcurementOpen = useSetAtom(createProcurementOpenAtom)
+   const [open, setOpen] = React.useState(false)
    const mutation = useCreateProcurement({
       onMutate: () => setOpen(false),
       onError: () => setOpen(true),
@@ -31,7 +33,10 @@ export function CreateProcurement() {
    return (
       <Drawer
          open={open}
-         onOpenChange={setOpen}
+         onOpenChange={(open) => {
+            setOpen(open)
+            createProcurementOpen(open)
+         }}
       >
          <DrawerTrigger
             render={

@@ -3,6 +3,7 @@ import { useAuth } from "@/auth/hooks"
 import { useOrder } from "@/order/hooks"
 import { ProcurementForm } from "@/procurement/components/procurement-form"
 import { useUpdateProcurement } from "@/procurement/mutations/use-update-procurement"
+import { updateProcurementOpenAtom } from "@/procurement/store"
 import type { Procurement } from "@unfiddle/core/procurement/types"
 import { Button } from "@unfiddle/ui/components/button"
 import {
@@ -13,6 +14,7 @@ import {
    DrawerTitle,
 } from "@unfiddle/ui/components/drawer"
 import { number } from "@unfiddle/ui/utils"
+import { useSetAtom } from "jotai"
 
 export function UpdateProcurement({
    procurement,
@@ -27,6 +29,7 @@ export function UpdateProcurement({
 }) {
    const auth = useAuth()
    const order = useOrder()
+   const setStoreUpdateOpen = useSetAtom(updateProcurementOpenAtom)
    const attachments = useAttachments({
       subjectId: procurement.id,
    })
@@ -39,7 +42,10 @@ export function UpdateProcurement({
    return (
       <Drawer
          open={open}
-         onOpenChange={setOpen}
+         onOpenChange={(open) => {
+            setOpen(open)
+            setStoreUpdateOpen(open)
+         }}
       >
          <DrawerPopup finalFocus={finalFocus}>
             <DrawerTitle>Редагувати закупівлю</DrawerTitle>

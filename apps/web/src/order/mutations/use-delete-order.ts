@@ -22,23 +22,26 @@ export function useDeleteOrder({
    return useMutation(
       trpc.order.delete.mutationOptions({
          onMutate: async (input) => {
+            onMutate?.()
+
+            const oneQueryOptions = trpc.order.one.queryOptions({
+               orderId: input.orderId,
+               workspaceId: input.workspaceId,
+            })
+
             await Promise.all([
                queryClient.cancelQueries(queryOptions.list),
-               queryClient.cancelQueries(trpc.order.one.queryOptions(input)),
+               queryClient.cancelQueries(oneQueryOptions),
             ])
 
             const listData = queryClient.getQueryData(
                queryOptions.list.queryKey,
             )
             const oneData = orderId
-               ? queryClient.getQueryData(
-                    trpc.order.one.queryOptions(input).queryKey,
-                 )
+               ? queryClient.getQueryData(oneQueryOptions.queryKey)
                : null
 
             deleteItem(input)
-
-            onMutate?.()
 
             return { listData, oneData }
          },
@@ -48,7 +51,10 @@ export function useDeleteOrder({
                context?.listData,
             )
             queryClient.setQueryData(
-               trpc.order.one.queryOptions(input).queryKey,
+               trpc.order.one.queryOptions({
+                  orderId: input.orderId,
+                  workspaceId: input.workspaceId,
+               }).queryKey,
                context?.oneData,
             )
             toast.error("Ой-ой!", {
@@ -81,7 +87,12 @@ export function useDeleteOrder({
                }),
             )
             queryClient.invalidateQueries(queryOptions.list)
-            queryClient.invalidateQueries(trpc.order.one.queryOptions(input))
+            queryClient.invalidateQueries(
+               trpc.order.one.queryOptions({
+                  orderId: input.orderId,
+                  workspaceId: input.workspaceId,
+               }),
+            )
          },
       }),
    )
@@ -94,7 +105,10 @@ export function useOptimisticDeleteOrder() {
    const params = useParams({ strict: false })
 
    return (input: RouterInput["order"]["delete"]) => {
-      const oneQueryKey = trpc.order.one.queryOptions(input).queryKey
+      const oneQueryKey = trpc.order.one.queryOptions({
+         orderId: input.orderId,
+         workspaceId: input.workspaceId,
+      }).queryKey
 
       queryClient.setQueryData(queryOptions.list.queryKey, (oldData) => {
          if (!oldData) return oldData

@@ -22,6 +22,8 @@ export function useCreateOrder({
    return useMutation(
       trpc.order.create.mutationOptions({
          onMutate: async (input) => {
+            onMutate?.()
+
             await queryClient.cancelQueries(queryOptions.list)
 
             const data = queryClient.getQueryData(queryOptions.list.queryKey)
@@ -45,8 +47,6 @@ export function useCreateOrder({
                deliversAt: input.deliversAt ?? null,
                note: input.note ?? "",
             })
-
-            onMutate?.()
 
             return { data }
          },

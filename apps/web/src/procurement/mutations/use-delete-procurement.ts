@@ -26,6 +26,8 @@ export function useDeleteProcurement({
    return useMutation(
       trpc.procurement.delete.mutationOptions({
          onMutate: async (input) => {
+            onMutate?.()
+
             await Promise.all([
                queryClient.cancelQueries(orderQueryOptions.list),
                queryClient.cancelQueries(queryOptions),
@@ -37,8 +39,6 @@ export function useDeleteProcurement({
             )
 
             deleteItem(input)
-
-            onMutate?.()
 
             return { procurements, orders }
          },
