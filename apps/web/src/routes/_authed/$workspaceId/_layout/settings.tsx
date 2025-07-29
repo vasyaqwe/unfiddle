@@ -1,5 +1,7 @@
 import { api } from "@/api"
+import { authClient } from "@/auth"
 import { useAuth } from "@/auth/hooks"
+import { env } from "@/env"
 import { fileToBase64, imageDimensions } from "@/file/components/uploader/utils"
 import { MainScrollArea } from "@/layout/components/main"
 import { useOrderQueryOptions } from "@/order/queries"
@@ -26,6 +28,7 @@ import {
 } from "@unfiddle/ui/components/tabs"
 import { formData } from "@unfiddle/ui/utils"
 import { useTheme } from "next-themes"
+import React from "react"
 import { toast } from "sonner"
 import { z } from "zod"
 
@@ -56,20 +59,43 @@ function RouteComponent() {
       }),
    )
 
-   const updateUser = useMutation(
-      trpc.user.update.mutationOptions({
-         onSuccess: () => {
-            toast.success("Оновлено")
-            queryClient.invalidateQueries(auth.queryOptions.user)
-            queryClient.invalidateQueries(orderQueryOptions.list)
-            queryClient.invalidateQueries(
-               trpc.workspace.member.list.queryOptions({
-                  workspaceId: auth.workspace.id,
-               }),
-            )
-         },
-      }),
-   )
+   const updateUser = useMutation({
+      mutationFn: async (input: { name: string; image: string }) => {
+         const res = await authClient.updateUser(input)
+         if (res.error) throw res.error
+      },
+      onSuccess: () => {
+         toast.success("Оновлено")
+         queryClient.invalidateQueries(auth.queryOptions.user)
+         queryClient.invalidateQueries(orderQueryOptions.list)
+         queryClient.invalidateQueries(
+            trpc.workspace.member.list.queryOptions({
+               workspaceId: auth.workspace.id,
+            }),
+         )
+      },
+   })
+   const changeEmail = useMutation({
+      mutationFn: async (input: { newEmail: string }) => {
+         const res = await authClient.changeEmail({
+            ...input,
+            callbackURL: env.WEB_URL,
+         })
+         if (res.error) throw res.error
+      },
+      onSuccess: () => {
+         toast.success("Підтвердження надіслано", {
+            description:
+               "Перейдіть за посиланням у поточній пошті щоб підтвердити зміну пошти.",
+         })
+         queryClient.invalidateQueries(auth.queryOptions.user)
+         queryClient.invalidateQueries(
+            trpc.workspace.member.list.queryOptions({
+               workspaceId: auth.workspace.id,
+            }),
+         )
+      },
+   })
 
    const upload = useMutation({
       mutationFn: async (file: File) => {
@@ -96,6 +122,11 @@ function RouteComponent() {
       "enot.ghaster@gmail.com",
       "vasylpolishchuk22@gmail.com",
    ]
+
+   const [nameFocused, setNameFocused] = React.useState(false)
+   const [name, setName] = React.useState(auth.user.name)
+   const [emailFocused, setEmailFocused] = React.useState(false)
+   const [email, setEmail] = React.useState(auth.user.email)
 
    return (
       <>
@@ -307,17 +338,7 @@ function RouteComponent() {
                   className={"mt-3"}
                   value={"me"}
                >
-                  <form
-                     onSubmit={(e) => {
-                        e.preventDefault()
-                        const form = formData<{ name: string }>(e.target)
-                        if (auth.user.name === form.name) return
-                        updateUser.mutate({
-                           name: form.name,
-                        })
-                     }}
-                     className="divide-y divide-neutral"
-                  >
+                  <div className="divide-y divide-neutral">
                      <div className="grid grid-cols-[100px_1fr] items-center py-4">
                         <label htmlFor="logo">Аватар</label>
                         <FileTrigger
@@ -343,6 +364,7 @@ function RouteComponent() {
 
                               updateUser.mutate({
                                  image: image.url,
+                                 name: auth.user.name,
                               })
                            }}
                            size={"xl"}
@@ -353,22 +375,103 @@ function RouteComponent() {
                            />
                         </FileTrigger>
                      </div>
-                     <Field className="grid grid-cols-[100px_1fr] items-center py-4">
-                        <FieldLabel className="mt-2 md:mt-1">Ім'я</FieldLabel>
-                        <FieldControl
-                           className={"max-w-[300px]"}
-                           defaultValue={auth.user.name}
-                           placeholder="Уведіть ваше ім'я"
-                           name="name"
-                           onBlur={(e) => {
-                              if (auth.user.name === e.target.value) return
-                              updateUser.mutate({
-                                 name: e.target.value,
-                              })
-                           }}
-                        />
-                     </Field>
-                  </form>
+                     <form
+                        onSubmit={(e) => {
+                           e.preventDefault()
+                           if (auth.user.name === name) return
+                           updateUser.mutate({
+                              name,
+                              image: auth.user.image,
+                           })
+                           setNameFocused(false)
+                        }}
+                     >
+                        <Field className="grid grid-cols-[100px_1fr] items-center py-4">
+                           <FieldLabel className="mt-2 md:mt-1">
+                              Ім'я
+                           </FieldLabel>
+                           <div className={"relative max-w-[300px]"}>
+                              <FieldControl
+                                 value={name}
+                                 onValueChange={setName}
+                                 placeholder="Уведіть ваше ім'я"
+                                 name="name"
+                                 onFocus={() => setNameFocused(true)}
+                              />
+                              {nameFocused && (
+                                 <div className="absolute top-2 right-0 flex items-center gap-0.5">
+                                    <Button
+                                       size={"sm"}
+                                       kind={"icon"}
+                                    >
+                                       <Icons.check className="size-5" />
+                                    </Button>
+                                    <Button
+                                       size={"sm"}
+                                       kind={"icon"}
+                                       variant={"secondary"}
+                                       type="button"
+                                       onClick={() => {
+                                          setNameFocused(false)
+                                          setName(auth.user.name)
+                                       }}
+                                    >
+                                       <Icons.xMark className="size-5" />
+                                    </Button>
+                                 </div>
+                              )}
+                           </div>
+                        </Field>
+                     </form>
+                     <form
+                        onSubmit={(e) => {
+                           e.preventDefault()
+                           if (auth.user.email === email) return
+                           changeEmail.mutate({
+                              newEmail: email,
+                           })
+                           setEmailFocused(false)
+                        }}
+                     >
+                        <Field className="grid grid-cols-[100px_1fr] items-center py-4">
+                           <FieldLabel className="mt-2 md:mt-1">
+                              Email
+                           </FieldLabel>
+                           <div className={"relative max-w-[300px]"}>
+                              <FieldControl
+                                 className={"max-w-[300px]"}
+                                 value={email}
+                                 onValueChange={setEmail}
+                                 placeholder="Уведіть ваш email"
+                                 name="email"
+                                 onFocus={() => setEmailFocused(true)}
+                              />{" "}
+                              {emailFocused && (
+                                 <div className="absolute top-2 right-0 flex items-center gap-0.5">
+                                    <Button
+                                       size={"sm"}
+                                       kind={"icon"}
+                                    >
+                                       <Icons.check className="size-5" />
+                                    </Button>
+                                    <Button
+                                       size={"sm"}
+                                       kind={"icon"}
+                                       variant={"secondary"}
+                                       type="button"
+                                       onClick={() => {
+                                          setEmailFocused(false)
+                                          setEmail(auth.user.email)
+                                       }}
+                                    >
+                                       <Icons.xMark className="size-5" />
+                                    </Button>
+                                 </div>
+                              )}
+                           </div>
+                        </Field>
+                     </form>
+                  </div>
                </TabsPanel>
             </Tabs>
          </MainScrollArea>

@@ -115,33 +115,47 @@ export const authClient: any = (c: Context<HonoEnv>) => {
             },
          },
       },
+      user: {
+         changeEmail: {
+            enabled: true,
+            sendChangeEmailVerification: async (
+               { user, newEmail, url },
+               _request,
+            ) => {
+               const res = await c.var.email.emails.send({
+                  from: EMAIL_FROM,
+                  to: user.email,
+                  subject: "Підтвердіть зміну пошти",
+                  html: `Перейдіть за посиланням щоб підтвердити зміну поточної пошти на ${newEmail}: <a style="margin-top:8px; display:inline-block;" href="${url}">Підтвердити</a>`,
+               })
+               if (res.error) {
+                  logger.error(res.error)
+                  throw new Error(res.error.message)
+               }
+            },
+         },
+      },
       hooks: {
          after: createAuthMiddleware(async (ctx) => {
-            if (
-               ctx.path.startsWith("/sign-up") ||
-               ctx.path.startsWith("/sign-in") ||
-               ctx.path.includes("/callback")
-            ) {
-               const newSession = ctx.context.newSession
-               if (!newSession) return
+            const newSession = ctx.context.newSession
+            if (!newSession) return
 
-               const workspaceMemberships =
-                  await c.var.db.query.workspaceMember.findMany({
-                     where: eq(workspaceMember.userId, newSession.user.id),
-                     columns: {
-                        workspaceId: true,
-                        role: true,
-                        deletedAt: true,
-                     },
-                  })
+            const workspaceMemberships =
+               await c.var.db.query.workspaceMember.findMany({
+                  where: eq(workspaceMember.userId, newSession.user.id),
+                  columns: {
+                     workspaceId: true,
+                     role: true,
+                     deletedAt: true,
+                  },
+               })
 
-               await c.var.db
-                  .update(session)
-                  .set({
-                     workspaceMemberships,
-                  })
-                  .where(eq(session.id, newSession.session.id))
-            }
+            await c.var.db
+               .update(session)
+               .set({
+                  workspaceMemberships,
+               })
+               .where(eq(session.id, newSession.session.id))
          }),
       },
    })

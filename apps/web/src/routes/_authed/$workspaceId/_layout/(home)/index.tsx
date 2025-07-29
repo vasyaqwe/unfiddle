@@ -1,6 +1,5 @@
 import { useAuth } from "@/auth/hooks"
 import { useForceUpdate } from "@/interactions/use-force-update"
-import { useTip } from "@/interactions/use-tip"
 import { MainScrollArea } from "@/layout/components/main"
 import { VList, VListContent } from "@/layout/components/vlist"
 import { useCreateOrderAssignee } from "@/order/assignee/mutations/use-create-order-assignee"
@@ -142,12 +141,6 @@ function Content({
 
    const queryOptions = useOrderQueryOptions()
    const query = useSuspenseQuery(queryOptions.list)
-   useTip({
-      key: "order_context_menu",
-      message:
-         "Клацніть на замовлення правою кнопкою миші, щоб відкрити менюшку",
-      autoTrigger: true,
-   })
    const virtualizer = useVirtualizer({
       count: query.data.length,
       getScrollElement: () => scrollAreaRef.current,
