@@ -250,7 +250,7 @@ function MemberRow({
             <TableCell>{member.user.email}</TableCell>
             <TableCell className="min-w-[150px]">
                <Select
-                  value={member.role}
+                  defaultValue={member.role}
                   onValueChange={(role) =>
                      update.mutate({
                         userId: member.user.id,
@@ -272,10 +272,12 @@ function MemberRow({
                            variant={"ghost"}
                            className="-ml-2 disabled:cursor-auto disabled:opacity-100 disabled:hover:bg-transparent"
                         >
-                           <SelectValue placeholder={member.role}>
-                              {(label) =>
-                                 WORKSPACE_ROLES_TRANSLATION[label as never]
+                           <SelectValue
+                              placeholder={
+                                 WORKSPACE_ROLES_TRANSLATION[member.role]
                               }
+                           >
+                              {(label) => label}
                            </SelectValue>
                         </Button>
                      }
