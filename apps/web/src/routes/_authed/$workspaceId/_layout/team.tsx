@@ -273,7 +273,9 @@ function MemberRow({
                            className="-ml-2 disabled:cursor-auto disabled:opacity-100 disabled:hover:bg-transparent"
                         >
                            <SelectValue placeholder={member.role}>
-                              {(label) => label}
+                              {(label) =>
+                                 WORKSPACE_ROLES_TRANSLATION[label as never]
+                              }
                            </SelectValue>
                         </Button>
                      }
