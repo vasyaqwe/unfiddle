@@ -2,6 +2,7 @@ import { useAuth } from "@/auth/hooks"
 import { env } from "@/env"
 import { useDelayedValue } from "@/interactions/use-delayed-value"
 import { MainScrollArea } from "@/layout/components/main"
+import { useOrderQueryOptions } from "@/order/queries"
 import {
    Header,
    HeaderBackButton,
@@ -20,6 +21,8 @@ import { Button } from "@unfiddle/ui/components/button"
 import { CopyButton } from "@unfiddle/ui/components/copy-button"
 import {
    Dialog,
+   DialogClose,
+   DialogFooter,
    DialogPopup,
    DialogTitle,
    DialogTrigger,
@@ -33,6 +36,7 @@ import {
    AlertDialogPopup,
    AlertDialogTitle,
 } from "@unfiddle/ui/components/dialog/alert"
+import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { Input } from "@unfiddle/ui/components/input"
 import { Loading } from "@unfiddle/ui/components/loading"
@@ -57,6 +61,7 @@ import {
    TableHeader,
    TableRow,
 } from "@unfiddle/ui/components/table"
+import { formData } from "@unfiddle/ui/utils"
 import * as React from "react"
 import { toast } from "sonner"
 
@@ -197,7 +202,9 @@ function MemberRow({
    const params = Route.useParams()
    const queryClient = useQueryClient()
    const auth = useAuth()
+   const orderQueryOptions = useOrderQueryOptions()
 
+   const [editOpen, setEditOpen] = React.useState(false)
    const [deleteOpen, setDeleteOpen] = React.useState(false)
    const menuTriggerRef = React.useRef<HTMLButtonElement>(null)
 
@@ -232,7 +239,26 @@ function MemberRow({
       }),
    )
 
+   const updateUser = useMutation(
+      trpc.user.update.mutationOptions({
+         onSuccess: () => {
+            toast.success("Оновлено")
+            setEditOpen(false)
+            queryClient.invalidateQueries(auth.queryOptions.user)
+            queryClient.invalidateQueries(orderQueryOptions.list)
+            queryClient.invalidateQueries(
+               trpc.workspace.member.list.queryOptions({
+                  workspaceId: auth.workspace.id,
+               }),
+            )
+         },
+      }),
+   )
+
    const isDeletePending = useDelayedValue(deleteMember.isPending, 150)
+   const isUpdatePending = useDelayedValue(updateUser.isPending, 150)
+
+   const nameRef = React.useRef<HTMLInputElement>(null)
 
    return (
       <>
@@ -326,6 +352,17 @@ function MemberRow({
                      />
                      <MenuPopup align="end">
                         <MenuItem
+                           onClick={() => {
+                              setEditOpen(true)
+                              setTimeout(() => {
+                                 nameRef.current?.focus()
+                              }, 1)
+                           }}
+                        >
+                           <Icons.pencil />
+                           Редагувати
+                        </MenuItem>
+                        <MenuItem
                            destructive
                            onClick={() => setDeleteOpen(true)}
                         >
@@ -337,6 +374,55 @@ function MemberRow({
                </TableCell>
             ) : null}
          </TableRow>
+         <Dialog
+            open={editOpen}
+            onOpenChange={setEditOpen}
+         >
+            <DialogPopup finalFocus={menuTriggerRef}>
+               <DialogTitle>Редагувати користувача</DialogTitle>
+               <form
+                  onSubmit={(e) => {
+                     e.preventDefault()
+                     const form = formData<{
+                        name: string
+                     }>(e.target)
+                     updateUser.mutate({
+                        userId: member.user.id,
+                        workspaceId: params.workspaceId,
+                        name: form.name,
+                     })
+                  }}
+               >
+                  <Field>
+                     <FieldLabel>Ім'я</FieldLabel>
+                     <FieldControl
+                        ref={nameRef}
+                        placeholder="Ім'я"
+                        name="name"
+                        defaultValue={member.user.name}
+                     />
+                  </Field>
+                  <DialogFooter>
+                     <DialogClose
+                        render={
+                           <Button
+                              type="button"
+                              variant="secondary"
+                           >
+                              Відмінити
+                           </Button>
+                        }
+                     />
+                     <Button
+                        disabled={isUpdatePending}
+                        pending={isUpdatePending}
+                     >
+                        Зберегти
+                     </Button>
+                  </DialogFooter>
+               </form>
+            </DialogPopup>
+         </Dialog>
          <AlertDialog
             open={deleteOpen}
             onOpenChange={setDeleteOpen}

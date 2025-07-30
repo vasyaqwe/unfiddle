@@ -236,7 +236,7 @@ function _OrderRow({
                   <p className="whitespace-nowrap font-medium font-mono text-foreground/75 text-sm">
                      {makeShortId(order.shortId)}
                   </p>
-                  <p className="flex items-center gap-1.5 font-medium text-sm lg:w-[108px]">
+                  <p className="flex items-center gap-1.5 font-medium text-sm lg:w-[110px]">
                      <UserAvatar
                         size={25}
                         user={order.creator}
