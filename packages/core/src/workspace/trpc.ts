@@ -1,10 +1,9 @@
 import { TRPCError } from "@trpc/server"
 import { session } from "@unfiddle/core/auth/schema"
 import { workspaceMember } from "@unfiddle/core/database/schema"
-import { createCode } from "@unfiddle/core/id"
+import { createCode, createId } from "@unfiddle/core/id"
 import { order } from "@unfiddle/core/order/schema"
 import { t } from "@unfiddle/core/trpc/context"
-import { tryCatch } from "@unfiddle/core/try-catch"
 import { workspaceAnalyticsRouter } from "@unfiddle/core/workspace/analytics/trpc"
 import { workspaceMemberRouter } from "@unfiddle/core/workspace/member/trpc"
 import { workspaceMemberMiddleware } from "@unfiddle/core/workspace/middleware"
@@ -229,54 +228,35 @@ export const workspaceRouter = t.router({
    create: t.procedure
       .input(z.object({ name: z.string() }))
       .mutation(async ({ ctx, input }) => {
-         const [createdWorkspace] = await ctx.db
-            .insert(workspace)
-            .values({
+         const workspaceId = createId("workspace")
+
+         await ctx.db.batch([
+            ctx.db.insert(workspace).values({
+               id: workspaceId,
                name: input.name,
                creatorId: ctx.user.id,
-            })
-            .returning({
-               id: workspace.id,
-            })
+            }),
+            ctx.db.insert(workspaceMember).values({
+               workspaceId,
+               userId: ctx.user.id,
+               role: "owner",
+            }),
+            ctx.db
+               .update(session)
+               .set({
+                  workspaceMemberships: [
+                     ...ctx.session.workspaceMemberships,
+                     {
+                        workspaceId,
+                        role: "owner",
+                        deletedAt: null,
+                     },
+                  ],
+               })
+               .where(eq(session.userId, ctx.user.id)),
+         ])
 
-         if (!createdWorkspace)
-            throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" })
-
-         const batch = await tryCatch(
-            ctx.db.batch([
-               ctx.db.insert(workspaceMember).values({
-                  workspaceId: createdWorkspace.id,
-                  userId: ctx.user.id,
-                  role: "owner",
-               }),
-               ctx.db
-                  .update(session)
-                  .set({
-                     workspaceMemberships: [
-                        ...ctx.session.workspaceMemberships,
-                        {
-                           workspaceId: createdWorkspace.id,
-                           role: "owner",
-                           deletedAt: null,
-                        },
-                     ],
-                  })
-                  .where(eq(session.userId, ctx.user.id)),
-            ]),
-         )
-
-         if (batch.error || batch.data.some((r) => r.error)) {
-            await ctx.db
-               .delete(workspace)
-               .where(eq(workspace.id, createdWorkspace.id))
-
-            throw new TRPCError({
-               code: "INTERNAL_SERVER_ERROR",
-               message: "Failed to create workspace",
-            })
-         }
-
-         return createdWorkspace.id
+         return workspaceId
       }),
    update: t.procedure
       .use(workspaceMemberMiddleware)
@@ -293,7 +273,7 @@ export const workspaceRouter = t.router({
    delete: t.procedure
       .input(z.object({ id: z.string() }))
       .mutation(async ({ ctx, input }) => {
-         const _batch = await ctx.db.batch([
+         await ctx.db.batch([
             ctx.db
                .delete(workspace)
                .where(

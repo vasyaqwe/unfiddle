@@ -6,6 +6,7 @@ import {
 import { formatCurrency } from "@unfiddle/core/currency"
 import { CURRENCIES } from "@unfiddle/core/currency/constants"
 import { orderAssignee, orderItem } from "@unfiddle/core/database/schema"
+import { createId } from "@unfiddle/core/id"
 import { orderAssigneeRouter } from "@unfiddle/core/order/assignee/trpc"
 import {
    ORDER_SEVERITIES_TRANSLATION,
@@ -20,7 +21,6 @@ import {
 } from "@unfiddle/core/order/schema"
 import { procurement } from "@unfiddle/core/procurement/schema"
 import { t } from "@unfiddle/core/trpc/context"
-import { tryCatch } from "@unfiddle/core/try-catch"
 import { workspaceMemberMiddleware } from "@unfiddle/core/workspace/middleware"
 import {
    and,
@@ -536,42 +536,37 @@ export const orderRouter = t.router({
          })
          const lastId = existingCounter?.lastId ?? 0
          const nextId = lastId + 1
-
          const normalizedName = input.name
             .normalize("NFC")
             .toLocaleLowerCase("uk")
 
-         const createdOrder = await ctx.db
-            .insert(order)
-            .values({
+         const orderId = createId("order")
+
+         const batchQueries: BatchItem[] = []
+
+         batchQueries.push(
+            ctx.db.insert(order).values({
                ...input,
+               id: orderId,
                shortId: nextId,
                creatorId: ctx.user.id,
                normalizedName,
-            })
-            .returning()
-            .get()
-
-         const createdOrderItems = await tryCatch(
-            ctx.db.insert(orderItem).values(
-               input.items.map((item) => ({
-                  ...item,
-                  workspaceId: input.workspaceId,
-                  orderId: createdOrder.id,
-               })),
-            ),
+            }),
          )
 
-         if (createdOrderItems.error) {
-            await ctx.db.delete(order).where(eq(order.id, createdOrder.id))
-
-            throw new TRPCError({
-               code: "INTERNAL_SERVER_ERROR",
-               message: "Failed to create order items",
-            })
+         const BATCH_SIZE = 5
+         for (let i = 0; i < input.items.length; i += BATCH_SIZE) {
+            const batch = input.items.slice(i, i + BATCH_SIZE)
+            batchQueries.push(
+               ctx.db.insert(orderItem).values(
+                  batch.map((item) => ({
+                     ...item,
+                     workspaceId: input.workspaceId,
+                     orderId,
+                  })),
+               ),
+            )
          }
-
-         const batchQueries: BatchItem[] = []
 
          if (!existingCounter) {
             batchQueries.push(
@@ -581,7 +576,6 @@ export const orderRouter = t.router({
                   .onConflictDoNothing(),
             )
          }
-
          batchQueries.push(
             ctx.db
                .update(orderCounter)
@@ -594,7 +588,7 @@ export const orderRouter = t.router({
                ctx.db.insert(attachment).values(
                   input.attachments.map((a) => ({
                      ...a,
-                     subjectId: createdOrder.id,
+                     subjectId: orderId,
                      subjectType: "order" as const,
                      workspaceId: input.workspaceId,
                      creatorId: ctx.user.id,
@@ -603,24 +597,20 @@ export const orderRouter = t.router({
             )
          }
 
-         const batch = await tryCatch(
-            ctx.db.batch(
-               batchQueries as unknown as readonly [
-                  BatchItem<"sqlite">,
-                  ...BatchItem<"sqlite">[],
-               ],
-            ),
+         await ctx.db.batch(
+            batchQueries as unknown as readonly [
+               BatchItem<"sqlite">,
+               ...BatchItem<"sqlite">[],
+            ],
          )
 
-         if (batch.error || batch.data.some((r) => r.error)) {
-            await ctx.db.delete(order).where(eq(order.id, createdOrder.id))
-            await ctx.db
-               .delete(orderItem)
-               .where(eq(orderItem.orderId, createdOrder.id))
-            throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" })
+         return {
+            ...input,
+            id: orderId,
+            shortId: nextId,
+            creatorId: ctx.user.id,
+            normalizedName,
          }
-
-         return createdOrder
       }),
    update: t.procedure
       .use(workspaceMemberMiddleware)

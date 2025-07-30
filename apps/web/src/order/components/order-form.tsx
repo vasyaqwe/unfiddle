@@ -78,6 +78,29 @@ export function OrderForm({
    const fileUploaderRef = React.useRef<HTMLDivElement>(null)
    const attachments = useAttachments({ subjectId: auth.workspace.id })
 
+   const handleAddItem = () => {
+      setItems((prevItems) => [
+         ...prevItems,
+         {
+            name: "",
+            quantity: 1,
+            desiredPrice: null,
+         },
+      ])
+
+      // Use requestAnimationFrame to wait for the DOM to update
+      requestAnimationFrame(() => {
+         // Find all the item name inputs
+         const itemInputs = document.querySelectorAll(
+            ".order-item-name-input",
+         ) as NodeListOf<HTMLInputElement>
+         // Focus the last one (which is the newly added one)
+         if (itemInputs.length > 0) {
+            itemInputs[itemInputs.length - 1]?.focus()
+         }
+      })
+   }
+
    return (
       <form
          ref={formRef}
@@ -167,6 +190,8 @@ export function OrderForm({
                                  ),
                               )
                            }
+                           // Add a class name to easily select this input
+                           className="order-item-name-input"
                         />
                      </Field>
                      <Field>
@@ -218,16 +243,7 @@ export function OrderForm({
                   </FieldGroup>
                ))}
                <Button
-                  onClick={() =>
-                     setItems([
-                        ...items,
-                        {
-                           name: "",
-                           quantity: 1,
-                           desiredPrice: null,
-                        },
-                     ])
-                  }
+                  onClick={handleAddItem}
                   type="button"
                   className="mt-2 w-full disabled:cursor-not-allowed"
                   variant={"secondary"}
@@ -237,7 +253,7 @@ export function OrderForm({
                </Button>
             </Fieldset>
          )}
-         <Fieldset className={"space-y-3 md:space-y-8"}>
+         <Fieldset className={"mb-10 space-y-3 md:space-y-8"}>
             <FieldsetLegend className={"md:mb-4"}>Деталі</FieldsetLegend>
             <FieldGroup>
                <Field>
