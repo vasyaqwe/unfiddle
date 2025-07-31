@@ -50,9 +50,15 @@ import {
 } from "@unfiddle/ui/components/menu/context"
 import { Separator } from "@unfiddle/ui/components/separator"
 import { SVGPreview } from "@unfiddle/ui/components/svg-preview"
+import {
+   Tooltip,
+   TooltipPopup,
+   TooltipTrigger,
+} from "@unfiddle/ui/components/tooltip"
 import { useSetAtom } from "jotai"
 import { useTheme } from "next-themes"
 import * as React from "react"
+import { toast } from "sonner"
 
 export function Procurement({
    procurement,
@@ -87,6 +93,22 @@ export function Procurement({
          !attachment.type.startsWith("image/") ||
          attachment.name.endsWith(".svg"),
    )
+   const extractDomain = (url: string) => {
+      try {
+         const urlObj = new URL(url.startsWith("http") ? url : `https://${url}`)
+         return urlObj.hostname.replace("www.", "")
+      } catch {
+         return url
+      }
+   }
+
+   const isUrl = (str: string) => {
+      const urlPattern =
+         /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/i
+      return urlPattern.test(str)
+   }
+
+   const provider = procurement.provider
 
    return (
       <div className="gap-3 border-neutral border-t p-3 text-left first:border-none lg:gap-4 lg:p-2 lg:pl-3">
@@ -97,8 +119,28 @@ export function Procurement({
                </p>
             ) : null}
             <div className="ml-auto flex items-center gap-1.5">
-               {procurement.provider ? (
-                  <Badge size={"sm"}>{procurement.provider}</Badge>
+               {provider ? (
+                  <Tooltip delay={0}>
+                     <TooltipTrigger
+                        render={
+                           <Badge
+                              size="sm"
+                              className="line-clamp-1 max-w-72 cursor-pointer"
+                              onClick={() => {
+                                 navigator.clipboard.writeText(provider)
+                                 toast.success("Скопійовано!")
+                              }}
+                           >
+                              {isUrl(provider)
+                                 ? extractDomain(provider)
+                                 : provider}
+                           </Badge>
+                        }
+                     />
+                     <TooltipPopup>
+                        Натисніть щоб скопіювати постачальника
+                     </TooltipPopup>
+                  </Tooltip>
                ) : null}
                <Combobox
                   value={procurement.status}
