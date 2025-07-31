@@ -381,7 +381,7 @@ function RouteComponent() {
                            if (auth.user.name === name) return
                            updateUser.mutate({
                               name,
-                              image: auth.user.image,
+                              image: auth.user.image ?? "",
                            })
                            setNameFocused(false)
                         }}
@@ -393,7 +393,7 @@ function RouteComponent() {
                            <div className={"relative max-w-[300px]"}>
                               <FieldControl
                                  value={name}
-                                 onValueChange={setName}
+                                 onValueChange={(v) => setName(v as string)}
                                  placeholder="Уведіть ваше ім'я"
                                  name="name"
                                  onFocus={() => setNameFocused(true)}
@@ -441,7 +441,7 @@ function RouteComponent() {
                               <FieldControl
                                  className={"max-w-[300px]"}
                                  value={email}
-                                 onValueChange={setEmail}
+                                 onValueChange={(v) => setEmail(v as string)}
                                  placeholder="Уведіть ваш email"
                                  name="email"
                                  onFocus={() => setEmailFocused(true)}
