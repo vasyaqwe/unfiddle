@@ -50,13 +50,13 @@
       "bindings": [
          {
             "name": "DO",
-            "class_name": "PARTYKIT"
+            "class_name": "Partykit"
          }
       ],
       "migrations": [
          {
             "tag": "v1",
-            "new_classes": ["PARTYKIT"]
+            "new_classes": ["Partykit"]
          }
       ]
    },
