@@ -1,12 +1,12 @@
 import { CACHE_SHORT } from "@/api"
 import { useAuth } from "@/auth/hooks"
-import { MainScrollArea } from "@/layout/components/main"
 import {
    Header,
    HeaderBackButton,
    HeaderTitle,
    HeaderUserMenu,
-} from "@/routes/_authed/$workspaceId/-components/header"
+} from "@/layout/components/header"
+import { MainScrollArea } from "@/layout/components/main"
 import { trpc } from "@/trpc"
 import { validator } from "@/validator"
 import { CurrencySelect } from "@/workspace/analytics/components/currency-select"

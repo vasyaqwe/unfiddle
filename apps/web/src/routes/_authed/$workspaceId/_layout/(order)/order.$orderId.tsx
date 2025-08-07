@@ -3,6 +3,11 @@ import { useAttachments, useDownloadAttachment } from "@/attachment/hooks"
 import type { UploadedAttachment } from "@/attachment/types"
 import { useAuth } from "@/auth/hooks"
 import { FileUploader } from "@/file/components/uploader"
+import {
+   Header,
+   HeaderBackButton,
+   HeaderTitle,
+} from "@/layout/components/header"
 import { MainScrollArea } from "@/layout/components/main"
 import { useCreateOrderAssignee } from "@/order/assignee/mutations/use-create-order-assignee"
 import { useDeleteOrderAssignee } from "@/order/assignee/mutations/use-delete-order-assignee"
@@ -20,11 +25,6 @@ import {
    createProcurementOpenAtom,
    updateProcurementOpenAtom,
 } from "@/procurement/store"
-import {
-   Header,
-   HeaderBackButton,
-   HeaderTitle,
-} from "@/routes/_authed/$workspaceId/-components/header"
 import { CreateAnalog } from "@/routes/_authed/$workspaceId/_layout/(order)/-components/create-analog"
 import { OrderItem } from "@/routes/_authed/$workspaceId/_layout/(order)/-components/order-item"
 import { Procurement } from "@/routes/_authed/$workspaceId/_layout/(order)/-components/procurement"
@@ -291,7 +291,7 @@ function RouteComponent() {
                      )
                   }}
                />
-               <div className="mb-3 flex gap-1 lg:hidden">
+               <div className="mt-3 mb-3 flex gap-1 lg:hidden">
                   <StatusCombobox />
                   <SeverityCombobox />
                </div>

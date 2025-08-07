@@ -1,5 +1,11 @@
 import { useAuth } from "@/auth/hooks"
 import { useForceUpdate } from "@/interactions/use-force-update"
+import {
+   Header,
+   HeaderTitle,
+   HeaderUserMenu,
+   HeaderWorkspaceMenu,
+} from "@/layout/components/header"
 import { MainScrollArea } from "@/layout/components/main"
 import { VList, VListContent } from "@/layout/components/vlist"
 import { useCreateOrderAssignee } from "@/order/assignee/mutations/use-create-order-assignee"
@@ -12,12 +18,6 @@ import { useDeleteOrder } from "@/order/mutations/use-delete-order"
 import { useUpdateOrder } from "@/order/mutations/use-update-order"
 import { useOrderQueryOptions } from "@/order/queries"
 import { createOrderOpenAtom } from "@/order/store"
-import {
-   Header,
-   HeaderTitle,
-   HeaderUserMenu,
-   HeaderWorkspaceMenu,
-} from "@/routes/_authed/$workspaceId/-components/header"
 import { DateFilter } from "@/routes/_authed/$workspaceId/_layout/(home)/-components/date-filter"
 import { Empty } from "@/routes/_authed/$workspaceId/_layout/(home)/-components/empty"
 import { FilterMenu } from "@/routes/_authed/$workspaceId/_layout/(home)/-components/filter-menu"
@@ -242,7 +242,9 @@ function _OrderRow({
                         user={order.creator}
                         className="inline-block"
                      />
-                     <span className="line-clamp-1">{order.creator.name}</span>
+                     <span className="line-clamp-1">
+                        {order.creator.name.split(" ")[0]}
+                     </span>
                   </p>
                </div>
                <p

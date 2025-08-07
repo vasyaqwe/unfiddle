@@ -1,13 +1,13 @@
 import { useAuth } from "@/auth/hooks"
 import { env } from "@/env"
 import { useDelayedValue } from "@/interactions/use-delayed-value"
-import { MainScrollArea } from "@/layout/components/main"
-import { useOrderQueryOptions } from "@/order/queries"
 import {
    Header,
    HeaderBackButton,
    HeaderTitle,
-} from "@/routes/_authed/$workspaceId/-components/header"
+} from "@/layout/components/header"
+import { MainScrollArea } from "@/layout/components/main"
+import { useOrderQueryOptions } from "@/order/queries"
 import { trpc } from "@/trpc"
 import { ErrorComponent } from "@/ui/components/error"
 import { UserAvatar } from "@/user/components/user-avatar"

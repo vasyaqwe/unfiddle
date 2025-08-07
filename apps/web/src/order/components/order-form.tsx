@@ -166,7 +166,7 @@ export function OrderForm({
          {order ? null : (
             <Fieldset className={"space-y-2"}>
                <FieldsetLegend className={"md:mb-4"}>Товари</FieldsetLegend>
-               <FieldGroup className="md:grid-cols-[1fr_4rem_5rem_2rem] md:gap-5">
+               <FieldGroup className="max-md:hidden md:grid-cols-[1fr_4rem_5rem_2rem] md:gap-5">
                   <p className="font-medium text-sm">Назва</p>
                   <p className="font-medium text-sm">Кількість</p>
                   <p className="font-medium text-sm">Баж. ціна</p>
@@ -174,9 +174,9 @@ export function OrderForm({
                {items.map((item, idx) => (
                   <FieldGroup
                      key={idx}
-                     className="md:grid-cols-[1fr_4rem_5rem_2rem] md:gap-5"
+                     className="grid-cols-[1fr_1fr_2rem] md:grid-cols-[1fr_4rem_5rem_2rem] md:gap-5"
                   >
-                     <Field>
+                     <Field className={"max-md:col-span-3"}>
                         <FieldControl
                            required
                            placeholder="Уведіть назву"

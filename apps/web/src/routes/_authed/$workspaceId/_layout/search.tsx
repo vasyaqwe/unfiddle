@@ -1,9 +1,6 @@
 import { useLocalStorage } from "@/interactions/use-local-storage"
+import { Header, HeaderBackButton } from "@/layout/components/header"
 import { MainScrollArea } from "@/layout/components/main"
-import {
-   Header,
-   HeaderBackButton,
-} from "@/routes/_authed/$workspaceId/-components/header"
 import { trpc } from "@/trpc"
 import { validator } from "@/validator"
 import { useQuery } from "@tanstack/react-query"

@@ -3,13 +3,13 @@ import { authClient } from "@/auth"
 import { useAuth } from "@/auth/hooks"
 import { env } from "@/env"
 import { fileToBase64, imageDimensions } from "@/file/components/uploader/utils"
-import { MainScrollArea } from "@/layout/components/main"
-import { useOrderQueryOptions } from "@/order/queries"
 import {
    Header,
    HeaderBackButton,
    HeaderTitle,
-} from "@/routes/_authed/$workspaceId/-components/header"
+} from "@/layout/components/header"
+import { MainScrollArea } from "@/layout/components/main"
+import { useOrderQueryOptions } from "@/order/queries"
 import { trpc } from "@/trpc"
 import { UserAvatar } from "@/user/components/user-avatar"
 import { validator } from "@/validator"
