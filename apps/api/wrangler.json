@@ -97,10 +97,6 @@
                {
                   "name": "Procurement",
                   "class_name": "Procurement"
-               },
-               {
-                  "name": "Whiteboard",
-                  "class_name": "Whiteboard"
                }
             ]
          },
