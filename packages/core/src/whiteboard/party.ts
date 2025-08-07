@@ -1,3 +1,4 @@
+// src/server.ts
 import { throttle } from "@tldraw/utils"
 import { Server } from "partyserver"
 import type { Connection } from "partyserver"
@@ -9,7 +10,6 @@ export class Whiteboard extends Server {
    readonly schema = createTLSchema()
 
    override async onStart(): Promise<void> {
-      // need to make sure we've loaded the snapshot before we can let clients connect
       const snapshot = await this.ctx.storage.get<TLStoreSnapshot>("snapshot")
       if (!snapshot) return
 
@@ -41,15 +41,20 @@ export class Whiteboard extends Server {
       sender: Connection<unknown>,
       message: string,
    ): Promise<void> {
+      // Parse the message once
       const msg = JSON.parse(message) as
          | {
+              clientId: string
               type: "update"
               updates: HistoryEntry<TLRecord>[]
            }
          | {
+              clientId: string
               type: "recovery"
            }
+
       const schema = createTLSchema().serialize()
+
       switch (msg.type) {
          case "update": {
             try {
@@ -57,7 +62,6 @@ export class Whiteboard extends Server {
                   const {
                      changes: { added, updated, removed },
                   } = update
-                  // Try to merge the update into our local store
                   for (const record of Object.values(added)) {
                      this.records[record.id] = record
                   }
@@ -68,13 +72,9 @@ export class Whiteboard extends Server {
                      delete this.records[record.id]
                   }
                }
-               // If it works, broadcast the update to all other clients
                this.broadcast(message, [sender.id])
-               // and update the storage layer
                await this.persist()
             } catch (_err) {
-               // If we have a problem merging the update, we need to send a snapshot
-               // of the current state to the client so they can get back in sync.
                sender.send(
                   JSON.stringify({
                      type: "recovery",
@@ -85,8 +85,6 @@ export class Whiteboard extends Server {
             break
          }
          case "recovery": {
-            const schema = createTLSchema().serialize()
-            // If the client asks for a recovery, send them a snapshot of the current state
             sender.send(
                JSON.stringify({
                   type: "recovery",

@@ -161,12 +161,12 @@ export function useSyncStore({
          }),
       )
 
-      // unsubs.push(
-      // 	store.listen(handleChange, {
-      // 		source: 'user',
-      // 		scope: 'presence',
-      // 	})
-      // )
+      unsubs.push(
+         store.listen(handleChange, {
+            source: "user",
+            scope: "presence",
+         }),
+      )
 
       unsubs.push(() => socket.removeEventListener("open", handleOpen))
       unsubs.push(() => socket.removeEventListener("close", handleClose))
