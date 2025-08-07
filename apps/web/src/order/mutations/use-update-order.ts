@@ -87,14 +87,14 @@ export function useUpdateOrder({
                   workspaceId: input.workspaceId,
                }),
             )
+            queryClient.invalidateQueries(queryOptions.list)
+
             if (input.deletedAt)
                return queryClient.invalidateQueries(queryOptions.listArchived)
             if (input.deletedAt === null)
                return queryClient.invalidateQueries(
                   queryOptions.listNotArchived,
                )
-
-            queryClient.invalidateQueries(queryOptions.list)
          },
       }),
    )

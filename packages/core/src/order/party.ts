@@ -6,7 +6,7 @@ export class Order extends Server {
       connection: Connection,
       message: WSMessage,
    ): void | Promise<void> {
-      console.log("onMessage", message)
+      console.log("new order message", message)
       this.broadcast(message, [connection.id])
    }
 }
