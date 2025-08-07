@@ -6,6 +6,8 @@
     "@unfiddle/core": "workspace:*"
   },
   "dependencies": {
-    "partykit": "^0.0.114"
+    "partykit": "^0.0.114",
+    "y-partykit": "^0.0.33",
+    "yjs": "^13.6.27"
   }
 }

@@ -125,6 +125,19 @@ export function SidebarContent() {
                      <span className="pt-px"> Головна</span>
                   </Link>
                </li>
+               {/* <li>
+                  <Link
+                     to={"/$workspaceId/board"}
+                     params={params}
+                     search={search}
+                     className={
+                        "group flex h-8 items-center justify-start gap-2 rounded-md px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:bg-surface-3 hover:text-foreground aria-[current=page]:bg-surface-4/75 aria-[current=page]:text-foreground"
+                     }
+                  >
+                     <Icons.pencil className="size-5" />
+                     <span className="pt-px"> Поставки</span>
+                  </Link>
+               </li> */}
                <li>
                   <Link
                      to={"/$workspaceId/analytics"}

@@ -7,7 +7,12 @@ import { SidebarContent } from "@/layout/components/sidebar"
 import { SocketProvider } from "@/socket/provider"
 import { trpc } from "@/trpc"
 import { validator } from "@/validator"
-import { Outlet, createFileRoute, notFound } from "@tanstack/react-router"
+import {
+   Outlet,
+   createFileRoute,
+   notFound,
+   useMatches,
+} from "@tanstack/react-router"
 import { z } from "zod"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout")({
@@ -44,11 +49,18 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout")({
 })
 
 function RouteComponent() {
+   const matches = useMatches()
+   const isOnBoard = matches.some(
+      (m) => m.routeId === "/_authed/$workspaceId/_layout/board",
+   )
+
    return (
       <SocketProvider>
-         <Sidebar className="md:motion-preset-fade">
-            <SidebarContent />
-         </Sidebar>
+         {isOnBoard ? null : (
+            <Sidebar className="md:motion-preset-fade">
+               <SidebarContent />
+            </Sidebar>
+         )}
          <Main innerClassName="md:motion-preset-fade">
             <Outlet />
          </Main>
