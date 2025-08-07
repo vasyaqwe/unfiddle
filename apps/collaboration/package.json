@@ -1,19 +1,13 @@
 {
   "name": "@unfiddle/collaboration",
-  "scripts": {
-    "dev": "wrangler dev --local src/room.ts --port 8686",
-    "db:migrate": "wrangler d1 migrations apply unfiddle --local",
-    "deploy": "wrangler deploy --minify src/room.ts --env production",
-    "typecheck": "tsc --noEmit"
+  "type": "module",
+  "devDependencies": {
+    "@unfiddle/tsconfig": "workspace:*",
+    "@unfiddle/core": "workspace:*"
   },
   "dependencies": {
-    "@unfiddle/core": "workspace:*",
     "partykit": "^0.0.114",
     "y-partykit": "^0.0.33",
     "yjs": "^13.6.27"
-  },
-  "devDependencies": {
-    "@unfiddle/tsconfig": "workspace:*",
-    "wrangler": "^4.12.0"
   }
 }

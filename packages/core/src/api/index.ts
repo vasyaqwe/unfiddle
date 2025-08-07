@@ -11,8 +11,10 @@ import { workspaceRouter } from "@unfiddle/core/workspace/api"
 import { emailClient } from "@unfiddle/infra/email"
 import { clientEnv } from "@unfiddle/infra/env"
 import { logger } from "@unfiddle/infra/logger"
+import { partyserverMiddleware } from "hono-party"
 import { cors } from "hono/cors"
 import { logger as honoLogger } from "hono/logger"
+export { Order } from "@unfiddle/core/order/party"
 
 const app = createRouter()
    .use(honoLogger())
@@ -34,6 +36,7 @@ const base = createRouter()
       })
       return handler(c, next)
    })
+   .use("*", partyserverMiddleware())
    .get("/r2/*", async (c) => {
       const key = c.req.path.substring("/r2/".length)
       const file = await c.var.env.BUCKET.get(key)

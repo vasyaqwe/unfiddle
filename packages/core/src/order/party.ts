@@ -1,10 +1,12 @@
-import type * as Party from "partykit/server"
+import { Server } from "partyserver"
+import type { Connection, WSMessage } from "partyserver"
 
-export default class OrderServer implements Party.Server {
-   constructor(readonly room: Party.Room) {}
-
-   async onMessage(message: string, _connection: Party.Connection<unknown>) {
-      const event = JSON.parse(message)
-      return this.room.broadcast(JSON.stringify(event))
+export class Order extends Server {
+   override onMessage(
+      connection: Connection,
+      message: WSMessage,
+   ): void | Promise<void> {
+      console.log("onMessage", message)
+      this.broadcast(message, [connection.id])
    }
 }
