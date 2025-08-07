@@ -46,6 +46,20 @@
          "migrations_dir": "../../packages/core/src/database/migrations"
       }
    ],
+   "durable_objects": {
+      "bindings": [
+         {
+            "name": "Order",
+            "class_name": "Order"
+         }
+      ]
+   },
+   "migrations": [
+      {
+         "tag": "v1",
+         "new_classes": ["Order"]
+      }
+   ],
    "vars": {
       "ENVIRONMENT": "development"
    },

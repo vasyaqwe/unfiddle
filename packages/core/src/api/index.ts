@@ -14,7 +14,6 @@ import { logger } from "@unfiddle/infra/logger"
 import { partyserverMiddleware } from "hono-party"
 import { cors } from "hono/cors"
 import { logger as honoLogger } from "hono/logger"
-export { Order } from "@unfiddle/core/order/party"
 
 const app = createRouter()
    .use(honoLogger())
