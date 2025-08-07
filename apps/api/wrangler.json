@@ -93,13 +93,21 @@
                {
                   "name": "Order",
                   "class_name": "Order"
+               },
+               {
+                  "name": "Procurement",
+                  "class_name": "Procurement"
+               },
+               {
+                  "name": "Whiteboard",
+                  "class_name": "Whiteboard"
                }
             ]
          },
          "migrations": [
             {
                "tag": "v1",
-               "new_sqlite_classes": ["Order"]
+               "new_sqlite_classes": ["Order", "Procurement", "Whiteboard"]
             }
          ],
          "vars": {
