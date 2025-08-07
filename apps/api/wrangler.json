@@ -88,24 +88,6 @@
                "migrations_dir": "../../packages/core/src/database/migrations"
             }
          ],
-         "durable_objects": {
-            "bindings": [
-               {
-                  "name": "Order",
-                  "class_name": "Order"
-               },
-               {
-                  "name": "Procurement",
-                  "class_name": "Procurement"
-               }
-            ]
-         },
-         "migrations": [
-            {
-               "tag": "v1",
-               "new_sqlite_classes": ["Order", "Procurement", "Whiteboard"]
-            }
-         ],
          "vars": {
             "ENVIRONMENT": "production"
          }
