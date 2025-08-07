@@ -46,20 +46,6 @@
          "migrations_dir": "../../packages/core/src/database/migrations"
       }
    ],
-   "durable_objects": {
-      "bindings": [
-         {
-            "name": "Order",
-            "class_name": "Order"
-         }
-      ]
-   },
-   "migrations": [
-      {
-         "tag": "v1",
-         "new_classes": ["Order"]
-      }
-   ],
    "vars": {
       "ENVIRONMENT": "development"
    },
@@ -100,6 +86,20 @@
                "database_name": "unfiddle",
                "database_id": "b3c5c658-0eec-4ad5-95b2-63948fd304dd",
                "migrations_dir": "../../packages/core/src/database/migrations"
+            }
+         ],
+         "durable_objects": {
+            "bindings": [
+               {
+                  "name": "Order",
+                  "class_name": "Order"
+               }
+            ]
+         },
+         "migrations": [
+            {
+               "tag": "v1",
+               "new_classes": ["Order"]
             }
          ],
          "vars": {
