@@ -18,8 +18,7 @@
    ],
    "env": {
       "production": {
-         "main": "src/room.ts",
-         "compatibility_date": "2025-08-01",
+         "name": "unfiddle-collaboration",
          "durable_objects": {
             "bindings": [
                {
