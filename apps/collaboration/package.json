@@ -1,13 +1,15 @@
 {
   "name": "@unfiddle/collaboration",
-  "type": "module",
-  "devDependencies": {
-    "@unfiddle/tsconfig": "workspace:*",
-    "@unfiddle/core": "workspace:*"
+  "scripts": {
+    "dev": "wrangler dev --local src/index.ts --port 8686",
+    "deploy": "wrangler deploy --minify src/index.ts --env production",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "partykit": "^0.0.114",
-    "y-partykit": "^0.0.33",
-    "yjs": "^13.6.27"
+      "@unfiddle/core": "workspace:*"
+  },
+  "devDependencies": {
+      "@unfiddle/tsconfig": "workspace:*",
+      "wrangler": "^4.12.0"
   }
 }

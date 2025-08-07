@@ -1,0 +1,45 @@
+{
+   "name": "unfiddle-collaboration",
+   "main": "src/index.ts",
+   "compatibility_date": "2025-04-01",
+   "observability": {
+      "enabled": true,
+      "head_sampling_rate": 1
+   },
+   "placement": {
+      "mode": "smart"
+   },
+   "vars": {
+      "ENVIRONMENT": "development"
+   },
+   "env": {
+      "production": {
+         "name": "unfiddle-collaboration",
+         "durable_objects": {
+            "bindings": [
+               {
+                  "name": "Order",
+                  "class_name": "Order"
+               },
+               {
+                  "name": "Procurement",
+                  "class_name": "Procurement"
+               },
+               {
+                  "name": "Whiteboard",
+                  "class_name": "Whiteboard"
+               }
+            ]
+         },
+         "migrations": [
+            {
+               "tag": "v1",
+               "new_sqlite_classes": ["Order", "Procurement", "Whiteboard"]
+            }
+         ],
+         "vars": {
+            "ENVIRONMENT": "production"
+         }
+      }
+   }
+}

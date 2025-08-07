@@ -1,7 +1,15 @@
-import type { PartyKitServer } from "partykit/server"
+import { routePartykitRequest } from "partyserver"
+export { Order } from "@unfiddle/core/order/party"
+export { Procurement } from "@unfiddle/core/procurement/party"
+export { Whiteboard } from "@unfiddle/core/whiteboard/party"
 
 export default {
-   onConnect(_websocket, _room) {
-      console.log("no-op")
+   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+   async fetch(request: Request, env: any): Promise<Response> {
+      return (
+         (await routePartykitRequest(request, env)) ||
+         new Response("Not Found", { status: 404 })
+      )
    },
-} satisfies PartyKitServer
+   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+} satisfies ExportedHandler<any>
