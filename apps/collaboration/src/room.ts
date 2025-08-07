@@ -6,7 +6,8 @@ export default class Room {
 
    constructor(readonly room: PartyKitRoom) {}
 
-   onConnect(ws: any) {
-      return this.handler.onConnect(ws, this.room)
+   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+   onConnect(connection: any, room: PartyKitRoom, ctx: any) {
+      return this.handler.onConnect?.(connection, room, ctx)
    }
 }

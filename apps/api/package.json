@@ -12,7 +12,6 @@
    },
    "devDependencies": {
       "@unfiddle/tsconfig": "workspace:*",
-      "@types/bun": "latest",
       "wrangler": "^4.12.0"
    }
 }
