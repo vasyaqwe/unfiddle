@@ -51,6 +51,12 @@
    },
    "env": {
       "production": {
+         "migrations": [
+            {
+               "tag": "delete_order_class",
+               "deleted_classes": ["Order"]
+            }
+         ],
          "name": "unfiddle-api",
          "ai": {
             "binding": "AI"
