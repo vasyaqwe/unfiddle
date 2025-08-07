@@ -1,6 +1,6 @@
 {
    "name": "unfiddle-collaboration",
-   "main": "src/room.ts",
+   "main": "src/index.ts",
    "compatibility_date": "2025-08-01",
    "durable_objects": {
       "bindings": [
