@@ -1,13 +1,15 @@
-import type { Room as PartyKitRoom, PartyKitServer } from "partykit/server"
-import handler from "./index"
+import type { DurableObjectState } from "@cloudflare/workers-types"
 
-export default class Room {
-   private handler: PartyKitServer = handler
+export class Room {
+   constructor(private state: DurableObjectState) {}
 
-   constructor(readonly room: PartyKitRoom) {}
-
-   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-   onConnect(connection: any, room: PartyKitRoom, ctx: any) {
-      return this.handler.onConnect?.(connection, room, ctx)
+   async fetch(_request: Request) {
+      return new Response("Hello from Durable Object")
    }
+}
+
+export default {
+   async fetch(_request: Request) {
+      return new Response("Durable Object only worker")
+   },
 }
