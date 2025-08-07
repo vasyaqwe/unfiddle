@@ -1,9 +1,12 @@
 import "tldraw/tldraw.css"
 import { useAuth } from "@/auth/hooks"
+import { SuspenseFallback } from "@/ui/components/suspense-boundary"
 import { useSyncStore } from "@/whiteboard/hooks"
-import { createFileRoute } from "@tanstack/react-router"
-import React from "react"
-import { Tldraw, track, useEditor } from "tldraw"
+import { Link, createFileRoute } from "@tanstack/react-router"
+import { button } from "@unfiddle/ui/components/button/constants"
+import { Icons } from "@unfiddle/ui/components/icons"
+import { cn } from "@unfiddle/ui/utils"
+import { Tldraw, track } from "tldraw"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/board")({
    component: RouteComponent,
@@ -11,41 +14,36 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/board")({
 
 function RouteComponent() {
    const params = Route.useParams()
-   const storeWithStatus = useSyncStore({
+   const store = useSyncStore({
       roomId: params.workspaceId,
    })
 
-   // Handle the loading state correctly
-   if (storeWithStatus.status !== "synced-remote") {
-      return <div>Loading...</div>
-   }
+   if (store.status !== "synced-remote") return <SuspenseFallback />
 
-   // Pass the actual store object to the Tldraw component
    return (
-      <div style={{ position: "fixed", inset: 0 }}>
+      <div className="fixed inset-0">
          <Tldraw
             autoFocus
-            store={storeWithStatus.store} // <-- Corrected line
-            components={{
-               SharePanel: NameEditor,
-            }}
+            store={store.store}
          />
+         <Link
+            className={cn(
+               button({ size: "lg" }),
+               "absolute right-1 bottom-1 z-[999] min-w-[100px]",
+            )}
+            to={"/$workspaceId"}
+            style={{ color: "white" }}
+            params={params}
+         >
+            <Icons.home className="size-5" />
+            Додому
+         </Link>
       </div>
    )
 }
 
-const NameEditor = track(() => {
-   const auth = useAuth()
-   const editor = useEditor()
+const _NameEditor = track(() => {
+   const _auth = useAuth()
 
-   React.useEffect(() => {
-      console.log("update name")
-      if (editor && !editor.user.getUserPreferences().name) {
-         editor.user.updateUserPreferences({
-            name: auth.user.name,
-         })
-      }
-   }, [editor])
-
-   return <div>hello</div>
+   return null
 })

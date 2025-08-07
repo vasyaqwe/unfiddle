@@ -125,7 +125,7 @@ export function SidebarContent() {
                      <span className="pt-px"> Головна</span>
                   </Link>
                </li>
-               {/* <li>
+               <li>
                   <Link
                      to={"/$workspaceId/board"}
                      params={params}
@@ -137,7 +137,7 @@ export function SidebarContent() {
                      <Icons.pencil className="size-5" />
                      <span className="pt-px"> Поставки</span>
                   </Link>
-               </li> */}
+               </li>
                <li>
                   <Link
                      to={"/$workspaceId/analytics"}
