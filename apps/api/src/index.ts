@@ -1,6 +1,6 @@
 import { routes } from "@unfiddle/core/api"
 
-export class Partykit {
+export class Partykit implements DurableObject {
    private state: DurableObjectState
    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
    private env: any
