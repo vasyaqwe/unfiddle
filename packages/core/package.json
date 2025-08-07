@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@hono/trpc-server": "^0.3.4",
+    "@tldraw/utils": "^3.15.1",
     "@trpc/server": "^11.1.0",
     "@types/node": "^22.15.3",
     "@unfiddle/infra": "workspace:*",
@@ -25,6 +26,7 @@
     "partyserver": "^0.0.72",
     "remeda": "^2.17.4",
     "superjson": "^2.2.2",
+    "tldraw": "^3.15.1",
     "xlsx": "^0.18.5",
     "zod": "^3.24.3"
   },

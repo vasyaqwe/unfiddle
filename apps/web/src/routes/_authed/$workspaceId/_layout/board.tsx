@@ -1,36 +1,44 @@
-import "@tldraw/tldraw/tldraw.css"
-import { useYjsStore } from "@/board/hooks"
-import { BoardProvider, useBoard } from "@/board/provider"
-import { env } from "@/env"
+import "tldraw/tldraw.css"
+import { useAuth } from "@/auth/hooks"
+import { useSyncStore } from "@/whiteboard/hooks"
 import { createFileRoute } from "@tanstack/react-router"
-import { Tldraw } from "@tldraw/tldraw"
+import React from "react"
+import { Tldraw, track, useEditor } from "tldraw"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/board")({
    component: RouteComponent,
 })
 
 function RouteComponent() {
+   const params = Route.useParams()
+   const store = useSyncStore({
+      roomId: params.workspaceId,
+   })
+
    return (
       <div style={{ position: "fixed", inset: 0 }}>
-         <BoardProvider>
-            <Content />
-         </BoardProvider>
+         <Tldraw
+            autoFocus
+            store={store}
+            components={{
+               SharePanel: NameEditor,
+            }}
+         />
       </div>
    )
 }
 
-function Content() {
-   const params = Route.useParams()
-   const board = useBoard()
-   const store = useYjsStore({
-      roomId: params.workspaceId,
-      hostUrl: `${env.COLLABORATION_URL}/parties/board`,
-   })
+const NameEditor = track(() => {
+   const auth = useAuth()
+   const editor = useEditor()
 
-   return (
-      <Tldraw
-         store={store}
-         onMount={board.setEditor}
-      />
-   )
-}
+   React.useEffect(() => {
+      if (editor && !editor.user.getUserPreferences().name) {
+         editor.user.updateUserPreferences({
+            name: auth.user.name,
+         })
+      }
+   }, [editor])
+
+   return null
+})
