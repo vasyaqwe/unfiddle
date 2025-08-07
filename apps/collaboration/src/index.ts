@@ -1,7 +1,12 @@
 import type { PartyKitServer } from "partykit/server"
 
-export default {
-   onConnect(_websocket, _room) {
-      console.log("no-op")
+const handler: PartyKitServer = {
+   onConnect(ws, _room) {
+      ws.send("connected to PartyKit room")
+      ws.addEventListener("message", (event) => {
+         ws.send(`echo: ${event.data}`)
+      })
    },
-} satisfies PartyKitServer
+}
+
+export default handler
