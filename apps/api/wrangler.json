@@ -46,6 +46,20 @@
          "migrations_dir": "../../packages/core/src/database/migrations"
       }
    ],
+   "durable_objects": {
+      "bindings": [
+         {
+            "name": "DO",
+            "class_name": "PARTYKIT"
+         }
+      ],
+      "migrations": [
+         {
+            "tag": "v1",
+            "new_classes": ["PARTYKIT"]
+         }
+      ]
+   },
    "vars": {
       "ENVIRONMENT": "development"
    },
@@ -88,6 +102,20 @@
                "migrations_dir": "../../packages/core/src/database/migrations"
             }
          ],
+         "durable_objects": {
+            "bindings": [
+               {
+                  "name": "DO",
+                  "class_name": "PARTYKIT"
+               }
+            ],
+            "migrations": [
+               {
+                  "tag": "v1",
+                  "new_classes": ["PARTYKIT"]
+               }
+            ]
+         },
          "vars": {
             "ENVIRONMENT": "production"
          }

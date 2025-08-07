@@ -2,6 +2,20 @@
    "name": "unfiddle",
    "main": "./src/index.ts",
    "compatibilityDate": "2023-10-10",
+   "durable_objects": {
+      "bindings": [
+         {
+            "name": "DO",
+            "class_name": "PARTYKIT"
+         }
+      ],
+      "migrations": [
+         {
+            "tag": "v1",
+            "new_classes": ["PARTYKIT"]
+         }
+      ]
+   },
    "parties": {
       "order": "../../packages/core/src/order/party.ts",
       "procurement": "../../packages/core/src/procurement/party.ts",
