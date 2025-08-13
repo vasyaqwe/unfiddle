@@ -34,8 +34,14 @@ export function UpdateProcurement({
       subjectId: procurement.id,
    })
    const mutation = useUpdateProcurement({
-      onMutate: () => setOpen(false),
-      onError: () => setOpen(true),
+      onMutate: () => {
+         setOpen(false)
+         setStoreUpdateOpen(false)
+      },
+      onError: () => {
+         setOpen(true)
+         setStoreUpdateOpen(true)
+      },
       onSuccess: () => attachments.clear(),
    })
 

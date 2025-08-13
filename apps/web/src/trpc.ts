@@ -60,7 +60,6 @@ export const client = createTRPCClient<AppRouter>({
             return fetch(url, {
                ...options,
                credentials: "include",
-               signal: AbortSignal.timeout(30000),
             })
          },
       }),
