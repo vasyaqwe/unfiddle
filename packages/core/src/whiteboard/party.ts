@@ -6,6 +6,10 @@ import { createTLSchema } from "tldraw"
 import type { HistoryEntry, TLRecord, TLStoreSnapshot } from "tldraw"
 
 export class Whiteboard extends Server {
+   static override options = {
+      hibernate: true,
+   }
+
    records: Record<string, TLRecord> = {}
    readonly schema = createTLSchema()
 

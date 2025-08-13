@@ -2,6 +2,10 @@ import { Server } from "partyserver"
 import type { Connection, WSMessage } from "partyserver"
 
 export class Procurement extends Server {
+   static override options = {
+      hibernate: true,
+   }
+
    override onMessage(
       connection: Connection,
       message: WSMessage,
