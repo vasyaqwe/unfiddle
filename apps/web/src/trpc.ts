@@ -23,6 +23,7 @@ export const queryClient = new QueryClient({
       queries: {
          retry: (failureCount) => failureCount < 1,
          staleTime: CACHE_SHORT, // TODO: update
+         refetchInterval: CACHE_SHORT * 2,
       },
       mutations: {
          onError: (error) =>
