@@ -1,4 +1,3 @@
-import { CACHE_SHORT } from "@/api"
 import { useAuth } from "@/auth/hooks"
 import {
    Header,
@@ -69,39 +68,24 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
             }),
          )
          opts.context.queryClient.prefetchQuery(
-            trpc.workspace.analytics.stats.queryOptions(
-               {
-                  id: opts.params.workspaceId,
-                  ...opts.deps.search,
-               },
-               {
-                  staleTime: CACHE_SHORT,
-               },
-            ),
+            trpc.workspace.analytics.stats.queryOptions({
+               id: opts.params.workspaceId,
+               ...opts.deps.search,
+            }),
          )
          opts.context.queryClient.prefetchQuery(
-            trpc.workspace.analytics.profit.queryOptions(
-               {
-                  id: opts.params.workspaceId,
-                  timezoneOffset: getUserTimezoneOffset(),
-                  ...opts.deps.search,
-               },
-               {
-                  staleTime: CACHE_SHORT,
-               },
-            ),
+            trpc.workspace.analytics.profit.queryOptions({
+               id: opts.params.workspaceId,
+               timezoneOffset: getUserTimezoneOffset(),
+               ...opts.deps.search,
+            }),
          )
          opts.context.queryClient.prefetchQuery(
-            trpc.workspace.analytics.orders.queryOptions(
-               {
-                  id: opts.params.workspaceId,
-                  timezoneOffset: getUserTimezoneOffset(),
-                  ...opts.deps.search,
-               },
-               {
-                  staleTime: CACHE_SHORT,
-               },
-            ),
+            trpc.workspace.analytics.orders.queryOptions({
+               id: opts.params.workspaceId,
+               timezoneOffset: getUserTimezoneOffset(),
+               ...opts.deps.search,
+            }),
          )
       },
       validateSearch: validator(

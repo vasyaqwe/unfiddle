@@ -1,4 +1,3 @@
-import { CACHE_SHORT } from "@/api"
 import { trpc } from "@/trpc"
 import {
    Stat,
@@ -24,14 +23,9 @@ export function QuickStats() {
    const search = useSearch({ from: "/_authed/$workspaceId/_layout/analytics" })
 
    const members = useQuery(
-      trpc.workspace.member.list.queryOptions(
-         {
-            workspaceId: params.workspaceId,
-         },
-         {
-            staleTime: CACHE_SHORT,
-         },
-      ),
+      trpc.workspace.member.list.queryOptions({
+         workspaceId: params.workspaceId,
+      }),
    )
    const selectedMembers = search.who.includes("all")
       ? [{ user: { id: "all", name: "" } }]
