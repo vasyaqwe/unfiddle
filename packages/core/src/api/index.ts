@@ -74,7 +74,7 @@ export const routes = app
    .use(
       "/trpc/*",
       (c, next) => {
-         c.header("Content-Encoding", "Identity") //worker streaming fix
+         // c.header("Content-Encoding", "Identity") //worker streaming fix
          const handler = cors({
             credentials: true,
             maxAge: 600,

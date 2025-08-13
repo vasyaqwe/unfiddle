@@ -5,7 +5,7 @@ import { MutationCache, QueryClient } from "@tanstack/react-query"
 import {
    type TRPCClientErrorLike,
    createTRPCClient,
-   httpBatchStreamLink,
+   httpBatchLink,
 } from "@trpc/client"
 import {
    createTRPCContext,
@@ -53,13 +53,14 @@ export const queryClient = new QueryClient({
 
 export const client = createTRPCClient<AppRouter>({
    links: [
-      httpBatchStreamLink({
+      httpBatchLink({
          url: `${env.API_URL}/trpc`,
          transformer: superjson,
          fetch(url, options) {
             return fetch(url, {
                ...options,
                credentials: "include",
+               signal: AbortSignal.timeout(30000),
             })
          },
       }),
