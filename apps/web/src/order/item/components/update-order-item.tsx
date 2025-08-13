@@ -39,7 +39,7 @@ export function UpdateOrderItem({
       >
          {children}
          <DrawerPopup finalFocus={finalFocus}>
-            <DrawerTitle>Новий товар</DrawerTitle>
+            <DrawerTitle>Редагувати товар</DrawerTitle>
             <OrderItemForm
                orderItem={orderItem}
                onSubmit={(form) =>

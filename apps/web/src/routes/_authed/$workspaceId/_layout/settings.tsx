@@ -118,8 +118,8 @@ function RouteComponent() {
    const theme = useTheme()
 
    const exportEmails = [
-      "denluluckys@gmail.com",
-      "enot.ghaster@gmail.com",
+      "luts@lightforce.com.ua",
+      "safonov@lightforce.com.ua",
       "vasylpolishchuk22@gmail.com",
    ]
 
