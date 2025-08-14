@@ -1,4 +1,4 @@
-import { CACHE_SHORT } from "@/api"
+import { CACHE_AWHILE } from "@/api"
 import { env } from "@/env"
 import * as Sentry from "@sentry/react"
 import { MutationCache, QueryClient } from "@tanstack/react-query"
@@ -22,8 +22,7 @@ export const queryClient = new QueryClient({
    defaultOptions: {
       queries: {
          retry: (failureCount) => failureCount < 1,
-         staleTime: CACHE_SHORT, // TODO: update
-         refetchInterval: CACHE_SHORT * 2,
+         staleTime: CACHE_AWHILE,
       },
       mutations: {
          onError: (error) =>
