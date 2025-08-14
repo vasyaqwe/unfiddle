@@ -27,7 +27,7 @@ export function ToggleArchived() {
                         params,
                         search: (prev) => ({
                            ...prev,
-                           archived,
+                           archived: !archived ? undefined : true,
                         }),
                      })
                   }}

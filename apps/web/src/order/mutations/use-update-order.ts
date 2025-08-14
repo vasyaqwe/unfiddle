@@ -91,10 +91,6 @@ export function useUpdateOrder({
 
             if (input.deletedAt)
                return queryClient.invalidateQueries(queryOptions.listArchived)
-            if (input.deletedAt === null)
-               return queryClient.invalidateQueries(
-                  queryOptions.listNotArchived,
-               )
          },
       }),
    )
@@ -126,7 +122,6 @@ export function useOptimisticUpdateOrder() {
          await queryClient.prefetchQuery(fromOptions)
          fromData = queryClient.getQueryData<T[]>(fromOptions.queryKey) || []
       }
-
       if (!toData) {
          await queryClient.prefetchQuery(toOptions)
          toData = queryClient.getQueryData<T[]>(toOptions.queryKey) || []
@@ -137,7 +132,8 @@ export function useOptimisticUpdateOrder() {
 
       queryClient.setQueryData(
          fromOptions.queryKey,
-         fromData.filter((i) => i.id !== itemId),
+         (currentFromData: T[] = []) =>
+            currentFromData.filter((i) => i.id !== itemId),
       )
 
       queryClient.setQueryData(toOptions.queryKey, (currentToData: T[] = []) =>
@@ -158,7 +154,7 @@ export function useOptimisticUpdateOrder() {
          })
          return await moveItemBetweenQueries(
             queryOptions.listArchived,
-            queryOptions.listNotArchived,
+            queryOptions.list,
             input.orderId,
             { deletedAt: null },
          )
@@ -170,7 +166,7 @@ export function useOptimisticUpdateOrder() {
             return { ...oldData, deletedAt: new Date() }
          })
          return await moveItemBetweenQueries(
-            queryOptions.listNotArchived,
+            queryOptions.list,
             queryOptions.listArchived,
             input.orderId,
             { deletedAt: new Date().toString() },
