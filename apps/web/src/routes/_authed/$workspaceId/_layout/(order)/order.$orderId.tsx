@@ -45,6 +45,7 @@ import { notFound } from "@tanstack/react-router"
 import { createFileRoute } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
 import { formatDate } from "@unfiddle/core/date"
+import { makeShortId } from "@unfiddle/core/id"
 import {
    ORDER_SEVERITIES,
    ORDER_SEVERITIES_TRANSLATION,
@@ -53,7 +54,6 @@ import {
 } from "@unfiddle/core/order/constants"
 import {
    formatOrderDate,
-   makeShortId,
    orderStatusGradient,
 } from "@unfiddle/core/order/utils"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"

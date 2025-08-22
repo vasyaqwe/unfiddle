@@ -11,6 +11,7 @@ export const ID_PREFIXES = {
    procurement: "pro",
    good: "good",
    order_item: "o_item",
+   estimate: "est",
 } as const
 
 export const createId = (prefix: keyof typeof ID_PREFIXES) => {
@@ -40,3 +41,5 @@ export const createCode = () => {
 
    return encoded.slice(0, 12)
 }
+
+export const makeShortId = (id: number) => `№${String(id).padStart(3, "0")}`

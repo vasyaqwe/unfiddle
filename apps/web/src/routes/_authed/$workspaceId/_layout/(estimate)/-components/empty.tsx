@@ -1,10 +1,6 @@
 import { useAuth } from "@/auth/hooks"
-import { useSearch } from "@tanstack/react-router"
 
-export function HomeEmpty() {
-   const search = useSearch({
-      from: "/_authed/$workspaceId/_layout/(home)/",
-   })
+export function EstimatesEmpty() {
    const auth = useAuth()
 
    return (
@@ -35,7 +31,7 @@ export function HomeEmpty() {
             )}
          </div>
          <p className="mb-2 font-medium text-foreground/90 text-lg">
-            {search.archived ? "В архіві нічого немає" : "Немає замовлень"}
+            Немає прорахунків
          </p>
       </div>
    )

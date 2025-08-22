@@ -19,7 +19,7 @@ import { useUpdateOrder } from "@/order/mutations/use-update-order"
 import { useOrderQueryOptions } from "@/order/queries"
 import { createOrderOpenAtom } from "@/order/store"
 import { DateFilter } from "@/routes/_authed/$workspaceId/_layout/(home)/-components/date-filter"
-import { Empty } from "@/routes/_authed/$workspaceId/_layout/(home)/-components/empty"
+import { HomeEmpty } from "@/routes/_authed/$workspaceId/_layout/(home)/-components/empty"
 import { FilterMenu } from "@/routes/_authed/$workspaceId/_layout/(home)/-components/filter-menu"
 import { Search } from "@/routes/_authed/$workspaceId/_layout/(home)/-components/search"
 import { ToggleArchived } from "@/routes/_authed/$workspaceId/_layout/(home)/-components/toggle-archived"
@@ -31,12 +31,12 @@ import { useSuspenseQuery } from "@tanstack/react-query"
 import { Link, createFileRoute } from "@tanstack/react-router"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import { formatCurrency } from "@unfiddle/core/currency"
+import { makeShortId } from "@unfiddle/core/id"
 import { ORDER_STATUSES_TRANSLATION } from "@unfiddle/core/order/constants"
 import { ORDER_STATUSES } from "@unfiddle/core/order/constants"
 import { orderFilterSchema } from "@unfiddle/core/order/filter"
 import {
    formatOrderDate,
-   makeShortId,
    orderStatusGradient,
 } from "@unfiddle/core/order/utils"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"
@@ -152,7 +152,7 @@ function Content({
    const data = virtualizer.getVirtualItems()
    useForceUpdate()
 
-   if (data.length === 0) return <Empty />
+   if (data.length === 0) return <HomeEmpty />
 
    return (
       <VList

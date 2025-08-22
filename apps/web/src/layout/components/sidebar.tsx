@@ -127,6 +127,19 @@ export function SidebarContent() {
                </li>
                <li>
                   <Link
+                     to={"/$workspaceId/estimates"}
+                     params={params}
+                     search={search}
+                     className={
+                        "group flex h-8 items-center justify-start gap-2 rounded-md px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:bg-surface-3 hover:text-foreground aria-[current=page]:bg-surface-4/75 aria-[current=page]:text-foreground"
+                     }
+                  >
+                     <Icons.notebook className="size-5" />
+                     <span className="pt-px"> Прорахунок</span>
+                  </Link>
+               </li>
+               <li>
+                  <Link
                      to={"/$workspaceId/board"}
                      params={params}
                      search={search}

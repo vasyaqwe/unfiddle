@@ -22,5 +22,9 @@ export function useSocket() {
          send: (event: ProcurementEvent) =>
             socket.procurement?.send(JSON.stringify(event)),
       },
+      estimate: {
+         send: (event: ProcurementEvent) =>
+            socket.estimate?.send(JSON.stringify(event)),
+      },
    }
 }

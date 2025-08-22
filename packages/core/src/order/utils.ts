@@ -28,5 +28,3 @@ export const formatOrderDate = (date: string | Date) => {
          : { dateStyle: "short" },
    )
 }
-
-export const makeShortId = (id: number) => `№${String(id).padStart(3, "0")}`
