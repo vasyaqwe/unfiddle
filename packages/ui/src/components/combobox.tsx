@@ -137,7 +137,7 @@ export function ComboboxTriggerIcon() {
    return (
       <Icons.chevronUpDown
          data-combobox-icon
-         className="-mr-1 !ml-auto size-4 text-foreground/75"
+         className="-mr-1 !ml-auto size-4 text-muted"
       />
    )
 }

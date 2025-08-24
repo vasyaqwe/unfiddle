@@ -36,6 +36,7 @@
    --color-background: #ffffff;
    --color-foreground: hsl(0, 0%, 7%);
    --color-neutral: var(--color-surface-4);
+   --color-muted: var(--color-surface-10);
    --color-highlight-foreground: hsl(28, 60%, 28%);
    --color-highlight-background: hsl(44, 90%, 88%);
 

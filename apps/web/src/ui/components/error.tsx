@@ -46,7 +46,7 @@ export function ErrorComponent({ error, reset, className, ...props }: Props) {
       >
          <div>
             <h1 className="mb-2 text-xl">Виникла помилка</h1>
-            <p className="mb-5 text-balance text-foreground/70">
+            <p className="mb-5 text-balance text-muted">
                {reset && error?.message
                   ? error.message
                   : "У нас технічні несправності — спробуйте ще раз пізніше."}

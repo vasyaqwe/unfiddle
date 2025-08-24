@@ -179,7 +179,7 @@ export function FileUploader(props: Props) {
                <input {...getInputProps()} />
                <div className="flex h-full flex-col items-center justify-center text-center sm:px-5">
                   <p className="font-medium text-xl">Кидайте файли</p>
-                  <p className="mt-4 text-foreground/70">
+                  <p className="mt-4 text-muted">
                      Дозволено
                      {maxFileCount > 1
                         ? ` ${maxFileCount === Infinity ? "кілька" : maxFileCount}

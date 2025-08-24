@@ -253,7 +253,7 @@ function RouteComponent() {
                                  workspaceId={auth.workspace.id}
                               />
                            </div>
-                           <p className="mt-7 text-foreground/75 text-xs">
+                           <p className="mt-7 text-muted text-xs">
                               <Icons.info className="mr-1 mb-1 inline-block size-4" />
                               Коли імпортуєте, колонки Номер, Товари та Створене
                               будуть ігноровані.

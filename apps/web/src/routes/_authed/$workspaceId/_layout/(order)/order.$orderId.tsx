@@ -297,7 +297,7 @@ function RouteComponent() {
                </div>
                <div className="mb-6 grid grid-cols-[40%_1fr] gap-y-4 lg:hidden">
                   <section className="group/section">
-                     <p className="text-foreground/75 text-sm">Ціна</p>
+                     <p className="text-muted text-sm">Ціна</p>
                      <p className="mt-1.5 font-medium font-mono text-lg">
                         {order.sellingPrice
                            ? formatCurrency(order.sellingPrice, {
@@ -307,19 +307,17 @@ function RouteComponent() {
                      </p>
                   </section>
                   <section className="group/section">
-                     <p className="text-foreground/75 text-sm">
-                        Термін постачання
-                     </p>
+                     <p className="text-muted text-sm">Термін постачання</p>
                      <p className="mt-1.5">
                         {order.deliversAt ? formatDate(order.deliversAt) : "—"}
                      </p>
                   </section>
                   <section className="group/section">
-                     <p className="text-foreground/75 text-sm">Клієнт</p>
+                     <p className="text-muted text-sm">Клієнт</p>
                      <p className="mt-1.5">{order.client ?? "—"}</p>
                   </section>
                   <section className="group/section">
-                     <p className="text-foreground/75 text-sm">Створене</p>
+                     <p className="text-muted text-sm">Створене</p>
                      <p className="mt-2 flex items-center gap-2">
                         <UserAvatar
                            size={22}
@@ -411,7 +409,7 @@ function RouteComponent() {
          >
             <ScrollArea className="px-5 pb-4">
                <div className="flex h-(--header-height) items-center gap-1">
-                  <p className="text-foreground/75">Деталі</p>
+                  <p className="text-muted">Деталі</p>
                </div>
                <section className="group/section flex flex-col py-3">
                   <StatusCombobox />
@@ -442,7 +440,7 @@ function RouteComponent() {
                   )}
                </section>
                <section className="group/section py-3">
-                  <p className="text-foreground/75 text-sm">Ціна</p>
+                  <p className="text-muted text-sm">Ціна</p>
                   <p className="mt-1.5 font-medium font-mono text-lg">
                      {order.sellingPrice
                         ? formatCurrency(order.sellingPrice, {
@@ -452,19 +450,17 @@ function RouteComponent() {
                   </p>
                </section>
                <section className="group/section py-3">
-                  <p className="text-foreground/75 text-sm">
-                     Термін постачання
-                  </p>
+                  <p className="text-muted text-sm">Термін постачання</p>
                   <p className="mt-1.5">
                      {order.deliversAt ? formatDate(order.deliversAt) : "—"}
                   </p>
                </section>
                <section className="group/section py-3">
-                  <p className="text-foreground/75 text-sm">Клієнт</p>
+                  <p className="text-muted text-sm">Клієнт</p>
                   <p className="mt-1.5">{order.client ?? "—"}</p>
                </section>
                <section className="group/section py-3">
-                  <p className="text-foreground/75 text-sm">Створене</p>
+                  <p className="text-muted text-sm">Створене</p>
                   <p className="mt-2 flex items-center gap-2">
                      <Tooltip delay={0}>
                         <TooltipTrigger
@@ -513,7 +509,7 @@ function Files({
    return (
       <section className="group/section py-4">
          <div className="flex items-center">
-            <p className="text-foreground/75">Файли </p>
+            <p className="text-muted">Файли </p>
             <Button
                className="ml-auto"
                kind={"icon"}
@@ -526,7 +522,7 @@ function Files({
          </div>
          <div className={"mt-3 flex flex-col gap-1"}>
             {otherAttachments.length === 0 ? (
-               <p className="text-foreground/60 text-sm">Немає файлів.</p>
+               <p className="text-muted text-sm">Немає файлів.</p>
             ) : (
                otherAttachments.map((attachment) => (
                   <FileItem
@@ -573,7 +569,7 @@ function FileItem({
             ) : (
                <Icons.attachment className="!ml-0" />
             )}
-            <span className="line-clamp-1 text-foreground/75 text-sm">
+            <span className="line-clamp-1 text-muted text-sm">
                {attachment.name}
             </span>
          </Button>
@@ -887,9 +883,7 @@ function Procurements() {
    const query = useSuspenseQuery(trpc.procurement.list.queryOptions(params))
 
    if (query.data.length === 0)
-      return (
-         <p className="font-medium text-foreground/75">Ще немає закупівель.</p>
-      )
+      return <p className="font-medium text-muted">Ще немає закупівель.</p>
 
    return (
       <Card className="relative mt-2 p-0">

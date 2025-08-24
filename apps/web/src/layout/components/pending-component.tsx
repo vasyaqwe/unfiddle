@@ -8,7 +8,7 @@ export function PendingComponent({ animated = false }: { animated?: boolean }) {
       >
          <Logo className="size-6" />
          <p
-            className="font-medium text-foreground/75 text-lg"
+            className="font-medium text-lg text-muted"
             data-loading-ellipsis
          >
             зачекайте

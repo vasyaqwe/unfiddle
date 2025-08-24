@@ -52,7 +52,7 @@ export function PasswordInput({
          <Button
             variant={"ghost"}
             kind={"icon"}
-            className={cn("absolute inset-y-0 end-1 m-auto text-foreground/80")}
+            className={cn("absolute inset-y-0 end-1 m-auto text-muted")}
             type="button"
             onClick={toggleVisibility}
             aria-label={isVisible ? "Hide password" : "Show password"}

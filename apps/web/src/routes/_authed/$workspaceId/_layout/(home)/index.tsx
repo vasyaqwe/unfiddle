@@ -233,7 +233,7 @@ function _OrderRow({
                      severity={order.severity}
                      className="mr-[2px] shrink-0"
                   />
-                  <p className="whitespace-nowrap font-medium font-mono text-foreground/75 text-sm">
+                  <p className="whitespace-nowrap font-medium font-mono text-muted text-sm">
                      {makeShortId(order.shortId)}
                   </p>
                   <p className="flex items-center gap-1.5 font-medium text-sm lg:w-[110px]">
@@ -340,7 +340,7 @@ function _OrderRow({
                      </Combobox>
                   ) : null}
                </div>
-               <p className="min-w-[60px] text-foreground/75 max-lg:hidden">
+               <p className="min-w-[60px] text-muted max-lg:hidden">
                   {formatOrderDate(order.createdAt)}
                </p>
                <div

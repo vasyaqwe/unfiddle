@@ -107,7 +107,7 @@ export function FieldDescription({
 }: React.ComponentProps<typeof FieldPrimitive.Description>) {
    return (
       <FieldPrimitive.Description
-         className={cn("mt-1 text-foreground/75 text-sm", className)}
+         className={cn("mt-1 text-muted text-sm", className)}
          {...props}
       />
    )

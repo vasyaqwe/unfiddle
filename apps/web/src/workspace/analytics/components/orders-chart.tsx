@@ -62,7 +62,7 @@ function ChartContent() {
    const maxValue = Math.max(...data.map((item) => item.value))
 
    return isChartDataEmpty(data) ? (
-      <div className="absolute inset-0 m-auto flex size-fit flex-col items-center gap-5 font-medium text-foreground/75 text-lg">
+      <div className="absolute inset-0 m-auto flex size-fit flex-col items-center gap-5 font-medium text-lg text-muted">
          <svg
             className="size-12"
             xmlns="http://www.w3.org/2000/svg"

@@ -169,7 +169,7 @@ function RouteComponent() {
                <>
                   {searchResults.isPending ? null : searchResults.isError ||
                     searchResults.data.length === 0 ? (
-                     <div className="-translate-y-8 absolute inset-0 m-auto size-fit text-center text-foreground/75">
+                     <div className="-translate-y-8 absolute inset-0 m-auto size-fit text-center text-muted">
                         <Icons.search className="mx-auto size-8" />
                         <p className="mt-3 font-semibold text-lg">
                            Нічого не знайдено
@@ -191,7 +191,7 @@ function RouteComponent() {
                                     }}
                                     className="ml-1.5 line-clamp-1 break-all font-semibold leading-snug"
                                  />
-                                 <span className="ml-auto whitespace-nowrap text-foreground/75 text-xs">
+                                 <span className="ml-auto whitespace-nowrap text-muted text-xs">
                                     {formatDateRelative(
                                        item.createdAt,
                                        "narrow",

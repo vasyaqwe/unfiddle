@@ -98,7 +98,7 @@ function RouteComponent() {
                }}
             >
                <Logo />
-               <h1 className="mt-3 font-semibold text-foreground/75 text-lg">
+               <h1 className="mt-3 font-semibold text-lg text-muted">
                   Увійдіть в аккаунт
                </h1>
                <Field>
@@ -118,7 +118,7 @@ function RouteComponent() {
                      minLength={MIN_PASSWORD_LENGTH}
                   />
                </Field>
-               <p className="mt-5 text-foreground/75 text-sm">
+               <p className="mt-5 text-muted text-sm">
                   <Link
                      to={"/forgot-password"}
                      search={search}
@@ -169,7 +169,7 @@ function RouteComponent() {
                   </svg>
                   Google
                </Button>
-               <p className="mt-5 text-foreground/75 text-sm">
+               <p className="mt-5 text-muted text-sm">
                   Не маєте аккаунта?{" "}
                   <Link
                      to={"/signup"}

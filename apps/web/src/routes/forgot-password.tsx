@@ -40,7 +40,7 @@ function RouteComponent() {
                }}
             >
                <Logo />
-               <h1 className="mt-3 font-semibold text-foreground/75 text-lg">
+               <h1 className="mt-3 font-semibold text-lg text-muted">
                   Забули пароль?
                </h1>
                <Field>
@@ -68,7 +68,7 @@ function RouteComponent() {
                      "Надіслати підтвердження"
                   )}
                </Button>
-               <p className="mt-5 text-foreground/75 text-sm">
+               <p className="mt-5 text-muted text-sm">
                   Все ок?{" "}
                   <Link
                      to={"/login"}

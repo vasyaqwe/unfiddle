@@ -51,7 +51,7 @@ function RouteComponent() {
                }}
             >
                <Logo />
-               <h1 className="mt-3 font-semibold text-foreground/75 text-lg">
+               <h1 className="mt-3 font-semibold text-lg text-muted">
                   Створіть новий пароль
                </h1>
                <Field>

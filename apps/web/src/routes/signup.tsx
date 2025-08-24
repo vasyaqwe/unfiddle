@@ -89,7 +89,7 @@ function RouteComponent() {
             {signup.isSuccess ? (
                <div>
                   <Icons.check className="size-8 text-emerald-600" />
-                  <h1 className="mt-3 font-semibold text-foreground/75 text-lg">
+                  <h1 className="mt-3 font-semibold text-lg text-muted">
                      Зареєстровано!
                   </h1>
                   <p className="mt-3">
@@ -114,7 +114,7 @@ function RouteComponent() {
                   }}
                >
                   <Logo />
-                  <h1 className="mt-3 font-semibold text-foreground/75 text-lg">
+                  <h1 className="mt-3 font-semibold text-lg text-muted">
                      Створіть аккаунт
                   </h1>
                   <Field>
@@ -184,7 +184,7 @@ function RouteComponent() {
                      </svg>
                      Google
                   </Button>
-                  <p className="mt-5 text-foreground/75 text-sm">
+                  <p className="mt-5 text-muted text-sm">
                      Вже зареєстровані?{" "}
                      <Link
                         to={"/login"}

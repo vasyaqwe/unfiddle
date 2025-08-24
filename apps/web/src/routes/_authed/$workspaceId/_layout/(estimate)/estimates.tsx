@@ -207,7 +207,7 @@ function EstimateRow({
          >
             <div className="relative grid h-[72px] grid-cols-[1fr_auto] grid-rows-[1fr_auto] items-center gap-x-2.5 gap-y-2 px-2.5 py-2 text-left lg:flex lg:h-[44px]">
                <div className="flex items-center gap-2 max-lg:w-full">
-                  <p className="whitespace-nowrap font-medium font-mono text-foreground/75 text-sm">
+                  <p className="whitespace-nowrap font-medium font-mono text-muted text-sm">
                      {makeShortId(estimate.shortId)}
                   </p>
                   <p className="flex items-center gap-1.5 font-medium text-sm lg:w-[110px]">
@@ -224,7 +224,7 @@ function EstimateRow({
                <p className="col-span-2 col-start-1 row-start-2 mt-px line-clamp-1 break-normal font-semibold data-vat:text-orange-10">
                   {estimate.name}
                </p>
-               <p className="ml-auto min-w-[60px] text-foreground/75 max-lg:hidden">
+               <p className="ml-auto min-w-[60px] text-muted max-lg:hidden">
                   {formatEstimateDate(estimate.createdAt)}
                </p>
                <div

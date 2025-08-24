@@ -32,7 +32,7 @@ export function StatLabel({
    return (
       <span
          className={cn(
-            "mr-auto line-clamp-1 font-medium text-foreground/75 text-sm sm:text-base",
+            "mr-auto line-clamp-1 font-medium text-muted text-sm sm:text-base",
             className,
          )}
          {...props}

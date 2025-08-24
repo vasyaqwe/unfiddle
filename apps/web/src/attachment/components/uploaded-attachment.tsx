@@ -46,7 +46,7 @@ export function UploadedAttachment({
             ) : null}
             <FilePreview file={file} />
             {!image ? (
-               <span className="mt-1.5 font-medium text-foreground/75 text-xs">
+               <span className="mt-1.5 font-medium text-muted text-xs">
                   {truncate(file.name, 40)}
                </span>
             ) : null}

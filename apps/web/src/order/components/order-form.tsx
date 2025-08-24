@@ -105,6 +105,13 @@ export function OrderForm({
       })
    }
 
+   if (!order)
+      return (
+         <p className="absolute inset-0 m-auto size-fit text-center text-muted">
+            Замовлення не знайдено. Можливо, його видалили.
+         </p>
+      )
+
    return (
       <form
          ref={formRef}

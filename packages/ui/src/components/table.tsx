@@ -60,7 +60,7 @@ export function TableHead({ className, ...props }: React.ComponentProps<"th">) {
    return (
       <th
          className={cn(
-            "whitespace-nowrap px-4 py-2 font-medium text-foreground/75 first:pl-(--container-padding) last:pr-(--container-padding)",
+            "whitespace-nowrap px-4 py-2 font-medium text-muted first:pl-(--container-padding) last:pr-(--container-padding)",
             className,
          )}
          {...props}

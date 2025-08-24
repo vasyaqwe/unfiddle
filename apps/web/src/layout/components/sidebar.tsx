@@ -65,7 +65,7 @@ export function SidebarContent() {
                            <span className="line-clamp-1 py-px">
                               {auth.workspace.name}
                            </span>
-                           <Icons.chevronUpDown className="-mr-2 ml-auto size-4 shrink-0 text-foreground/75" />
+                           <Icons.chevronUpDown className="-mr-2 ml-auto size-4 shrink-0 text-muted" />
                         </Button>
                      }
                   />
@@ -77,7 +77,7 @@ export function SidebarContent() {
                   search={search}
                   className={cx(
                      button({ kind: "icon", variant: "ghost" }),
-                     "text-foreground/75 hover:text-foreground/90 aria-[current=page]:text-foreground/90",
+                     "text-muted hover:text-foreground/90 aria-[current=page]:text-foreground/90",
                   )}
                >
                   <Icons.gear className="size-5" />

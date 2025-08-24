@@ -387,7 +387,7 @@ function FileItem({
                   ) : (
                      <Icons.attachment />
                   )}
-                  <span className="font-medium text-foreground/75 text-sm">
+                  <span className="font-medium text-muted text-sm">
                      {truncate(attachment.name, 36)}
                   </span>
                </Button>

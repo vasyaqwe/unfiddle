@@ -110,13 +110,13 @@ export default function AttachmentLightbox({
                <>
                   <button
                      onClick={prevAttachment}
-                     className="-translate-y-1/2 absolute top-1/2 left-3 z-[1] flex h-full w-16 cursor-pointer items-center text-foreground/70 transition-colors duration-100 hover:text-foreground md:h-full"
+                     className="-translate-y-1/2 absolute top-1/2 left-3 z-[1] flex h-full w-16 cursor-pointer items-center text-muted transition-colors duration-100 hover:text-foreground md:h-full"
                   >
                      <Icons.chevronLeft className="size-6" />
                   </button>
                   <button
                      onClick={nextAttachment}
-                     className="-translate-y-1/2 absolute top-1/2 right-3.5 z-[1] flex h-full w-16 cursor-pointer items-center justify-end text-foreground/70 transition-colors duration-100 hover:text-foreground md:h-full"
+                     className="-translate-y-1/2 absolute top-1/2 right-3.5 z-[1] flex h-full w-16 cursor-pointer items-center justify-end text-muted transition-colors duration-100 hover:text-foreground md:h-full"
                   >
                      <Icons.chevronRight className="size-6" />
                   </button>

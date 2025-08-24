@@ -43,7 +43,7 @@ function NotFound() {
       <div className="flex grow flex-col items-center bg-background pt-20 text-center md:pt-40">
          <Logo className="size-10" />
          <h1 className="mt-4 mb-2 text-xl">Сторінку не знайдено</h1>
-         <p className="mb-5 text-foreground/75">
+         <p className="mb-5 text-muted">
             Сторінку не знайдено — <br /> може вона переїхала..
          </p>
          <Link

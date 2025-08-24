@@ -126,7 +126,7 @@ function RouteComponent() {
                      Запросіть людей
                      <DialogXClose />
                   </DialogTitle>
-                  <p className="text-foreground/75">
+                  <p className="text-muted">
                      Будь-хто може приєднатися до проєкту за цим посиланням.
                   </p>
                   <div className="relative mt-4 flex items-center gap-0.5">

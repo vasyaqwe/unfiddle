@@ -9,7 +9,7 @@ export const DIALOG_STYLES = {
    backdrop:
       "fixed inset-0 bg-black opacity-25 dark:opacity-50 transition-all duration-150 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0",
    title: "-mt-1 mb-2 font-semibold text-lg",
-   description: "mb-6 text-foreground/80 text-sm/6",
+   description: "mb-6 text-muted text-sm/6",
    footer: "flex justify-end gap-3 pt-3",
 }
 

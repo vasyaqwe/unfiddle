@@ -52,7 +52,7 @@ export function SelectTriggerIcon() {
          data-icon
          className="-mr-[5px] ml-auto flex shrink-0"
       >
-         <Icons.chevronUpDown className="size-[18px] text-foreground/75 md:size-[16px]" />
+         <Icons.chevronUpDown className="size-[18px] text-muted md:size-[16px]" />
       </SelectIcon>
    )
 }
