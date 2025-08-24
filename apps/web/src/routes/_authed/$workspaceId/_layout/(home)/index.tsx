@@ -353,7 +353,7 @@ function _OrderRow({
                   <UpdateOrder
                      open={updateOpen}
                      setOpen={setUpdateOpen}
-                     order={order}
+                     orderId={order.id}
                      finalFocus={menuTriggerRef}
                   />
                   <ArchiveOrderAlert

@@ -1,7 +1,7 @@
 import { useAuth } from "@/auth/hooks"
 import { OrderForm } from "@/order/components/order-form"
 import { useUpdateOrder } from "@/order/mutations/use-update-order"
-import type { RouterOutput } from "@unfiddle/core/trpc/types"
+import { SuspenseBoundary } from "@/ui/components/suspense-boundary"
 import { Button } from "@unfiddle/ui/components/button"
 
 import {
@@ -14,13 +14,13 @@ import {
 import { number } from "@unfiddle/ui/utils"
 
 interface Props {
-   order: Omit<RouterOutput["order"]["list"][number], "procurements">
+   orderId: string
    finalFocus: React.RefObject<HTMLElement | null>
    open: boolean
    setOpen: (open: boolean) => void
 }
 
-export function UpdateOrder({ order, finalFocus, open, setOpen }: Props) {
+export function UpdateOrder({ orderId, finalFocus, open, setOpen }: Props) {
    const auth = useAuth()
    const mutation = useUpdateOrder({
       onMutate: () => setOpen(false),
@@ -39,30 +39,35 @@ export function UpdateOrder({ order, finalFocus, open, setOpen }: Props) {
             finalFocus={finalFocus}
          >
             <DrawerTitle>Редагувати замовлення</DrawerTitle>
-            <OrderForm
-               onSubmit={(form) =>
-                  mutation.mutate({
-                     orderId: order.id,
-                     workspaceId: auth.workspace.id,
-                     name: form.name,
-                     sellingPrice: number(form.sellingPrice),
-                     note: form.note,
-                     client: form.client.length === 0 ? null : form.client,
-                     severity: form.severity,
-                     vat: form.vat === "on",
-                     deliversAt: form.deliversAt,
-                     currency: form.currency,
-                  })
-               }
-               order={order}
-            >
-               <DrawerFooter>
-                  <Button>Зберегти</Button>
-                  <DrawerClose
-                     render={<Button variant={"secondary"}>Відмінити</Button>}
-                  />
-               </DrawerFooter>
-            </OrderForm>
+            <SuspenseBoundary>
+               <OrderForm
+                  open={open}
+                  onSubmit={(form) =>
+                     mutation.mutate({
+                        orderId,
+                        workspaceId: auth.workspace.id,
+                        name: form.name,
+                        sellingPrice: number(form.sellingPrice),
+                        note: form.note,
+                        client: form.client.length === 0 ? null : form.client,
+                        severity: form.severity,
+                        vat: form.vat === "on",
+                        deliversAt: form.deliversAt,
+                        currency: form.currency,
+                     })
+                  }
+                  orderId={orderId}
+               >
+                  <DrawerFooter>
+                     <Button>Зберегти</Button>
+                     <DrawerClose
+                        render={
+                           <Button variant={"secondary"}>Відмінити</Button>
+                        }
+                     />
+                  </DrawerFooter>
+               </OrderForm>
+            </SuspenseBoundary>
          </DrawerPopup>
       </Drawer>
    )

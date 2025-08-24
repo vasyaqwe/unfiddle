@@ -2,13 +2,15 @@ import { UploadedAttachment } from "@/attachment/components/uploaded-attachment"
 import { useAttachments } from "@/attachment/hooks"
 import { useAuth } from "@/auth/hooks"
 import { FileUploader } from "@/file/components/uploader"
+import { trpc } from "@/trpc"
+import { useSuspenseQuery } from "@tanstack/react-query"
 import { CURRENCIES, CURRENCY_SYMBOLS } from "@unfiddle/core/currency/constants"
 import type { Currency } from "@unfiddle/core/currency/types"
 import { ORDER_SEVERITIES_TRANSLATION } from "@unfiddle/core/order/constants"
 import { ORDER_SEVERITIES } from "@unfiddle/core/order/constants"
 import type { OrderItem } from "@unfiddle/core/order/item/types"
 import type { OrderSeverity } from "@unfiddle/core/order/types"
-import type { RouterInput, RouterOutput } from "@unfiddle/core/trpc/types"
+import type { RouterInput } from "@unfiddle/core/trpc/types"
 import { Button } from "@unfiddle/ui/components/button"
 import { Checkbox } from "@unfiddle/ui/components/checkbox"
 import { DateInput } from "@unfiddle/ui/components/date-input"
@@ -50,30 +52,32 @@ type FormData = {
 }
 
 export function OrderForm({
-   order,
+   orderId,
    onSubmit,
    children,
+   open,
 }: {
-   order?:
-      | (Omit<RouterOutput["order"]["list"][number], "procurements"> & {
-           items?: OrderItem[]
-        })
-      | undefined
+   orderId?: string | undefined
    onSubmit: (data: FormData) => void
    children: React.ReactNode
+   open?: boolean | undefined
 }) {
    const auth = useAuth()
+   const order = useSuspenseQuery(
+      trpc.order.one.queryOptions(
+         { orderId: orderId ?? "", workspaceId: auth.workspace.id },
+         { enabled: orderId !== undefined && open },
+      ),
+   ).data
    const [deliversAt, setDeliversAt] = React.useState(order?.deliversAt ?? null)
    const [currency, setCurrency] = React.useState(order?.currency ?? "UAH")
-   const [items, setItems] = React.useState<BareOrderItem[]>(
-      order?.items ?? [
-         {
-            name: "",
-            quantity: 1,
-            desiredPrice: null,
-         },
-      ],
-   )
+   const [items, setItems] = React.useState<BareOrderItem[]>([
+      {
+         name: "",
+         quantity: 1,
+         desiredPrice: null,
+      },
+   ])
    const formRef = React.useRef<HTMLFormElement>(null)
    const fileUploaderRef = React.useRef<HTMLDivElement>(null)
    const attachments = useAttachments({ subjectId: auth.workspace.id })

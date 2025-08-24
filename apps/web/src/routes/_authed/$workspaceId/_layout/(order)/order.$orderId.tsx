@@ -850,7 +850,7 @@ function Actions() {
          <UpdateOrder
             open={editOpen}
             setOpen={setEditOpen}
-            order={order}
+            orderId={order.id}
             finalFocus={menuTriggerRef}
          />
          <ArchiveOrderAlert
