@@ -28,6 +28,7 @@ import { Route as AuthedWorkspaceIdLayoutAnalyticsRouteImport } from './routes/_
 import { Route as AuthedWorkspaceIdLayouthomeIndexRouteImport } from './routes/_authed/$workspaceId/_layout/(home)/index'
 import { Route as AuthedWorkspaceIdLayoutestimateEstimatesRouteImport } from './routes/_authed/$workspaceId/_layout/(estimate)/estimates'
 import { Route as AuthedWorkspaceIdLayoutorderOrderOrderIdRouteImport } from './routes/_authed/$workspaceId/_layout/(order)/order.$orderId'
+import { Route as AuthedWorkspaceIdLayoutestimateEstimateEstimateIdRouteImport } from './routes/_authed/$workspaceId/_layout/(estimate)/estimate.$estimateId'
 
 const AuthedWorkspaceIdRouteImport = createFileRoute('/_authed/$workspaceId')()
 
@@ -127,6 +128,12 @@ const AuthedWorkspaceIdLayoutorderOrderOrderIdRoute =
     path: '/order/$orderId',
     getParentRoute: () => AuthedWorkspaceIdLayoutRoute,
   } as any)
+const AuthedWorkspaceIdLayoutestimateEstimateEstimateIdRoute =
+  AuthedWorkspaceIdLayoutestimateEstimateEstimateIdRouteImport.update({
+    id: '/(estimate)/estimate/$estimateId',
+    path: '/estimate/$estimateId',
+    getParentRoute: () => AuthedWorkspaceIdLayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
@@ -144,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/$workspaceId/team': typeof AuthedWorkspaceIdLayoutTeamRoute
   '/$workspaceId/estimates': typeof AuthedWorkspaceIdLayoutestimateEstimatesRoute
   '/$workspaceId/': typeof AuthedWorkspaceIdLayouthomeIndexRoute
+  '/$workspaceId/estimate/$estimateId': typeof AuthedWorkspaceIdLayoutestimateEstimateEstimateIdRoute
   '/$workspaceId/order/$orderId': typeof AuthedWorkspaceIdLayoutorderOrderOrderIdRoute
 }
 export interface FileRoutesByTo {
@@ -161,6 +169,7 @@ export interface FileRoutesByTo {
   '/$workspaceId/settings': typeof AuthedWorkspaceIdLayoutSettingsRoute
   '/$workspaceId/team': typeof AuthedWorkspaceIdLayoutTeamRoute
   '/$workspaceId/estimates': typeof AuthedWorkspaceIdLayoutestimateEstimatesRoute
+  '/$workspaceId/estimate/$estimateId': typeof AuthedWorkspaceIdLayoutestimateEstimateEstimateIdRoute
   '/$workspaceId/order/$orderId': typeof AuthedWorkspaceIdLayoutorderOrderOrderIdRoute
 }
 export interface FileRoutesById {
@@ -182,6 +191,7 @@ export interface FileRoutesById {
   '/_authed/$workspaceId/_layout/team': typeof AuthedWorkspaceIdLayoutTeamRoute
   '/_authed/$workspaceId/_layout/(estimate)/estimates': typeof AuthedWorkspaceIdLayoutestimateEstimatesRoute
   '/_authed/$workspaceId/_layout/(home)/': typeof AuthedWorkspaceIdLayouthomeIndexRoute
+  '/_authed/$workspaceId/_layout/(estimate)/estimate/$estimateId': typeof AuthedWorkspaceIdLayoutestimateEstimateEstimateIdRoute
   '/_authed/$workspaceId/_layout/(order)/order/$orderId': typeof AuthedWorkspaceIdLayoutorderOrderOrderIdRoute
 }
 export interface FileRouteTypes {
@@ -202,6 +212,7 @@ export interface FileRouteTypes {
     | '/$workspaceId/team'
     | '/$workspaceId/estimates'
     | '/$workspaceId/'
+    | '/$workspaceId/estimate/$estimateId'
     | '/$workspaceId/order/$orderId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -219,6 +230,7 @@ export interface FileRouteTypes {
     | '/$workspaceId/settings'
     | '/$workspaceId/team'
     | '/$workspaceId/estimates'
+    | '/$workspaceId/estimate/$estimateId'
     | '/$workspaceId/order/$orderId'
   id:
     | '__root__'
@@ -239,6 +251,7 @@ export interface FileRouteTypes {
     | '/_authed/$workspaceId/_layout/team'
     | '/_authed/$workspaceId/_layout/(estimate)/estimates'
     | '/_authed/$workspaceId/_layout/(home)/'
+    | '/_authed/$workspaceId/_layout/(estimate)/estimate/$estimateId'
     | '/_authed/$workspaceId/_layout/(order)/order/$orderId'
   fileRoutesById: FileRoutesById
 }
@@ -379,6 +392,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedWorkspaceIdLayoutorderOrderOrderIdRouteImport
       parentRoute: typeof AuthedWorkspaceIdLayoutRoute
     }
+    '/_authed/$workspaceId/_layout/(estimate)/estimate/$estimateId': {
+      id: '/_authed/$workspaceId/_layout/(estimate)/estimate/$estimateId'
+      path: '/estimate/$estimateId'
+      fullPath: '/$workspaceId/estimate/$estimateId'
+      preLoaderRoute: typeof AuthedWorkspaceIdLayoutestimateEstimateEstimateIdRouteImport
+      parentRoute: typeof AuthedWorkspaceIdLayoutRoute
+    }
   }
 }
 
@@ -390,6 +410,7 @@ interface AuthedWorkspaceIdLayoutRouteChildren {
   AuthedWorkspaceIdLayoutTeamRoute: typeof AuthedWorkspaceIdLayoutTeamRoute
   AuthedWorkspaceIdLayoutestimateEstimatesRoute: typeof AuthedWorkspaceIdLayoutestimateEstimatesRoute
   AuthedWorkspaceIdLayouthomeIndexRoute: typeof AuthedWorkspaceIdLayouthomeIndexRoute
+  AuthedWorkspaceIdLayoutestimateEstimateEstimateIdRoute: typeof AuthedWorkspaceIdLayoutestimateEstimateEstimateIdRoute
   AuthedWorkspaceIdLayoutorderOrderOrderIdRoute: typeof AuthedWorkspaceIdLayoutorderOrderOrderIdRoute
 }
 
@@ -405,6 +426,8 @@ const AuthedWorkspaceIdLayoutRouteChildren: AuthedWorkspaceIdLayoutRouteChildren
       AuthedWorkspaceIdLayoutestimateEstimatesRoute,
     AuthedWorkspaceIdLayouthomeIndexRoute:
       AuthedWorkspaceIdLayouthomeIndexRoute,
+    AuthedWorkspaceIdLayoutestimateEstimateEstimateIdRoute:
+      AuthedWorkspaceIdLayoutestimateEstimateEstimateIdRoute,
     AuthedWorkspaceIdLayoutorderOrderOrderIdRoute:
       AuthedWorkspaceIdLayoutorderOrderOrderIdRoute,
   }
