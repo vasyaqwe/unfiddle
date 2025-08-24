@@ -1,7 +1,7 @@
 import { useAuth } from "@/auth/hooks"
 import { EstimateForm } from "@/estimate/components/estimate-form"
 import { useUpdateEstimate } from "@/estimate/mutations/use-update-estimate"
-import type { RouterOutput } from "@unfiddle/core/trpc/types"
+import { SuspenseBoundary } from "@/ui/components/suspense-boundary"
 import { Button } from "@unfiddle/ui/components/button"
 
 import {
@@ -14,13 +14,18 @@ import {
 import { number } from "@unfiddle/ui/utils"
 
 interface Props {
-   estimate: Omit<RouterOutput["estimate"]["list"][number], "procurements">
+   estimateId: string
    finalFocus: React.RefObject<HTMLElement | null>
    open: boolean
    setOpen: (open: boolean) => void
 }
 
-export function UpdateEstimate({ estimate, finalFocus, open, setOpen }: Props) {
+export function UpdateEstimate({
+   estimateId,
+   finalFocus,
+   open,
+   setOpen,
+}: Props) {
    const auth = useAuth()
    const mutation = useUpdateEstimate({
       onMutate: () => setOpen(false),
@@ -38,28 +43,33 @@ export function UpdateEstimate({ estimate, finalFocus, open, setOpen }: Props) {
             }}
             finalFocus={finalFocus}
          >
-            <DrawerTitle>Редагувати замовлення</DrawerTitle>
-            <EstimateForm
-               onSubmit={(form) =>
-                  mutation.mutate({
-                     estimateId: estimate.id,
-                     workspaceId: auth.workspace.id,
-                     name: form.name,
-                     sellingPrice: number(form.sellingPrice),
-                     note: form.note,
-                     client: form.client.length === 0 ? null : form.client,
-                     currency: form.currency,
-                  })
-               }
-               estimate={estimate}
-            >
-               <DrawerFooter>
-                  <Button>Зберегти</Button>
-                  <DrawerClose
-                     render={<Button variant={"secondary"}>Відмінити</Button>}
-                  />
-               </DrawerFooter>
-            </EstimateForm>
+            <DrawerTitle>Редагувати прорахунок</DrawerTitle>
+            <SuspenseBoundary>
+               <EstimateForm
+                  open={open}
+                  onSubmit={(form) =>
+                     mutation.mutate({
+                        estimateId,
+                        workspaceId: auth.workspace.id,
+                        name: form.name,
+                        sellingPrice: number(form.sellingPrice),
+                        note: form.note,
+                        client: form.client.length === 0 ? null : form.client,
+                        currency: form.currency,
+                     })
+                  }
+                  estimateId={estimateId}
+               >
+                  <DrawerFooter>
+                     <Button>Зберегти</Button>
+                     <DrawerClose
+                        render={
+                           <Button variant={"secondary"}>Відмінити</Button>
+                        }
+                     />
+                  </DrawerFooter>
+               </EstimateForm>
+            </SuspenseBoundary>
          </DrawerPopup>
       </Drawer>
    )

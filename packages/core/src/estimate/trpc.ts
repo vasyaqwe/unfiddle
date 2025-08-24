@@ -15,6 +15,42 @@ import { createInsertSchema } from "drizzle-zod"
 import { z } from "zod"
 
 export const estimateRouter = t.router({
+   one: t.procedure
+      .use(workspaceMemberMiddleware)
+      .input(
+         z.object({
+            estimateId: z.string(),
+            workspaceId: z.string(),
+         }),
+      )
+      .query(async ({ ctx, input }) => {
+         const found = await ctx.db.query.estimate.findFirst({
+            where: and(
+               eq(estimate.id, input.estimateId),
+               eq(estimate.workspaceId, input.workspaceId),
+            ),
+            with: {
+               // items: {
+               //    columns: {
+               //       id: true,
+               //       name: true,
+               //       quantity: true,
+               //       desiredPrice: true,
+               //    },
+               // },
+               creator: {
+                  columns: {
+                     id: true,
+                     name: true,
+                     image: true,
+                  },
+               },
+            },
+            orderBy: [desc(estimate.createdAt)],
+         })
+
+         return found ?? null
+      }),
    list: t.procedure
       .use(workspaceMemberMiddleware)
       .input(
@@ -66,11 +102,8 @@ export const estimateRouter = t.router({
                shortId: true,
                name: true,
                currency: true,
-               creatorId: true,
-               client: true,
                sellingPrice: true,
                createdAt: true,
-               note: true,
             },
             with: {
                creator: {

@@ -237,7 +237,7 @@ function EstimateRow({
                   <UpdateEstimate
                      open={updateOpen}
                      setOpen={setUpdateOpen}
-                     estimate={estimate}
+                     estimateId={estimate.id}
                      finalFocus={menuTriggerRef}
                   />
                   <DeleteEstimateAlert

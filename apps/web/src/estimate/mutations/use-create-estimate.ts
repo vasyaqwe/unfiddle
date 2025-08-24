@@ -35,13 +35,10 @@ export function useCreateEstimate({
                ...input,
                id: crypto.randomUUID(),
                shortId: 0,
-               currency: input.currency ?? "UAH",
-               creatorId: auth.user.id,
                creator: auth.user,
-               createdAt: new Date(),
-               client: input.client ?? null,
+               currency: input.currency ?? "UAH",
                sellingPrice: input.sellingPrice ?? 0,
-               note: input.note ?? "",
+               createdAt: new Date(),
             })
 
             return { data }
@@ -60,13 +57,10 @@ export function useCreateEstimate({
                senderId: auth.user.id,
                estimate: {
                   ...estimate,
-                  currency: estimate.currency ?? "UAH",
-                  creatorId: auth.user.id,
-                  createdAt: new Date(),
-                  client: estimate.client ?? null,
-                  sellingPrice: estimate.sellingPrice ?? 0,
-                  note: estimate.note ?? "",
                   creator: auth.user,
+                  currency: estimate.currency ?? "UAH",
+                  sellingPrice: estimate.sellingPrice ?? 0,
+                  createdAt: new Date(),
                },
             })
             attachments.clear()

@@ -10,7 +10,7 @@ import { ORDER_SEVERITIES_TRANSLATION } from "@unfiddle/core/order/constants"
 import { ORDER_SEVERITIES } from "@unfiddle/core/order/constants"
 import type { OrderItem } from "@unfiddle/core/order/item/types"
 import type { OrderSeverity } from "@unfiddle/core/order/types"
-import type { RouterInput } from "@unfiddle/core/trpc/types"
+import type { RouterInput, RouterOutput } from "@unfiddle/core/trpc/types"
 import { Button } from "@unfiddle/ui/components/button"
 import { Checkbox } from "@unfiddle/ui/components/checkbox"
 import { DateInput } from "@unfiddle/ui/components/date-input"
@@ -51,24 +51,49 @@ type FormData = {
    attachments: RouterInput["order"]["create"]["attachments"]
 }
 
-export function OrderForm({
-   orderId,
-   onSubmit,
-   children,
-   open,
-}: {
+interface Props {
    orderId?: string | undefined
    onSubmit: (data: FormData) => void
    children: React.ReactNode
    open?: boolean | undefined
-}) {
+}
+
+export function OrderForm(props: Props) {
+   if (props.orderId && props.open) return <WithExistingData {...props} />
+
+   return <Form {...props} />
+}
+
+function WithExistingData(props: Props) {
    const auth = useAuth()
    const order = useSuspenseQuery(
-      trpc.order.one.queryOptions(
-         { orderId: orderId ?? "", workspaceId: auth.workspace.id },
-         { enabled: orderId !== undefined && open },
-      ),
+      trpc.order.one.queryOptions({
+         orderId: props.orderId ?? "",
+         workspaceId: auth.workspace.id,
+      }),
    ).data
+
+   if (order === null)
+      return (
+         <p className="absolute inset-0 m-auto size-fit text-center text-muted">
+            Замовлення не знайдено. Можливо, його видалили.
+         </p>
+      )
+
+   return (
+      <Form
+         order={order}
+         {...props}
+      />
+   )
+}
+
+function Form({
+   order,
+   onSubmit,
+   children,
+}: { order?: RouterOutput["order"]["one"] } & Props) {
+   const auth = useAuth()
    const [deliversAt, setDeliversAt] = React.useState(order?.deliversAt ?? null)
    const [currency, setCurrency] = React.useState(order?.currency ?? "UAH")
    const [items, setItems] = React.useState<BareOrderItem[]>([
@@ -104,13 +129,6 @@ export function OrderForm({
          }
       })
    }
-
-   if (!order)
-      return (
-         <p className="absolute inset-0 m-auto size-fit text-center text-muted">
-            Замовлення не знайдено. Можливо, його видалили.
-         </p>
-      )
 
    return (
       <form

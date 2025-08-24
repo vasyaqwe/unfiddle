@@ -1,5 +1,6 @@
-import { useAttachments } from "@/attachment/hooks"
 import { useAuth } from "@/auth/hooks"
+import { trpc } from "@/trpc"
+import { useSuspenseQuery } from "@tanstack/react-query"
 import { CURRENCIES, CURRENCY_SYMBOLS } from "@unfiddle/core/currency/constants"
 import type { Currency } from "@unfiddle/core/currency/types"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"
@@ -33,20 +34,50 @@ type FormData = {
    currency: Currency
 }
 
-export function EstimateForm({
-   estimate,
-   onSubmit,
-   children,
-}: {
-   estimate?: RouterOutput["estimate"]["list"][number] | undefined
+interface Props {
+   estimateId?: string | undefined
    onSubmit: (data: FormData) => void
    children: React.ReactNode
-}) {
+   open?: boolean | undefined
+}
+
+export function EstimateForm(props: Props) {
+   if (props.estimateId && props.open) return <WithExistingData {...props} />
+
+   return <Form {...props} />
+}
+
+function WithExistingData(props: Props) {
    const auth = useAuth()
+   const estimate = useSuspenseQuery(
+      trpc.estimate.one.queryOptions({
+         estimateId: props.estimateId ?? "",
+         workspaceId: auth.workspace.id,
+      }),
+   ).data
+
+   if (estimate === null)
+      return (
+         <p className="absolute inset-0 m-auto size-fit text-center text-muted">
+            Прорахунок не знайдено. Можливо, його видалили.
+         </p>
+      )
+
+   return (
+      <Form
+         estimate={estimate}
+         {...props}
+      />
+   )
+}
+
+export function Form({
+   onSubmit,
+   children,
+   estimate,
+}: { estimate?: RouterOutput["estimate"]["one"] } & Props) {
    const [currency, setCurrency] = React.useState(estimate?.currency ?? "UAH")
    const formRef = React.useRef<HTMLFormElement>(null)
-   // const fileUploaderRef = React.useRef<HTMLDivElement>(null)
-   const attachments = useAttachments({ subjectId: auth.workspace.id })
 
    return (
       <form
@@ -141,41 +172,13 @@ export function EstimateForm({
                               name="note"
                               placeholder="Додайте комент"
                               defaultValue={estimate?.note}
-                              onPaste={(e) => attachments.onPaste(e)}
                            />
                         }
                      />
-                     {/* {estimate ? null : (
-                        <Button
-                           type="button"
-                           onClick={() => {
-                              fileUploaderRef.current?.click()
-                           }}
-                           kind={"icon"}
-                           variant={"ghost"}
-                           className="absolute top-1 right-1"
-                        >
-                           <Icons.paperClip />
-                        </Button>
-                     )} */}
                   </div>
                </Field>
-               {/* <div className="mt-4 flex flex-wrap gap-2 empty:hidden">
-                  {attachments.uploaded.map((file, idx) => (
-                     <UploadedAttachment
-                        key={idx}
-                        file={file}
-                        onRemove={() => attachments.remove(file.id)}
-                     />
-                  ))}
-               </div> */}
             </div>
          </Fieldset>
-         {/* <FileUploader
-            ref={fileUploaderRef}
-            className="absolute inset-0 z-[9] h-full"
-            onUpload={attachments.upload.mutateAsync}
-         /> */}
          {children}
       </form>
    )
