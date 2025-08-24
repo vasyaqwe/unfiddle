@@ -3,6 +3,7 @@ import { trpc } from "@/trpc"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { CURRENCIES, CURRENCY_SYMBOLS } from "@unfiddle/core/currency/constants"
 import type { Currency } from "@unfiddle/core/currency/types"
+import type { EstimateItem } from "@unfiddle/core/estimate/item/types"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import { Button } from "@unfiddle/ui/components/button"
 import {
@@ -13,6 +14,7 @@ import {
    Fieldset,
    FieldsetLegend,
 } from "@unfiddle/ui/components/field"
+import { Icons } from "@unfiddle/ui/components/icons"
 import { NumberField } from "@unfiddle/ui/components/number-field"
 import {
    Select,
@@ -26,12 +28,15 @@ import { Textarea } from "@unfiddle/ui/components/textarea"
 import { formData } from "@unfiddle/ui/utils"
 import * as React from "react"
 
+type BareItem = Omit<EstimateItem, "id">
+
 type FormData = {
    name: string
    sellingPrice: string
    note: string
    client: string
    currency: Currency
+   items: BareItem[]
 }
 
 interface Props {
@@ -76,6 +81,13 @@ export function Form({
    children,
    estimate,
 }: { estimate?: RouterOutput["estimate"]["one"] } & Props) {
+   const [items, setItems] = React.useState<BareItem[]>([
+      {
+         name: "",
+         quantity: 1,
+         desiredPrice: null,
+      },
+   ])
    const [currency, setCurrency] = React.useState(estimate?.currency ?? "UAH")
    const formRef = React.useRef<HTMLFormElement>(null)
 
@@ -95,6 +107,7 @@ export function Form({
                onSubmit({
                   ...form,
                   currency,
+                  items,
                })
             })
          }}
@@ -138,6 +151,117 @@ export function Form({
                </Select>
             </Field>
          </FieldGroup>
+         {estimate ? null : (
+            <Fieldset className={"space-y-2"}>
+               <FieldsetLegend className={"md:mb-4"}>Товари</FieldsetLegend>
+               <FieldGroup className="max-md:hidden md:grid-cols-[1fr_4rem_5rem_2rem] md:gap-5">
+                  <p className="font-medium text-sm">Назва</p>
+                  <p className="font-medium text-sm">Кількість</p>
+                  <p className="font-medium text-sm">Баж. ціна</p>
+               </FieldGroup>
+               {items.map((item, idx) => (
+                  <FieldGroup
+                     key={idx}
+                     className="grid-cols-[1fr_1fr_2rem] md:grid-cols-[1fr_4rem_5rem_2rem] md:gap-5"
+                  >
+                     <Field className={"max-md:col-span-3"}>
+                        <FieldControl
+                           required
+                           placeholder="Уведіть назву"
+                           value={item.name}
+                           onChange={(e) =>
+                              setItems(
+                                 items.map((i, itemIdx) =>
+                                    idx === itemIdx
+                                       ? { ...i, name: e.target.value }
+                                       : i,
+                                 ),
+                              )
+                           }
+                           // Add a class name to easily select this input
+                           className="order-item-name-input"
+                        />
+                     </Field>
+                     <Field>
+                        <NumberField
+                           required
+                           placeholder="шт."
+                           min={1}
+                           value={item.quantity}
+                           onValueChange={(quantity) =>
+                              setItems(
+                                 items.map((i, itemIdx) =>
+                                    idx === itemIdx
+                                       ? { ...i, quantity: quantity ?? 1 }
+                                       : i,
+                                 ),
+                              )
+                           }
+                        />
+                     </Field>
+                     <Field>
+                        <NumberField
+                           placeholder={CURRENCY_SYMBOLS[currency]}
+                           value={item.desiredPrice}
+                           onValueChange={(desiredPrice) =>
+                              setItems(
+                                 items.map((i, itemIdx) =>
+                                    idx === itemIdx
+                                       ? { ...i, desiredPrice }
+                                       : i,
+                                 ),
+                              )
+                           }
+                        />
+                     </Field>
+                     <Button
+                        onClick={() =>
+                           setItems(
+                              items.filter((_, itemIdx) => idx !== itemIdx),
+                           )
+                        }
+                        type="button"
+                        variant={"ghost"}
+                        kind={"icon"}
+                        disabled={items.length === 1}
+                        className="self-end disabled:cursor-not-allowed"
+                     >
+                        <Icons.trash />
+                     </Button>
+                  </FieldGroup>
+               ))}
+               <Button
+                  onClick={() => {
+                     setItems((prevItems) => [
+                        ...prevItems,
+                        {
+                           name: "",
+                           quantity: 1,
+                           desiredPrice: null,
+                        },
+                     ])
+
+                     // Use requestAnimationFrame to wait for the DOM to update
+                     requestAnimationFrame(() => {
+                        // Find all the item name inputs
+                        const itemInputs = document.querySelectorAll(
+                           ".order-item-name-input",
+                        ) as NodeListOf<HTMLInputElement>
+                        // Focus the last one (which is the newly added one)
+                        if (itemInputs.length > 0) {
+                           itemInputs[itemInputs.length - 1]?.focus()
+                        }
+                     })
+                  }}
+                  type="button"
+                  className="mt-2 w-full disabled:cursor-not-allowed"
+                  variant={"secondary"}
+               >
+                  <Icons.plus />
+                  Додати товар
+               </Button>
+            </Fieldset>
+         )}
          <Fieldset className={"mb-10 space-y-3 md:space-y-8"}>
             <FieldsetLegend className={"md:mb-4"}>Деталі</FieldsetLegend>
             <FieldGroup>

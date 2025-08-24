@@ -48,7 +48,6 @@ export function useCreateEstimate({
             toast.error("Ой-ой!", {
                description: error.message,
             })
-
             onError?.()
          },
          onSuccess: (estimate) => {

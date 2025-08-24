@@ -17,7 +17,6 @@ export function useDeleteOrder({
    const socket = useSocket()
    const queryOptions = useOrderQueryOptions()
    const deleteItem = useOptimisticDeleteOrder()
-   const orderId = maybeParams.orderId
 
    return useMutation(
       trpc.order.delete.mutationOptions({
@@ -37,7 +36,7 @@ export function useDeleteOrder({
             const listData = queryClient.getQueryData(
                queryOptions.list.queryKey,
             )
-            const oneData = orderId
+            const oneData = maybeParams.orderId
                ? queryClient.getQueryData(oneQueryOptions.queryKey)
                : null
 
@@ -99,10 +98,10 @@ export function useDeleteOrder({
 }
 
 export function useOptimisticDeleteOrder() {
+   const params = useParams({ strict: false })
+   const navigate = useNavigate()
    const queryClient = useQueryClient()
    const queryOptions = useOrderQueryOptions()
-   const navigate = useNavigate()
-   const params = useParams({ strict: false })
 
    return (input: RouterInput["order"]["delete"]) => {
       const oneQueryKey = trpc.order.one.queryOptions({

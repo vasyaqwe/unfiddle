@@ -12,6 +12,7 @@ export const ID_PREFIXES = {
    good: "good",
    order_item: "o_item",
    estimate: "est",
+   estimate_item: "e_item",
 } as const
 
 export const createId = (prefix: keyof typeof ID_PREFIXES) => {

@@ -36,7 +36,7 @@ import { Textarea } from "@unfiddle/ui/components/textarea"
 import { formData } from "@unfiddle/ui/utils"
 import * as React from "react"
 
-type BareOrderItem = Omit<OrderItem, "id">
+type BareItem = Omit<OrderItem, "id">
 
 type FormData = {
    name: string
@@ -47,7 +47,7 @@ type FormData = {
    vat: "on" | "off"
    deliversAt: Date | null
    currency: Currency
-   items: BareOrderItem[]
+   items: BareItem[]
    attachments: RouterInput["order"]["create"]["attachments"]
 }
 
@@ -96,7 +96,7 @@ function Form({
    const auth = useAuth()
    const [deliversAt, setDeliversAt] = React.useState(order?.deliversAt ?? null)
    const [currency, setCurrency] = React.useState(order?.currency ?? "UAH")
-   const [items, setItems] = React.useState<BareOrderItem[]>([
+   const [items, setItems] = React.useState<BareItem[]>([
       {
          name: "",
          quantity: 1,
@@ -106,29 +106,6 @@ function Form({
    const formRef = React.useRef<HTMLFormElement>(null)
    const fileUploaderRef = React.useRef<HTMLDivElement>(null)
    const attachments = useAttachments({ subjectId: auth.workspace.id })
-
-   const handleAddItem = () => {
-      setItems((prevItems) => [
-         ...prevItems,
-         {
-            name: "",
-            quantity: 1,
-            desiredPrice: null,
-         },
-      ])
-
-      // Use requestAnimationFrame to wait for the DOM to update
-      requestAnimationFrame(() => {
-         // Find all the item name inputs
-         const itemInputs = document.querySelectorAll(
-            ".order-item-name-input",
-         ) as NodeListOf<HTMLInputElement>
-         // Focus the last one (which is the newly added one)
-         if (itemInputs.length > 0) {
-            itemInputs[itemInputs.length - 1]?.focus()
-         }
-      })
-   }
 
    return (
       <form
@@ -272,7 +249,28 @@ function Form({
                   </FieldGroup>
                ))}
                <Button
-                  onClick={handleAddItem}
+                  onClick={() => {
+                     setItems((prevItems) => [
+                        ...prevItems,
+                        {
+                           name: "",
+                           quantity: 1,
+                           desiredPrice: null,
+                        },
+                     ])
+
+                     // Use requestAnimationFrame to wait for the DOM to update
+                     requestAnimationFrame(() => {
+                        // Find all the item name inputs
+                        const itemInputs = document.querySelectorAll(
+                           ".order-item-name-input",
+                        ) as NodeListOf<HTMLInputElement>
+                        // Focus the last one (which is the newly added one)
+                        if (itemInputs.length > 0) {
+                           itemInputs[itemInputs.length - 1]?.focus()
+                        }
+                     })
+                  }}
                   type="button"
                   className="mt-2 w-full disabled:cursor-not-allowed"
                   variant={"secondary"}

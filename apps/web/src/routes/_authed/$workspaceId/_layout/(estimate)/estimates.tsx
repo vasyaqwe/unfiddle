@@ -22,6 +22,7 @@ import { SuspenseBoundary } from "@/ui/components/suspense-boundary"
 import { UserAvatar } from "@/user/components/user-avatar"
 import { validator } from "@/validator"
 import { useSuspenseQuery } from "@tanstack/react-query"
+import { Link } from "@tanstack/react-router"
 import { createFileRoute } from "@tanstack/react-router"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import { estimateFilterSchema } from "@unfiddle/core/estimate/filter"
@@ -205,7 +206,14 @@ function EstimateRow({
             ref={menuTriggerRef}
             data-active={contextMenuOpen ? "" : undefined}
          >
-            <div className="relative grid h-[72px] grid-cols-[1fr_auto] grid-rows-[1fr_auto] items-center gap-x-2.5 gap-y-2 px-2.5 py-2 text-left lg:flex lg:h-[44px]">
+            <Link
+               to="/$workspaceId/estimate/$estimateId"
+               params={{
+                  estimateId: estimate.id,
+                  workspaceId: params.workspaceId,
+               }}
+               className="relative grid h-[72px] grid-cols-[1fr_auto] grid-rows-[1fr_auto] items-center gap-x-2.5 gap-y-2 px-2.5 py-2 text-left lg:flex lg:h-[44px]"
+            >
                <div className="flex items-center gap-2 max-lg:w-full">
                   <p className="whitespace-nowrap font-medium font-mono text-muted text-sm">
                      {makeShortId(estimate.shortId)}
@@ -253,7 +261,7 @@ function EstimateRow({
                      }
                   />
                </div>
-            </div>
+            </Link>
          </ContextMenuTrigger>
          <ContextMenuPopup>
             <ContextMenuItem

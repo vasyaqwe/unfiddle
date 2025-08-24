@@ -1,6 +1,7 @@
 import { user } from "@unfiddle/core/auth/schema"
 import { CURRENCIES } from "@unfiddle/core/currency/constants"
 import { d } from "@unfiddle/core/database"
+import { estimateItem } from "@unfiddle/core/estimate/item/schema"
 import { workspace } from "@unfiddle/core/workspace/schema"
 import { relations } from "drizzle-orm"
 import { createUpdateSchema } from "drizzle-zod"
@@ -56,11 +57,12 @@ export const estimate = d.table(
    ],
 )
 
-export const estimateRelations = relations(estimate, ({ one }) => ({
+export const estimateRelations = relations(estimate, ({ one, many }) => ({
    creator: one(user, {
       fields: [estimate.creatorId],
       references: [user.id],
    }),
+   items: many(estimateItem),
 }))
 
 export const updateEstimateSchema = createUpdateSchema(estimate)

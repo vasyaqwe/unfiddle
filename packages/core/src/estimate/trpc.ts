@@ -1,6 +1,8 @@
 import { TRPCError } from "@trpc/server"
 import {} from "@unfiddle/core/attachment/schema"
+import { estimateItem } from "@unfiddle/core/database/schema"
 import { estimateFilterSchema } from "@unfiddle/core/estimate/filter"
+import { estimateItemRouter } from "@unfiddle/core/estimate/item/trpc"
 import {
    estimate,
    estimateCounter,
@@ -15,6 +17,7 @@ import { createInsertSchema } from "drizzle-zod"
 import { z } from "zod"
 
 export const estimateRouter = t.router({
+   item: estimateItemRouter,
    one: t.procedure
       .use(workspaceMemberMiddleware)
       .input(
@@ -30,14 +33,14 @@ export const estimateRouter = t.router({
                eq(estimate.workspaceId, input.workspaceId),
             ),
             with: {
-               // items: {
-               //    columns: {
-               //       id: true,
-               //       name: true,
-               //       quantity: true,
-               //       desiredPrice: true,
-               //    },
-               // },
+               items: {
+                  columns: {
+                     id: true,
+                     name: true,
+                     quantity: true,
+                     desiredPrice: true,
+                  },
+               },
                creator: {
                   columns: {
                      id: true,
@@ -122,7 +125,17 @@ export const estimateRouter = t.router({
    create: t.procedure
       .use(workspaceMemberMiddleware)
       .input(
-         createInsertSchema(estimate).omit({ creatorId: true, shortId: true }),
+         createInsertSchema(estimate)
+            .omit({ creatorId: true, shortId: true })
+            .extend({
+               items: z
+                  .array(
+                     createInsertSchema(estimateItem).omit({
+                        estimateId: true,
+                     }),
+                  )
+                  .min(1),
+            }),
       )
       .mutation(async ({ ctx, input }) => {
          const existingCounter = await ctx.db.query.estimateCounter.findFirst({
@@ -147,6 +160,20 @@ export const estimateRouter = t.router({
                normalizedName,
             }),
          )
+
+         const BATCH_SIZE = 5
+         for (let i = 0; i < input.items.length; i += BATCH_SIZE) {
+            const batch = input.items.slice(i, i + BATCH_SIZE)
+            batchQueries.push(
+               ctx.db.insert(estimateItem).values(
+                  batch.map((item) => ({
+                     ...item,
+                     workspaceId: input.workspaceId,
+                     estimateId,
+                  })),
+               ),
+            )
+         }
 
          if (!existingCounter) {
             batchQueries.push(

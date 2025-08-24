@@ -17,7 +17,6 @@ export function useUpdateOrder({
    const socket = useSocket()
    const queryOptions = useOrderQueryOptions()
    const update = useOptimisticUpdateOrder()
-   const orderId = maybeParams.orderId
 
    return useMutation(
       trpc.order.update.mutationOptions({
@@ -37,7 +36,7 @@ export function useUpdateOrder({
             const listData = queryClient.getQueryData(
                queryOptions.list.queryKey,
             )
-            const oneData = orderId
+            const oneData = maybeParams.orderId
                ? queryClient.getQueryData(oneQueryOptions.queryKey)
                : null
 
