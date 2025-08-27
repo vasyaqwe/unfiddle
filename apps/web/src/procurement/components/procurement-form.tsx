@@ -137,6 +137,7 @@ export function ProcurementForm({
                   <FieldControl
                      render={
                         <Textarea
+                           className="pr-12"
                            name="note"
                            placeholder="Додайте комент"
                            defaultValue={procurement?.note ?? ""}

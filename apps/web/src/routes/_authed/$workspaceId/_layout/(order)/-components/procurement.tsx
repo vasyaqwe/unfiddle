@@ -93,19 +93,24 @@ export function Procurement({
          !attachment.type.startsWith("image/") ||
          attachment.name.endsWith(".svg"),
    )
-   const extractDomain = (url: string) => {
+   const isUrl = (str: string) => {
+      if (!str) return false
+      if (/\s/.test(str)) return false
       try {
-         const urlObj = new URL(url.startsWith("http") ? url : `https://${url}`)
-         return urlObj.hostname.replace("www.", "")
+         new URL(str.startsWith("http") ? str : `https://${str}`)
+         return true
       } catch {
-         return url
+         return false
       }
    }
 
-   const isUrl = (str: string) => {
-      const urlPattern =
-         /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/i
-      return urlPattern.test(str)
+   const extractDomain = (str: string) => {
+      try {
+         const urlObj = new URL(str.startsWith("http") ? str : `https://${str}`)
+         return urlObj.hostname.replace(/^www\./, "")
+      } catch {
+         return str
+      }
    }
 
    const provider = procurement.provider

@@ -364,6 +364,7 @@ function Form({
                      <FieldControl
                         render={
                            <Textarea
+                              className="pr-12"
                               name="note"
                               placeholder="Додайте комент"
                               defaultValue={order?.note}
