@@ -95,7 +95,7 @@ export function Procurement({
    )
    const isUrl = (str: string) => {
       if (!str) return false
-      if (/\s/.test(str)) return false
+      if (/\s/.test(str) || !str.includes(".")) return false
       try {
          new URL(str.startsWith("http") ? str : `https://${str}`)
          return true
@@ -107,7 +107,7 @@ export function Procurement({
    const extractDomain = (str: string) => {
       try {
          const urlObj = new URL(str.startsWith("http") ? str : `https://${str}`)
-         return urlObj.hostname.replace(/^www\./, "")
+         return decodeURIComponent(urlObj.hostname.replace(/^www\./, ""))
       } catch {
          return str
       }
