@@ -46,12 +46,12 @@ export function useDeleteEstimateItem({
 
             onError?.()
          },
-         onSuccess: (_, item) => {
+         onSuccess: (_, data) => {
             socket.estimate.send({
                action: "delete_item",
                senderId: auth.user.id,
-               estimateId: item.estimateId,
-               estimateItemId: item.estimateItemId,
+               estimateId: data.estimateId,
+               estimateItemId: data.estimateItemId,
                workspaceId: auth.workspace.id,
             })
          },

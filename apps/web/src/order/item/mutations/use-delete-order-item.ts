@@ -46,12 +46,12 @@ export function useDeleteOrderItem({
 
             onError?.()
          },
-         onSuccess: (_, item) => {
+         onSuccess: (_, data) => {
             socket.order.send({
                action: "delete_item",
                senderId: auth.user.id,
-               orderId: item.orderId,
-               orderItemId: item.orderItemId,
+               orderId: data.orderId,
+               orderItemId: data.orderItemId,
                workspaceId: auth.workspace.id,
             })
          },

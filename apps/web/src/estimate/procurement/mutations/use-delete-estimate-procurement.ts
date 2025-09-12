@@ -1,46 +1,49 @@
 import { useAuth } from "@/auth/hooks"
-import { useOrder } from "@/order/hooks"
-import { useOrderQueryOptions } from "@/order/queries"
+import { useEstimate } from "@/estimate/hooks"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useSearch } from "@tanstack/react-router"
 import type { RouterInput } from "@unfiddle/core/trpc/types"
 import { toast } from "sonner"
 
-export function useDeleteProcurement({
+export function useDeleteEstimateProcurement({
    onMutate,
    onError,
 }: { onMutate?: () => void; onError?: () => void } = {}) {
-   const order = useOrder()
+   const search = useSearch({ strict: false })
+   const estimate = useEstimate()
    const queryClient = useQueryClient()
    const auth = useAuth()
    const socket = useSocket()
    const deleteItem = useOptimisticDeleteProcurement()
-   const orderQueryOptions = useOrderQueryOptions()
-
-   const queryOptions = trpc.procurement.list.queryOptions({
-      orderId: order.id,
+   const estimateQueryOptions = trpc.order.list.queryOptions({
+      workspaceId: auth.workspace.id,
+      filter: search,
+   })
+   const queryOptions = trpc.estimateProcurement.list.queryOptions({
+      estimateId: estimate.id,
       workspaceId: auth.workspace.id,
    })
 
    return useMutation(
-      trpc.procurement.delete.mutationOptions({
+      trpc.estimateProcurement.delete.mutationOptions({
          onMutate: async (input) => {
             onMutate?.()
 
             await Promise.all([
-               queryClient.cancelQueries(orderQueryOptions.list),
+               queryClient.cancelQueries(estimateQueryOptions),
                queryClient.cancelQueries(queryOptions),
             ])
 
             const procurements = queryClient.getQueryData(queryOptions.queryKey)
-            const orders = queryClient.getQueryData(
-               orderQueryOptions.list.queryKey,
+            const estimates = queryClient.getQueryData(
+               estimateQueryOptions.queryKey,
             )
 
             deleteItem(input)
 
-            return { procurements, orders }
+            return { procurements, estimates }
          },
          onError: (error, _data, context) => {
             queryClient.setQueryData(
@@ -48,8 +51,8 @@ export function useDeleteProcurement({
                context?.procurements,
             )
             queryClient.setQueryData(
-               orderQueryOptions.list.queryKey,
-               context?.orders,
+               estimateQueryOptions.queryKey,
+               context?.estimates,
             )
             toast.error("Ой-ой!", {
                description: error.message,
@@ -58,54 +61,48 @@ export function useDeleteProcurement({
             onError?.()
          },
          onSuccess: (_, data) => {
-            socket.procurement.send({
+            socket.estimateProcurement.send({
                action: "delete",
                senderId: auth.user.id,
-               procurementId: data.procurementId,
-               orderId: data.orderId,
+               estimateProcurementId: data.estimateProcurementId,
+               estimateId: data.estimateId,
                workspaceId: auth.workspace.id,
             })
          },
          onSettled: () => {
-            queryClient.invalidateQueries(
-               trpc.workspace.analytics.stats.queryOptions({
-                  id: auth.workspace.id,
-               }),
-            )
-            queryClient.invalidateQueries(
-               trpc.workspace.analytics.profit.queryOptions({
-                  id: auth.workspace.id,
-               }),
-            )
             queryClient.invalidateQueries(queryOptions)
-            queryClient.invalidateQueries(orderQueryOptions.list)
+            queryClient.invalidateQueries(estimateQueryOptions)
          },
       }),
    )
 }
 
 export function useOptimisticDeleteProcurement() {
+   const search = useSearch({ strict: false })
    const auth = useAuth()
    const queryClient = useQueryClient()
-   const queryOptions = useOrderQueryOptions()
+   const estimateQueryOptions = trpc.order.list.queryOptions({
+      workspaceId: auth.workspace.id,
+      filter: search,
+   })
 
-   return (input: RouterInput["procurement"]["delete"]) => {
-      const queryKey = trpc.procurement.list.queryOptions({
-         orderId: input.orderId,
+   return (input: RouterInput["estimateProcurement"]["delete"]) => {
+      const queryKey = trpc.estimateProcurement.list.queryOptions({
+         estimateId: input.estimateProcurementId,
          workspaceId: auth.workspace.id,
       }).queryKey
       queryClient.setQueryData(queryKey, (oldData) => {
          if (!oldData) return oldData
-         return oldData.filter((p) => p.id !== input.procurementId)
+         return oldData.filter((p) => p.id !== input.estimateProcurementId)
       })
-      queryClient.setQueryData(queryOptions.list.queryKey, (oldData) => {
+      queryClient.setQueryData(estimateQueryOptions.queryKey, (oldData) => {
          if (!oldData) return oldData
          return oldData.map((item) => {
-            if (item.id === input.orderId)
+            if (item.id === input.estimateId)
                return {
                   ...item,
                   procurements: item.procurements.filter(
-                     (p) => p.id !== input.procurementId,
+                     (p) => p.id !== input.estimateProcurementId,
                   ),
                }
             return item

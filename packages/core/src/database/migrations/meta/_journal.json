@@ -141,6 +141,13 @@
       "when": 1756073390154,
       "tag": "0022_jazzy_whizzer",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "6",
+      "when": 1757681982264,
+      "tag": "0023_narrow_menace",
+      "breakpoints": true
     }
   ]
 }
