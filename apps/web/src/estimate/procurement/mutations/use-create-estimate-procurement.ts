@@ -16,7 +16,7 @@ export function useCreateEstimateProcurement({
    const queryClient = useQueryClient()
    const auth = useAuth()
    const socket = useSocket()
-   const estimateQueryOptions = trpc.order.list.queryOptions({
+   const estimateQueryOptions = trpc.estimate.list.queryOptions({
       workspaceId: auth.workspace.id,
       filter: search,
    })
@@ -104,13 +104,13 @@ export function useCreateEstimateProcurement({
 }
 
 export function useOptimisticCreateEstimateProcurement() {
-   const search = useSearch({ strict: false })
+   // const search = useSearch({ strict: false })
    const auth = useAuth()
    const queryClient = useQueryClient()
-   const estimateQueryOptions = trpc.order.list.queryOptions({
-      workspaceId: auth.workspace.id,
-      filter: search,
-   })
+   // const estimateQueryOptions = trpc.estimate.list.queryOptions({
+   //    workspaceId: auth.workspace.id,
+   //    filter: search,
+   // })
 
    return (
       input: EstimateProcurement & {
@@ -125,13 +125,13 @@ export function useOptimisticCreateEstimateProcurement() {
          if (!oldData) return oldData
          return [input, ...oldData]
       })
-      queryClient.setQueryData(estimateQueryOptions.queryKey, (oldData) => {
-         if (!oldData) return oldData
-         return oldData.map((item) => {
-            if (item.id === input.estimateId)
-               return { ...item, procurements: [input, ...item.procurements] }
-            return item
-         })
-      })
+      // queryClient.setQueryData(estimateQueryOptions.queryKey, (oldData) => {
+      //    if (!oldData) return oldData
+      //    return oldData.map((item) => {
+      //       if (item.id === input.estimateId)
+      //          return { ...item, procurements: [input, ...item.procurements] }
+      //       return item
+      //    })
+      // })
    }
 }

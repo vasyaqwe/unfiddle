@@ -70,11 +70,6 @@ export function useCreateEstimate({
             // })
          },
          onSettled: () => {
-            queryClient.invalidateQueries(
-               trpc.workspace.analytics.stats.queryOptions({
-                  id: auth.workspace.id,
-               }),
-            )
             queryClient.invalidateQueries(queryOptions)
          },
       }),
