@@ -146,16 +146,7 @@ function Form({
                   value={currency}
                   onValueChange={setCurrency}
                >
-                  <SelectTrigger
-                     render={
-                        <Button variant={"secondary"}>
-                           <SelectValue placeholder={currency}>
-                              {(label) => label}
-                           </SelectValue>
-                           <SelectTriggerIcon />
-                        </Button>
-                     }
-                  />
+                  <SelectTrigger />
                   <SelectPopup align="start">
                      {CURRENCIES.map((item) => (
                         <SelectItem
@@ -317,14 +308,10 @@ function Form({
                               variant={"secondary"}
                               className="w-full justify-start"
                            >
-                              <SelectValue
-                                 placeholder={
-                                    ORDER_SEVERITIES_TRANSLATION[
-                                       order?.severity ?? "low"
-                                    ]
+                              <SelectValue>
+                                 {(v) =>
+                                    ORDER_SEVERITIES_TRANSLATION[v as never]
                                  }
-                              >
-                                 {(label) => label}
                               </SelectValue>
                               <SelectTriggerIcon />
                            </Button>
@@ -335,6 +322,7 @@ function Form({
                            <SelectItem
                               key={s}
                               value={s}
+                              label={ORDER_SEVERITIES_TRANSLATION[s]}
                            >
                               {ORDER_SEVERITIES_TRANSLATION[s]}
                            </SelectItem>

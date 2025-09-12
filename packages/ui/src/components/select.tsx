@@ -1,4 +1,5 @@
 import { Select as SelectPrimitive } from "@base-ui-components/react/select"
+import { Button } from "@unfiddle/ui/components/button"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { MENU_ITEM_STYLES } from "@unfiddle/ui/components/menu/constants"
 import { POPUP_STYLES } from "@unfiddle/ui/constants"
@@ -38,7 +39,20 @@ export function SelectTrigger({ children, className, ...props }: Props) {
          onPointerDown={(e) => {
             e.stopPropagation()
          }}
-         className={cn("justify-start text-sm", className)}
+         render={
+            <Button
+               variant={"secondary"}
+               className={cn("flex justify-start", className)}
+            >
+               {children ?? (
+                  <>
+                     <SelectValue>{(v) => v}</SelectValue>
+                     <SelectTriggerIcon />
+                  </>
+               )}
+            </Button>
+         }
+         nativeButton
          {...props}
       >
          {children}

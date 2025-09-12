@@ -21,8 +21,6 @@ import {
    SelectItem,
    SelectPopup,
    SelectTrigger,
-   SelectTriggerIcon,
-   SelectValue,
 } from "@unfiddle/ui/components/select"
 import { Textarea } from "@unfiddle/ui/components/textarea"
 import { formData } from "@unfiddle/ui/utils"
@@ -128,16 +126,7 @@ export function Form({
                   value={currency}
                   onValueChange={setCurrency}
                >
-                  <SelectTrigger
-                     render={
-                        <Button variant={"secondary"}>
-                           <SelectValue placeholder={currency}>
-                              {(label) => label}
-                           </SelectValue>
-                           <SelectTriggerIcon />
-                        </Button>
-                     }
-                  />
+                  <SelectTrigger />
                   <SelectPopup align="start">
                      {CURRENCIES.map((item) => (
                         <SelectItem

@@ -1,34 +1,22 @@
 import { CURRENCIES } from "@unfiddle/core/currency/constants"
-import { Button } from "@unfiddle/ui/components/button"
 import {
    Select,
    SelectItem,
    SelectPopup,
    SelectTrigger,
-   SelectTriggerIcon,
-   SelectValue,
 } from "@unfiddle/ui/components/select"
 
 export const CurrencySelect = ({
    value,
    onValueChange,
 }: { value: string; onValueChange: (value: string) => void }) => {
+   console.log(value)
    return (
       <Select
          value={value}
          onValueChange={onValueChange}
       >
-         <SelectTrigger
-            render={
-               <Button
-                  variant="secondary"
-                  className="min-w-24"
-               >
-                  <SelectValue placeholder={value} />
-                  <SelectTriggerIcon />
-               </Button>
-            }
-         />
+         <SelectTrigger className="min-w-24" />
          <SelectPopup>
             {CURRENCIES.map((currency) => (
                <SelectItem

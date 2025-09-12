@@ -37,10 +37,8 @@ export function PeriodSelect() {
                      "min-w-32 disabled:cursor-default disabled:bg-surface-3"
                   }
                >
-                  <SelectValue
-                     placeholder={PERIOD_FILTERS_TRANSLATION[search.period]}
-                  >
-                     {(label) => label}
+                  <SelectValue>
+                     {(v) => PERIOD_FILTERS_TRANSLATION[v as never]}
                   </SelectValue>
                   <SelectTriggerIcon />
                </Button>

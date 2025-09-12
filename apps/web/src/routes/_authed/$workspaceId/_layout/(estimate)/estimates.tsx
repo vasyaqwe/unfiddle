@@ -100,7 +100,8 @@ function RouteComponent() {
                <DrawerPopup>
                   <DrawerTitle>Новий прорахунок</DrawerTitle>
                   <EstimateForm
-                     onSubmit={(form) =>
+                     onSubmit={(form) => {
+                        console.log(form)
                         mutation.mutate({
                            ...form,
                            workspaceId: auth.workspace.id,
@@ -108,7 +109,7 @@ function RouteComponent() {
                            client:
                               form.client.length === 0 ? null : form.client,
                         })
-                     }
+                     }}
                   >
                      <DrawerFooter>
                         <Button>Додати</Button>

@@ -9,7 +9,7 @@
     "generate-pwa-assets": "pwa-assets-generator --preset minimal-2023 public/icon.svg"
   },
   "dependencies": {
-    "@base-ui-components/react": "1.0.0-beta.0",
+    "@base-ui-components/react": "1.0.0-beta.3",
     "@oslojs/encoding": "^1.1.0",
     "@sentry/react": "^9.25.1",
     "@sentry/vite-plugin": "^3.5.0",
@@ -45,7 +45,7 @@
     "sonner": "^1.7.1",
     "superjson": "^2.2.2",
     "tldraw": "^3.15.1",
-    "vaul-base": "^0.0.5",
+    "vaul-base": "^0.0.6",
     "vite-tsconfig-paths": "^5.1.4",
     "zod": "^3.24.3"
   },

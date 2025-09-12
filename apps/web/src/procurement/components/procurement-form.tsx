@@ -13,8 +13,6 @@ import {
    SelectItem,
    SelectPopup,
    SelectTrigger,
-   SelectTriggerIcon,
-   SelectValue,
 } from "@unfiddle/ui/components/select"
 import { Textarea } from "@unfiddle/ui/components/textarea"
 import { formData } from "@unfiddle/ui/utils"
@@ -75,19 +73,7 @@ export function ProcurementForm({
                name="orderItemId"
                defaultValue={procurement?.orderItemId ?? order.items[0]?.id}
             >
-               <SelectTrigger
-                  render={
-                     <Button
-                        variant={"secondary"}
-                        className="w-full justify-start"
-                     >
-                        <SelectValue placeholder={"Оберіть товар"}>
-                           {(label) => label}
-                        </SelectValue>
-                        <SelectTriggerIcon />
-                     </Button>
-                  }
-               />
+               <SelectTrigger className={"w-full"} />
                <SelectPopup align="start">
                   {order.items.map((item) => (
                      <SelectItem
