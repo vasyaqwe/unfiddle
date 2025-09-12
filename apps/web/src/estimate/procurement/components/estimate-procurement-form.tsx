@@ -1,6 +1,7 @@
 import { useEstimate } from "@/estimate/hooks"
 import { CURRENCY_SYMBOLS } from "@unfiddle/core/currency/constants"
 import type { EstimateProcurement } from "@unfiddle/core/estimate/procurement/types"
+import { Button } from "@unfiddle/ui/components/button"
 import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
 import { NumberField } from "@unfiddle/ui/components/number-field"
 import {
@@ -8,6 +9,8 @@ import {
    SelectItem,
    SelectPopup,
    SelectTrigger,
+   SelectTriggerIcon,
+   SelectValue,
 } from "@unfiddle/ui/components/select"
 import { Textarea } from "@unfiddle/ui/components/textarea"
 import { formData } from "@unfiddle/ui/utils"
@@ -66,7 +69,19 @@ export function EstimateProcurementForm({
                   estimateProcurement?.estimateItemId ?? estimate.items[0]?.id
                }
             >
-               <SelectTrigger className={"w-full"} />
+               <SelectTrigger
+                  render={
+                     <Button
+                        variant={"secondary"}
+                        className={"w-full"}
+                     >
+                        <SelectValue>
+                           {(v) => estimate.items.find((i) => i.id === v)?.name}
+                        </SelectValue>
+                        <SelectTriggerIcon />
+                     </Button>
+                  }
+               />
                <SelectPopup align="start">
                   {estimate.items.map((item) => (
                      <SelectItem
