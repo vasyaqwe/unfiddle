@@ -84,12 +84,11 @@ export const estimateProcurementRouter = t.router({
                ),
             )
 
-         // if (input.attachments.length > 0) {
          //    await ctx.db.insert(attachment).values(
          //       input.attachments.map((a) => ({
          //          ...a,
-         //          subjectId: input.procurementId,
-         //          subjectType: "procurement" as const,
+         //          subjectId: input.estimateProcurementId,
+         //          subjectType: "estimateProcurement" as const,
          //          workspaceId: input.workspaceId,
          //          creatorId: ctx.user.id,
          //       })),

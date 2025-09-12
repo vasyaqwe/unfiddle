@@ -21,7 +21,7 @@ export function useUpdateEstimateProcurement({
    const auth = useAuth()
    const socket = useSocket()
    const update = useOptimisticUpdateEstimateProcurement()
-   // const estimateQueryOptions = trpc.procurement.list.queryOptions({
+   // const estimateQueryOptions = trpc.estimateProcurement.list.queryOptions({
    //    workspaceId: auth.workspace.id,
    //    filter: search,
    // })
@@ -84,7 +84,7 @@ export function useOptimisticUpdateEstimateProcurement() {
    // const search = useSearch({ strict: false })
    const auth = useAuth()
    const queryClient = useQueryClient()
-   // const estimateQueryOptions = trpc.procurement.list.queryOptions({
+   // const estimateQueryOptions = trpc.estimateProcurement.list.queryOptions({
    //    workspaceId: auth.workspace.id,
    //    filter: search,
    // })
