@@ -1,7 +1,6 @@
 import { useEstimate } from "@/estimate/hooks"
 import { UpdateEstimateProcurement } from "@/estimate/procurement/components/update-estimate-procurement"
 import { useDeleteEstimateProcurement } from "@/estimate/procurement/mutations/use-delete-estimate-procurement"
-import { updateProcurementOpenAtom } from "@/procurement/store"
 import { UserAvatar } from "@/user/components/user-avatar"
 import { useParams } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
@@ -30,7 +29,6 @@ import {
    TooltipPopup,
    TooltipTrigger,
 } from "@unfiddle/ui/components/tooltip"
-import { useSetAtom } from "jotai"
 import * as React from "react"
 import { toast } from "sonner"
 
@@ -45,7 +43,6 @@ export function EstimateProcurement({
    const estimate = useEstimate()
    const deleteItem = useDeleteEstimateProcurement()
    const [updateOpen, setUpdateOpen] = React.useState(false)
-   const setStoreUpdateOpen = useSetAtom(updateProcurementOpenAtom)
    const [deleteAlertOpen, setDeleteAlertOpen] = React.useState(false)
    const menuTriggerRef = React.useRef<HTMLButtonElement>(null)
 
@@ -128,7 +125,6 @@ export function EstimateProcurement({
                      <MenuItem
                         onClick={() => {
                            setUpdateOpen(true)
-                           setStoreUpdateOpen(true)
                         }}
                      >
                         <Icons.pencil />

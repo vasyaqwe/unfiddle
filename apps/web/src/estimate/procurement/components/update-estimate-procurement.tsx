@@ -1,9 +1,8 @@
 import { useAttachments } from "@/attachment/hooks"
 import { useAuth } from "@/auth/hooks"
+import { useEstimate } from "@/estimate/hooks"
 import { EstimateProcurementForm } from "@/estimate/procurement/components/estimate-procurement-form"
-import { useOrder } from "@/order/hooks"
-import { useUpdateProcurement } from "@/procurement/mutations/use-update-procurement"
-import { updateProcurementOpenAtom } from "@/procurement/store"
+import { useUpdateEstimateProcurement } from "@/estimate/procurement/mutations/use-update-estimate-procurement"
 import type { EstimateProcurement } from "@unfiddle/core/estimate/procurement/types"
 import { Button } from "@unfiddle/ui/components/button"
 import {
@@ -14,7 +13,6 @@ import {
    DrawerTitle,
 } from "@unfiddle/ui/components/drawer"
 import { number } from "@unfiddle/ui/utils"
-import { useSetAtom } from "jotai"
 
 export function UpdateEstimateProcurement({
    procurement,
@@ -28,19 +26,16 @@ export function UpdateEstimateProcurement({
    setOpen: (open: boolean) => void
 }) {
    const auth = useAuth()
-   const order = useOrder()
-   const setStoreUpdateOpen = useSetAtom(updateProcurementOpenAtom)
+   const estimate = useEstimate()
    const attachments = useAttachments({
       subjectId: procurement.id,
    })
-   const mutation = useUpdateProcurement({
+   const mutation = useUpdateEstimateProcurement({
       onMutate: () => {
          setOpen(false)
-         setStoreUpdateOpen(false)
       },
       onError: () => {
          setOpen(true)
-         setStoreUpdateOpen(true)
       },
       onSuccess: () => attachments.clear(),
    })
@@ -50,7 +45,6 @@ export function UpdateEstimateProcurement({
          open={open}
          onOpenChange={(open) => {
             setOpen(open)
-            setStoreUpdateOpen(open)
          }}
       >
          <DrawerPopup finalFocus={finalFocus}>
@@ -59,12 +53,11 @@ export function UpdateEstimateProcurement({
                onSubmit={(form) => {
                   mutation.mutate({
                      ...form,
-                     procurementId: procurement.id,
+                     estimateProcurementId: procurement.id,
                      workspaceId: auth.workspace.id,
                      purchasePrice: number(form.purchasePrice),
                      quantity: number(form.quantity),
-                     orderId: order.id,
-                     attachments: attachments.uploaded,
+                     estimateId: estimate.id,
                   })
                }}
                estimateProcurement={procurement}
