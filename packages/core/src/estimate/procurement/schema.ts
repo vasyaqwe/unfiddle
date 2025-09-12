@@ -32,7 +32,7 @@ export const estimateProcurement = d.table(
    },
    (table) => [
       d
-         .index("procurement_estimate_id_created_at_idx")
+         .index("estimate_procurement_estimate_id_created_at_idx")
          .on(table.estimateId, table.createdAt),
    ],
 )

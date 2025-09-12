@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "c234a59d-9341-41e0-bdaf-36746e6fe2ae",
+  "id": "53e1717c-e3a5-4930-9d4c-54916c8fd9cd",
   "prevId": "c68d3f12-7c13-4334-bbb4-1e19d0e4c555",
   "tables": {
     "account": {
@@ -1718,8 +1718,8 @@
         }
       },
       "indexes": {
-        "procurement_estimate_id_created_at_idx": {
-          "name": "procurement_estimate_id_created_at_idx",
+        "estimate_procurement_estimate_id_created_at_idx": {
+          "name": "estimate_procurement_estimate_id_created_at_idx",
           "columns": [
             "estimate_id",
             "created_at"

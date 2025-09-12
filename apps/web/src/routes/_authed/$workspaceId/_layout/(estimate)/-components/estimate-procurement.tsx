@@ -4,7 +4,7 @@ import { useDeleteEstimateProcurement } from "@/estimate/procurement/mutations/u
 import { UserAvatar } from "@/user/components/user-avatar"
 import { useParams } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
-import type { EstimateProcurement as ProcurementType } from "@unfiddle/core/estimate/procurement/types"
+import type { EstimateProcurement as EstimateProcurementType } from "@unfiddle/core/estimate/procurement/types"
 import { formatNumber } from "@unfiddle/core/number"
 import { Badge } from "@unfiddle/ui/components/badge"
 import { Button } from "@unfiddle/ui/components/button"
@@ -33,9 +33,9 @@ import * as React from "react"
 import { toast } from "sonner"
 
 export function EstimateProcurement({
-   procurement,
+   estimateProcurement,
 }: {
-   procurement: ProcurementType
+   estimateProcurement: EstimateProcurementType
 }) {
    const params = useParams({
       from: "/_authed/$workspaceId/_layout/(estimate)/estimate/$estimateId",
@@ -47,7 +47,7 @@ export function EstimateProcurement({
    const menuTriggerRef = React.useRef<HTMLButtonElement>(null)
 
    const estimateItem = estimate.items.find(
-      (i) => i.id === procurement.estimateItemId,
+      (i) => i.id === estimateProcurement.estimateItemId,
    )
    const isUrl = (str: string) => {
       if (!str) return false
@@ -69,7 +69,7 @@ export function EstimateProcurement({
       }
    }
 
-   const provider = procurement.provider
+   const provider = estimateProcurement.provider
 
    return (
       <div className="gap-3 border-neutral border-t p-3 text-left first:border-none lg:gap-4 lg:p-2 lg:pl-3">
@@ -148,36 +148,38 @@ export function EstimateProcurement({
             >
                <UserAvatar
                   size={16}
-                  user={procurement.creator}
+                  user={estimateProcurement.creator}
                   className="inline-block"
                />
-               <span className="line-clamp-1">{procurement.creator.name}</span>
+               <span className="line-clamp-1">
+                  {estimateProcurement.creator.name}
+               </span>
             </p>
             <p
                id={`${estimate.id}_p_quantity`}
                className="mb-px whitespace-nowrap font-medium font-mono lg:text-sm"
             >
-               {formatNumber(procurement.quantity)} шт.
+               {formatNumber(estimateProcurement.quantity)} шт.
             </p>
             <Separator className={"h-4 w-px bg-surface-7"} />
             <p
                id={`${estimate.id}_p_price`}
                className="mb-px whitespace-nowrap font-medium font-mono lg:text-sm"
             >
-               {formatCurrency(procurement.purchasePrice, {
+               {formatCurrency(estimateProcurement.purchasePrice, {
                   currency: estimate.currency,
                })}
             </p>
          </div>
          <p className="lg:!max-w-[80ch] mt-2 whitespace-pre-wrap empty:hidden lg:mt-2.5">
-            {procurement.note}
+            {estimateProcurement.note}
          </p>
          <div
             className="absolute"
             onClick={(e) => e.stopPropagation()}
          >
             <UpdateEstimateProcurement
-               procurement={procurement}
+               estimateProcurement={estimateProcurement}
                open={updateOpen}
                setOpen={setUpdateOpen}
                finalFocus={menuTriggerRef}
@@ -204,7 +206,8 @@ export function EstimateProcurement({
                               variant={"destructive"}
                               onClick={() =>
                                  deleteItem.mutate({
-                                    estimateProcurementId: procurement.id,
+                                    estimateProcurementId:
+                                       estimateProcurement.id,
                                     workspaceId: params.workspaceId,
                                     estimateId: estimate.id,
                                  })

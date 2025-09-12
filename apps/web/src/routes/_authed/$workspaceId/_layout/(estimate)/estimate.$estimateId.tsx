@@ -295,7 +295,7 @@ function Procurements() {
          {query.data.map((p) => (
             <EstimateProcurement
                key={p.id}
-               procurement={p}
+               estimateProcurement={p}
             />
          ))}
       </Card>

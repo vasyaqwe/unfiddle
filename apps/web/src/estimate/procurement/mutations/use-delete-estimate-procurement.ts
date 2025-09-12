@@ -16,7 +16,7 @@ export function useDeleteEstimateProcurement({
    const queryClient = useQueryClient()
    const auth = useAuth()
    const socket = useSocket()
-   const deleteItem = useOptimisticDeleteProcurement()
+   const deleteItem = useOptimisticDeleteEstimateProcurement()
    const estimateQueryOptions = trpc.estimate.list.queryOptions({
       workspaceId: auth.workspace.id,
       filter: search,
@@ -77,7 +77,7 @@ export function useDeleteEstimateProcurement({
    )
 }
 
-export function useOptimisticDeleteProcurement() {
+export function useOptimisticDeleteEstimateProcurement() {
    // const search = useSearch({ strict: false })
    const auth = useAuth()
    const queryClient = useQueryClient()

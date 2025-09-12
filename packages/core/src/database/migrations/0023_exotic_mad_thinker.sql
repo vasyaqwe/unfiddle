@@ -16,4 +16,4 @@ CREATE TABLE `estimate_procurement` (
 	FOREIGN KEY (`estimate_item_id`) REFERENCES `estimate_item`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
-CREATE INDEX `procurement_estimate_id_created_at_idx` ON `estimate_procurement` (`estimate_id`,`created_at`);
+CREATE INDEX `estimate_procurement_estimate_id_created_at_idx` ON `estimate_procurement` (`estimate_id`,`created_at`);

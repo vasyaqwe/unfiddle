@@ -15,12 +15,12 @@ import {
 import { number } from "@unfiddle/ui/utils"
 
 export function UpdateEstimateProcurement({
-   procurement,
+   estimateProcurement,
    finalFocus,
    open,
    setOpen,
 }: {
-   procurement: EstimateProcurement
+   estimateProcurement: EstimateProcurement
    finalFocus: React.RefObject<HTMLButtonElement | null>
    open: boolean
    setOpen: (open: boolean) => void
@@ -28,7 +28,7 @@ export function UpdateEstimateProcurement({
    const auth = useAuth()
    const estimate = useEstimate()
    const attachments = useAttachments({
-      subjectId: procurement.id,
+      subjectId: estimateProcurement.id,
    })
    const mutation = useUpdateEstimateProcurement({
       onMutate: () => {
@@ -53,14 +53,14 @@ export function UpdateEstimateProcurement({
                onSubmit={(form) => {
                   mutation.mutate({
                      ...form,
-                     estimateProcurementId: procurement.id,
+                     estimateProcurementId: estimateProcurement.id,
                      workspaceId: auth.workspace.id,
                      purchasePrice: number(form.purchasePrice),
                      quantity: number(form.quantity),
                      estimateId: estimate.id,
                   })
                }}
-               estimateProcurement={procurement}
+               estimateProcurement={estimateProcurement}
             >
                <DrawerFooter>
                   <Button>Зберегти</Button>
