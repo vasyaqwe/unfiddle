@@ -69,11 +69,11 @@ export function useCreateOrderAssignee({
             })
             onError?.()
          },
-         onSuccess: (_, assignee) => {
+         onSuccess: (_, data) => {
             socket.order.send({
                action: "create_assignee",
                senderId: auth.user.id,
-               orderId: assignee.orderId,
+               orderId: data.orderId,
                workspaceId: auth.workspace.id,
                assignee: { user: auth.user },
             })

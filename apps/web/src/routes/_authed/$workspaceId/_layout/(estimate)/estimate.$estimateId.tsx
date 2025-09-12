@@ -5,6 +5,7 @@ import { useEstimate } from "@/estimate/hooks"
 import { CreateEstimateItem } from "@/estimate/item/components/create-estimate-item"
 import { useDeleteEstimate } from "@/estimate/mutations/use-delete-estimate"
 import { useUpdateEstimate } from "@/estimate/mutations/use-update-estimate"
+import { CreateEstimateProcurement } from "@/estimate/procurement/components/create-estimate-procurement"
 import {
    Header,
    HeaderBackButton,
@@ -12,14 +13,21 @@ import {
 } from "@/layout/components/header"
 import { MainScrollArea } from "@/layout/components/main"
 import { EstimateItem } from "@/routes/_authed/$workspaceId/_layout/(estimate)/-components/estimate-item"
+import { EstimateProcurement } from "@/routes/_authed/$workspaceId/_layout/(estimate)/-components/estimate-procurement"
+import { trpc } from "@/trpc"
 import { ErrorComponent } from "@/ui/components/error"
-import { SuspenseFallback } from "@/ui/components/suspense-boundary"
+import {
+   SuspenseBoundary,
+   SuspenseFallback,
+} from "@/ui/components/suspense-boundary"
 import { UserAvatar } from "@/user/components/user-avatar"
+import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, notFound } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
 import { formatEstimateDate } from "@unfiddle/core/estimate/utils"
 import { makeShortId } from "@unfiddle/core/id"
 import { Button } from "@unfiddle/ui/components/button"
+import { Card } from "@unfiddle/ui/components/card"
 import { DrawerTrigger } from "@unfiddle/ui/components/drawer"
 import { Icons } from "@unfiddle/ui/components/icons"
 import {
@@ -143,6 +151,15 @@ function RouteComponent() {
                      ))}
                   </div>
                </div>
+               <div className="relative mt-5 min-h-[250px]">
+                  <div className="my-2 flex items-center justify-between">
+                     <p className="font-medium text-lg">Закупівлі</p>
+                     <CreateEstimateProcurement />
+                  </div>
+                  <SuspenseBoundary>
+                     <Procurements />
+                  </SuspenseBoundary>
+               </div>
             </MainScrollArea>
          </div>
          <div
@@ -261,5 +278,26 @@ function Actions() {
             }
          />
       </>
+   )
+}
+
+function Procurements() {
+   const params = Route.useParams()
+   const query = useSuspenseQuery(
+      trpc.estimateProcurement.list.queryOptions(params),
+   )
+
+   if (query.data.length === 0)
+      return <p className="font-medium text-muted">Ще немає закупівель.</p>
+
+   return (
+      <Card className="relative mt-2 p-0">
+         {query.data.map((p) => (
+            <EstimateProcurement
+               key={p.id}
+               estimateProcurement={p}
+            />
+         ))}
+      </Card>
    )
 }

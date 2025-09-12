@@ -129,6 +129,7 @@ export const procurementRouter = t.router({
          z.object({
             procurementId: z.string(),
             workspaceId: z.string(),
+            // for real-time
             orderId: z.string(),
          }),
       )

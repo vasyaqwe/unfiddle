@@ -1,3 +1,4 @@
+import type { EstimateProcurementEvent } from "@unfiddle/core/estimate/procurement/types"
 import type { EstimateEvent } from "@unfiddle/core/estimate/types"
 import invariant from "@unfiddle/core/invariant"
 import type { OrderEvent } from "@unfiddle/core/order/types"
@@ -25,6 +26,10 @@ export function useSocket() {
       },
       estimate: {
          send: (event: EstimateEvent) =>
+            socket.estimate?.send(JSON.stringify(event)),
+      },
+      estimateProcurement: {
+         send: (event: EstimateProcurementEvent) =>
             socket.estimate?.send(JSON.stringify(event)),
       },
    }

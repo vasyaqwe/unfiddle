@@ -62,12 +62,12 @@ export function useDeleteOrderAssignee({
             })
             onError?.()
          },
-         onSuccess: (_, assignee) => {
+         onSuccess: (_, data) => {
             socket.order.send({
                action: "delete_assignee",
                senderId: auth.user.id,
-               orderId: assignee.orderId,
-               userId: assignee.userId,
+               orderId: data.orderId,
+               userId: data.userId,
                workspaceId: auth.workspace.id,
             })
          },

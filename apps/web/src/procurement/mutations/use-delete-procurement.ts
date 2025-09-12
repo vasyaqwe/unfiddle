@@ -57,12 +57,12 @@ export function useDeleteProcurement({
 
             onError?.()
          },
-         onSuccess: (_, procurement) => {
+         onSuccess: (_, data) => {
             socket.procurement.send({
                action: "delete",
                senderId: auth.user.id,
-               procurementId: procurement.procurementId,
-               orderId: procurement.orderId,
+               procurementId: data.procurementId,
+               orderId: data.orderId,
                workspaceId: auth.workspace.id,
             })
          },
