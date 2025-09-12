@@ -26,9 +26,11 @@ import { createFileRoute, notFound } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
 import { formatEstimateDate } from "@unfiddle/core/estimate/utils"
 import { makeShortId } from "@unfiddle/core/id"
+import { Badge } from "@unfiddle/ui/components/badge"
 import { Button } from "@unfiddle/ui/components/button"
 import { Card } from "@unfiddle/ui/components/card"
 import { DrawerTrigger } from "@unfiddle/ui/components/drawer"
+import { Expandable } from "@unfiddle/ui/components/expandable"
 import { Icons } from "@unfiddle/ui/components/icons"
 import {
    Menu,
@@ -93,6 +95,12 @@ function RouteComponent() {
                <Actions />
             </Header>
             <MainScrollArea>
+               <SuspenseBoundary
+                  fallback={null}
+                  errorComponent={null}
+               >
+                  <TotalProfit />
+               </SuspenseBoundary>
                <p className="mt-2 mb-3 font-semibold text-xl md:text-2xl">
                   {estimate.name}
                </p>
@@ -209,6 +217,35 @@ function RouteComponent() {
             </ScrollArea>
          </div>
       </div>
+   )
+}
+
+function TotalProfit() {
+   const params = Route.useParams()
+   const estimate = useEstimate()
+   const query = useSuspenseQuery(
+      trpc.estimateProcurement.list.queryOptions(params),
+   )
+   const procurements = query.data
+
+   const totalProfit = procurements.reduce(
+      (acc, p) =>
+         acc + ((estimate.sellingPrice ?? 0) - p.purchasePrice) * p.quantity,
+      0,
+   )
+
+   return (
+      <Expandable expanded={totalProfit > 0}>
+         <Badge
+            variant={"success"}
+            className="mb-1.5 text-base"
+         >
+            Профіт:{" "}
+            {`${formatCurrency(totalProfit as number, {
+               currency: estimate.currency,
+            })}`}{" "}
+         </Badge>
+      </Expandable>
    )
 }
 
