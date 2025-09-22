@@ -1,6 +1,6 @@
 export * from "./utils"
 export * from "drizzle-orm/sqlite-core"
-import type { ApiEnv, ClientEnv } from "@unfiddle/infra/env"
+import type { ApiEnv, ClientEnv } from "@unfiddle/core/env"
 import { drizzle } from "drizzle-orm/d1"
 import * as schema from "./schema"
 

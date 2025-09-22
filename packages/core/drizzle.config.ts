@@ -1,4 +1,4 @@
-import { clientEnv } from "@unfiddle/infra/env"
+import { clientEnv } from "@unfiddle/core/env"
 import { defineConfig } from "drizzle-kit"
 
 const env = (process.env.NODE_ENV || "development") as

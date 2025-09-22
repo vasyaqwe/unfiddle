@@ -1,6 +1,6 @@
 import { initTRPC } from "@trpc/server"
 import type { AuthedHonoEnv } from "@unfiddle/core/api/types"
-import type { Env } from "@unfiddle/infra/env"
+import type { Env } from "@unfiddle/core/env"
 import type { Context } from "hono"
 import superjson from "superjson"
 

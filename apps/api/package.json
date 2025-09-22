@@ -7,7 +7,6 @@
       "typecheck": "tsc --noEmit"
    },
    "dependencies": {
-      "@unfiddle/infra": "workspace:*",
       "@unfiddle/core": "workspace:*"
    },
    "devDependencies": {

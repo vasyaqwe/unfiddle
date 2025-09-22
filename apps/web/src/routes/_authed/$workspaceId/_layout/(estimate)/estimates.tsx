@@ -117,7 +117,6 @@ function RouteComponent() {
                   </EstimateForm>
                </DrawerPopup>
             </Drawer>
-
             <div className="sticky top-0 z-[5] flex min-h-12 items-center gap-1 border-surface-12/13 border-b bg-background px-1.5 shadow-xs/4 lg:min-h-10">
                <DateFilter />
                <FilterMenu />

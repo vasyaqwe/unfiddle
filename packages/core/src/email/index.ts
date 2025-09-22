@@ -1,5 +1,5 @@
+import type { ApiEnv } from "@unfiddle/core/env"
 import { Resend } from "resend"
-import type { ApiEnv } from "./env"
 
 export const EMAIL_FROM = "unfiddle <unfiddle@vasyaqwe.com>"
 

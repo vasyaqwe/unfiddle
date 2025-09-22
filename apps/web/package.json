@@ -21,7 +21,6 @@
     "@trpc/client": "^11.4.3",
     "@trpc/tanstack-react-query": "^11.4.3",
     "@unfiddle/core": "workspace:*",
-    "@unfiddle/infra": "workspace:*",
     "@unfiddle/ui": "workspace:*",
     "@vitejs/plugin-react": "^4.6.0",
     "babel-plugin-react-compiler": "^19.1.0-rc.2",

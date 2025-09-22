@@ -1,4 +1,4 @@
-import { clientEnv } from "@unfiddle/infra/env"
+import { clientEnv } from "@unfiddle/core/env"
 
 const metaEnv = import.meta.env
 

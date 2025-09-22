@@ -1,6 +1,6 @@
 import { parseZodErrorIssues, statusToCode } from "@unfiddle/core/api/error"
 import type { HonoEnv } from "@unfiddle/core/api/types"
-import { logger } from "@unfiddle/infra/logger"
+import { logger } from "@unfiddle/core/logger"
 import type { ValidationTargets } from "hono"
 import { Hono } from "hono"
 import { validator } from "hono/validator"
