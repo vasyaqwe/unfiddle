@@ -1,4 +1,4 @@
 {
    "extends": ["@unfiddle/tsconfig/base.json", "./tsconfig.json"],
-   "include": ["src"]
+   "include": ["src", "vite.config.ts"]
 }

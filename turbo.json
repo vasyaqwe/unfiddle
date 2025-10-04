@@ -7,7 +7,18 @@
       },
       "build": {
          "dependsOn": ["^build"],
-         "outputs": [".cache/tsbuildinfo.json", "dist/**"]
+         "outputs": [".cache/tsbuildinfo.json", "dist/**"],
+         "inputs": [
+            "src/**/*.tsx",
+            "src/**/*.ts",
+            "src/**/*.css",
+            "!src/**/*.test.tsx",
+            "!src/**/*.test.ts",
+            "!src/**/*.spec.tsx",
+            "!src/**/*.spec.ts",
+            "!src/**/*.stories.tsx",
+            "!src/**/*.stories.ts"
+         ]
       },
       "dev": {
          "dependsOn": ["^dev"],
@@ -27,6 +38,19 @@
       },
       "clean": {
          "cache": false
+      },
+      "test": {
+         "dependsOn": ["^topo"],
+         "inputs": [
+            "vite.config.ts",
+            "src/setup.ts",
+            "src/**/*.ts",
+            "src/**/*.tsx"
+         ]
+      },
+      "test:ui": {
+         "cache": false,
+         "persistent": true
       },
       "//#format-lint": {},
       "//#format-lint:fix": {

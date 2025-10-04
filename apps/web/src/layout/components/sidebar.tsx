@@ -1,5 +1,5 @@
 import { useAuth } from "@/auth/hooks"
-import { CreateOrder } from "@/order/components/create-order"
+import { CreateOrder } from "@/order/create/create-order"
 import { UserAvatar } from "@/user/components/user-avatar"
 import { WorkspaceLogo } from "@/workspace/components/workspace-logo"
 import { WorkspaceMenuPopup } from "@/workspace/components/workspace-menu"

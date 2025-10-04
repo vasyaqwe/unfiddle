@@ -175,12 +175,13 @@ function Form({
                   >
                      <Field className={"max-md:col-span-3"}>
                         <FieldControl
+                           data-testid="order-item-name"
                            required
                            placeholder="Уведіть назву"
                            value={item.name}
                            onChange={(e) =>
-                              setItems(
-                                 items.map((i, itemIdx) =>
+                              setItems((prevItems) =>
+                                 prevItems.map((i, itemIdx) =>
                                     idx === itemIdx
                                        ? { ...i, name: e.target.value }
                                        : i,
@@ -193,6 +194,7 @@ function Form({
                      </Field>
                      <Field>
                         <NumberField
+                           data-testid="order-item-quantity"
                            required
                            placeholder="шт."
                            min={1}
@@ -210,6 +212,7 @@ function Form({
                      </Field>
                      <Field>
                         <NumberField
+                           data-testid="order-item-price"
                            placeholder={CURRENCY_SYMBOLS[currency]}
                            value={item.desiredPrice}
                            onValueChange={(desiredPrice) =>
@@ -234,6 +237,7 @@ function Form({
                         kind={"icon"}
                         disabled={items.length === 1}
                         className="self-end disabled:cursor-not-allowed"
+                        data-testid="trash-button"
                      >
                         <Icons.trash />
                      </Button>

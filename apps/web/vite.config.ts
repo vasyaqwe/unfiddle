@@ -1,3 +1,5 @@
+/// <reference types="vitest" />
+
 import { sentryVitePlugin } from "@sentry/vite-plugin"
 import tailwindcss from "@tailwindcss/vite"
 import { tanstackRouter } from "@tanstack/router-plugin/vite"
@@ -32,6 +34,12 @@ export default defineConfig(({ mode }) => {
       },
       server: {
          port: 3000,
+      },
+      test: {
+         globals: true,
+         environment: "jsdom",
+         setupFiles: "./src/tests/setup.ts",
+         include: ["./src/**/*.test.{ts,tsx}"],
       },
    }
 })

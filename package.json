@@ -26,7 +26,9 @@
     "dev:www": "turbo dev --filter=@unfiddle/www --filter=@unfiddle/ui",
     "format-lint": "biome check",
     "format-lint:fix": "biome check --write",
-    "typecheck": "turbo typecheck"
+    "typecheck": "turbo typecheck",
+    "test": "turbo run test",
+    "test:ui": "turbo run test:ui"
   },
   "trustedDependencies": ["@biomejs/biome", "core-js", "esbuild", "workerd"],
   "workspaces": ["apps/*", "packages/*", "tooling/*"]

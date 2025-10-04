@@ -43,6 +43,22 @@
    "organizeImports": {
       "enabled": true
    },
+   "overrides": [
+      {
+         "include": ["**/*.test.ts", "**/*.test.tsx", "**/tests/**"],
+         "linter": {
+            "rules": {
+               "suspicious": {
+                  "noExplicitAny": "off",
+                  "noExtraNonNullAssertion": "off"
+               },
+               "style": {
+                  "noNonNullAssertion": "off"
+               }
+            }
+         }
+      }
+   ],
    "linter": {
       "enabled": true,
       "rules": {
