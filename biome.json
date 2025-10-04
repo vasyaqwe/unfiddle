@@ -45,7 +45,12 @@
    },
    "overrides": [
       {
-         "include": ["**/*.test.ts", "**/*.test.tsx", "**/tests/**"],
+         "include": [
+            "**/*.test.ts",
+            "**/*.test.tsx",
+            "**/tests/**",
+            "**/__mocks__/**"
+         ],
          "linter": {
             "rules": {
                "suspicious": {

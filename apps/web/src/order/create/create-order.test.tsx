@@ -1,3 +1,5 @@
+import "@/socket/__mocks__"
+import "@/auth/__mocks__"
 import { createOrderOpenAtom } from "@/order/store"
 import { trpcMsw } from "@/tests/handlers"
 import { TestProviders } from "@/tests/providers"
