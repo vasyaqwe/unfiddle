@@ -27,7 +27,7 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
          onOpenChange={setOpen}
       >
          {children}
-         <DrawerPopup>
+         <DrawerPopup data-testid="create-order-popup">
             <DrawerTitle>Нове замовлення</DrawerTitle>
             <OrderForm
                onSubmit={(form) =>

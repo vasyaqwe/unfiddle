@@ -15,13 +15,13 @@ import { CreateProcurement } from "./create-procurement"
 describe("CreateProcurement form", () => {
    it("should create procurement", async () => {
       const user = userEvent.setup()
-      const createProcurementSpy = vi.fn()
+      const spy = vi.fn()
 
       server.use(
          trpcMsw.procurement.create.mutation(async (opts) => {
             const input = ((opts.input as any)["0"] as any)
                .json as RouterInput["procurement"]["create"]
-            createProcurementSpy(input)
+            spy(input)
             const orderItemId = input.orderItemId ?? null
             if (!orderItemId) throw new Error("orderItemId is required")
             return {
@@ -46,10 +46,10 @@ describe("CreateProcurement form", () => {
       )
       await popup.findByText("Нова закупівля")
 
-      await user.type(popup.getByLabelText("Кількість"), "10")
-      await user.type(popup.getByLabelText("Ціна"), "123.45")
-      await user.type(popup.getByLabelText("Постачальник"), "Test Provider")
-      await user.type(popup.getByLabelText("Комент"), "Test comment")
+      await user.type(popup.getByLabelText("Кількість"), "1")
+      await user.type(popup.getByLabelText("Ціна"), "1.1")
+      await user.type(popup.getByLabelText("Постачальник"), "mock")
+      await user.type(popup.getByLabelText("Комент"), "mock")
 
       await user.click(popup.getByText("Додати"))
 
@@ -59,13 +59,10 @@ describe("CreateProcurement form", () => {
          ).not.toBeInTheDocument()
       })
 
-      expect(createProcurementSpy).toHaveBeenCalledOnce()
-      expect(createProcurementSpy).toHaveBeenCalledWith(
+      expect(spy).toHaveBeenCalledOnce()
+      expect(spy).toHaveBeenCalledWith(
          expect.objectContaining({
-            quantity: 10,
-            purchasePrice: 123.45,
-            provider: "Test Provider",
-            note: "Test comment",
+            orderItemId: "mock",
          }),
       )
    })

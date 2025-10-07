@@ -5,13 +5,15 @@ import { trpcMsw } from "@/tests/handlers"
 import { TestProviders } from "@/tests/providers"
 import { server } from "@/tests/server"
 import { store } from "@/tests/store"
-import { render, screen } from "@testing-library/react"
+import { render, screen, waitFor, within } from "@testing-library/react"
 import { userEvent } from "@testing-library/user-event"
 import { CURRENCIES } from "@unfiddle/core/currency/constants"
 import {
    ORDER_SEVERITIES,
    ORDER_SEVERITIES_TRANSLATION,
 } from "@unfiddle/core/order/constants"
+import type { RouterInput } from "@unfiddle/core/trpc/types"
+import { expect } from "vitest"
 import { CreateOrder } from "./create-order"
 
 describe("CreateOrder form", () => {
@@ -45,31 +47,34 @@ describe("CreateOrder form", () => {
          const user = userEvent.setup()
 
          server.use(
-            trpcMsw.order.create.mutation((opts) => ({
-               ...opts.input,
-               id: "mock" as any,
-               creatorId: "mock" as any,
-               shortId: 1,
-               normalizedName: opts.input.name.toLowerCase(),
-               items: opts.input.items ?? [],
-               analogs: [],
-            })),
+            trpcMsw.order.create.mutation((opts) => {
+               const input = ((opts.input as any)["0"] as any)
+                  .json as RouterInput["order"]["create"]
+               return {
+                  ...input,
+                  id: "mock" as any,
+                  creatorId: "mock" as any,
+                  shortId: 1,
+                  normalizedName: input.name.toLowerCase(),
+                  items: input.items ?? [],
+                  analogs: [],
+               }
+            }),
          )
 
          store.set(createOrderOpenAtom, true)
          render(<CreateOrder />, { wrapper: TestProviders })
-         await screen.findByText("Нове замовлення")
+         const popup = within(await screen.findByTestId("create-order-popup"))
 
-         await user.type(screen.getByLabelText("Назва"), "Test Project Alpha")
-         await user.click(screen.getByRole("combobox", { name: "Валюта" }))
+         await user.type(popup.getByLabelText("Назва"), "mock")
+         await user.click(popup.getByRole("combobox", { name: "Валюта" }))
          await user.click(
             await screen.findByRole("option", { name: CURRENCIES[0] }),
          )
-         await user.type(screen.getByLabelText("Ціна продажу"), "1234.56")
+         await user.type(popup.getByLabelText("Ціна продажу"), "1.1")
+         await user.type(popup.getByLabelText("Клієнт"), "mock")
 
-         await user.type(screen.getByLabelText("Клієнт"), "Acme Corp.")
-
-         await user.click(screen.getByRole("combobox", { name: "Пріоритет" }))
+         await user.click(popup.getByRole("combobox", { name: "Пріоритет" }))
          await user.click(
             await screen.findByRole("option", {
                name: ORDER_SEVERITIES_TRANSLATION[ORDER_SEVERITIES[0]],
@@ -77,25 +82,25 @@ describe("CreateOrder form", () => {
          )
 
          await user.type(
-            screen.getByLabelText("Термін постачання"),
+            popup.getByLabelText("Термін постачання"),
             "2025-12-31",
          )
 
-         await user.type(
-            screen.getByLabelText("Комент"),
-            "Needs express delivery.",
-         )
+         await user.type(popup.getByLabelText("Комент"), "mock")
 
-         await user.click(screen.getByLabelText("З ПДВ"))
+         await user.click(popup.getByLabelText("З ПДВ"))
 
-         await user.type(
-            screen.getAllByTestId("order-item-name")[0]!,
-            "Product",
-         )
-         await user.type(screen.getAllByTestId("order-item-quantity")[0]!, "10")
-         await user.type(screen.getAllByTestId("order-item-price")[0]!, "99.99")
+         await user.type(popup.getAllByTestId("order-item-name")[0]!, "mock")
+         await user.type(popup.getAllByTestId("order-item-quantity")[0]!, "1")
+         await user.type(popup.getAllByTestId("order-item-price")[0]!, "1.1")
 
-         await user.click(screen.getByText("Додати"))
+         await user.click(popup.getByText("Додати"))
+
+         await waitFor(() => {
+            expect(
+               screen.queryByTestId("create-order-popup"),
+            ).not.toBeInTheDocument()
+         })
       },
    )
 })
