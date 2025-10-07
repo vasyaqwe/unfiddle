@@ -2,7 +2,7 @@ import { useAttachments } from "@/attachment/hooks"
 import { useAuth } from "@/auth/hooks"
 import { useOrder } from "@/order/hooks"
 import { ProcurementForm } from "@/procurement/components/procurement-form"
-import { useCreateProcurement } from "@/procurement/mutations/use-create-procurement"
+import { useCreateProcurement } from "@/procurement/create/use-create-procurement"
 import { createProcurementOpenAtom } from "@/procurement/store"
 import { Button } from "@unfiddle/ui/components/button"
 import {

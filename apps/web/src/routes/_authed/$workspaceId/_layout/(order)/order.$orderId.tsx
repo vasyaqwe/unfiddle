@@ -20,7 +20,7 @@ import { CreateOrderItem } from "@/order/item/components/create-order-item"
 import { createOrderOpenAtom } from "@/order/store"
 import { UpdateOrder } from "@/order/update/update-order"
 import { useUpdateOrder } from "@/order/update/use-update-order"
-import { CreateProcurement } from "@/procurement/components/create-procurement"
+import { CreateProcurement } from "@/procurement/create/create-procurement"
 import {
    createProcurementOpenAtom,
    updateProcurementOpenAtom,
