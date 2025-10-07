@@ -41,7 +41,7 @@ export function CreateProcurement() {
                </Button>
             }
          />
-         <DrawerPopup>
+         <DrawerPopup data-testid="create-procurement-popup">
             <DrawerTitle>Нова закупівля</DrawerTitle>
             <ProcurementForm
                onSubmit={(form) =>

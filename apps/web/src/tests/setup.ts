@@ -1,4 +1,10 @@
+import { server } from "@/tests/server"
 import "@testing-library/jest-dom"
+import { afterAll, afterEach, beforeAll } from "vitest"
+
+beforeAll(() => server.listen())
+afterEach(() => server.resetHandlers())
+afterAll(() => server.close())
 
 if (window.HTMLElement) {
    window.HTMLElement.prototype.setPointerCapture = () => {}
