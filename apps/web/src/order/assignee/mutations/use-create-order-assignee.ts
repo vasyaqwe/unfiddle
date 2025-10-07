@@ -1,6 +1,6 @@
 import { useAuth } from "@/auth/hooks"
-import { useOptimisticUpdateOrder } from "@/order/mutations/use-update-order"
 import { useOrderQueryOptions } from "@/order/queries"
+import { useOptimisticUpdateOrder } from "@/order/update/use-update-order"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"

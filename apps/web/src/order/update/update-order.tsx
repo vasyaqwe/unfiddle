@@ -1,6 +1,6 @@
 import { useAuth } from "@/auth/hooks"
 import { OrderForm } from "@/order/components/order-form"
-import { useUpdateOrder } from "@/order/mutations/use-update-order"
+import { useUpdateOrder } from "@/order/update/use-update-order"
 import { SuspenseBoundary } from "@/ui/components/suspense-boundary"
 import { Button } from "@unfiddle/ui/components/button"
 

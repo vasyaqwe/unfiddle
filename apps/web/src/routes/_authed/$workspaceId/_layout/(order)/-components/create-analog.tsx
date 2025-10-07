@@ -1,5 +1,5 @@
 import { useOrder } from "@/order/hooks"
-import { useUpdateOrder } from "@/order/mutations/use-update-order"
+import { useUpdateOrder } from "@/order/update/use-update-order"
 import { useParams } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
 import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
