@@ -5,11 +5,7 @@ import { trpcMsw } from "@/tests/handlers"
 import { TestProviders } from "@/tests/providers"
 import { server } from "@/tests/server"
 import { store } from "@/tests/store"
-import {
-   render,
-   screen,
-   waitForElementToBeRemoved,
-} from "@testing-library/react"
+import { render, screen, waitFor } from "@testing-library/react"
 import { userEvent } from "@testing-library/user-event"
 import { CURRENCIES } from "@unfiddle/core/currency/constants"
 import {
@@ -100,8 +96,13 @@ describe("CreateOrder form", () => {
          await user.type(screen.getAllByTestId("order-item-price")[0]!, "99.99")
 
          await user.click(screen.getByText("Додати"))
-         await waitForElementToBeRemoved(() =>
-            screen.queryByText("Нове замовлення"),
+         await waitFor(
+            () => {
+               expect(
+                  screen.queryByText("Нове замовлення"),
+               ).not.toBeInTheDocument()
+            },
+            { timeout: 1000 },
          )
       },
    )

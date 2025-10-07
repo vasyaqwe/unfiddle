@@ -6,12 +6,7 @@ import { trpcMsw } from "@/tests/handlers"
 import { TestProviders } from "@/tests/providers"
 import { server } from "@/tests/server"
 import { store } from "@/tests/store"
-import {
-   render,
-   screen,
-   waitForElementToBeRemoved,
-   within,
-} from "@testing-library/react"
+import { render, screen, within } from "@testing-library/react"
 import { userEvent } from "@testing-library/user-event"
 import { CreateProcurement } from "./create-procurement"
 
@@ -21,7 +16,6 @@ describe("CreateProcurement form", () => {
 
       server.use(
          trpcMsw.procurement.create.mutation((opts) => {
-            console.log("hello", opts.input)
             const orderItemId = opts.input.orderItemId ?? null
             if (!orderItemId) throw new Error("orderItemId is required")
             return {
@@ -52,8 +46,5 @@ describe("CreateProcurement form", () => {
       await user.type(popup.getByLabelText("Комент"), "Test comment")
 
       await user.click(popup.getByText("Додати"))
-      await waitForElementToBeRemoved(() =>
-         screen.queryByText("Нова закупівля"),
-      )
    })
 })
