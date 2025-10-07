@@ -6,8 +6,9 @@ import { trpcMsw } from "@/tests/handlers"
 import { TestProviders } from "@/tests/providers"
 import { server } from "@/tests/server"
 import { store } from "@/tests/store"
-import { render, screen, within, waitFor } from "@testing-library/react"
+import { render, screen, waitFor, within } from "@testing-library/react"
 import { userEvent } from "@testing-library/user-event"
+import type { RouterInput } from "@unfiddle/core/trpc/types"
 import { expect, vi } from "vitest"
 import { CreateProcurement } from "./create-procurement"
 
@@ -17,18 +18,20 @@ describe("CreateProcurement form", () => {
       const createProcurementSpy = vi.fn()
 
       server.use(
-         trpcMsw.procurement.create.mutation(async (input) => {
-            createProcurementSpy(input.input['0'].json)
-            const orderItemId = input.input['0'].json.orderItemId ?? null
+         trpcMsw.procurement.create.mutation(async (opts) => {
+            const input = ((opts.input as any)["0"] as any)
+               .json as RouterInput["procurement"]["create"]
+            createProcurementSpy(input)
+            const orderItemId = input.orderItemId ?? null
             if (!orderItemId) throw new Error("orderItemId is required")
             return {
-               ...input.input['0'].json,
+               ...input,
                id: "mock" as any,
                creatorId: "mock" as any,
                status: "pending" as const,
-               note: input.input['0'].json.note ?? null,
+               note: input.note ?? null,
                orderItemId,
-               provider: input.input['0'].json.provider ?? null,
+               provider: input.provider ?? null,
                attachments: [],
                createdAt: new Date(),
                updatedAt: new Date(),
