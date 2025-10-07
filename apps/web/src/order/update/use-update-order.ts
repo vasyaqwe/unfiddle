@@ -86,10 +86,14 @@ export function useUpdateOrder({
                   workspaceId: input.workspaceId,
                }),
             )
-            queryClient.invalidateQueries(queryOptions.list)
 
-            if (input.deletedAt)
-               return queryClient.invalidateQueries(queryOptions.listArchived)
+            queryClient.invalidateQueries(queryOptions.list)
+            if (input.deletedAt) {
+               queryClient.invalidateQueries(queryOptions.listArchived)
+            }
+            if (input.deletedAt === null) {
+               queryClient.invalidateQueries(queryOptions.listUnarchived)
+            }
          },
       }),
    )
@@ -100,76 +104,17 @@ export function useOptimisticUpdateOrder() {
    const queryClient = useQueryClient()
    const queryOptions = useOrderQueryOptions()
 
-   const desc = (a: { createdAt: string }, b: { createdAt: string }) =>
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-
-   const moveItemBetweenQueries = async <
-      T extends Record<string, string | null> & {
-         id: string
-         createdAt: string
-      },
-   >(
-      fromOptions: ReturnType<typeof trpc.order.list.queryOptions>,
-      toOptions: ReturnType<typeof trpc.order.list.queryOptions>,
-      itemId: string,
-      update: Partial<T>,
-   ) => {
-      let fromData = queryClient.getQueryData<T[]>(fromOptions.queryKey)
-      let toData = queryClient.getQueryData<T[]>(toOptions.queryKey)
-
-      if (!fromData) {
-         await queryClient.prefetchQuery(fromOptions)
-         fromData = queryClient.getQueryData<T[]>(fromOptions.queryKey) || []
-      }
-      if (!toData) {
-         await queryClient.prefetchQuery(toOptions)
-         toData = queryClient.getQueryData<T[]>(toOptions.queryKey) || []
-      }
-
-      const item = fromData.find((i) => i.id === itemId)
-      if (!item) return
-
-      queryClient.setQueryData(
-         fromOptions.queryKey,
-         (currentFromData: T[] = []) =>
-            currentFromData.filter((i) => i.id !== itemId),
-      )
-
-      queryClient.setQueryData(toOptions.queryKey, (currentToData: T[] = []) =>
-         [...currentToData, { ...item, ...update }].sort(desc),
-      )
-   }
-
    return async (input: RouterInput["order"]["update"]) => {
       const oneQueryKey = trpc.order.one.queryOptions({
          orderId: input.orderId,
          workspaceId: auth.workspace.id,
       }).queryKey
 
-      if (input.deletedAt === null) {
-         queryClient.setQueryData(oneQueryKey, (oldData) => {
-            if (!oldData) return oldData
-            return { ...oldData, deletedAt: null }
-         })
-         return await moveItemBetweenQueries(
-            queryOptions.listArchived,
-            queryOptions.list,
-            input.orderId,
-            { deletedAt: null },
-         )
-      }
-
       if (input.deletedAt) {
-         queryClient.setQueryData(oneQueryKey, (oldData) => {
-            if (!oldData) return oldData
-            return { ...oldData, deletedAt: new Date() }
-         })
-         return await moveItemBetweenQueries(
-            queryOptions.list,
-            queryOptions.listArchived,
-            input.orderId,
-            { deletedAt: new Date().toString() },
-         )
+         queryClient.invalidateQueries(queryOptions.listArchived)
+      }
+      if (input.deletedAt === null) {
+         queryClient.invalidateQueries(queryOptions.listUnarchived)
       }
 
       queryClient.setQueryData(oneQueryKey, (oldData) => {

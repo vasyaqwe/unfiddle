@@ -18,10 +18,24 @@ export function useOrderQueryOptions() {
       },
    )
 
-   const listArchived = trpc.order.list.queryOptions({
-      workspaceId: auth.workspace.id,
-      filter: { ...search, archived: true },
-   })
+   const listArchived = trpc.order.list.queryOptions(
+      {
+         workspaceId: auth.workspace.id,
+         filter: { ...search, archived: true },
+      },
+      {
+         placeholderData: keepPreviousData,
+      },
+   )
+   const listUnarchived = trpc.order.list.queryOptions(
+      {
+         workspaceId: auth.workspace.id,
+         filter: { ...search, archived: false },
+      },
+      {
+         placeholderData: keepPreviousData,
+      },
+   )
 
-   return { list, listArchived }
+   return { list, listArchived, listUnarchived }
 }
