@@ -9,6 +9,7 @@ import { orderAssignee, orderItem } from "@unfiddle/core/database/schema"
 import { createId } from "@unfiddle/core/id"
 import { orderAssigneeRouter } from "@unfiddle/core/order/assignee/trpc"
 import {
+   ORDER_PAYMENT_TYPES_TRANSLATION,
    ORDER_SEVERITIES_TRANSLATION,
    ORDER_STATUSES_TRANSLATION,
 } from "@unfiddle/core/order/constants"
@@ -57,8 +58,8 @@ export const orderRouter = t.router({
                sellingPrice: true,
                status: true,
                severity: true,
+               paymentType: true,
                note: true,
-               vat: true,
                client: true,
                deliversAt: true,
                createdAt: true,
@@ -89,7 +90,8 @@ export const orderRouter = t.router({
             Ціна: formatCurrency(order.sellingPrice, {
                currency: order.currency,
             }),
-            "З ПДВ": order.vat ? "Так" : "Ні",
+            "Варіант оплати":
+               ORDER_PAYMENT_TYPES_TRANSLATION[order.paymentType],
             Клієнт: order.client,
             Коментар: order.note,
             Менеджер: order.creator?.name,
@@ -474,7 +476,7 @@ export const orderRouter = t.router({
                severity: true,
                currency: true,
                status: true,
-               vat: true,
+               paymentType: true,
                sellingPrice: true,
                deletedAt: true,
                createdAt: true,
@@ -517,7 +519,7 @@ export const orderRouter = t.router({
       .use(workspaceMemberMiddleware)
       .input(
          createInsertSchema(order)
-            .omit({ creatorId: true, shortId: true })
+            .omit({ creatorId: true, shortId: true, vat: true })
             .extend({
                analogs: z.array(z.string()).default([]),
                items: z

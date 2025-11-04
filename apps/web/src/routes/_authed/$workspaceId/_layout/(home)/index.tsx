@@ -248,7 +248,7 @@ function _OrderRow({
                   </p>
                </div>
                <p
-                  data-vat={order.vat ? "" : undefined}
+                  data-vat={order.paymentType === "llc_vat" ? "" : undefined}
                   className="col-span-2 col-start-1 row-start-2 mt-px line-clamp-1 break-normal font-semibold data-vat:text-orange-10"
                >
                   {order.name}

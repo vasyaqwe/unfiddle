@@ -5,6 +5,7 @@ import { d } from "@unfiddle/core/database"
 import { good } from "@unfiddle/core/good/schema"
 import { orderAssignee } from "@unfiddle/core/order/assignee/schema"
 import {
+   ORDER_PAYMENT_TYPES,
    ORDER_SEVERITIES,
    ORDER_STATUSES,
 } from "@unfiddle/core/order/constants"
@@ -52,6 +53,12 @@ export const order = d.table(
       note: d.text().notNull().default(""),
       status: d.text({ enum: ORDER_STATUSES }).notNull().default("pending"),
       vat: d.integer({ mode: "boolean" }).notNull().default(false),
+      paymentType: d
+         .text({
+            enum: ORDER_PAYMENT_TYPES,
+         })
+         .notNull()
+         .default("cash"),
       client: d.text(),
       deletedAt: d.integer({ mode: "timestamp" }),
       deliversAt: d.integer({ mode: "timestamp" }),
@@ -100,7 +107,7 @@ export const updateOrderSchema = createUpdateSchema(order)
       sellingPrice: true,
       status: true,
       severity: true,
-      vat: true,
+      paymentType: true,
       client: true,
       deliversAt: true,
       currency: true,

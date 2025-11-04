@@ -51,7 +51,7 @@ export function UpdateOrder({ orderId, finalFocus, open, setOpen }: Props) {
                         note: form.note,
                         client: form.client.length === 0 ? null : form.client,
                         severity: form.severity,
-                        vat: form.vat === "on",
+                        paymentType: form.paymentType,
                         deliversAt: form.deliversAt,
                         currency: form.currency,
                      })
