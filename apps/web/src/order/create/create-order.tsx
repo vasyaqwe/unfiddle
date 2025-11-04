@@ -36,7 +36,6 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
                      workspaceId: auth.workspace.id,
                      sellingPrice: number(form.sellingPrice),
                      client: form.client.length === 0 ? null : form.client,
-                     vat: form.vat === "on",
                   })
                }
             >

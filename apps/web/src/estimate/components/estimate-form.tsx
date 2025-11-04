@@ -251,7 +251,7 @@ export function Form({
                </Button>
             </Fieldset>
          )}
-         <Fieldset className={"mb-10 space-y-3 md:space-y-8"}>
+         <Fieldset className={"mb-10 space-y-4 md:space-y-8"}>
             <FieldsetLegend className={"md:mb-4"}>Деталі</FieldsetLegend>
             <FieldGroup>
                <Field>

@@ -6,13 +6,19 @@ import { trpc } from "@/trpc"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { CURRENCIES, CURRENCY_SYMBOLS } from "@unfiddle/core/currency/constants"
 import type { Currency } from "@unfiddle/core/currency/types"
-import { ORDER_SEVERITIES_TRANSLATION } from "@unfiddle/core/order/constants"
+import {
+   ORDER_PAYMENT_TYPES,
+   ORDER_PAYMENT_TYPES_TRANSLATION,
+   ORDER_SEVERITIES_TRANSLATION,
+} from "@unfiddle/core/order/constants"
 import { ORDER_SEVERITIES } from "@unfiddle/core/order/constants"
 import type { OrderItem } from "@unfiddle/core/order/item/types"
-import type { OrderSeverity } from "@unfiddle/core/order/types"
+import type {
+   OrderPaymentType,
+   OrderSeverity,
+} from "@unfiddle/core/order/types"
 import type { RouterInput, RouterOutput } from "@unfiddle/core/trpc/types"
 import { Button } from "@unfiddle/ui/components/button"
-import { Checkbox } from "@unfiddle/ui/components/checkbox"
 import { DateInput } from "@unfiddle/ui/components/date-input"
 import {
    Field,
@@ -44,7 +50,7 @@ type FormData = {
    note: string
    client: string
    severity: OrderSeverity
-   vat: "on" | "off"
+   paymentType: OrderPaymentType
    deliversAt: Date | null
    currency: Currency
    items: BareItem[]
@@ -130,7 +136,7 @@ function Form({
             })
          }}
       >
-         <FieldGroup className="grid-cols-[1fr_4rem] md:grid-cols-[1fr_4rem]">
+         <FieldGroup className="grid-cols-[1fr_74px] md:grid-cols-[1fr_74px]">
             <Field>
                <FieldLabel>Назва</FieldLabel>
                <FieldControl
@@ -275,7 +281,7 @@ function Form({
                </Button>
             </Fieldset>
          )}
-         <Fieldset className={"mb-10 space-y-3 md:space-y-8"}>
+         <Fieldset className={"mb-10 space-y-4 md:space-y-8"}>
             <FieldsetLegend className={"md:mb-4"}>Деталі</FieldsetLegend>
             <FieldGroup>
                <Field>
@@ -299,6 +305,20 @@ function Form({
                   />
                </Field>
             </FieldGroup>
+            <Field>
+               <label
+                  htmlFor="term"
+                  className="font-medium text-sm"
+               >
+                  Термін постачання
+               </label>
+               <DateInput
+                  inDialog
+                  id="term"
+                  value={deliversAt}
+                  onValueChange={setDeliversAt}
+               />
+            </Field>
             <FieldGroup>
                <Field>
                   <FieldLabel className={"mb-2.5"}>Пріоритет</FieldLabel>
@@ -334,20 +354,40 @@ function Form({
                      </SelectPopup>
                   </Select>
                </Field>
-               <div className="flex w-full flex-col items-start">
-                  <label
-                     htmlFor="term"
-                     className="font-medium text-sm"
+               <Field>
+                  <FieldLabel className={"mb-2.5"}>Варіант оплати</FieldLabel>
+                  <Select
+                     name="paymentType"
+                     defaultValue={order?.paymentType ?? "cash"}
                   >
-                     Термін постачання
-                  </label>
-                  <DateInput
-                     inDialog
-                     id="term"
-                     value={deliversAt}
-                     onValueChange={setDeliversAt}
-                  />
-               </div>
+                     <SelectTrigger
+                        render={
+                           <Button
+                              variant={"secondary"}
+                              className="w-full justify-start"
+                           >
+                              <SelectValue>
+                                 {(v) =>
+                                    ORDER_PAYMENT_TYPES_TRANSLATION[v as never]
+                                 }
+                              </SelectValue>
+                              <SelectTriggerIcon />
+                           </Button>
+                        }
+                     />
+                     <SelectPopup align="start">
+                        {ORDER_PAYMENT_TYPES.map((s) => (
+                           <SelectItem
+                              key={s}
+                              value={s}
+                              label={ORDER_PAYMENT_TYPES_TRANSLATION[s]}
+                           >
+                              {ORDER_PAYMENT_TYPES_TRANSLATION[s]}
+                           </SelectItem>
+                        ))}
+                     </SelectPopup>
+                  </Select>
+               </Field>
             </FieldGroup>
             <div>
                <Field>
@@ -389,13 +429,13 @@ function Form({
                   ))}
                </div>
             </div>
-            <Field className={"mt-3 flex flex-row items-center gap-2"}>
+            {/* <Field className={"mt-3 flex flex-row items-center gap-2"}>
                <Checkbox
                   name="vat"
                   defaultChecked={order?.vat ?? false}
                />
                <FieldLabel className={"mt-px"}>З ПДВ</FieldLabel>
-            </Field>
+            </Field> */}
          </Fieldset>
          <FileUploader
             ref={fileUploaderRef}

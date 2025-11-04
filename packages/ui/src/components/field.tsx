@@ -34,7 +34,7 @@ export function FieldGroup({
 }: React.ComponentProps<"div">) {
    return (
       <div
-         className={cn("grid gap-3 md:grid-cols-2 md:gap-8", className)}
+         className={cn("grid gap-4 md:grid-cols-2 md:gap-8", className)}
          {...props}
       />
    )

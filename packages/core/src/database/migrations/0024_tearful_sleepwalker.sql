@@ -1,0 +1,1 @@
+ALTER TABLE `order` ADD `payment_type` text DEFAULT 'cash' NOT NULL;

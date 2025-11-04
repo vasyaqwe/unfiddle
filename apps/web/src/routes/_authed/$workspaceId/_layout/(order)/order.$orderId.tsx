@@ -47,6 +47,7 @@ import { formatCurrency } from "@unfiddle/core/currency"
 import { formatDate } from "@unfiddle/core/date"
 import { makeShortId } from "@unfiddle/core/id"
 import {
+   ORDER_PAYMENT_TYPES_TRANSLATION,
    ORDER_SEVERITIES,
    ORDER_SEVERITIES_TRANSLATION,
    ORDER_STATUSES,
@@ -480,14 +481,12 @@ function RouteComponent() {
                      {formatOrderDate(order.createdAt)}
                   </p>
                </section>
-               {order.vat ? (
-                  <section className="group/section py-3">
-                     <p className="-ml-1 font-medium text-orange-10">
-                        <Icons.check className="mr-1.5 mb-[2px] inline-block size-5.5" />
-                        З ПДВ
-                     </p>
-                  </section>
-               ) : null}
+               <section className="group/section py-3">
+                  <p className="text-muted text-sm">Оплата</p>
+                  <p className="mt-2 font-medium">
+                     {ORDER_PAYMENT_TYPES_TRANSLATION[order.paymentType]}
+                  </p>
+               </section>
                <Files fileUploaderRef={fileUploaderRef} />
             </ScrollArea>
          </div>

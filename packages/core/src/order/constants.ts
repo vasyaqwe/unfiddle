@@ -1,4 +1,8 @@
-import type { OrderSeverity, OrderStatus } from "@unfiddle/core/order/types"
+import type {
+   OrderPaymentType,
+   OrderSeverity,
+   OrderStatus,
+} from "@unfiddle/core/order/types"
 import type tailwindColors from "tailwindcss/colors"
 
 export const ORDER_STATUSES = [
@@ -34,3 +38,12 @@ export const ORDER_SEVERITIES_TRANSLATION: Record<OrderSeverity, string> = {
    high: "Терміново",
    critical: "Критично",
 }
+
+export const ORDER_PAYMENT_TYPES = ["llc_vat", "fop", "cash"] as const
+
+export const ORDER_PAYMENT_TYPES_TRANSLATION: Record<OrderPaymentType, string> =
+   {
+      llc_vat: "ТОВ з ПДВ",
+      fop: "ФОП",
+      cash: "Готівка",
+   }

@@ -9,6 +9,8 @@ import { render, screen, waitFor, within } from "@testing-library/react"
 import { userEvent } from "@testing-library/user-event"
 import { CURRENCIES } from "@unfiddle/core/currency/constants"
 import {
+   ORDER_PAYMENT_TYPES,
+   ORDER_PAYMENT_TYPES_TRANSLATION,
    ORDER_SEVERITIES,
    ORDER_SEVERITIES_TRANSLATION,
 } from "@unfiddle/core/order/constants"
@@ -73,6 +75,10 @@ describe("CreateOrder form", () => {
          )
          await user.type(popup.getByLabelText("Ціна продажу"), "1.1")
          await user.type(popup.getByLabelText("Клієнт"), "mock")
+         await user.type(
+            popup.getByLabelText("Термін постачання"),
+            "2025-12-31",
+         )
 
          await user.click(popup.getByRole("combobox", { name: "Пріоритет" }))
          await user.click(
@@ -80,15 +86,16 @@ describe("CreateOrder form", () => {
                name: ORDER_SEVERITIES_TRANSLATION[ORDER_SEVERITIES[0]],
             }),
          )
-
-         await user.type(
-            popup.getByLabelText("Термін постачання"),
-            "2025-12-31",
+         await user.click(
+            popup.getByRole("combobox", { name: "Варіант оплати" }),
+         )
+         await user.click(
+            await screen.findByRole("option", {
+               name: ORDER_PAYMENT_TYPES_TRANSLATION[ORDER_PAYMENT_TYPES[0]],
+            }),
          )
 
          await user.type(popup.getByLabelText("Комент"), "mock")
-
-         await user.click(popup.getByLabelText("З ПДВ"))
 
          await user.type(popup.getAllByTestId("order-item-name")[0]!, "mock")
          await user.type(popup.getAllByTestId("order-item-quantity")[0]!, "1")

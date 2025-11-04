@@ -148,6 +148,13 @@
       "when": 1757684107469,
       "tag": "0023_exotic_mad_thinker",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "6",
+      "when": 1762262542389,
+      "tag": "0024_tearful_sleepwalker",
+      "breakpoints": true
     }
   ]
 }
