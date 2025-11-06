@@ -24,7 +24,7 @@ export const ORDER_STATUSES_COLORS: Record<OrderStatus, TailwindColor> = {
 export const ORDER_STATUSES_TRANSLATION: Record<OrderStatus, string> = {
    pending: "Без статусу",
    processing: "В роботі",
-   en_route: "В дорозі",
+   en_route: "Некоректний запит",
    successful: "Успішно",
    canceled: "Скасовано",
 }

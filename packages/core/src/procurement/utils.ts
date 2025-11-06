@@ -1,4 +1,4 @@
-import { PROCUREMENT_STATUSES_COLORS } from "@/procurement/constants"
+import { PROCUREMENT_STATUSES_COLORS } from "@unfiddle/core/procurement/constants"
 import type { ProcurementStatus } from "@unfiddle/core/procurement/types"
 import tailwindColors from "tailwindcss/colors"
 

@@ -147,7 +147,7 @@ function Content({
       estimateSize: () => {
          return window.innerWidth < 1024 ? 72 : 44
       },
-      overscan: 3,
+      overscan: 6,
    })
    const data = virtualizer.getVirtualItems()
    useForceUpdate()
