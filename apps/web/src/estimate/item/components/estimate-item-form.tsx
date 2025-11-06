@@ -34,7 +34,7 @@ export function EstimateItemForm({
    return (
       <form
          ref={formRef}
-         className="mt-4 flex grow flex-col space-y-3 md:space-y-8"
+         className="mt-4 flex grow flex-col space-y-4 md:space-y-8"
          onSubmit={(e) => {
             e.preventDefault()
             const activeElement = document.activeElement as HTMLElement

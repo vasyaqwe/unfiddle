@@ -1,6 +1,7 @@
 import type { updateOrderItemSchema } from "@unfiddle/core/database/schema"
 import type { OrderAssignee } from "@unfiddle/core/order/assignee/types"
 import type {
+   ORDER_PAYMENT_TYPES,
    ORDER_SEVERITIES,
    ORDER_STATUSES,
 } from "@unfiddle/core/order/constants"
@@ -11,6 +12,7 @@ import type { z } from "zod"
 
 export type OrderStatus = (typeof ORDER_STATUSES)[number]
 export type OrderSeverity = (typeof ORDER_SEVERITIES)[number]
+export type OrderPaymentType = (typeof ORDER_PAYMENT_TYPES)[number]
 
 export type OrderEvent =
    | {

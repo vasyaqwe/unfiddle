@@ -9,6 +9,7 @@ import { orderAssignee, orderItem } from "@unfiddle/core/database/schema"
 import { createId } from "@unfiddle/core/id"
 import { orderAssigneeRouter } from "@unfiddle/core/order/assignee/trpc"
 import {
+   ORDER_PAYMENT_TYPES_TRANSLATION,
    ORDER_SEVERITIES_TRANSLATION,
    ORDER_STATUSES_TRANSLATION,
 } from "@unfiddle/core/order/constants"
@@ -57,8 +58,8 @@ export const orderRouter = t.router({
                sellingPrice: true,
                status: true,
                severity: true,
+               paymentType: true,
                note: true,
-               vat: true,
                client: true,
                deliversAt: true,
                createdAt: true,
@@ -89,7 +90,8 @@ export const orderRouter = t.router({
             Ціна: formatCurrency(order.sellingPrice, {
                currency: order.currency,
             }),
-            "З ПДВ": order.vat ? "Так" : "Ні",
+            "Варіант оплати":
+               ORDER_PAYMENT_TYPES_TRANSLATION[order.paymentType],
             Клієнт: order.client,
             Коментар: order.note,
             Менеджер: order.creator?.name,
@@ -157,6 +159,9 @@ export const orderRouter = t.router({
          const severityTranslationValues = Object.values(
             ORDER_SEVERITIES_TRANSLATION,
          ) as [string, ...string[]]
+         const paymentTypeTranslationValues = Object.values(
+            ORDER_PAYMENT_TYPES_TRANSLATION,
+         ) as [string, ...string[]]
 
          const priceSchema = z.union([
             z.number(),
@@ -181,17 +186,9 @@ export const orderRouter = t.router({
                   .default(ORDER_SEVERITIES_TRANSLATION.low),
                Валюта: z.enum(CURRENCIES).default("UAH"),
                Ціна: priceSchema,
-               "З ПДВ": z
-                  .union([z.boolean(), z.string()])
-                  .transform((val) => {
-                     if (typeof val === "boolean") return val
-                     return (
-                        val.toLowerCase() === "так" ||
-                        val.toLowerCase() === "true" ||
-                        val === "1"
-                     )
-                  })
-                  .default(false),
+               "Варіант оплати": z
+                  .enum(paymentTypeTranslationValues)
+                  .default(ORDER_PAYMENT_TYPES_TRANSLATION.cash),
                Клієнт: z.string().optional(),
                Коментар: z.string().default(""),
                "Термін постачання": z
@@ -238,6 +235,12 @@ export const orderRouter = t.router({
                key,
             ]),
          ) as Record<string, keyof typeof ORDER_SEVERITIES_TRANSLATION>
+
+         const paymentTypeMap = Object.fromEntries(
+            Object.entries(ORDER_PAYMENT_TYPES_TRANSLATION).map(
+               ([key, value]) => [value, key],
+            ),
+         ) as Record<string, keyof typeof ORDER_PAYMENT_TYPES_TRANSLATION>
          const validatedData = []
          const errors = []
 
@@ -250,7 +253,7 @@ export const orderRouter = t.router({
                   severity: severityMap[row.Пріоритет || "Звичайно"],
                   currency: row.Валюта || "UAH",
                   sellingPrice: row.Ціна,
-                  vat: row["З ПДВ"] || false,
+                  paymentType: paymentTypeMap[row["Варіант оплати"] || "cash"],
                   client: row.Клієнт || null,
                   note: row.Коментар || "",
                   deliversAt: row["Термін постачання"] || null,
@@ -474,7 +477,7 @@ export const orderRouter = t.router({
                severity: true,
                currency: true,
                status: true,
-               vat: true,
+               paymentType: true,
                sellingPrice: true,
                deletedAt: true,
                createdAt: true,
@@ -517,7 +520,7 @@ export const orderRouter = t.router({
       .use(workspaceMemberMiddleware)
       .input(
          createInsertSchema(order)
-            .omit({ creatorId: true, shortId: true })
+            .omit({ creatorId: true, shortId: true, vat: true })
             .extend({
                analogs: z.array(z.string()).default([]),
                items: z
