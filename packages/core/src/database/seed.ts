@@ -7,8 +7,8 @@ import { eq } from "drizzle-orm"
 import type { Context } from "hono"
 
 export const seed = async (c: Context<HonoEnv>) => {
-   if (c.var.env.ENVIRONMENT !== "development")
-      return c.json({ error: "Not found" }, 404)
+   // if (c.var.env.ENVIRONMENT !== "development")
+   //    return c.json({ error: "Not found" }, 404)
 
    const db = c.var.db
    const workspaceId = "wrk_3epqUEnxFEZx6oHLBPGZJRJ6ZcYi"
