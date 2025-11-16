@@ -14,6 +14,7 @@ import { workspaceRouter } from "@unfiddle/core/workspace/api"
 import { partyserverMiddleware } from "hono-party"
 import { cors } from "hono/cors"
 import { logger as honoLogger } from "hono/logger"
+import { seedRouter } from "./seed"
 
 const app = createRouter()
    .use(honoLogger())
@@ -48,6 +49,7 @@ const base = createRouter()
    })
    .route("/storage", storageRouter)
    .route("/workspace", workspaceRouter)
+   .route("/seed", seedRouter)
    .get("/health", (c) =>
       c.json({
          message: "Healthy",
