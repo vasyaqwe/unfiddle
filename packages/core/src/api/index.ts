@@ -4,6 +4,7 @@ import { createRouter } from "@unfiddle/core/api/utils"
 import { authClient } from "@unfiddle/core/auth"
 import { authMiddleware } from "@unfiddle/core/auth/middleware"
 import { d } from "@unfiddle/core/database"
+import { seed } from "@unfiddle/core/database/seed"
 import { emailClient } from "@unfiddle/core/email"
 import { clientEnv } from "@unfiddle/core/env"
 import { logger } from "@unfiddle/core/logger"
@@ -14,7 +15,6 @@ import { workspaceRouter } from "@unfiddle/core/workspace/api"
 import { partyserverMiddleware } from "hono-party"
 import { cors } from "hono/cors"
 import { logger as honoLogger } from "hono/logger"
-import { seedRouter } from "./seed"
 
 const app = createRouter()
    .use(honoLogger())
@@ -49,7 +49,7 @@ const base = createRouter()
    })
    .route("/storage", storageRouter)
    .route("/workspace", workspaceRouter)
-   .route("/seed", seedRouter)
+   .get("/seed", seed)
    .get("/health", (c) =>
       c.json({
          message: "Healthy",

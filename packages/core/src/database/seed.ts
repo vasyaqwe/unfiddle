@@ -1,17 +1,18 @@
-import { createRouter } from "@unfiddle/core/api/utils"
+import type { HonoEnv } from "@unfiddle/core/api/types"
 import { ORDER_STATUSES } from "@unfiddle/core/order/constants"
 import { orderItem } from "@unfiddle/core/order/item/schema"
 import { order, orderCounter } from "@unfiddle/core/order/schema"
 import { procurement } from "@unfiddle/core/procurement/schema"
 import { eq } from "drizzle-orm"
+import type { Context } from "hono"
 
-export const seedRouter = createRouter().get("/", async (c) => {
+export const seed = async (c: Context<HonoEnv>) => {
    if (c.var.env.ENVIRONMENT !== "development")
       return c.json({ error: "Not found" }, 404)
 
    const db = c.var.db
-   const workspaceId = "wrk_3cuzzvDFhJouEL2cfgnFCXNKWQbM"
-   const userId = "wN4ikjgC56XdGCwR4yn9yYpsVbo0e0Bz"
+   const workspaceId = "wrk_3epqUEnxFEZx6oHLBPGZJRJ6ZcYi"
+   const userId = "ODILYdq12Q2chn3we5d8CoxMLmeJbexC"
 
    try {
       let currentCounter =
@@ -119,4 +120,4 @@ export const seedRouter = createRouter().get("/", async (c) => {
          500,
       )
    }
-})
+}
