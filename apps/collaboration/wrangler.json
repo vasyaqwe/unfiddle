@@ -26,14 +26,6 @@
                   "class_name": "Procurement"
                },
                {
-                  "name": "Estimate",
-                  "class_name": "Estimate"
-               },
-               {
-                  "name": "EstimateProcurement",
-                  "class_name": "EstimateProcurement"
-               },
-               {
                   "name": "Whiteboard",
                   "class_name": "Whiteboard"
                }
