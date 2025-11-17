@@ -26,6 +26,14 @@
                   "class_name": "Procurement"
                },
                {
+                  "name": "Estimate",
+                  "class_name": "Estimate"
+               },
+               {
+                  "name": "EstimateProcurement",
+                  "class_name": "EstimateProcurement"
+               },
+               {
                   "name": "Whiteboard",
                   "class_name": "Whiteboard"
                }
@@ -34,7 +42,13 @@
          "migrations": [
             {
                "tag": "v1",
-               "new_sqlite_classes": ["Order", "Procurement", "Whiteboard"]
+               "new_sqlite_classes": [
+                  "Order",
+                  "Procurement",
+                  "Estimate",
+                  "EstimateProcurement",
+                  "Whiteboard"
+               ]
             }
          ],
          "vars": {
