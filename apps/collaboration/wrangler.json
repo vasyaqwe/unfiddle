@@ -35,6 +35,10 @@
             {
                "tag": "v1",
                "new_sqlite_classes": ["Order", "Procurement", "Whiteboard"]
+            },
+            {
+               "tag": "v2",
+               "new_sqlite_classes": ["Estimate", "EstimateProcurement"]
             }
          ],
          "vars": {
