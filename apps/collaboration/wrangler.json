@@ -1,4 +1,6 @@
 {
+   "$schema": "../../node_modules/wrangler/config-schema.json",
+   "account_id": "bfef1e994f1aac7e7a42dc4ba75197a0",
    "name": "unfiddle-collaboration",
    "main": "src/index.ts",
    "compatibility_date": "2025-04-01",
@@ -24,6 +26,14 @@
                {
                   "name": "Procurement",
                   "class_name": "Procurement"
+               },
+               {
+                  "name": "Estimate",
+                  "class_name": "Estimate"
+               },
+               {
+                  "name": "EstimateProcurement",
+                  "class_name": "EstimateProcurement"
                },
                {
                   "name": "Whiteboard",
