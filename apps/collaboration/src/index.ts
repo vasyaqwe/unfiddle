@@ -1,6 +1,8 @@
 import { routePartykitRequest } from "partyserver"
 export { Order } from "@unfiddle/core/order/party"
 export { Procurement } from "@unfiddle/core/procurement/party"
+export { Estimate } from "@unfiddle/core/estimate/party"
+export { EstimateProcurement } from "@unfiddle/core/estimate/procurement/party"
 export { Whiteboard } from "@unfiddle/core/whiteboard/party"
 
 export default {
