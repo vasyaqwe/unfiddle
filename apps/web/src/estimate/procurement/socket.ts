@@ -14,7 +14,7 @@ export function useEstimateProcurementSocket() {
 
    return usePartySocket({
       host: env.COLLABORATION_URL,
-      party: "estimateProcurement",
+      party: "estimate-procurement",
       room: auth.workspace.id,
       onMessage(event) {
          const data = JSON.parse(event.data) as EstimateProcurementEvent
