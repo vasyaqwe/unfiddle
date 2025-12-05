@@ -10,7 +10,6 @@ export const CurrencySelect = ({
    value,
    onValueChange,
 }: { value: string; onValueChange: (value: string) => void }) => {
-   console.log(value)
    return (
       <Select
          value={value}

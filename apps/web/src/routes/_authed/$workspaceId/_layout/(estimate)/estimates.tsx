@@ -101,7 +101,6 @@ function RouteComponent() {
                   <DrawerTitle>Новий прорахунок</DrawerTitle>
                   <EstimateForm
                      onSubmit={(form) => {
-                        console.log(form)
                         mutation.mutate({
                            ...form,
                            workspaceId: auth.workspace.id,
