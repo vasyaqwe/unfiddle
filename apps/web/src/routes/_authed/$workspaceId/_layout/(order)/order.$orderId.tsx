@@ -12,7 +12,7 @@ import { MainScrollArea } from "@/layout/components/main"
 import { useCreateOrderAssignee } from "@/order/assignee/mutations/use-create-order-assignee"
 import { useDeleteOrderAssignee } from "@/order/assignee/mutations/use-delete-order-assignee"
 import { ArchiveOrderAlert } from "@/order/components/archive-order-alert"
-import { SeverityIcon } from "@/order/components/severity-icon"
+import { OrderSeverityIcon } from "@/order/components/order-severity-icon"
 import { DeleteOrderAlert } from "@/order/delete/delete-order-alert"
 import { useDeleteOrder } from "@/order/delete/use-delete-order"
 import { useOrder } from "@/order/hooks"
@@ -647,7 +647,7 @@ function SeverityCombobox({ className }: React.ComponentProps<typeof Button>) {
                   variant={"ghost"}
                   className={cn("!gap-1.75 w-fit justify-start", className)}
                >
-                  <SeverityIcon
+                  <OrderSeverityIcon
                      severity={order.severity}
                      className="!-ml-[3px]"
                   />

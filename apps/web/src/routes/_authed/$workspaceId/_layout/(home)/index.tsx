@@ -11,7 +11,7 @@ import { VList, VListContent } from "@/layout/components/vlist"
 import { useCreateOrderAssignee } from "@/order/assignee/mutations/use-create-order-assignee"
 import { useDeleteOrderAssignee } from "@/order/assignee/mutations/use-delete-order-assignee"
 import { ArchiveOrderAlert } from "@/order/components/archive-order-alert"
-import { SeverityIcon } from "@/order/components/severity-icon"
+import { OrderSeverityIcon } from "@/order/components/order-severity-icon"
 import { DeleteOrderAlert } from "@/order/delete/delete-order-alert"
 import { useDeleteOrder } from "@/order/delete/use-delete-order"
 import { useOrderQueryOptions } from "@/order/queries"
@@ -229,7 +229,7 @@ function _OrderRow({
                className="relative grid h-[72px] grid-cols-[1fr_auto] grid-rows-[1fr_auto] items-center gap-x-2.5 gap-y-2 px-2.5 py-2 text-left lg:flex lg:h-[44px]"
             >
                <div className="flex items-center gap-2 max-lg:w-full">
-                  <SeverityIcon
+                  <OrderSeverityIcon
                      severity={order.severity}
                      className="mr-[2px] shrink-0"
                   />

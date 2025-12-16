@@ -1,4 +1,4 @@
-import { SeverityIcon } from "@/order/components/severity-icon"
+import { OrderSeverityIcon } from "@/order/components/order-severity-icon"
 import { useOrderQueryOptions } from "@/order/queries"
 import { trpc } from "@/trpc"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
@@ -120,7 +120,7 @@ export function FilterMenu() {
                </Submenu>
                <Submenu>
                   <MenuSubmenuTrigger>
-                     <SeverityIcon severity="high" />
+                     <OrderSeverityIcon severity="high" />
                      Пріоритет
                   </MenuSubmenuTrigger>
                   <MenuPopup>
