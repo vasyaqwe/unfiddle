@@ -1,4 +1,5 @@
 import "@/socket/__mocks__"
+import "@/router/__mocks__"
 import "@/auth/__mocks__"
 import { createOrderOpenAtom } from "@/order/store"
 import { trpcMsw } from "@/tests/handlers"
@@ -74,7 +75,6 @@ describe("CreateOrder form", () => {
             await screen.findByRole("option", { name: CURRENCIES[0] }),
          )
          await user.type(popup.getByLabelText("Ціна продажу"), "1.1")
-         await user.type(popup.getByLabelText("Клієнт"), "mock")
          await user.type(
             popup.getByLabelText("Термін постачання"),
             "2025-12-31",

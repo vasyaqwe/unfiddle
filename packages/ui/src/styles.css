@@ -124,6 +124,7 @@
    --color-surface-10: var(--color-slate-10);
    --color-surface-11: var(--color-slate-11);
    --color-surface-12: var(--color-slate-12);
+   --color-muted: var(--color-surface-11);
    --color-destructive: var(--color-red-9);
    --color-surface-2: #17181a;
    --color-highlight-foreground: hsl(30, 100%, 85%);

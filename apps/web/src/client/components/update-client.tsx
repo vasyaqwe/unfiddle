@@ -1,9 +1,9 @@
 import { useAuth } from "@/auth/hooks"
-import { OrderForm } from "@/order/components/order-form"
-import { useUpdateOrder } from "@/order/update/use-update-order"
+import { ClientForm } from "@/client/components/client-form"
+import { useUpdateClient } from "@/client/mutations/use-update-client"
 import { SuspenseBoundary } from "@/ui/components/suspense-boundary"
+import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import { Button } from "@unfiddle/ui/components/button"
-
 import {
    Drawer,
    DrawerClose,
@@ -11,18 +11,17 @@ import {
    DrawerPopup,
    DrawerTitle,
 } from "@unfiddle/ui/components/drawer"
-import { number } from "@unfiddle/ui/utils"
 
 interface Props {
-   orderId: string
+   client: RouterOutput["client"]["list"][number]
    finalFocus: React.RefObject<HTMLElement | null>
    open: boolean
    setOpen: (open: boolean) => void
 }
 
-export function UpdateOrder({ orderId, finalFocus, open, setOpen }: Props) {
+export function UpdateClient({ client, finalFocus, open, setOpen }: Props) {
    const auth = useAuth()
-   const mutation = useUpdateOrder({
+   const mutation = useUpdateClient({
       onMutate: () => setOpen(false),
       onError: () => setOpen(true),
    })
@@ -38,26 +37,19 @@ export function UpdateOrder({ orderId, finalFocus, open, setOpen }: Props) {
             }}
             finalFocus={finalFocus}
          >
-            <DrawerTitle>Редагувати замовлення</DrawerTitle>
+            <DrawerTitle>Редагувати клієнта</DrawerTitle>
             <SuspenseBoundary>
-               <OrderForm
+               <ClientForm
                   open={open}
                   onSubmit={(form) =>
                      mutation.mutate({
-                        orderId,
+                        clientId: client.id,
                         workspaceId: auth.workspace.id,
                         name: form.name,
-                        sellingPrice: number(form.sellingPrice),
-                        note: form.note,
-                        client: null,
-                        clientId: form.clientId,
                         severity: form.severity,
-                        paymentType: form.paymentType,
-                        deliversAt: form.deliversAt,
-                        currency: form.currency,
                      })
                   }
-                  orderId={orderId}
+                  client={client}
                >
                   <DrawerFooter>
                      <Button>Зберегти</Button>
@@ -67,7 +59,7 @@ export function UpdateOrder({ orderId, finalFocus, open, setOpen }: Props) {
                         }
                      />
                   </DrawerFooter>
-               </OrderForm>
+               </ClientForm>
             </SuspenseBoundary>
          </DrawerPopup>
       </Drawer>

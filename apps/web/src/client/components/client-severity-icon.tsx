@@ -2,7 +2,7 @@ import type { OrderSeverity } from "@unfiddle/core/order/types"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { cn } from "@unfiddle/ui/utils"
 
-export function SeverityIcon({
+export function ClientSeverityIcon({
    severity,
    className = "",
 }: { severity: OrderSeverity; className?: string }) {

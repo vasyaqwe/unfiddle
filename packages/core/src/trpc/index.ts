@@ -1,4 +1,5 @@
 import { attachmentRouter } from "@unfiddle/core/attachment/trpc"
+import { clientRouter } from "@unfiddle/core/client/trpc"
 import { estimateProcurementRouter } from "@unfiddle/core/estimate/procurement/trpc"
 import { estimateRouter } from "@unfiddle/core/estimate/trpc"
 import { orderRouter } from "@unfiddle/core/order/trpc"
@@ -10,6 +11,7 @@ import { workspaceRouter } from "@unfiddle/core/workspace/trpc"
 export const appRouter = t.router({
    user: userRouter,
    workspace: workspaceRouter,
+   client: clientRouter,
    procurement: procurementRouter,
    order: orderRouter,
    attachment: attachmentRouter,

@@ -10,9 +10,6 @@
    "placement": {
       "mode": "smart"
    },
-   "ai": {
-      "binding": "AI"
-   },
    "unsafe": {
       "bindings": [
          {
@@ -58,9 +55,6 @@
             }
          ],
          "name": "unfiddle-api",
-         "ai": {
-            "binding": "AI"
-         },
          "unsafe": {
             "bindings": [
                {

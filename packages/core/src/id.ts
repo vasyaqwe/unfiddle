@@ -7,6 +7,7 @@ export const ID_PREFIXES = {
    attachment: "att",
    file: "file",
    workspace: "wrk",
+   client: "cl",
    order: "ord",
    procurement: "pro",
    good: "good",

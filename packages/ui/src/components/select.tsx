@@ -42,7 +42,7 @@ export function SelectTrigger({ children, className, ...props }: Props) {
          render={
             <Button
                variant={"secondary"}
-               className={cn("flex justify-start", className)}
+               className={cn("flex justify-start text-sm", className)}
             >
                {children ?? (
                   <>

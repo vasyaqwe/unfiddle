@@ -1,9 +1,13 @@
+import { CACHE_SHORT } from "@/api"
 import { UploadedAttachment } from "@/attachment/components/uploaded-attachment"
 import { useAttachments } from "@/attachment/hooks"
 import { useAuth } from "@/auth/hooks"
+import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
 import { FileUploader } from "@/file/components/uploader"
 import { trpc } from "@/trpc"
+import { SuspenseBoundary } from "@/ui/components/suspense-boundary"
 import { useSuspenseQuery } from "@tanstack/react-query"
+import { useParams } from "@tanstack/react-router"
 import { CURRENCIES, CURRENCY_SYMBOLS } from "@unfiddle/core/currency/constants"
 import type { Currency } from "@unfiddle/core/currency/types"
 import {
@@ -19,6 +23,15 @@ import type {
 } from "@unfiddle/core/order/types"
 import type { RouterInput, RouterOutput } from "@unfiddle/core/trpc/types"
 import { Button } from "@unfiddle/ui/components/button"
+import {
+   Combobox,
+   ComboboxEmpty,
+   ComboboxInput,
+   ComboboxItem,
+   ComboboxPopup,
+   ComboboxTrigger,
+   ComboboxTriggerIcon,
+} from "@unfiddle/ui/components/combobox"
 import { DateInput } from "@unfiddle/ui/components/date-input"
 import {
    Field,
@@ -49,6 +62,7 @@ type FormData = {
    sellingPrice: string
    note: string
    client: string
+   clientId: string | null
    severity: OrderSeverity
    paymentType: OrderPaymentType
    deliversAt: Date | null
@@ -109,6 +123,7 @@ function Form({
          desiredPrice: null,
       },
    ])
+   const [clientId, setClientId] = React.useState(order?.clientId ?? undefined)
    const formRef = React.useRef<HTMLFormElement>(null)
    const fileUploaderRef = React.useRef<HTMLDivElement>(null)
    const attachments = useAttachments({ subjectId: auth.workspace.id })
@@ -131,6 +146,7 @@ function Form({
                   deliversAt,
                   currency,
                   items,
+                  clientId: clientId ?? null,
                   attachments: attachments.uploaded,
                })
             })
@@ -296,14 +312,15 @@ function Form({
                      placeholder={CURRENCY_SYMBOLS[currency]}
                   />
                </Field>
-               <Field>
-                  <FieldLabel>Клієнт</FieldLabel>
-                  <FieldControl
-                     name="client"
-                     placeholder="Ім'я клієнта"
-                     defaultValue={order?.client ?? ""}
+               <SuspenseBoundary
+                  fallback={null}
+                  errorComponent={null}
+               >
+                  <ClientSelect
+                     clientId={clientId}
+                     setClientId={setClientId}
                   />
-               </Field>
+               </SuspenseBoundary>
             </FieldGroup>
             <Field>
                <label
@@ -444,5 +461,66 @@ function Form({
          />
          {children}
       </form>
+   )
+}
+
+function ClientSelect({
+   clientId,
+   setClientId,
+}: {
+   clientId?: string | undefined
+   setClientId: React.Dispatch<React.SetStateAction<string | undefined>>
+}) {
+   const params = useParams({ from: "/_authed/$workspaceId/_layout" })
+   const data = useSuspenseQuery(
+      trpc.client.list.queryOptions(
+         {
+            workspaceId: params.workspaceId,
+         },
+         {
+            staleTime: CACHE_SHORT,
+         },
+      ),
+   ).data
+
+   return (
+      <Field>
+         <FieldLabel className={"mb-2.5"}>Клієнт</FieldLabel>
+         <Combobox
+            canBeEmpty
+            value={clientId}
+            onValueChange={(v) => setClientId((prev) => (prev ? undefined : v))}
+         >
+            <ComboboxTrigger
+               render={
+                  <Button
+                     className={"w-full"}
+                     variant={"secondary"}
+                  >
+                     {data.find((c) => c.id === clientId)?.name ??
+                        "Оберіть клієнта"}
+                     <ComboboxTriggerIcon />
+                  </Button>
+               }
+            />
+            <ComboboxPopup
+               align="end"
+               className={"min-w-(--anchor-width)!"}
+            >
+               <ComboboxInput placeholder="Шукати.." />
+               <ComboboxEmpty>Нічого не знайдено</ComboboxEmpty>
+               {data.map((c) => (
+                  <ComboboxItem
+                     key={c.id}
+                     value={c.id}
+                     keywords={[c.name]}
+                  >
+                     <ClientSeverityIcon severity={c.severity} />
+                     {c.name}
+                  </ComboboxItem>
+               ))}
+            </ComboboxPopup>
+         </Combobox>
+      </Field>
    )
 }
