@@ -1,3 +1,5 @@
+import { CACHE_SHORT } from "@/api"
+import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
 import { OrderSeverityIcon } from "@/order/components/order-severity-icon"
 import { useOrderQueryOptions } from "@/order/queries"
 import { trpc } from "@/trpc"
@@ -33,6 +35,7 @@ export function FilterMenu() {
          status: search.status,
          severity: search.severity,
          creator: search.creator,
+         client: search.client,
       }),
    })
    const navigate = useNavigate()
@@ -40,7 +43,7 @@ export function FilterMenu() {
    const queryOptions = useOrderQueryOptions()
 
    const onFilterChange = (
-      key: "status" | "severity" | "creator",
+      key: "status" | "severity" | "creator" | "client",
       value: string,
       isChecked: boolean,
    ) => {
@@ -71,6 +74,18 @@ export function FilterMenu() {
    const members = membersQ.data ?? []
    const managers = members.filter((m) => m.role !== "buyer").map((m) => m.user)
 
+   const clients =
+      useQuery(
+         trpc.client.list.queryOptions(
+            {
+               workspaceId: params.workspaceId,
+            },
+            {
+               staleTime: CACHE_SHORT,
+            },
+         ),
+      ).data ?? []
+
    const removeFilter = () => {
       navigate({
          to: ".",
@@ -79,6 +94,7 @@ export function FilterMenu() {
             status: undefined,
             severity: undefined,
             creator: undefined,
+            client: undefined,
          }),
       }).then(() => queryClient.invalidateQueries(queryOptions.list))
    }
@@ -158,6 +174,31 @@ export function FilterMenu() {
                               key={creator.id}
                            >
                               {creator.name}
+                              <MenuCheckboxItemIndicator />
+                           </MenuCheckboxItem>
+                        ))}
+                     </MenuPopup>
+                  </Submenu>
+               )}
+               {clients.length === 0 ? null : (
+                  <Submenu>
+                     <MenuSubmenuTrigger>
+                        <Icons.briefcase />
+                        Клієнт
+                     </MenuSubmenuTrigger>
+                     <MenuPopup>
+                        {clients.map((client) => (
+                           <MenuCheckboxItem
+                              checked={
+                                 search.client?.includes(client.id) ?? false
+                              }
+                              onCheckedChange={(checked) =>
+                                 onFilterChange("client", client.id, checked)
+                              }
+                              key={client.id}
+                           >
+                              <ClientSeverityIcon severity={client.severity} />
+                              {client.name}
                               <MenuCheckboxItemIndicator />
                            </MenuCheckboxItem>
                         ))}

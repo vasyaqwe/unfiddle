@@ -41,6 +41,11 @@ vi.mock("@/order/hooks", () => ({
             goodId: "mock",
             groupId: "mock",
             note: "mock",
+            clientId: "mock",
+            clientN: {
+               name: "mock",
+               severity: "low",
+            },
          }) satisfies ReturnType<typeof useOrder>,
    ),
 }))
