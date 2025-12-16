@@ -1,6 +1,4 @@
-import { useAuth } from "@/auth/hooks"
-import { trpc } from "@/trpc"
-import { useSuspenseQuery } from "@tanstack/react-query"
+
 import { CLIENT_SEVERITIES, CLIENT_SEVERITIES_TRANSLATION } from "@unfiddle/core/client/constants"
 import type { ClientSeverity } from "@unfiddle/core/client/types"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"
@@ -23,48 +21,47 @@ type FormData = {
 }
 
 interface Props {
-   clientId?: string | undefined
+   client?: RouterOutput["client"]["list"][number]
    onSubmit: (data: FormData) => void
    children: React.ReactNode
    open?: boolean | undefined
 }
 
 export function ClientForm(props: Props) {
-   if (props.clientId && props.open) return <WithExistingData {...props} />
+   // if (props.clientId && props.open) return <WithExistingData {...props} />
 
    return <Form {...props} />
 }
 
-function WithExistingData(props: Props) {
-   const auth = useAuth()
-   const client = useSuspenseQuery(
-      trpc.client.one.queryOptions({
-         clientId: props.clientId ?? "",
-         workspaceId: auth.workspace.id,
-      }),
-   ).data
+// function WithExistingData(props: Props) {
+//    const auth = useAuth()
+//    const client = useSuspenseQuery(
+//       trpc.client.one.queryOptions({
+//          clientId: props.clientId ?? "",
+//          workspaceId: auth.workspace.id,
+//       }),
+//    ).data
 
-   if (client === null)
-      return (
-         <p className="absolute inset-0 m-auto size-fit text-center text-muted">
-            Клієнта не знайдено. Можливо, його видалили.
-         </p>
-      )
+//    if (client === null)
+//       return (
+//          <p className="absolute inset-0 m-auto size-fit text-center text-muted">
+//             Клієнта не знайдено. Можливо, його видалили.
+//          </p>
+//       )
 
-   return (
-      <Form
-         client={client}
-         {...props}
-      />
-   )
-}
+//    return (
+//       <Form
+//          client={client}
+//          {...props}
+//       />
+//    )
+// }
 
 export function Form({
    onSubmit,
    children,
    client,
-}: { client?: RouterOutput["client"]["one"] } & Props) {
-   const [severity, _setSeverity] = React.useState(client?.severity ?? "low")
+}: { client?: RouterOutput["client"]["list"][number] } & Props) {
    const formRef = React.useRef<HTMLFormElement>(null)
 
    return (
@@ -80,10 +77,7 @@ export function Form({
 
             requestAnimationFrame(() => {
                const form = formData<FormData>(e.target)
-               onSubmit({
-                  ...form,
-                  severity,
-               })
+               onSubmit(form)
             })
          }}
       >

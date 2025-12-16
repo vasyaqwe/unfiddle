@@ -1,3 +1,4 @@
+import { CACHE_SHORT } from "@/api"
 import { useAuth } from "@/auth/hooks"
 import { ClientForm } from "@/client/components/client-form"
 import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
@@ -84,7 +85,7 @@ function RouteComponent() {
                />
                <DrawerPopup>
                   <DrawerTitle>Новий клієнт</DrawerTitle>
-                  <ClientForm
+                  <ClientForm 
                      onSubmit={(form) => {
                         mutation.mutate({
                            ...form,
@@ -115,6 +116,8 @@ function Content({
    const query = useSuspenseQuery(
       trpc.client.list.queryOptions({
          workspaceId: params.workspaceId,
+      }, {
+         staleTime: CACHE_SHORT,
       }),
    )
    const virtualizer = useVirtualizer({
@@ -197,7 +200,7 @@ function ClientRow({
                   <UpdateClient
                      open={updateOpen}
                      setOpen={setUpdateOpen}
-                     clientId={client.id}
+                     client={client}
                      finalFocus={menuTriggerRef}
                   />
                   <DeleteClientAlert
