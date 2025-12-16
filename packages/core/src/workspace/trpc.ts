@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server"
 import { session } from "@unfiddle/core/auth/schema"
+import { client } from "@unfiddle/core/client/schema"
 import { workspaceMember } from "@unfiddle/core/database/schema"
 import { createCode, createId } from "@unfiddle/core/id"
 import { order } from "@unfiddle/core/order/schema"
@@ -23,138 +24,6 @@ import { z } from "zod"
 export const workspaceRouter = t.router({
    member: workspaceMemberRouter,
    analytics: workspaceAnalyticsRouter,
-   // migrateOrdersToOrderItems: t.procedure.mutation(async ({ ctx }) => {
-   //    const BATCH_SIZE = 10
-   //    let totalMigrated = 0
-
-   //    while (true) {
-   //       const ordersToMigrate = await ctx.db.query.order.findMany({
-   //          where: (order, { notExists }) =>
-   //             notExists(
-   //                ctx.db
-   //                   .select()
-   //                   .from(orderItem)
-   //                   .where(eq(orderItem.orderId, order.id)),
-   //             ),
-   //          limit: BATCH_SIZE,
-   //       })
-
-   //       if (ordersToMigrate.length === 0) {
-   //          break
-   //       }
-
-   //       const newOrderItems = ordersToMigrate.map((o) => ({
-   //          orderId: o.id,
-   //          name: o.name,
-   //          quantity: o.quantity,
-   //          desiredPrice: o.desiredPrice,
-   //       }))
-
-   //       await ctx.db.insert(orderItem).values(newOrderItems)
-
-   //       totalMigrated += ordersToMigrate.length
-
-   //       if (ordersToMigrate.length < BATCH_SIZE) {
-   //          break
-   //       }
-   //    }
-
-   //    return { message: `Migrated ${totalMigrated} orders.` }
-   // }),
-   // migrateProcurementsToOrderItems: t.procedure.mutation(async ({ ctx }) => {
-   //    const BATCH_SIZE = 10
-   //    let totalMigrated = 0
-
-   //    while (true) {
-   //       const procurementsToMigrate = await ctx.db.query.procurement.findMany({
-   //          where: (procurement, { isNull }) => isNull(procurement.orderItemId),
-   //          limit: BATCH_SIZE,
-   //       })
-
-   //       if (procurementsToMigrate.length === 0) {
-   //          break
-   //       }
-
-   //       const orderIds = [
-   //          ...new Set(procurementsToMigrate.map((p) => p.orderId)),
-   //       ]
-
-   //       const correspondingItems = await ctx.db.query.orderItem.findMany({
-   //          where: inArray(orderItem.orderId, orderIds),
-   //          columns: { id: true, orderId: true },
-   //       })
-
-   //       const orderIdToItemIdMap = new Map(
-   //          correspondingItems.map((item) => [item.orderId, item.id]),
-   //       )
-
-   //       for (const proc of procurementsToMigrate) {
-   //          const itemId = orderIdToItemIdMap.get(proc.orderId)
-   //          if (itemId) {
-   //             await ctx.db
-   //                .update(procurement)
-   //                .set({ orderItemId: itemId })
-   //                .where(eq(procurement.id, proc.id))
-   //          }
-   //       }
-
-   //       totalMigrated += procurementsToMigrate.length
-
-   //       if (procurementsToMigrate.length < BATCH_SIZE) {
-   //          break
-   //       }
-   //    }
-
-   //    return { message: `Migrated ${totalMigrated} procurements.` }
-   // }),
-   // backup: t.procedure.query(async ({ ctx }) => {
-   //    const date = new Date("2025-07-12T00:00:00.000Z")
-   //    const data = await Promise.all(
-   //       Object.entries(tableMap).map(async ([name, table]) => {
-   //          const rows = await ctx.db
-   //             .select()
-   //             .from(table)
-   //             .where(gt(table.createdAt, date))
-   //          return { name, rows }
-   //       }),
-   //    )
-
-   //    const filteredData = data.filter((d) => d.rows.length > 0)
-
-   //    return Object.fromEntries(filteredData.map((d) => [d.name, d.rows]))
-   // }),
-   // restore: t.procedure
-   //    .input(z.record(z.string(), z.array(z.any())))
-   //    .mutation(async ({ ctx, input }) => {
-   //       for (const [name, rows] of Object.entries(input)) {
-   //          const table = tableMap[name as keyof typeof tableMap]
-   //          if (!table) {
-   //             throw new Error(`invalid table: ${name}`)
-   //          }
-   //          if (rows.length === 0) {
-   //             continue
-   //          }
-   //          const newRows = rows.map((row) => {
-   //             const newRow = { ...row }
-   //             if (newRow.createdAt) {
-   //                newRow.createdAt = new Date(newRow.createdAt)
-   //             }
-   //             if (newRow.updatedAt) {
-   //                newRow.updatedAt = new Date(newRow.updatedAt)
-   //             }
-   //             if (newRow.deletedAt) {
-   //                newRow.deletedAt = new Date(newRow.deletedAt)
-   //             }
-   //             return newRow
-   //          })
-   //          for (let i = 0; i < newRows.length; i += 5) {
-   //             const batch = newRows.slice(i, i + 5)
-   //             await ctx.db.insert(table).values(batch)
-   //          }
-   //       }
-
-   //       return { success: true }
-   //    }),
    search: t.procedure
       .use(workspaceMemberMiddleware)
       .input(z.object({ id: z.string(), query: z.string() }))
@@ -353,5 +222,87 @@ export const workspaceRouter = t.router({
          ])
 
          return foundWorkspace
+      }),
+   migrateClients: t.procedure
+      .use(workspaceMemberMiddleware)
+      .input(z.object({ workspaceId: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+         // Get all distinct client names from orders for this workspace
+         const distinctClients = await ctx.db
+            .selectDistinct({
+               client: order.client,
+               creatorId: order.creatorId,
+            })
+            .from(order)
+            .where(
+               and(
+                  eq(order.workspaceId, input.workspaceId),
+                  sql`${order.client} IS NOT NULL AND ${order.client} != ''`,
+               ),
+            )
+
+         if (distinctClients.length === 0) {
+            return { created: 0, updated: 0 }
+         }
+
+         let created = 0
+         let _updated = 0
+
+         // For each distinct client name, create a client record if it doesn't exist
+         for (const { client: clientName, creatorId } of distinctClients) {
+            if (!clientName) continue
+
+            const normalizedName = clientName
+               .normalize("NFC")
+               .toLocaleLowerCase("uk")
+
+            // Check if client already exists
+            const existingClient = await ctx.db.query.client.findFirst({
+               where: and(
+                  eq(client.workspaceId, input.workspaceId),
+                  eq(client.normalizedName, normalizedName),
+               ),
+            })
+
+            if (!existingClient) {
+               // Create new client
+               const clientId = createId("client")
+               await ctx.db.insert(client).values({
+                  id: clientId,
+                  workspaceId: input.workspaceId,
+                  creatorId: creatorId,
+                  name: clientName,
+                  normalizedName,
+                  severity: "low",
+               })
+               created++
+
+               // Update all orders with this client name to link to the new client
+               await ctx.db
+                  .update(order)
+                  .set({ clientId })
+                  .where(
+                     and(
+                        eq(order.workspaceId, input.workspaceId),
+                        eq(order.client, clientName),
+                     ),
+                  )
+            } else {
+               // Link existing orders to this client if not already linked
+               const _result = await ctx.db
+                  .update(order)
+                  .set({ clientId: existingClient.id })
+                  .where(
+                     and(
+                        eq(order.workspaceId, input.workspaceId),
+                        eq(order.client, clientName),
+                        sql`${order.clientId} IS NULL`,
+                     ),
+                  )
+            }
+            _updated++
+         }
+
+         return { created, updated: distinctClients.length }
       }),
 })
