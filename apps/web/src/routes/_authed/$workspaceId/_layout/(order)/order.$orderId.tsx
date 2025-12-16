@@ -2,6 +2,7 @@ import { ImagesCarousel } from "@/attachment/components/images-carousel"
 import { useAttachments, useDownloadAttachment } from "@/attachment/hooks"
 import type { UploadedAttachment } from "@/attachment/types"
 import { useAuth } from "@/auth/hooks"
+import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
 import { FileUploader } from "@/file/components/uploader"
 import {
    Header,
@@ -457,8 +458,24 @@ function RouteComponent() {
                   </p>
                </section>
                <section className="group/section py-3">
-                  <p className="text-muted text-sm">Клієнт</p>
+                  <p className="text-muted text-sm">Клієнт (старий)</p>
                   <p className="mt-1.5">{order.client ?? "—"}</p>
+               </section>
+               <section className="group/section py-3">
+                  <p className="text-muted text-sm">Клієнт (новий)</p>
+                  <p className="mt-1.5 flex items-center gap-2">
+                     {order.clientN ? (
+                        <>
+                           <ClientSeverityIcon
+                              className="-mb-0.5"
+                              severity={order.clientN.severity}
+                           />
+                           {order.clientN.name}
+                        </>
+                     ) : (
+                        "—"
+                     )}
+                  </p>
                </section>
                <section className="group/section py-3">
                   <p className="text-muted text-sm">Створене</p>

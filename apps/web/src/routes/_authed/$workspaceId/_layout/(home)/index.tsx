@@ -1,4 +1,5 @@
 import { useAuth } from "@/auth/hooks"
+import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
 import { useForceUpdate } from "@/interactions/use-force-update"
 import {
    Header,
@@ -253,7 +254,25 @@ function _OrderRow({
                >
                   {order.name}
                </p>
-               <div className="ml-auto flex items-center gap-4">
+               {order.clientN ? (
+                  <Tooltip delay={0}>
+                     <TooltipTrigger
+                        render={
+                           <Badge className="ml-auto gap-1 max-lg:hidden">
+                              <Icons.briefcase className="size-4.5" />
+                              <ClientSeverityIcon
+                                 severity={order.clientN.severity}
+                              />
+                           </Badge>
+                        }
+                     />
+                     <TooltipPopup>{order.clientN.name}</TooltipPopup>
+                  </Tooltip>
+               ) : null}
+               <div
+                  className="not-data-has-client:ml-auto flex items-center gap-4"
+                  data-has-client={order.clientN ? "" : undefined}
+               >
                   <AvatarStack
                      size={25}
                      className="max-md:hidden"

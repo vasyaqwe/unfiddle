@@ -1,5 +1,7 @@
-
-import { CLIENT_SEVERITIES, CLIENT_SEVERITIES_TRANSLATION } from "@unfiddle/core/client/constants"
+import {
+   CLIENT_SEVERITIES,
+   CLIENT_SEVERITIES_TRANSLATION,
+} from "@unfiddle/core/client/constants"
 import type { ClientSeverity } from "@unfiddle/core/client/types"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import { Button } from "@unfiddle/ui/components/button"
@@ -11,7 +13,14 @@ import {
    Fieldset,
    FieldsetLegend,
 } from "@unfiddle/ui/components/field"
-import { Select, SelectItem, SelectPopup, SelectTrigger, SelectTriggerIcon, SelectValue } from "@unfiddle/ui/components/select"
+import {
+   Select,
+   SelectItem,
+   SelectPopup,
+   SelectTrigger,
+   SelectTriggerIcon,
+   SelectValue,
+} from "@unfiddle/ui/components/select"
 import { formData } from "@unfiddle/ui/utils"
 import * as React from "react"
 
@@ -94,40 +103,43 @@ export function Form({
          </FieldGroup>
          <Fieldset className={"mb-10 space-y-4 md:space-y-8"}>
             <FieldsetLegend className={"md:mb-4"}>Деталі</FieldsetLegend>
-            <FieldGroup>  <Field>
-                              <FieldLabel className={"mb-2.5"}>Пріоритет</FieldLabel>
-                              <Select
-                                 name="severity"
-                                 defaultValue={client?.severity ?? "low"}
-                              >
-                                 <SelectTrigger
-                                    render={
-                                       <Button
-                                          variant={"secondary"}
-                                          className="w-full justify-start"
-                                       >
-                                          <SelectValue>
-                                             {(v) =>
-                                                CLIENT_SEVERITIES_TRANSLATION[v as never]
-                                             }
-                                          </SelectValue>
-                                          <SelectTriggerIcon />
-                                       </Button>
-                                    }
-                                 />
-                                 <SelectPopup align="start">
-                                    {CLIENT_SEVERITIES.map((s) => (
-                                       <SelectItem
-                                          key={s}
-                                          value={s}
-                                          label={CLIENT_SEVERITIES_TRANSLATION[s]}
-                                       >
-                                          {CLIENT_SEVERITIES_TRANSLATION[s]}
-                                       </SelectItem>
-                                    ))}
-                                 </SelectPopup>
-                              </Select>
-                           </Field></FieldGroup>
+            <FieldGroup>
+               {" "}
+               <Field>
+                  <FieldLabel className={"mb-2.5"}>Пріоритет</FieldLabel>
+                  <Select
+                     name="severity"
+                     defaultValue={client?.severity ?? "low"}
+                  >
+                     <SelectTrigger
+                        render={
+                           <Button
+                              variant={"secondary"}
+                              className="w-full justify-start"
+                           >
+                              <SelectValue>
+                                 {(v) =>
+                                    CLIENT_SEVERITIES_TRANSLATION[v as never]
+                                 }
+                              </SelectValue>
+                              <SelectTriggerIcon />
+                           </Button>
+                        }
+                     />
+                     <SelectPopup align="start">
+                        {CLIENT_SEVERITIES.map((s) => (
+                           <SelectItem
+                              key={s}
+                              value={s}
+                              label={CLIENT_SEVERITIES_TRANSLATION[s]}
+                           >
+                              {CLIENT_SEVERITIES_TRANSLATION[s]}
+                           </SelectItem>
+                        ))}
+                     </SelectPopup>
+                  </Select>
+               </Field>
+            </FieldGroup>
          </Fieldset>
          {children}
       </form>

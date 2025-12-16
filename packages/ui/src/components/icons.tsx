@@ -562,14 +562,15 @@ export const Icons = {
          />
       </svg>
    ),
-   briefcase: ({ className, ...props }: IconProps) => (
+   briefcase: (props: IconProps) => (
       <svg
+         width={"20"}
+         height={"20"}
          xmlns="http://www.w3.org/2000/svg"
          fill="none"
          viewBox="0 0 24 24"
          strokeWidth="1.5"
          stroke="currentColor"
-         className="size-5"
          {...props}
       >
          <path
@@ -579,7 +580,7 @@ export const Icons = {
          />
       </svg>
    ),
-   empty: ({ className, ...props }: IconProps) => (
+   empty: (props: IconProps) => (
       <svg
          xmlns="http://www.w3.org/2000/svg"
          className="size-12"

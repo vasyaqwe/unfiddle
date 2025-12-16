@@ -43,7 +43,7 @@ export function UpdateClient({ client, finalFocus, open, setOpen }: Props) {
                   open={open}
                   onSubmit={(form) =>
                      mutation.mutate({
-                        clientId:client.id,
+                        clientId: client.id,
                         workspaceId: auth.workspace.id,
                         name: form.name,
                         severity: form.severity,

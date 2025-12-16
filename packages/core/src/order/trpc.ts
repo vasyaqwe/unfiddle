@@ -368,6 +368,12 @@ export const orderRouter = t.router({
                      image: true,
                   },
                },
+               clientN: {
+                  columns: {
+                     name: true,
+                     severity: true,
+                  },
+               },
                assignees: {
                   columns: {},
                   with: {
@@ -483,6 +489,12 @@ export const orderRouter = t.router({
                createdAt: true,
             },
             with: {
+               clientN: {
+                  columns: {
+                     name: true,
+                     severity: true,
+                  },
+               },
                creator: {
                   columns: {
                      id: true,

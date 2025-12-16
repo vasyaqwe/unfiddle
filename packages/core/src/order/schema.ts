@@ -1,5 +1,6 @@
 import { attachment } from "@unfiddle/core/attachment/schema"
 import { user } from "@unfiddle/core/auth/schema"
+import { client } from "@unfiddle/core/client/schema"
 import { CURRENCIES } from "@unfiddle/core/currency/constants"
 import { d } from "@unfiddle/core/database"
 import { good } from "@unfiddle/core/good/schema"
@@ -60,6 +61,7 @@ export const order = d.table(
          .notNull()
          .default("cash"),
       client: d.text(),
+      clientId: d.text().references(() => client.id, { onDelete: "set null" }),
       deletedAt: d.integer({ mode: "timestamp" }),
       deliversAt: d.integer({ mode: "timestamp" }),
       analogs: d
@@ -93,6 +95,10 @@ export const orderRelations = relations(order, ({ one, many }) => ({
       fields: [order.goodId],
       references: [good.id],
    }),
+   clientN: one(client, {
+      fields: [order.clientId],
+      references: [client.id],
+   }),
    procurements: many(procurement),
    assignees: many(orderAssignee),
    items: many(orderItem),
@@ -109,6 +115,7 @@ export const updateOrderSchema = createUpdateSchema(order)
       severity: true,
       paymentType: true,
       client: true,
+      clientId: true,
       deliversAt: true,
       currency: true,
    })

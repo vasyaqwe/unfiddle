@@ -1,0 +1,1 @@
+ALTER TABLE `order` ADD `client_id` text REFERENCES client(id);

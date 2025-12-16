@@ -85,7 +85,7 @@ function RouteComponent() {
                />
                <DrawerPopup>
                   <DrawerTitle>Новий клієнт</DrawerTitle>
-                  <ClientForm 
+                  <ClientForm
                      onSubmit={(form) => {
                         mutation.mutate({
                            ...form,
@@ -114,11 +114,14 @@ function Content({
    const params = Route.useParams()
 
    const query = useSuspenseQuery(
-      trpc.client.list.queryOptions({
-         workspaceId: params.workspaceId,
-      }, {
-         staleTime: CACHE_SHORT,
-      }),
+      trpc.client.list.queryOptions(
+         {
+            workspaceId: params.workspaceId,
+         },
+         {
+            staleTime: CACHE_SHORT,
+         },
+      ),
    )
    const virtualizer = useVirtualizer({
       count: query.data.length,
