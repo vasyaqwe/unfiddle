@@ -1,7 +1,9 @@
+import { CACHE_SHORT } from "@/api"
 import { useAuth } from "@/auth/hooks"
 import { useOrderQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
+import { useQuery } from "@tanstack/react-query"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useParams } from "@tanstack/react-router"
 import type { RouterInput } from "@unfiddle/core/trpc/types"
@@ -56,6 +58,7 @@ export function useUpdateOrder({
                }).queryKey,
                context?.oneData,
             )
+
             toast.error("Ой-ой!", {
                description: error.message,
             })
@@ -88,6 +91,12 @@ export function useUpdateOrder({
             )
 
             queryClient.invalidateQueries(queryOptions.list)
+            queryClient.invalidateQueries(
+               trpc.order.one.queryOptions({
+                  orderId: input.orderId,
+                  workspaceId: input.workspaceId,
+               }),
+            )
             if (input.deletedAt) {
                queryClient.invalidateQueries(queryOptions.listArchived)
             }
@@ -103,6 +112,17 @@ export function useOptimisticUpdateOrder() {
    const auth = useAuth()
    const queryClient = useQueryClient()
    const queryOptions = useOrderQueryOptions()
+   const clients =
+      useQuery(
+         trpc.client.list.queryOptions(
+            {
+               workspaceId: auth.workspace.id,
+            },
+            {
+               staleTime: CACHE_SHORT,
+            },
+         ),
+      ).data ?? []
 
    return async (input: RouterInput["order"]["update"]) => {
       const oneQueryKey = trpc.order.one.queryOptions({
@@ -119,13 +139,22 @@ export function useOptimisticUpdateOrder() {
 
       queryClient.setQueryData(oneQueryKey, (oldData) => {
          if (!oldData) return oldData
-         return { ...oldData, ...input }
+         return {
+            ...oldData,
+            ...input,
+            client: clients.find((c) => c.id === input.clientId) ?? null,
+         }
       })
 
       queryClient.setQueryData(queryOptions.list.queryKey, (oldData) => {
          if (!oldData) return oldData
          return oldData.map((item) => {
-            if (item.id === input.orderId) return { ...item, ...input }
+            if (item.id === input.orderId)
+               return {
+                  ...item,
+                  ...input,
+                  client: clients.find((c) => c.id === input.clientId) ?? null,
+               }
             return item
          })
       })

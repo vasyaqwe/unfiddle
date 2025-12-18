@@ -316,7 +316,19 @@ function RouteComponent() {
                   </section>
                   <section className="group/section">
                      <p className="text-muted text-sm">Клієнт</p>
-                     <p className="mt-1.5">{order.client ?? "—"}</p>
+                     <p className="mt-1.5 flex items-center gap-2">
+                        {order.client ? (
+                           <>
+                              <ClientSeverityIcon
+                                 className="-mb-0.5"
+                                 severity={order.client.severity}
+                              />
+                              {order.client.name}
+                           </>
+                        ) : (
+                           "—"
+                        )}
+                     </p>
                   </section>
                   <section className="group/section">
                      <p className="text-muted text-sm">Створене</p>
@@ -458,19 +470,15 @@ function RouteComponent() {
                   </p>
                </section>
                <section className="group/section py-3">
-                  <p className="text-muted text-sm">Клієнт (старий)</p>
-                  <p className="mt-1.5">{order.client ?? "—"}</p>
-               </section>
-               <section className="group/section py-3">
-                  <p className="text-muted text-sm">Клієнт (новий)</p>
+                  <p className="text-muted text-sm">Клієнт</p>
                   <p className="mt-1.5 flex items-center gap-2">
-                     {order.clientN ? (
+                     {order.client ? (
                         <>
                            <ClientSeverityIcon
                               className="-mb-0.5"
-                              severity={order.clientN.severity}
+                              severity={order.client.severity}
                            />
-                           {order.clientN.name}
+                           {order.client.name}
                         </>
                      ) : (
                         "—"

@@ -40,7 +40,6 @@ export function useCreateOrder({
             await queryClient.cancelQueries(queryOptions.list)
 
             const data = queryClient.getQueryData(queryOptions.list.queryKey)
-            const clientN = clients.find((c) => c.id === input.clientId) ?? null
 
             create({
                ...input,
@@ -49,7 +48,7 @@ export function useCreateOrder({
                currency: input.currency ?? "UAH",
                severity: input.severity ?? "low",
                creator: auth.user,
-               clientN,
+               client: clients.find((c) => c.id === input.clientId) ?? null,
                status: "pending",
                paymentType: input.paymentType ?? "cash",
                assignees: [],
@@ -70,8 +69,6 @@ export function useCreateOrder({
             onError?.()
          },
          onSuccess: (order) => {
-            const clientN = clients.find((c) => c.id === order.clientId) ?? null
-
             socket.order.send({
                action: "create",
                senderId: auth.user.id,
@@ -85,7 +82,7 @@ export function useCreateOrder({
                   createdAt: new Date(),
                   sellingPrice: order.sellingPrice ?? 0,
                   creator: auth.user,
-                  clientN,
+                  client: clients.find((c) => c.id === order.clientId) ?? null,
                   assignees: [],
                   procurements: [],
                },

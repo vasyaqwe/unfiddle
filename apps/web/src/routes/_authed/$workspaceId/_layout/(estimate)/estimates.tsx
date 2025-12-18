@@ -1,4 +1,5 @@
 import { useAuth } from "@/auth/hooks"
+import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
 import { DeleteEstimateAlert } from "@/estimate/components/delete-estimate-alert"
 import { EstimateForm } from "@/estimate/components/estimate-form"
 import { UpdateEstimate } from "@/estimate/components/update-estimate"
@@ -29,6 +30,7 @@ import { estimateFilterSchema } from "@unfiddle/core/estimate/filter"
 import { formatEstimateDate } from "@unfiddle/core/estimate/utils"
 import { makeShortId } from "@unfiddle/core/id"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"
+import { Badge } from "@unfiddle/ui/components/badge"
 import { Button } from "@unfiddle/ui/components/button"
 import {
    Drawer,
@@ -45,6 +47,11 @@ import {
    ContextMenuPopup,
    ContextMenuTrigger,
 } from "@unfiddle/ui/components/menu/context"
+import {
+   Tooltip,
+   TooltipPopup,
+   TooltipTrigger,
+} from "@unfiddle/ui/components/tooltip"
 import { number } from "@unfiddle/ui/utils"
 import * as React from "react"
 
@@ -105,8 +112,6 @@ function RouteComponent() {
                            ...form,
                            workspaceId: auth.workspace.id,
                            sellingPrice: number(form.sellingPrice),
-                           client:
-                              form.client.length === 0 ? null : form.client,
                         })
                      }}
                   >
@@ -231,7 +236,25 @@ function EstimateRow({
                <p className="col-span-2 col-start-1 row-start-2 mt-px line-clamp-1 break-normal font-semibold data-vat:text-orange-10">
                   {estimate.name}
                </p>
-               <p className="ml-auto min-w-[60px] text-muted max-lg:hidden">
+               {estimate.client ? (
+                  <Tooltip delay={0}>
+                     <TooltipTrigger
+                        render={
+                           <Badge className="ml-auto gap-1 max-lg:hidden">
+                              <Icons.briefcase className="size-4.5" />
+                              <ClientSeverityIcon
+                                 severity={estimate.client.severity}
+                              />
+                           </Badge>
+                        }
+                     />
+                     <TooltipPopup>{estimate.client.name}</TooltipPopup>
+                  </Tooltip>
+               ) : null}
+               <p
+                  data-has-client={estimate.client ? "" : undefined}
+                  className="not-data-has-client:ml-auto min-w-[60px] text-muted max-lg:hidden"
+               >
                   {formatEstimateDate(estimate.createdAt)}
                </p>
                <div

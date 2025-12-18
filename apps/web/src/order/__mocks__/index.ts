@@ -15,7 +15,6 @@ vi.mock("@/order/hooks", () => ({
             severity: "low",
             paymentType: "cash",
             vat: false,
-            client: "mock",
             deliversAt: new Date(),
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -42,7 +41,7 @@ vi.mock("@/order/hooks", () => ({
             groupId: "mock",
             note: "mock",
             clientId: "mock",
-            clientN: {
+            client: {
                name: "mock",
                severity: "low",
             },

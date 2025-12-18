@@ -54,7 +54,7 @@ export function UpdateEstimate({
                         name: form.name,
                         sellingPrice: number(form.sellingPrice),
                         note: form.note,
-                        client: form.client.length === 0 ? null : form.client,
+                        clientId: form.clientId,
                         currency: form.currency,
                      })
                   }

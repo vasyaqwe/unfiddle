@@ -1,6 +1,5 @@
 import { TRPCError } from "@trpc/server"
 import { session } from "@unfiddle/core/auth/schema"
-import { client } from "@unfiddle/core/client/schema"
 import { workspaceMember } from "@unfiddle/core/database/schema"
 import { createCode, createId } from "@unfiddle/core/id"
 import { order } from "@unfiddle/core/order/schema"
@@ -14,12 +13,6 @@ import {
 } from "@unfiddle/core/workspace/schema"
 import { and, desc, eq, or, sql } from "drizzle-orm"
 import { z } from "zod"
-
-// const tableMap = {
-//    order,
-//    orderAssignee,
-//    procurement,
-// }
 
 export const workspaceRouter = t.router({
    member: workspaceMemberRouter,
@@ -222,87 +215,5 @@ export const workspaceRouter = t.router({
          ])
 
          return foundWorkspace
-      }),
-   migrateClients: t.procedure
-      .use(workspaceMemberMiddleware)
-      .input(z.object({ workspaceId: z.string() }))
-      .mutation(async ({ ctx, input }) => {
-         // Get all distinct client names from orders for this workspace
-         const distinctClients = await ctx.db
-            .selectDistinct({
-               client: order.client,
-               creatorId: order.creatorId,
-            })
-            .from(order)
-            .where(
-               and(
-                  eq(order.workspaceId, input.workspaceId),
-                  sql`${order.client} IS NOT NULL AND ${order.client} != ''`,
-               ),
-            )
-
-         if (distinctClients.length === 0) {
-            return { created: 0, updated: 0 }
-         }
-
-         let created = 0
-         let _updated = 0
-
-         // For each distinct client name, create a client record if it doesn't exist
-         for (const { client: clientName, creatorId } of distinctClients) {
-            if (!clientName) continue
-
-            const normalizedName = clientName
-               .normalize("NFC")
-               .toLocaleLowerCase("uk")
-
-            // Check if client already exists
-            const existingClient = await ctx.db.query.client.findFirst({
-               where: and(
-                  eq(client.workspaceId, input.workspaceId),
-                  eq(client.normalizedName, normalizedName),
-               ),
-            })
-
-            if (!existingClient) {
-               // Create new client
-               const clientId = createId("client")
-               await ctx.db.insert(client).values({
-                  id: clientId,
-                  workspaceId: input.workspaceId,
-                  creatorId: creatorId,
-                  name: clientName,
-                  normalizedName,
-                  severity: "low",
-               })
-               created++
-
-               // Update all orders with this client name to link to the new client
-               await ctx.db
-                  .update(order)
-                  .set({ clientId })
-                  .where(
-                     and(
-                        eq(order.workspaceId, input.workspaceId),
-                        eq(order.client, clientName),
-                     ),
-                  )
-            } else {
-               // Link existing orders to this client if not already linked
-               const _result = await ctx.db
-                  .update(order)
-                  .set({ clientId: existingClient.id })
-                  .where(
-                     and(
-                        eq(order.workspaceId, input.workspaceId),
-                        eq(order.client, clientName),
-                        sql`${order.clientId} IS NULL`,
-                     ),
-                  )
-            }
-            _updated++
-         }
-
-         return { created, updated: distinctClients.length }
       }),
 })

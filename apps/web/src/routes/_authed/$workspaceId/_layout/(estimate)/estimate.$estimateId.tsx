@@ -1,4 +1,5 @@
 import { useAuth } from "@/auth/hooks"
+import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
 import { DeleteEstimateAlert } from "@/estimate/components/delete-estimate-alert"
 import { UpdateEstimate } from "@/estimate/components/update-estimate"
 import { useEstimate } from "@/estimate/hooks"
@@ -118,7 +119,19 @@ function RouteComponent() {
                   </section>
                   <section className="group/section">
                      <p className="text-muted text-sm">Клієнт</p>
-                     <p className="mt-1.5">{estimate.client ?? "—"}</p>
+                     <p className="mt-1.5 flex items-center gap-2">
+                        {estimate.client ? (
+                           <>
+                              <ClientSeverityIcon
+                                 className="-mb-0.5"
+                                 severity={estimate.client.severity}
+                              />
+                              {estimate.client.name}
+                           </>
+                        ) : (
+                           "—"
+                        )}
+                     </p>
                   </section>
                   <section className="group/section">
                      <p className="text-muted text-sm">Створене</p>
@@ -191,7 +204,19 @@ function RouteComponent() {
                </section>
                <section className="group/section py-3">
                   <p className="text-muted text-sm">Клієнт</p>
-                  <p className="mt-1.5">{estimate.client ?? "—"}</p>
+                  <p className="mt-1.5 flex items-center gap-2">
+                     {estimate.client ? (
+                        <>
+                           <ClientSeverityIcon
+                              className="-mb-0.5"
+                              severity={estimate.client.severity}
+                           />
+                           {estimate.client.name}
+                        </>
+                     ) : (
+                        "—"
+                     )}
+                  </p>
                </section>
                <section className="group/section py-3">
                   <p className="text-muted text-sm">Створене</p>

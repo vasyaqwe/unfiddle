@@ -1,5 +1,7 @@
 import { useAuth } from "@/auth/hooks"
+import { ClientCombobox } from "@/client/components/client-combobox"
 import { trpc } from "@/trpc"
+import { SuspenseBoundary } from "@/ui/components/suspense-boundary"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { CURRENCIES, CURRENCY_SYMBOLS } from "@unfiddle/core/currency/constants"
 import type { Currency } from "@unfiddle/core/currency/types"
@@ -32,7 +34,7 @@ type FormData = {
    name: string
    sellingPrice: string
    note: string
-   client: string
+   clientId: string | null
    currency: Currency
    items: BareItem[]
 }
@@ -87,6 +89,10 @@ export function Form({
       },
    ])
    const [currency, setCurrency] = React.useState(estimate?.currency ?? "UAH")
+   const [clientId, setClientId] = React.useState(
+      estimate?.clientId ?? undefined,
+   )
+
    const formRef = React.useRef<HTMLFormElement>(null)
 
    return (
@@ -105,6 +111,7 @@ export function Form({
                onSubmit({
                   ...form,
                   currency,
+                  clientId: clientId ?? null,
                   items,
                })
             })
@@ -266,14 +273,15 @@ export function Form({
                      placeholder={CURRENCY_SYMBOLS[currency]}
                   />
                </Field>
-               <Field>
-                  <FieldLabel>Клієнт</FieldLabel>
-                  <FieldControl
-                     name="client"
-                     placeholder="Ім'я клієнта"
-                     defaultValue={estimate?.client ?? ""}
+               <SuspenseBoundary
+                  fallback={null}
+                  errorComponent={null}
+               >
+                  <ClientCombobox
+                     clientId={clientId}
+                     setClientId={setClientId}
                   />
-               </Field>
+               </SuspenseBoundary>
             </FieldGroup>
             <div>
                <Field>

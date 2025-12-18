@@ -60,7 +60,6 @@ export const order = d.table(
          })
          .notNull()
          .default("cash"),
-      client: d.text(),
       clientId: d.text().references(() => client.id, { onDelete: "set null" }),
       deletedAt: d.integer({ mode: "timestamp" }),
       deliversAt: d.integer({ mode: "timestamp" }),
@@ -95,7 +94,7 @@ export const orderRelations = relations(order, ({ one, many }) => ({
       fields: [order.goodId],
       references: [good.id],
    }),
-   clientN: one(client, {
+   client: one(client, {
       fields: [order.clientId],
       references: [client.id],
    }),
@@ -114,7 +113,6 @@ export const updateOrderSchema = createUpdateSchema(order)
       status: true,
       severity: true,
       paymentType: true,
-      client: true,
       clientId: true,
       deliversAt: true,
       currency: true,

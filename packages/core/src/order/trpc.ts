@@ -60,11 +60,15 @@ export const orderRouter = t.router({
                severity: true,
                paymentType: true,
                note: true,
-               client: true,
                deliversAt: true,
                createdAt: true,
             },
             with: {
+               client: {
+                  columns: {
+                     name: true,
+                  },
+               },
                items: {
                   columns: {
                      name: true,
@@ -92,7 +96,7 @@ export const orderRouter = t.router({
             }),
             "Варіант оплати":
                ORDER_PAYMENT_TYPES_TRANSLATION[order.paymentType],
-            Клієнт: order.client,
+            Клієнт: order.client?.name,
             Коментар: order.note,
             Менеджер: order.creator?.name,
             Товари: order.items
@@ -189,7 +193,6 @@ export const orderRouter = t.router({
                "Варіант оплати": z
                   .enum(paymentTypeTranslationValues)
                   .default(ORDER_PAYMENT_TYPES_TRANSLATION.cash),
-               Клієнт: z.string().optional(),
                Коментар: z.string().default(""),
                "Термін постачання": z
                   .union([z.string(), z.date()])
@@ -254,7 +257,6 @@ export const orderRouter = t.router({
                   currency: row.Валюта || "UAH",
                   sellingPrice: row.Ціна,
                   paymentType: paymentTypeMap[row["Варіант оплати"] || "cash"],
-                  client: row.Клієнт || null,
                   note: row.Коментар || "",
                   deliversAt: row["Термін постачання"] || null,
                   quantity: 1,
@@ -368,7 +370,7 @@ export const orderRouter = t.router({
                      image: true,
                   },
                },
-               clientN: {
+               client: {
                   columns: {
                      name: true,
                      severity: true,
@@ -492,7 +494,7 @@ export const orderRouter = t.router({
                createdAt: true,
             },
             with: {
-               clientN: {
+               client: {
                   columns: {
                      name: true,
                      severity: true,

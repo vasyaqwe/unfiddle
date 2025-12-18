@@ -254,24 +254,24 @@ function _OrderRow({
                >
                   {order.name}
                </p>
-               {order.clientN ? (
+               {order.client ? (
                   <Tooltip delay={0}>
                      <TooltipTrigger
                         render={
                            <Badge className="ml-auto gap-1 max-lg:hidden">
                               <Icons.briefcase className="size-4.5" />
                               <ClientSeverityIcon
-                                 severity={order.clientN.severity}
+                                 severity={order.client.severity}
                               />
                            </Badge>
                         }
                      />
-                     <TooltipPopup>{order.clientN.name}</TooltipPopup>
+                     <TooltipPopup>{order.client.name}</TooltipPopup>
                   </Tooltip>
                ) : null}
                <div
                   className="not-data-has-client:ml-auto flex items-center gap-4"
-                  data-has-client={order.clientN ? "" : undefined}
+                  data-has-client={order.client ? "" : undefined}
                >
                   <AvatarStack
                      size={25}

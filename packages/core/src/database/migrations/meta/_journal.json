@@ -169,6 +169,20 @@
       "when": 1765900982687,
       "tag": "0026_magical_leech",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "6",
+      "when": 1766081374396,
+      "tag": "0027_lame_fat_cobra",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "6",
+      "when": 1766081388447,
+      "tag": "0028_fluffy_the_enforcers",
+      "breakpoints": true
     }
   ]
 }

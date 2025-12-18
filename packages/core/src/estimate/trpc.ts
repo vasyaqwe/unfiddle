@@ -33,6 +33,12 @@ export const estimateRouter = t.router({
                eq(estimate.workspaceId, input.workspaceId),
             ),
             with: {
+               client: {
+                  columns: {
+                     name: true,
+                     severity: true,
+                  },
+               },
                items: {
                   columns: {
                      id: true,
@@ -109,6 +115,12 @@ export const estimateRouter = t.router({
                createdAt: true,
             },
             with: {
+               client: {
+                  columns: {
+                     name: true,
+                     severity: true,
+                  },
+               },
                creator: {
                   columns: {
                      id: true,

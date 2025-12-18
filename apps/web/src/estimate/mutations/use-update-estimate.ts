@@ -1,7 +1,8 @@
+import { CACHE_SHORT } from "@/api"
 import { useAuth } from "@/auth/hooks"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useParams, useSearch } from "@tanstack/react-router"
 import type { RouterInput } from "@unfiddle/core/trpc/types"
 import { toast } from "sonner"
@@ -45,10 +46,13 @@ export function useUpdateEstimate({
 
             return { listData, oneData }
          },
-         onError: (error, _input, context) => {
+         onError: (error, input, context) => {
             queryClient.setQueryData(
-               listQueryOptions.queryKey,
-               context?.listData,
+               trpc.estimate.one.queryOptions({
+                  estimateId: input.estimateId,
+                  workspaceId: input.workspaceId,
+               }).queryKey,
+               context?.oneData,
             )
             toast.error("Ой-ой!", {
                description: error.message,
@@ -62,8 +66,12 @@ export function useUpdateEstimate({
                estimate,
             })
          },
-         onSettled: (_data, _error, _input) => {
-            queryClient.invalidateQueries(listQueryOptions)
+         onSettled: (_data, _error, input) => {
+            const oneQueryOptions = trpc.estimate.one.queryOptions({
+               estimateId: input.estimateId,
+               workspaceId: input.workspaceId,
+            })
+            queryClient.invalidateQueries(oneQueryOptions)
          },
       }),
    )
@@ -77,6 +85,17 @@ export function useOptimisticUpdateEstimate() {
       filter: search,
       workspaceId: auth.workspace.id,
    })
+   const clients =
+      useQuery(
+         trpc.client.list.queryOptions(
+            {
+               workspaceId: auth.workspace.id,
+            },
+            {
+               staleTime: CACHE_SHORT,
+            },
+         ),
+      ).data ?? []
 
    return async (input: RouterInput["estimate"]["update"]) => {
       const oneQueryKey = trpc.estimate.one.queryOptions({
@@ -86,12 +105,21 @@ export function useOptimisticUpdateEstimate() {
 
       queryClient.setQueryData(oneQueryKey, (oldData) => {
          if (!oldData) return oldData
-         return { ...oldData, ...input }
+         return {
+            ...oldData,
+            ...input,
+            client: clients.find((c) => c.id === input.clientId) ?? null,
+         }
       })
       queryClient.setQueryData(listQueryOptions.queryKey, (oldData) => {
          if (!oldData) return oldData
          return oldData.map((item) => {
-            if (item.id === input.estimateId) return { ...item, ...input }
+            if (item.id === input.estimateId)
+               return {
+                  ...item,
+                  ...input,
+                  client: clients.find((c) => c.id === input.clientId) ?? null,
+               }
             return item
          })
       })

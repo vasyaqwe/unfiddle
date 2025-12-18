@@ -1,8 +1,9 @@
+import { CACHE_SHORT } from "@/api"
 import { useAttachments } from "@/attachment/hooks"
 import { useAuth } from "@/auth/hooks"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useSearch } from "@tanstack/react-router"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import { toast } from "sonner"
@@ -21,6 +22,17 @@ export function useCreateEstimate({
    })
    const create = useOptimisticCreateEstimate()
    const attachments = useAttachments({ subjectId: auth.workspace.id })
+   const clients =
+      useQuery(
+         trpc.client.list.queryOptions(
+            {
+               workspaceId: auth.workspace.id,
+            },
+            {
+               staleTime: CACHE_SHORT,
+            },
+         ),
+      ).data ?? []
 
    return useMutation(
       trpc.estimate.create.mutationOptions({
@@ -36,6 +48,7 @@ export function useCreateEstimate({
                id: crypto.randomUUID(),
                shortId: 0,
                creator: auth.user,
+               client: clients.find((c) => c.id === input.clientId) ?? null,
                currency: input.currency ?? "UAH",
                sellingPrice: input.sellingPrice ?? 0,
                createdAt: new Date(),
@@ -56,6 +69,8 @@ export function useCreateEstimate({
                senderId: auth.user.id,
                estimate: {
                   ...estimate,
+                  client:
+                     clients.find((c) => c.id === estimate.clientId) ?? null,
                   creator: auth.user,
                   currency: estimate.currency ?? "UAH",
                   sellingPrice: estimate.sellingPrice ?? 0,

@@ -49,7 +49,6 @@ export function UpdateOrder({ orderId, finalFocus, open, setOpen }: Props) {
                         name: form.name,
                         sellingPrice: number(form.sellingPrice),
                         note: form.note,
-                        client: null,
                         clientId: form.clientId,
                         severity: form.severity,
                         paymentType: form.paymentType,

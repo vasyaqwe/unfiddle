@@ -1,7 +1,7 @@
 import { user } from "@unfiddle/core/auth/schema"
 import { CURRENCIES } from "@unfiddle/core/currency/constants"
 import { d } from "@unfiddle/core/database"
-import { estimateProcurement } from "@unfiddle/core/database/schema"
+import { client, estimateProcurement } from "@unfiddle/core/database/schema"
 import { estimateItem } from "@unfiddle/core/estimate/item/schema"
 import { workspace } from "@unfiddle/core/workspace/schema"
 import { relations } from "drizzle-orm"
@@ -30,6 +30,7 @@ export const estimate = d.table(
          .text()
          .notNull()
          .references(() => workspace.id, { onDelete: "cascade" }),
+      clientId: d.text().references(() => client.id, { onDelete: "set null" }),
       normalizedName: d.text().notNull().default(""),
       name: d.text().notNull(),
       currency: d
@@ -40,7 +41,6 @@ export const estimate = d.table(
          .default("UAH"),
       sellingPrice: d.numeric({ mode: "number" }).notNull(),
       note: d.text().notNull().default(""),
-      client: d.text(),
       ...d.timestamps,
    },
    (table) => [
@@ -59,6 +59,10 @@ export const estimate = d.table(
 )
 
 export const estimateRelations = relations(estimate, ({ one, many }) => ({
+   client: one(client, {
+      fields: [estimate.clientId],
+      references: [client.id],
+   }),
    creator: one(user, {
       fields: [estimate.creatorId],
       references: [user.id],
@@ -73,7 +77,7 @@ export const updateEstimateSchema = createUpdateSchema(estimate)
       name: true,
       note: true,
       sellingPrice: true,
-      client: true,
+      clientId: true,
       currency: true,
    })
    .required({ workspaceId: true })
