@@ -91,7 +91,7 @@ export function Toaster(props: React.ComponentProps<typeof Sonner>) {
             ),
             close: (
                <Icons.xMark
-                  className="!size-4 text-muted"
+                  className="size-4! text-muted"
                   strokeWidth={3}
                />
             ),
