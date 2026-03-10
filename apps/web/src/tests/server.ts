@@ -1,6 +1,15 @@
+import { http, HttpResponse } from "msw"
 import { setupServer } from "msw/node"
-import { trpcMsw } from "@/tests/handlers"
+import superjson from "superjson"
 
-export const server = setupServer(
-   trpcMsw.client.list.query(() => []),
-)
+const batchHandler = http.get("http://localhost:8787/trpc/client.list", () => {
+   return HttpResponse.json([
+      {
+         result: {
+            data: superjson.serialize([]),
+         },
+      },
+   ])
+})
+
+export const server = setupServer(batchHandler)

@@ -4,6 +4,14 @@ const API_URL = {
 }
 
 export const clientEnv = {
+   test: {
+      API_URL: API_URL.development,
+      WEB_URL: "http://localhost:3000",
+      COLLABORATION_URL: "collaboration.unfiddle.com",
+      STORAGE_URL: `${API_URL.development}/r2`,
+      CLOUDFLARE_ACCOUNT_ID: "bfef1e994f1aac7e7a42dc4ba75197a0",
+      CLOUDFLARE_DATABASE_ID: "b3c5c658-0eec-4ad5-95b2-63948fd304dd",
+   },
    development: {
       API_URL: API_URL.development,
       WEB_URL: "http://localhost:3000",
@@ -22,7 +30,7 @@ export const clientEnv = {
    },
 } as const
 
-type Environment = "production" | "development"
+type Environment = "production" | "development" | "test"
 
 export type ApiEnv = {
    ENVIRONMENT: Environment
