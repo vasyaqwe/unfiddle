@@ -19,11 +19,11 @@ export const button = cva(
                "bg-red-9 font-[400] text-shadow-md/7 shadow-[inset_0_-2.5px_1px_0_rgb(0_0_0_/_0.2),0_1px_3px_0_rgb(0_0_0_/_0.1),_0_1px_2px_-1px_rgb(0_0_0_/_0.1)] hover:bg-red-9/90 active:bg-red-9 [&>svg]:drop-shadow-md",
          },
          size: {
-            xs: "h-9 rounded-sm px-1 md:h-6",
-            sm: "h-9 rounded-sm px-1.5 md:h-7",
-            md: "h-9 rounded-md px-3 md:h-[1.925rem] md:px-[0.53rem]",
-            lg: "h-10 rounded-lg px-3 md:h-[2.1rem]",
-            xl: "h-10 rounded-lg px-3 md:h-10",
+            xs: "h-9 rounded-sm px-1 md:h-6 [&_svg:not([class*='size-'])]:size-4",
+            sm: "h-9 rounded-sm px-1.5 md:h-7 [&_svg:not([class*='size-'])]:size-4.5",
+            md: "h-9 rounded-md px-3 md:h-[1.925rem] md:px-[0.53rem] [&_svg:not([class*='size-'])]:size-5",
+            lg: "h-10 rounded-lg px-3 md:h-[2.1rem] [&_svg:not([class*='size-'])]:size-5",
+            xl: "h-10 rounded-lg px-3 md:h-10 [&_svg:not([class*='size-'])]:size-5.5",
          },
          kind: {
             default: "gap-1.5",
@@ -40,7 +40,7 @@ export const button = cva(
             kind: "default",
             size: "md",
             className:
-               "md:[&>svg]:-ml-[0.3rem] [&>svg]:-ml-[0.2rem] has-[svg]:gap-1",
+               "md:[&>svg]:-ml-[0.25rem] [&>svg]:-ml-[0.2rem] has-[svg]:gap-1",
          },
       ],
       defaultVariants: {

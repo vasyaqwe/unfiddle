@@ -102,7 +102,7 @@ export function SidebarContent() {
                         className="mt-3 w-full"
                         size={"lg"}
                      >
-                        <Icons.pencilLine className="size-5" />
+                        <Icons.pencilLine />
                         Нове замовлення
                      </Button>
                   }

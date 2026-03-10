@@ -108,7 +108,7 @@ export function FilterMenu() {
                      variant={"ghost"}
                      size={"sm"}
                   >
-                     <Icons.filter className="size-5" />
+                     <Icons.filter />
                      Фільтр
                   </Button>
                }

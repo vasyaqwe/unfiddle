@@ -353,7 +353,7 @@ function RouteComponent() {
                         <DrawerTrigger
                            render={
                               <Button variant={"secondary"}>
-                                 <Icons.plus className="md:size-6" />
+                                 <Icons.plus  />
                                  Додати
                               </Button>
                            }
