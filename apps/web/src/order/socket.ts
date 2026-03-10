@@ -7,6 +7,9 @@ import { useOptimisticDeleteOrder } from "@/order/delete/use-delete-order"
 import { useOptimisticCreateOrderItem } from "@/order/item/mutations/use-create-order-item"
 import { useOptimisticDeleteOrderItem } from "@/order/item/mutations/use-delete-order-item"
 import { useOptimisticUpdateOrderItem } from "@/order/item/mutations/use-update-order-item"
+import { useOptimisticCreateMessage } from "@/order/message/mutations/use-create-message"
+import { useOptimisticDeleteMessage } from "@/order/message/mutations/use-delete-message"
+import { useOptimisticUpdateMessage } from "@/order/message/mutations/use-update-message"
 import { useOptimisticUpdateOrder } from "@/order/update/use-update-order"
 import { trpc } from "@/trpc"
 import { useQueryClient } from "@tanstack/react-query"
@@ -24,6 +27,9 @@ export function useOrderSocket() {
    const createItem = useOptimisticCreateOrderItem()
    const updateItem = useOptimisticUpdateOrderItem()
    const deleteItem = useOptimisticDeleteOrderItem()
+   const createMessage = useOptimisticCreateMessage()
+   const updateMessage = useOptimisticUpdateMessage()
+   const deleteMessage = useOptimisticDeleteMessage()
 
    return usePartySocket({
       host: env.COLLABORATION_URL,
@@ -49,6 +55,15 @@ export function useOrderSocket() {
          if (data.action === "create_item") return createItem(data)
          if (data.action === "update_item") return updateItem(data.item)
          if (data.action === "delete_item") return deleteItem(data)
+
+         if (data.action === "create_message")
+            return createMessage({
+               orderId: data.orderId,
+               message: data.message,
+            })
+         if (data.action === "update_message")
+            return updateMessage(data.message)
+         if (data.action === "delete_message") return deleteMessage(data)
 
          if (data.action === "create_assignee") {
             await update({

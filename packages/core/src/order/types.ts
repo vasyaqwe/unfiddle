@@ -6,6 +6,7 @@ import type {
    ORDER_STATUSES,
 } from "@unfiddle/core/order/constants"
 import type { OrderItem } from "@unfiddle/core/order/item/types"
+import type { updateOrderMessageSchema } from "@unfiddle/core/order/message/schema"
 import type { updateOrderSchema } from "@unfiddle/core/order/schema"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import type { z } from "zod"
@@ -76,4 +77,24 @@ export type OrderEvent =
         orderId: string
         senderId: string
         workspaceId: string
+     }
+   | {
+        action: "create_message"
+        message: RouterOutput["order"]["message"]["list"][number]
+        orderId: string
+        workspaceId: string
+        senderId: string
+     }
+   | {
+        action: "update_message"
+        message: z.infer<typeof updateOrderMessageSchema>
+        orderId: string
+        senderId: string
+     }
+   | {
+        action: "delete_message"
+        orderMessageId: string
+        orderId: string
+        workspaceId: string
+        senderId: string
      }

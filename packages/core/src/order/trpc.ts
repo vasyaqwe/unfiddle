@@ -15,6 +15,7 @@ import {
 } from "@unfiddle/core/order/constants"
 import { orderFilterSchema } from "@unfiddle/core/order/filter"
 import { orderItemRouter } from "@unfiddle/core/order/item/trpc"
+import { orderMessageRouter } from "@unfiddle/core/order/message/trpc"
 import {
    order,
    orderCounter,
@@ -42,6 +43,7 @@ import { z } from "zod"
 export const orderRouter = t.router({
    assignee: orderAssigneeRouter,
    item: orderItemRouter,
+   message: orderMessageRouter,
    export: t.procedure
       .use(workspaceMemberMiddleware)
       .input(z.object({ workspaceId: z.string() }))

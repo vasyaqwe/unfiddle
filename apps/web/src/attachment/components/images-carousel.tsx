@@ -107,7 +107,7 @@ function Image({
                            "--aspect-ratio": aspectRatio,
                         } as never
                      }
-                     className="size-full max-h-[320px] min-w-[calc(var(--base-width)*var(--aspect-ratio))] rounded-xl border border-neutral object-cover"
+                     className="size-full max-h-80 min-w-[calc(var(--base-width)*var(--aspect-ratio))] rounded-xl border border-neutral object-cover"
                   />
                </div>
             }
