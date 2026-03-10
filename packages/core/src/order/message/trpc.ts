@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server"
+import { orderMessageReadRouter } from "@unfiddle/core/order/message/read/trpc"
 import {
    createOrderMessageSchema,
    orderMessage,
@@ -10,6 +11,7 @@ import { and, desc, eq } from "drizzle-orm"
 import { z } from "zod"
 
 export const orderMessageRouter = t.router({
+   read: orderMessageReadRouter,
    list: t.procedure
       .use(workspaceMemberMiddleware)
       .input(

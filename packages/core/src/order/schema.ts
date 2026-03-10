@@ -11,6 +11,7 @@ import {
    ORDER_STATUSES,
 } from "@unfiddle/core/order/constants"
 import { orderItem } from "@unfiddle/core/order/item/schema"
+import { orderMessageRead } from "@unfiddle/core/order/message/read/schema"
 import { orderMessage } from "@unfiddle/core/order/message/schema"
 import { procurement } from "@unfiddle/core/procurement/schema"
 import { workspace } from "@unfiddle/core/workspace/schema"
@@ -104,6 +105,7 @@ export const orderRelations = relations(order, ({ one, many }) => ({
    items: many(orderItem),
    attachments: many(attachment),
    messages: many(orderMessage),
+   messageReads: many(orderMessageRead),
 }))
 
 export const updateOrderSchema = createUpdateSchema(order)
