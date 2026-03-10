@@ -16,7 +16,7 @@ import {
 } from "@unfiddle/ui/components/chart"
 import { useChartZoom } from "@unfiddle/ui/components/chart/use-chart-zoom"
 import { Loading } from "@unfiddle/ui/components/loading"
-import { cx } from "@unfiddle/ui/utils"
+import { cn } from "@unfiddle/ui/utils"
 import * as React from "react"
 import {
    CartesianGrid,
@@ -177,7 +177,7 @@ function ChartContent() {
          </div>
          <ChartContainer
             config={config}
-            className={cx(
+            className={cn(
                "mt-5 h-0 grow",
                lines.length === 1
                   ? "[--color-chart-1:var(--color-primary-6)]"

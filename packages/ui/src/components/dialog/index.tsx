@@ -2,7 +2,7 @@ import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 import { Button } from "@unfiddle/ui/components/button"
 import { Icons } from "@unfiddle/ui/components/icons"
 import type { VariantProps } from "class-variance-authority"
-import { cn, cx } from "../../utils"
+import { cn } from "../../utils"
 import { DIALOG_STYLES, dialog } from "./constants"
 
 export const Dialog = DialogPrimitive.Root
@@ -25,7 +25,7 @@ export function DialogPopup({
             className={cn(
                dialog({
                   size,
-                  className: cx(
+                  className: cn(
                      DIALOG_STYLES.transition,
                      DIALOG_STYLES.popup,
                      DIALOG_STYLES.center,

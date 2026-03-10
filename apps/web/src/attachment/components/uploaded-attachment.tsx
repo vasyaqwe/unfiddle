@@ -8,7 +8,7 @@ import {
    TooltipPopup,
    TooltipTrigger,
 } from "@unfiddle/ui/components/tooltip"
-import { cx } from "@unfiddle/ui/utils"
+import { cn } from "@unfiddle/ui/utils"
 
 export function UploadedAttachment({
    file,
@@ -25,7 +25,7 @@ export function UploadedAttachment({
             delay={0}
             render={
                <div
-                  className={cx(
+                  className={cn(
                      "group relative flex flex-col justify-center rounded-md border border-neutral dark:bg-primary-3",
                      image ? "size-17" : "h-17 px-2",
                   )}

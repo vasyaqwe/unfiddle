@@ -1,6 +1,6 @@
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog"
 import type { VariantProps } from "class-variance-authority"
-import { cn, cx } from "../../utils"
+import { cn } from "../../utils"
 import { DIALOG_STYLES, dialog } from "./constants"
 
 export const AlertDialog = AlertDialogPrimitive.Root
@@ -23,7 +23,7 @@ export function AlertDialogPopup({
             className={cn(
                dialog({
                   size,
-                  className: cx(
+                  className: cn(
                      DIALOG_STYLES.transition,
                      DIALOG_STYLES.popup,
                      DIALOG_STYLES.center,

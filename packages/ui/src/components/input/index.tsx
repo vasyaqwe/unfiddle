@@ -6,7 +6,7 @@ import {
 import { input } from "@unfiddle/ui/components/input/constants"
 import type { VariantProps } from "class-variance-authority"
 import * as React from "react"
-import { cn, cx } from "../../utils"
+import { cn } from "../../utils"
 
 export function Input({
    className,
@@ -41,7 +41,7 @@ export function PasswordInput({
             required
             placeholder="••••••••••••"
             onChange={(e) => setValue(e.target.value)}
-            className={cx(
+            className={cn(
                "pe-9",
                isVisible && value.length > 0
                   ? ""

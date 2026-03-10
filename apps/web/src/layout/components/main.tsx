@@ -1,5 +1,5 @@
 import { ScrollArea } from "@unfiddle/ui/components/scroll-area"
-import { cn, cx } from "@unfiddle/ui/utils"
+import { cn } from "@unfiddle/ui/utils"
 
 export function Main({
    children,
@@ -12,19 +12,19 @@ export function Main({
 }) {
    return (
       <main
-         className={cx(
+         className={cn(
             "flex h-[calc(100svh-var(--bottom-navigation-height))] grow overflow-hidden bg-background md:mt-[0.5rem] md:mr-[0.5rem] md:h-[calc(100svh-16px)] md:grow md:rounded-lg md:border md:border-surface-12/13 md:shadow-xs",
             className,
          )}
       >
-         <div className={cx("relative flex grow flex-col", innerClassName)}>
+         <div className={cn("relative flex grow flex-col", innerClassName)}>
             {children}
          </div>
       </main>
    )
 }
 
-interface Props extends React.ComponentProps<"div"> {
+interface Props extends React.ComponentProps<typeof ScrollArea> {
    containerClassName?: string
    container?: boolean
 }

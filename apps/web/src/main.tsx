@@ -8,7 +8,7 @@ import { Link, RouterProvider, createRouter } from "@tanstack/react-router"
 import { button } from "@unfiddle/ui/components/button/constants"
 import { Logo } from "@unfiddle/ui/components/logo"
 import { TooltipProvider } from "@unfiddle/ui/components/tooltip"
-import { cx } from "@unfiddle/ui/utils"
+import { cn } from "@unfiddle/ui/utils"
 import { ThemeProvider } from "next-themes"
 import * as React from "react"
 import ReactDOM from "react-dom/client"
@@ -48,7 +48,7 @@ function NotFound() {
          </p>
          <Link
             to={"/"}
-            className={cx(button(), "text-white")}
+            className={cn(button(), "text-white")}
          >
             Додому
          </Link>

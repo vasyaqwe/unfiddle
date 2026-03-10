@@ -1,4 +1,4 @@
-import { cn, cx } from "@unfiddle/ui/utils"
+import { cn } from "@unfiddle/ui/utils"
 import * as React from "react"
 
 type ContextType = {
@@ -70,7 +70,7 @@ export function SegmentedProgressBars({
          {Array.from({ length: segments }).map((_, idx) => (
             <div
                key={idx}
-               className={cx(
+               className={cn(
                   "w-0.5 bg-current",
                   idx === filled - 1 ? "h-5.5" : "h-3.5",
                   idx < filled ? "" : "opacity-30",

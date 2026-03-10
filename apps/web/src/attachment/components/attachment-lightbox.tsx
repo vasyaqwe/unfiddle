@@ -10,7 +10,6 @@ import {
 } from "@unfiddle/ui/components/dialog"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { Separator } from "@unfiddle/ui/components/separator"
-import { cx } from "@unfiddle/ui/utils"
 import { ZoomPane } from "@unfiddle/ui/zoom-pane"
 import { ZoomImageRenderer } from "@unfiddle/ui/zoom-pane/image-renderer"
 
@@ -146,7 +145,7 @@ export default function AttachmentLightbox({
                            search: { attachmentId: attachment.id },
                         })
                      }}
-                     className={cx(
+                     className={cn(
                         "cursor-(--cursor) rounded-md border outline-4",
                         currentAttachment?.id === attachment.id
                            ? "border-primary-8 outline-primary-8/25"

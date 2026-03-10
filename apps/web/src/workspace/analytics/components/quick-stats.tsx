@@ -16,7 +16,7 @@ import {
    CardHeader,
    CardTitle,
 } from "@unfiddle/ui/components/card"
-import { cx } from "@unfiddle/ui/utils"
+import { cn } from "@unfiddle/ui/utils"
 
 export function QuickStats() {
    const params = useParams({ from: "/_authed/$workspaceId/_layout/analytics" })
@@ -152,7 +152,7 @@ export function QuickStats() {
                         {formatNumber(m.orders)}{" "}
                         {m.percentage > 0 && (
                            <StatValueSup
-                              className={cx(
+                              className={cn(
                                  m.percentage >= 75
                                     ? "text-green-9"
                                     : "text-red-9",
@@ -179,7 +179,7 @@ export function QuickStats() {
                         {formatNumber(m.orders)}{" "}
                         {m.percentage > 0 && (
                            <StatValueSup
-                              className={cx(
+                              className={cn(
                                  m.percentage > 25
                                     ? "text-red-9"
                                     : "text-green-9",

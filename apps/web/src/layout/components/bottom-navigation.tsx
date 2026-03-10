@@ -2,7 +2,7 @@ import { Link, useParams, useSearch } from "@tanstack/react-router"
 import { Icons } from "@unfiddle/ui/components/icons"
 
 export function BottomNavigation() {
-   const params = useParams({ from: "/_authed/$workspaceId" })
+   const params = useParams({ from: "/_authed/$workspaceId/_layout" })
    const search = useSearch({ strict: false })
 
    return (

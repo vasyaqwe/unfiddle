@@ -8,7 +8,7 @@ import {
 } from "cmdk"
 import * as React from "react"
 import { POPUP_STYLES } from "../constants"
-import { cn, cx } from "../utils"
+import { cn } from "../utils"
 import { Icons } from "./icons"
 import { Popover, PopoverPopup, PopoverTrigger } from "./popover"
 
@@ -233,7 +233,7 @@ export function ComboboxItem({
          {children}
          <Icons.check
             strokeWidth={2.5}
-            className={cx(
+            className={cn(
                "!text-white/90 -mr-1 md:-mr-0.5 ml-auto size-[25px] md:size-[22px]",
                isSelected ? "" : "invisible",
             )}

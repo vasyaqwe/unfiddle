@@ -2,7 +2,7 @@ import { DIALOG_STYLES } from "@unfiddle/ui/components/dialog/constants"
 import { useAtomValue } from "jotai"
 import { Drawer as DrawerPrimitive } from "vaul-base"
 import { isMobileAtom } from "../store"
-import { cn, cx } from "../utils"
+import { cn } from "../utils"
 import { Separator } from "./separator"
 
 function Drawer({
@@ -30,7 +30,7 @@ function DrawerPopup({
    return (
       <DrawerPortal>
          <DrawerBackdrop
-            className={cx(DIALOG_STYLES.backdrop, "bg-black/45")}
+            className={cn(DIALOG_STYLES.backdrop, "bg-black/45")}
          />
          <DrawerPrimitive.Content
             className={cn(

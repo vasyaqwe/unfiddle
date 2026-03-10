@@ -16,7 +16,6 @@ import {
 } from "@unfiddle/ui/components/menu"
 import { ScrollArea } from "@unfiddle/ui/components/scroll-area"
 import { cn } from "@unfiddle/ui/utils"
-import { cx } from "@unfiddle/ui/utils"
 
 export function Sidebar({
    children,
@@ -40,7 +39,7 @@ export function Sidebar({
 
 export function SidebarContent() {
    const auth = useAuth()
-   const params = useParams({ from: "/_authed/$workspaceId" })
+   const params = useParams({ from: "/_authed/$workspaceId/_layout" })
    const search = useSearch({ strict: false })
 
    return (
@@ -51,7 +50,7 @@ export function SidebarContent() {
                   <MenuTrigger
                      render={
                         <Button
-                           className={cx(
+                           className={cn(
                               "!gap-1.5 justify-start",
                               auth.workspace.image ? "md:pl-0.5" : "md:pl-1",
                            )}
@@ -75,7 +74,7 @@ export function SidebarContent() {
                   to={"/$workspaceId/settings"}
                   params={params}
                   search={search}
-                  className={cx(
+                  className={cn(
                      button({ kind: "icon", variant: "ghost" }),
                      "text-muted hover:text-foreground/90 aria-[current=page]:text-foreground/90",
                   )}
@@ -86,7 +85,7 @@ export function SidebarContent() {
                   to="/$workspaceId/search"
                   params={params}
                   search={search}
-                  className={cx(
+                  className={cn(
                      button({ kind: "icon", variant: "tertiary" }),
                      "!rounded-[0.6125rem] ml-auto shrink-0",
                   )}
