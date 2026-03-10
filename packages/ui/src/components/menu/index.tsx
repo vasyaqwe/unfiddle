@@ -1,4 +1,4 @@
-import { Menu as MenuPrimitive } from "@base-ui-components/react/menu"
+import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { MENU_ITEM_STYLES } from "@unfiddle/ui/components/menu/constants"
 import { POPUP_STYLES } from "@unfiddle/ui/constants"

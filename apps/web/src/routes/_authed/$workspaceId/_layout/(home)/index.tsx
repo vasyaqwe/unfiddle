@@ -198,7 +198,6 @@ function _OrderRow({
    const [archiveAlertOpen, setArchiveAlertOpen] = React.useState(false)
    const [deleteAlertOpen, setDeleteAlertOpen] = React.useState(false)
    const menuTriggerRef = React.useRef<HTMLDivElement>(null)
-   const [contextMenuOpen, setContextMenuOpen] = React.useState(false)
 
    const totalProfit = order.procurements.reduce(
       (acc, p) =>
@@ -210,16 +209,12 @@ function _OrderRow({
    const deleteAssignee = useDeleteOrderAssignee()
 
    return (
-      <ContextMenu
-         open={contextMenuOpen}
-         onOpenChange={setContextMenuOpen}
-      >
+      <ContextMenu>
          <ContextMenuTrigger
             className={
-               "border-surface-5 border-t transition-colors duration-[50ms] first:border-0 hover:bg-surface-1 data-active:bg-surface-2"
+               "border-surface-5 border-t transition-colors duration-[50ms] first:border-0 hover:bg-surface-1 data-popup-open:bg-surface-2"
             }
             ref={menuTriggerRef}
-            data-active={contextMenuOpen ? "" : undefined}
          >
             <Link
                to="/$workspaceId/order/$orderId"
@@ -255,8 +250,9 @@ function _OrderRow({
                   {order.name}
                </p>
                {order.client ? (
-                  <Tooltip delay={0}>
+                  <Tooltip>
                      <TooltipTrigger
+                        delay={0}
                         render={
                            <Badge className="ml-auto gap-1 max-lg:hidden">
                               <Icons.briefcase className="size-4.5" />
@@ -279,8 +275,9 @@ function _OrderRow({
                   >
                      {order.assignees.map((assignee) => (
                         <AvatarStackItem key={assignee.user.id}>
-                           <Tooltip delay={0}>
+                           <Tooltip>
                               <TooltipTrigger
+                                 delay={0}
                                  render={
                                     <UserAvatar
                                        size={25}

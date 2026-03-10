@@ -13,7 +13,10 @@ export const CurrencySelect = ({
    return (
       <Select
          value={value}
-         onValueChange={onValueChange}
+         onValueChange={(v) => {
+            if (!v) return
+            onValueChange(v)
+         }}
       >
          <SelectTrigger className="min-w-24" />
          <SelectPopup>

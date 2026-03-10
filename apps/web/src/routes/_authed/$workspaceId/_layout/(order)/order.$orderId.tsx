@@ -353,7 +353,7 @@ function RouteComponent() {
                         <DrawerTrigger
                            render={
                               <Button variant={"secondary"}>
-                                 <Icons.plus  />
+                                 <Icons.plus />
                                  Додати
                               </Button>
                            }
@@ -435,8 +435,9 @@ function RouteComponent() {
                      >
                         {order.assignees.map((assignee) => (
                            <AvatarStackItem key={assignee.user.id}>
-                              <Tooltip delay={0}>
+                              <Tooltip>
                                  <TooltipTrigger
+                                    delay={0}
                                     render={
                                        <UserAvatar
                                           size={26}
@@ -488,8 +489,9 @@ function RouteComponent() {
                <section className="group/section py-3">
                   <p className="text-muted text-sm">Створене</p>
                   <p className="mt-2 flex items-center gap-2">
-                     <Tooltip delay={0}>
+                     <Tooltip>
                         <TooltipTrigger
+                           delay={0}
                            render={
                               <UserAvatar
                                  size={22}
@@ -632,9 +634,10 @@ function FileItem({
                <Icons.trash />
             </Button>
          ) : (
-            <Tooltip delay={0}>
+            <Tooltip>
                <div className={"grid size-[31px] place-items-center"}>
                   <TooltipTrigger
+                     delay={0}
                      render={
                         <UserAvatar
                            size={22}

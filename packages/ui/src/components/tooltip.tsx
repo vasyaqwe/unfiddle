@@ -1,17 +1,11 @@
-import { Tooltip as TooltipPrimitive } from "@base-ui-components/react/tooltip"
+import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
 import { POPUP_STYLES } from "../constants"
 import { cn } from "../utils"
 
-export function Tooltip({
-   delay = 500,
-   ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Root>) {
-   return (
-      <TooltipPrimitive.Root
-         delay={delay}
-         {...props}
-      />
-   )
+export function Tooltip(
+   props: React.ComponentProps<typeof TooltipPrimitive.Root>,
+) {
+   return <TooltipPrimitive.Root {...props} />
 }
 
 export const TooltipProvider = TooltipPrimitive.Provider

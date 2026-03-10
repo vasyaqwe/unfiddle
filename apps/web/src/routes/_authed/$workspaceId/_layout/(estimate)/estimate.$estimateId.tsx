@@ -221,8 +221,9 @@ function RouteComponent() {
                <section className="group/section py-3">
                   <p className="text-muted text-sm">Створене</p>
                   <p className="mt-2 flex items-center gap-2">
-                     <Tooltip delay={0}>
+                     <Tooltip>
                         <TooltipTrigger
+                           delay={0}
                            render={
                               <UserAvatar
                                  size={22}

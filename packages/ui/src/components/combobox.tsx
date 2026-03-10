@@ -174,7 +174,7 @@ export function ComboboxInput({
          <CommandInput
             placeholder="Шукати.."
             className={cn(
-               "-top-[3px] absolute h-10 w-full border-transparent bg-transparent px-2 placeholder:text-white/55 focus:outline-hidden md:h-9 md:text-sm",
+               "-top-[3px] absolute h-10 w-full border-transparent bg-transparent px-2 placeholder:text-white/70 focus:outline-hidden md:h-9 md:text-sm",
                className,
             )}
             {...props}

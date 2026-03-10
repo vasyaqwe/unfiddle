@@ -1,4 +1,4 @@
-import { Accordion as AccordionPrimitive } from "@base-ui-components/react/accordion"
+import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion"
 import { cn } from "../utils"
 
 export function Accordion({

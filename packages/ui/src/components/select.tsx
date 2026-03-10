@@ -1,4 +1,4 @@
-import { Select as SelectPrimitive } from "@base-ui-components/react/select"
+import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { Button } from "@unfiddle/ui/components/button"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { MENU_ITEM_STYLES } from "@unfiddle/ui/components/menu/constants"

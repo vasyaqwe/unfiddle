@@ -1,4 +1,4 @@
-import { Tabs as TabsPrimitive } from "@base-ui-components/react/tabs"
+import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"
 import { Separator } from "@unfiddle/ui/components/separator"
 import { FOCUS_STYLES } from "@unfiddle/ui/constants"
 import { cn } from "../utils"

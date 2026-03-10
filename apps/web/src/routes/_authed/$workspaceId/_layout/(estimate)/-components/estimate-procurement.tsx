@@ -81,8 +81,9 @@ export function EstimateProcurement({
             ) : null}
             <div className="ml-auto flex items-center gap-1.5">
                {provider ? (
-                  <Tooltip delay={0}>
+                  <Tooltip>
                      <TooltipTrigger
+                        delay={0}
                         render={
                            <Badge
                               size="sm"

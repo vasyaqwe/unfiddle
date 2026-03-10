@@ -1,4 +1,4 @@
-import { Dialog as DialogPrimitive } from "@base-ui-components/react/dialog"
+import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 import { Button } from "@unfiddle/ui/components/button"
 import { Icons } from "@unfiddle/ui/components/icons"
 import type { VariantProps } from "class-variance-authority"

@@ -1,4 +1,4 @@
-import { NumberField as NumberFieldPrimitive } from "@base-ui-components/react/number-field"
+import { NumberField as NumberFieldPrimitive } from "@base-ui/react/number-field"
 import { cn } from "@unfiddle/ui/utils"
 import { input } from "./input/constants"
 

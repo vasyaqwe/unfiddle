@@ -1,4 +1,4 @@
-import { Popover as PopoverPrimitive } from "@base-ui-components/react/popover"
+import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
 import { POPUP_STYLES } from "../constants"
 import { cn } from "../utils"
 

@@ -1,3 +1,3 @@
-import { Toggle as TogglePrimitive } from "@base-ui-components/react/toggle"
+import { Toggle as TogglePrimitive } from "@base-ui/react/toggle"
 
 export const Toggle = TogglePrimitive

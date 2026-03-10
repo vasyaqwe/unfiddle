@@ -237,8 +237,9 @@ function EstimateRow({
                   {estimate.name}
                </p>
                {estimate.client ? (
-                  <Tooltip delay={0}>
+                  <Tooltip>
                      <TooltipTrigger
+                        delay={0}
                         render={
                            <Badge className="ml-auto gap-1 max-lg:hidden">
                               <Icons.briefcase className="size-4.5" />

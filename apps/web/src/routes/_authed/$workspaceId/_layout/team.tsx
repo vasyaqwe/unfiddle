@@ -277,13 +277,14 @@ function MemberRow({
             <TableCell className="min-w-[150px]">
                <Select
                   defaultValue={member.role}
-                  onValueChange={(role) =>
+                  onValueChange={(role) => {
+                     if (!role) return
                      update.mutate({
                         userId: member.user.id,
                         workspaceId: params.workspaceId,
                         role,
                      })
-                  }
+                  }}
                >
                   <SelectTrigger
                      disabled={
@@ -428,9 +429,9 @@ function MemberRow({
                   Видалити {member.user.name} з команди?
                </AlertDialogTitle>
                <AlertDialogDescription>
-                  <b>
+                  <strong>
                      {member.user.name} ({member.user.email})
-                  </b>{" "}
+                  </strong>{" "}
                   більше не буде мати доступу до проєкту. Усі дані від цього
                   користувача залишаться незмінними (замовлення, закупівлі).
                </AlertDialogDescription>

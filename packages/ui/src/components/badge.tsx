@@ -12,7 +12,7 @@ const badge = cva(
             destructive: `border-transparent text-red-11 bg-red-4/40`,
          },
          size: {
-            sm: "h-[26px] rounded-sm px-1.5",
+            sm: "h-[26px] rounded-sm px-1.5 leading-6",
             md: "h-7 rounded-sm px-2",
             lg: "h-8 rounded-lg px-3",
          },

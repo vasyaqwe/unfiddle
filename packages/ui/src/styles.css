@@ -205,6 +205,10 @@ p:not(.prose) {
    text-wrap: pretty;
 }
 
+strong {
+   font-weight: 600;
+}
+
 [data-masked]:not(:first-of-type) {
    --circle: calc(((var(--border) * 2) + var(--size)) * 0.5);
    --y: calc(100% - (var(--size) * 0.5));

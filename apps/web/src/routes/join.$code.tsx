@@ -89,7 +89,8 @@ function RouteComponent() {
                Приєднайтеся до {workspace.name}
             </h1>
             <p className="mb-7 text-foreground/90 text-lg">
-               Вас запросили приєднатися до проєкту <b>{workspace.name}</b>.
+               Вас запросили приєднатися до проєкту{" "}
+               <strong>{workspace.name}</strong>.
             </p>
             <Button
                size={"lg"}

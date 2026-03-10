@@ -20,8 +20,9 @@ export function UploadedAttachment({
    const image = file.type.startsWith("image/")
 
    return (
-      <Tooltip delay={0}>
+      <Tooltip>
          <TooltipTrigger
+            delay={0}
             render={
                <div
                   className={cx(

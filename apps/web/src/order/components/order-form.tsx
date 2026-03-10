@@ -154,7 +154,10 @@ function Form({
                <FieldLabel className={"mb-2"}>Валюта</FieldLabel>
                <Select
                   value={currency}
-                  onValueChange={setCurrency}
+                  onValueChange={(v) => {
+                     if (!v) return
+                     setCurrency(v)
+                  }}
                >
                   <SelectTrigger />
                   <SelectPopup align="start">

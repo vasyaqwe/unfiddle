@@ -1,5 +1,5 @@
-import { Field as FieldPrimitive } from "@base-ui-components/react/field"
-import { Fieldset as FieldsetPrimitive } from "@base-ui-components/react/fieldset"
+import { Field as FieldPrimitive } from "@base-ui/react/field"
+import { Fieldset as FieldsetPrimitive } from "@base-ui/react/fieldset"
 import type { VariantProps } from "class-variance-authority"
 import { cn } from "../utils"
 import { input } from "./input/constants"

@@ -1,4 +1,4 @@
-import { AlertDialog as AlertDialogPrimitive } from "@base-ui-components/react/alert-dialog"
+import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog"
 import type { VariantProps } from "class-variance-authority"
 import { cn, cx } from "../../utils"
 import { DIALOG_STYLES, dialog } from "./constants"

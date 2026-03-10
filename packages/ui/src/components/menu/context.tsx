@@ -1,4 +1,4 @@
-import { ContextMenu as ContextMenuPrimitive } from "@base-ui-components/react/context-menu"
+import { ContextMenu as ContextMenuPrimitive } from "@base-ui/react/context-menu"
 import { MenuCheckboxItemIndicator } from "@unfiddle/ui/components/menu"
 import { MENU_ITEM_STYLES } from "@unfiddle/ui/components/menu/constants"
 import { POPUP_STYLES } from "@unfiddle/ui/constants"

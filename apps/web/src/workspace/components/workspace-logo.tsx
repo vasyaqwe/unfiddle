@@ -44,6 +44,7 @@ export function WorkspaceLogo({
             <Avatar
                name={workspace.id}
                size={size}
+               className="[&>svg]:size-full"
             />
          )}
          {children}
