@@ -137,7 +137,7 @@ export function ComboboxTriggerIcon() {
    return (
       <Icons.chevronUpDown
          data-combobox-icon
-         className="-mr-1 !ml-auto size-4 text-muted"
+         className="-mr-1 ml-auto! size-4 text-muted"
       />
    )
 }
@@ -174,7 +174,7 @@ export function ComboboxInput({
          <CommandInput
             placeholder="Шукати.."
             className={cn(
-               "-top-[3px] absolute h-10 w-full border-transparent bg-transparent px-2 placeholder:text-white/70 focus:outline-hidden md:h-9 md:text-sm",
+               "-top-0.75 absolute h-10 w-full border-transparent bg-transparent px-2 placeholder:text-white/70 focus:outline-hidden md:h-9 md:text-sm",
                className,
             )}
             {...props}
@@ -234,7 +234,7 @@ export function ComboboxItem({
          <Icons.check
             strokeWidth={2.5}
             className={cn(
-               "!text-white/90 -mr-1 md:-mr-0.5 ml-auto size-[25px] md:size-[22px]",
+               "-mr-1 md:-mr-0.5 ml-auto size-6.25 text-white/90! md:size-5.5",
                isSelected ? "" : "invisible",
             )}
          />

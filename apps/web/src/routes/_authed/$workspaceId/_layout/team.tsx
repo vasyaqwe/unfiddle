@@ -274,7 +274,7 @@ function MemberRow({
                </div>
             </TableCell>
             <TableCell>{member.user.email}</TableCell>
-            <TableCell className="min-w-[150px]">
+            <TableCell className="min-w-37.5">
                <Select
                   defaultValue={member.role}
                   onValueChange={(role) => {

@@ -68,7 +68,7 @@ function RouteComponent() {
                className="relative col-span-4 flex w-full items-center"
             >
                <div className="max-md:-translate-y-1/2 top-1/2 left-1 grid size-5 shrink-0 place-items-center opacity-50 max-md:absolute md:left-4">
-                  <Icons.search className="size-[18px]" />
+                  <Icons.search className="size-4.5" />
                </div>
                <Input
                   ref={inputRef}
@@ -140,7 +140,7 @@ function RouteComponent() {
                               setQuery(q)
                            }}
                            className={
-                              "group flex h-[34px] items-center justify-between rounded-none px-4 transition-none hover:bg-surface-2"
+                              "group flex h-8.5 items-center justify-between rounded-none px-4 transition-none hover:bg-surface-2"
                            }
                            key={q}
                            to="/$workspaceId/search"

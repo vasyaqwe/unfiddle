@@ -28,7 +28,7 @@ function RouteComponent() {
 
    return (
       <main className="grid h-svh w-full place-items-center bg-background">
-         <div className="w-full max-w-[21rem] px-5">
+         <div className="w-full max-w-84 px-5">
             <form
                onSubmit={async (e) => {
                   e.preventDefault()

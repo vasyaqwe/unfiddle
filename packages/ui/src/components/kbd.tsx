@@ -23,7 +23,7 @@ export function Kbd({
             <>
                <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="mt-px size-[15px]"
+                  className="mt-px size-3.75"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"

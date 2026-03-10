@@ -64,9 +64,9 @@ export function SelectTriggerIcon() {
    return (
       <SelectIcon
          data-icon
-         className="-mr-[5px] ml-auto flex shrink-0"
+         className="-mr-1.25 ml-auto flex shrink-0"
       >
-         <Icons.chevronUpDown className="size-[18px] text-muted md:size-[16px]" />
+         <Icons.chevronUpDown className="size-4.5 text-muted md:size-4" />
       </SelectIcon>
    )
 }
@@ -93,7 +93,7 @@ export function SelectItem({
       >
          <SelectItemIndicator className="col-start-1">
             <Icons.check
-               className={"-ml-[2px] size-[24px] text-white/90 md:size-[22px]"}
+               className={"-ml-0.5 size-6 text-white/90 md:size-5.5"}
             />
          </SelectItemIndicator>
          <SelectItemText className={"col-start-2"}>{children}</SelectItemText>
@@ -112,14 +112,14 @@ export function SelectPopup({
          <SelectBackdrop />
          <SelectPositioner
             sideOffset={sideOffset}
-            className={"group z-[51]"}
+            className={"group z-51"}
             {...props}
          >
             <SelectPrimitive.Popup
                className={cn(
                   POPUP_STYLES.base,
                   POPUP_STYLES.transition,
-                  "!scale-100 p-(--popup-padding) transition-none",
+                  "scale-100! p-(--popup-padding) transition-none",
                   className,
                )}
             >

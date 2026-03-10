@@ -51,7 +51,7 @@ function RouteComponent() {
 
                create.mutate({ name: form.name })
             }}
-            className="mx-auto w-full max-w-[21rem] px-5"
+            className="mx-auto w-full max-w-84 px-5"
          >
             <h1 className="mb-4 text-xl">Створіть проєкт</h1>
             <Field>

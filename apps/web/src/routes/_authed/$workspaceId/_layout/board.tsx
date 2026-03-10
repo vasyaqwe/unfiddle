@@ -29,7 +29,7 @@ function RouteComponent() {
          <Link
             className={cn(
                button({ size: "lg" }),
-               "absolute right-1 bottom-1 z-[999] min-w-[100px]",
+               "absolute right-1 bottom-1 z-999 min-w-25",
             )}
             to={"/$workspaceId"}
             style={{ color: "white" }}

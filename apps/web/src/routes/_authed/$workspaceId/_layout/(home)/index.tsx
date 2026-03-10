@@ -116,12 +116,12 @@ function RouteComponent() {
          >
             <Button
                onClick={() => setCreateOrderOpen(true)}
-               className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-[10] overflow-visible shadow-xl md:right-8 md:bottom-8 md:h-9 md:px-3"
+               className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-10 overflow-visible shadow-xl md:right-8 md:bottom-8 md:h-9 md:px-3"
             >
                <Icons.plus className="md:size-6" />
                Замовлення
             </Button>
-            <div className="sticky top-0 z-[5] flex min-h-12 items-center gap-1 border-surface-12/13 border-b bg-background px-1.5 shadow-xs/4 lg:min-h-10">
+            <div className="sticky top-0 z-5 flex min-h-12 items-center gap-1 border-surface-12/13 border-b bg-background px-1.5 shadow-xs/4 lg:min-h-10">
                <ToggleArchived />
                <DateFilter />
                <FilterMenu />
@@ -212,7 +212,7 @@ function _OrderRow({
       <ContextMenu>
          <ContextMenuTrigger
             className={
-               "border-surface-5 border-t transition-colors duration-[50ms] first:border-0 hover:bg-surface-1 data-popup-open:bg-surface-2"
+               "border-surface-5 border-t transition-colors duration-50 first:border-0 hover:bg-surface-1 data-popup-open:bg-surface-2"
             }
             ref={menuTriggerRef}
          >
@@ -222,17 +222,17 @@ function _OrderRow({
                   workspaceId: params.workspaceId,
                   orderId: order.id,
                }}
-               className="relative grid h-[72px] grid-cols-[1fr_auto] grid-rows-[1fr_auto] items-center gap-x-2.5 gap-y-2 px-2.5 py-2 text-left lg:flex lg:h-[44px]"
+               className="relative grid h-18 grid-cols-[1fr_auto] grid-rows-[1fr_auto] items-center gap-x-2.5 gap-y-2 px-2.5 py-2 text-left lg:flex lg:h-11"
             >
                <div className="flex items-center gap-2 max-lg:w-full">
                   <OrderSeverityIcon
                      severity={order.severity}
-                     className="mr-[2px] shrink-0"
+                     className="mr-0.5 shrink-0"
                   />
                   <p className="whitespace-nowrap font-medium font-mono text-muted text-sm">
                      {makeShortId(order.shortId)}
                   </p>
-                  <p className="flex items-center gap-1.5 font-medium text-sm lg:w-[110px]">
+                  <p className="flex items-center gap-1.5 font-medium text-sm lg:w-27.5">
                      <UserAvatar
                         size={25}
                         user={order.creator}
@@ -360,7 +360,7 @@ function _OrderRow({
                      </Combobox>
                   ) : null}
                </div>
-               <p className="min-w-[60px] text-muted max-lg:hidden">
+               <p className="min-w-15 text-muted max-lg:hidden">
                   {formatOrderDate(order.createdAt)}
                </p>
                <div
@@ -424,7 +424,7 @@ function _OrderRow({
             >
                {assigned ? (
                   <>
-                     <Icons.undo className="size-[18px]" />
+                     <Icons.undo className="size-4.5" />
                      Залишити
                   </>
                ) : (

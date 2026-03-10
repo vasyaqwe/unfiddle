@@ -172,7 +172,7 @@ function RouteComponent() {
                      ))}
                   </div>
                </div>
-               <div className="relative mt-5 min-h-[250px]">
+               <div className="relative mt-5 min-h-62.5">
                   <div className="my-2 flex items-center justify-between">
                      <p className="font-medium text-lg">Закупівлі</p>
                      <CreateEstimateProcurement />
@@ -185,7 +185,7 @@ function RouteComponent() {
          </div>
          <div
             className={
-               "relative flex w-full shrink-0 grow flex-col border-neutral bg-surface-1 max-lg:hidden lg:max-w-[15rem] lg:border-l xl:max-w-[19rem]"
+               "relative flex w-full shrink-0 grow flex-col border-neutral bg-surface-1 max-lg:hidden lg:max-w-60 lg:border-l xl:max-w-76"
             }
          >
             <ScrollArea className="px-5 pb-4">

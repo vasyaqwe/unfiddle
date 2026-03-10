@@ -16,7 +16,7 @@ export function Toaster(props: React.ComponentProps<typeof Sonner>) {
                <svg
                   viewBox="0 0 14 14"
                   fill="none"
-                  className="!size-[18px] text-green-600"
+                  className="size-4.5! text-green-600"
                >
                   <circle
                      cx="7"
@@ -51,7 +51,7 @@ export function Toaster(props: React.ComponentProps<typeof Sonner>) {
                   viewBox="0 0 20 20"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
-                  className="!size-[18px] text-red-9"
+                  className="size-4.5! text-red-9"
                >
                   <circle
                      cx="10"

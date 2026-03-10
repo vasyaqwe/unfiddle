@@ -35,9 +35,9 @@ export function DateFilter() {
                   size={"sm"}
                   className="relative"
                >
-                  <Icons.calendar className="size-[18px]" />
+                  <Icons.calendar className="size-4.5" />
                   {search.startDate || search.endDate ? (
-                     <span className="absolute top-[3px] right-[3px] size-[5px] rounded-full bg-primary-7" />
+                     <span className="absolute top-0.75 right-0.75 size-1.25 rounded-full bg-primary-7" />
                   ) : null}
                </Button>
             }
@@ -49,13 +49,13 @@ export function DateFilter() {
                   value={startDate}
                   onValueChange={setStartDate}
                   placeholder="Початок"
-                  className="max-w-[170px]"
+                  className="max-w-42.5"
                />
                <DateInput
                   value={endDate}
                   onValueChange={setEndDate}
                   placeholder="Кінець"
-                  className="max-w-[170px]"
+                  className="max-w-42.5"
                />
             </div>
             <div className="mt-4 grid grid-cols-2 items-center gap-2">

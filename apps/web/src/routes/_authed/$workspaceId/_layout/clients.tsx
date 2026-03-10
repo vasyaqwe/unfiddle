@@ -77,7 +77,7 @@ function RouteComponent() {
             >
                <DrawerTrigger
                   render={
-                     <Button className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-[10] overflow-visible shadow-xl md:right-8 md:bottom-8 md:h-9 md:px-3">
+                     <Button className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-10 overflow-visible shadow-xl md:right-8 md:bottom-8 md:h-9 md:px-3">
                         <Icons.plus className="md:size-6" />
                         Клієнт
                      </Button>
@@ -180,15 +180,15 @@ function ClientRow({
       >
          <ContextMenuTrigger
             className={
-               "border-surface-5 border-t transition-colors duration-[50ms] first:border-0 hover:bg-surface-1 data-active:bg-surface-2"
+               "border-surface-5 border-t transition-colors duration-50 first:border-0 hover:bg-surface-1 data-active:bg-surface-2"
             }
             ref={menuTriggerRef}
             data-active={contextMenuOpen ? "" : undefined}
          >
-            <div className="relative grid h-[72px] grid-cols-[1fr_auto] grid-rows-[1fr_auto] items-center gap-x-2.5 gap-y-2 px-2.5 py-2 text-left lg:flex lg:h-[44px]">
+            <div className="relative grid h-18 grid-cols-[1fr_auto] grid-rows-[1fr_auto] items-center gap-x-2.5 gap-y-2 px-2.5 py-2 text-left lg:flex lg:h-11">
                <ClientSeverityIcon
                   severity={client.severity}
-                  className="mr-[2px] shrink-0"
+                  className="mr-0.5 shrink-0"
                />
                <p className="col-span-2 col-start-1 row-start-2 mt-px line-clamp-1 break-normal font-semibold data-vat:text-orange-10">
                   {client.name}

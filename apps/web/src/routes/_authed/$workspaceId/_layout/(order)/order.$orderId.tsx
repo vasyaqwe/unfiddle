@@ -229,7 +229,7 @@ function RouteComponent() {
                                     }}
                                  >
                                     {state.pressed ? (
-                                       <Icons.undo className="size-[18px]" />
+                                       <Icons.undo className="size-4.5" />
                                     ) : (
                                        <Icons.pin className="size-5" />
                                     )}
@@ -251,7 +251,7 @@ function RouteComponent() {
                updateProcurementOpen ? null : (
                   <FileUploader
                      ref={fileUploaderRef}
-                     className="absolute inset-0 z-[9] h-full"
+                     className="absolute inset-0 z-9 h-full"
                      onUpload={attachments.upload.mutateAsync}
                   />
                )}
@@ -260,7 +260,7 @@ function RouteComponent() {
                      variant={"destructive"}
                      className="mb-1.5 text-base"
                   >
-                     <Icons.archive className="mb-[2px] inline-block size-5.5" />
+                     <Icons.archive className="mb-0.5 inline-block size-5.5" />
                      Замовлення у архіві
                   </Badge>
                </Expandable>
@@ -369,7 +369,7 @@ function RouteComponent() {
                      ))}
                   </div>
                </div>
-               <div className="relative mt-5 min-h-[250px]">
+               <div className="relative mt-5 min-h-62.5">
                   <div className="my-2 flex items-center justify-between">
                      <p className="font-medium text-lg">Закупівлі</p>
                      <CreateProcurement />
@@ -387,11 +387,11 @@ function RouteComponent() {
                         {order.analogs.map((name, idx) => (
                            <Card
                               key={name}
-                              className="group/analog before:mask-l-from-[2rem] relative flex items-center px-3 py-1.5 before:pointer-events-none before:absolute before:inset-0 before:z-[1] before:bg-background before:opacity-0 before:transition-opacity hover:before:opacity-100"
+                              className="group/analog before:mask-l-from-8 relative flex items-center px-3 py-1.5 before:pointer-events-none before:absolute before:inset-0 before:z-1 before:bg-background before:opacity-0 before:transition-opacity hover:before:opacity-100"
                            >
                               {name}
                               <Button
-                                 className="absolute right-0.75 z-[2] opacity-0 transition-opacity group-hover/analog:opacity-100"
+                                 className="absolute right-0.75 z-2 opacity-0 transition-opacity group-hover/analog:opacity-100"
                                  size={"sm"}
                                  kind={"icon"}
                                  variant={"ghost"}
@@ -418,7 +418,7 @@ function RouteComponent() {
          </div>
          <div
             className={
-               "relative flex w-full shrink-0 grow flex-col border-neutral bg-surface-1 max-lg:hidden lg:max-w-[15rem] lg:border-l xl:max-w-[19rem]"
+               "relative flex w-full shrink-0 grow flex-col border-neutral bg-surface-1 max-lg:hidden lg:max-w-60 lg:border-l xl:max-w-76"
             }
          >
             <ScrollArea className="px-5 pb-4">
@@ -585,7 +585,7 @@ function FileItem({
             disabled={download.isPending}
             onClick={() => download.mutate([attachment])}
             variant={"ghost"}
-            className="md:!gap-1.5 cursor-pointer justify-start px-1.5 md:px-1.5"
+            className="cursor-pointer justify-start px-1.5 md:gap-1.5! md:px-1.5"
          >
             {attachment.name.endsWith(".svg") ? (
                <SVGPreview
@@ -593,7 +593,7 @@ function FileItem({
                   url={attachment.url}
                />
             ) : (
-               <Icons.attachment className="!ml-0" />
+               <Icons.attachment className="ml-0!" />
             )}
             <span className="line-clamp-1 text-muted text-sm">
                {attachment.name}
@@ -635,7 +635,7 @@ function FileItem({
             </Button>
          ) : (
             <Tooltip>
-               <div className={"grid size-[31px] place-items-center"}>
+               <div className={"grid size-7.75 place-items-center"}>
                   <TooltipTrigger
                      delay={0}
                      render={
@@ -673,11 +673,11 @@ function SeverityCombobox({ className }: React.ComponentProps<typeof Button>) {
             render={
                <Button
                   variant={"ghost"}
-                  className={cn("!gap-1.75 w-fit justify-start", className)}
+                  className={cn("w-fit justify-start gap-1.75!", className)}
                >
                   <OrderSeverityIcon
                      severity={order.severity}
-                     className="!-ml-[3px]"
+                     className="-ml-0.75!"
                   />
                   {ORDER_SEVERITIES_TRANSLATION[order.severity]}
                </Button>

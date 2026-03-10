@@ -94,7 +94,7 @@ function RouteComponent() {
             </p>
             <Button
                size={"lg"}
-               className="min-w-[150px]"
+               className="min-w-37.5"
                onClick={() => mutate.mutate(params)}
                pending={mutate.isPending || mutate.isSuccess}
                disabled={mutate.isPending || mutate.isSuccess}

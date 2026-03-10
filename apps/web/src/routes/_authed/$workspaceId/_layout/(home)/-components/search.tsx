@@ -63,9 +63,9 @@ export function Search() {
             }}
          >
             {active ? (
-               <Icons.xMark className="size-[18px]" />
+               <Icons.xMark className="size-4.5" />
             ) : (
-               <Icons.search className="size-[18px]" />
+               <Icons.search className="size-4.5" />
             )}
          </Button>
       </div>

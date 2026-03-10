@@ -151,7 +151,7 @@ function RouteComponent() {
                         <ComboboxTrigger
                            render={
                               <Button
-                                 className="min-w-[170px]"
+                                 className="min-w-42.5"
                                  variant={"secondary"}
                               >
                                  {search.period_comparison.length === 0

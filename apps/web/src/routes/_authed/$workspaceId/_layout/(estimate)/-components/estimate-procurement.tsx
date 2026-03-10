@@ -172,7 +172,7 @@ export function EstimateProcurement({
                })}
             </p>
          </div>
-         <p className="lg:!max-w-[80ch] mt-2 whitespace-pre-wrap empty:hidden lg:mt-2.5">
+         <p className="mt-2 whitespace-pre-wrap empty:hidden lg:mt-2.5 lg:max-w-[80ch]!">
             {estimateProcurement.note}
          </p>
          <div

@@ -178,7 +178,7 @@ function RouteComponent() {
                         {theme.resolvedTheme === "light" ? (
                            <>
                               <svg
-                                 className="!ml-0 mr-1 size-[18px]"
+                                 className="mr-1 ml-0! size-4.5"
                                  viewBox="0 0 14 14"
                                  fill="none"
                                  xmlns="http://www.w3.org/2000/svg"
@@ -226,7 +226,7 @@ function RouteComponent() {
                            <>
                               {" "}
                               <svg
-                                 className="!ml-0 mr-1 size-[18px]"
+                                 className="mr-1 ml-0! size-4.5"
                                  viewBox="0 0 14 14"
                                  fill="none"
                                  xmlns="http://www.w3.org/2000/svg"
@@ -319,7 +319,7 @@ function RouteComponent() {
                      <Field className="grid grid-cols-[100px_1fr] items-center py-4">
                         <FieldLabel className="mt-2 md:mt-1">Назва</FieldLabel>
                         <FieldControl
-                           className={"max-w-[300px]"}
+                           className={"max-w-75"}
                            defaultValue={auth.workspace.name}
                            placeholder="Уведіть назву"
                            name="name"
@@ -390,7 +390,7 @@ function RouteComponent() {
                            <FieldLabel className="mt-2 md:mt-1">
                               Ім'я
                            </FieldLabel>
-                           <div className={"relative max-w-[300px]"}>
+                           <div className={"relative max-w-75"}>
                               <FieldControl
                                  value={name}
                                  onValueChange={(v) => setName(v as string)}
@@ -437,9 +437,9 @@ function RouteComponent() {
                            <FieldLabel className="mt-2 md:mt-1">
                               Email
                            </FieldLabel>
-                           <div className={"relative max-w-[300px]"}>
+                           <div className={"relative max-w-75"}>
                               <FieldControl
-                                 className={"max-w-[300px]"}
+                                 className={"max-w-75"}
                                  value={email}
                                  onValueChange={(v) => setEmail(v as string)}
                                  placeholder="Уведіть ваш email"

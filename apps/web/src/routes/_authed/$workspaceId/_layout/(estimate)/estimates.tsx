@@ -98,7 +98,7 @@ function RouteComponent() {
             >
                <DrawerTrigger
                   render={
-                     <Button className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-[10] overflow-visible shadow-xl md:right-8 md:bottom-8 md:h-9 md:px-3">
+                     <Button className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-10 overflow-visible shadow-xl md:right-8 md:bottom-8 md:h-9 md:px-3">
                         <Icons.plus className="md:size-6" />
                         Прорахунок
                      </Button>
@@ -121,7 +121,7 @@ function RouteComponent() {
                   </EstimateForm>
                </DrawerPopup>
             </Drawer>
-            <div className="sticky top-0 z-[5] flex min-h-12 items-center gap-1 border-surface-12/13 border-b bg-background px-1.5 shadow-xs/4 lg:min-h-10">
+            <div className="sticky top-0 z-5 flex min-h-12 items-center gap-1 border-surface-12/13 border-b bg-background px-1.5 shadow-xs/4 lg:min-h-10">
                <DateFilter />
                <FilterMenu />
                <Search />
@@ -205,7 +205,7 @@ function EstimateRow({
       >
          <ContextMenuTrigger
             className={
-               "border-surface-5 border-t transition-colors duration-[50ms] first:border-0 hover:bg-surface-1 data-active:bg-surface-2"
+               "border-surface-5 border-t transition-colors duration-50 first:border-0 hover:bg-surface-1 data-active:bg-surface-2"
             }
             ref={menuTriggerRef}
             data-active={contextMenuOpen ? "" : undefined}
@@ -216,13 +216,13 @@ function EstimateRow({
                   estimateId: estimate.id,
                   workspaceId: params.workspaceId,
                }}
-               className="relative grid h-[72px] grid-cols-[1fr_auto] grid-rows-[1fr_auto] items-center gap-x-2.5 gap-y-2 px-2.5 py-2 text-left lg:flex lg:h-[44px]"
+               className="relative grid h-18 grid-cols-[1fr_auto] grid-rows-[1fr_auto] items-center gap-x-2.5 gap-y-2 px-2.5 py-2 text-left lg:flex lg:h-11"
             >
                <div className="flex items-center gap-2 max-lg:w-full">
                   <p className="whitespace-nowrap font-medium font-mono text-muted text-sm">
                      {makeShortId(estimate.shortId)}
                   </p>
-                  <p className="flex items-center gap-1.5 font-medium text-sm lg:w-[110px]">
+                  <p className="flex items-center gap-1.5 font-medium text-sm lg:w-27.5">
                      <UserAvatar
                         size={25}
                         user={estimate.creator}
@@ -254,7 +254,7 @@ function EstimateRow({
                ) : null}
                <p
                   data-has-client={estimate.client ? "" : undefined}
-                  className="not-data-has-client:ml-auto min-w-[60px] text-muted max-lg:hidden"
+                  className="not-data-has-client:ml-auto min-w-15 text-muted max-lg:hidden"
                >
                   {formatEstimateDate(estimate.createdAt)}
                </p>

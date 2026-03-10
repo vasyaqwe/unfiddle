@@ -6,7 +6,7 @@ export function BottomNavigation() {
    const search = useSearch({ strict: false })
 
    return (
-      <nav className="fixed bottom-0 z-[2] flex h-(--bottom-navigation-height) w-full items-center border-neutral border-t bg-background px-1.5 shadow-xs md:hidden">
+      <nav className="fixed bottom-0 z-2 flex h-(--bottom-navigation-height) w-full items-center border-neutral border-t bg-background px-1.5 shadow-xs md:hidden">
          <ul className="flex grow items-center justify-around gap-2">
             <li>
                <Link
@@ -16,8 +16,8 @@ export function BottomNavigation() {
                   activeOptions={{ exact: true, includeSearch: false }}
                   className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-tight aria-[current=page]:text-foreground"
                >
-                  <Icons.home className="mb-px size-6 shrink-0 group-aria-[current=page]:hidden" />
-                  <Icons.homeSolid className="mb-px hidden size-6 shrink-0 group-aria-[current=page]:block" />
+                  <Icons.home className=" size-6 shrink-0 group-aria-[current=page]:hidden" />
+                  <Icons.homeSolid className=" hidden size-6 shrink-0 group-aria-[current=page]:block" />
                   Головна
                </Link>
             </li>
@@ -28,8 +28,8 @@ export function BottomNavigation() {
                   search={search}
                   className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-tight aria-[current=page]:text-foreground"
                >
-                  <Icons.barChart className="mb-[3px] size-[22px] shrink-0 group-aria-[current=page]:hidden" />
-                  <Icons.barChartSolid className="mb-[3px] hidden size-[22px] shrink-0 group-aria-[current=page]:block" />
+                  <Icons.barChart className="mb-0.5 size-5.5 shrink-0 group-aria-[current=page]:hidden" />
+                  <Icons.barChartSolid className="mb-0.5 hidden size-5.5 shrink-0 group-aria-[current=page]:block" />
                   Аналітика
                </Link>
             </li>
@@ -40,8 +40,8 @@ export function BottomNavigation() {
                   search={search}
                   className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-tight aria-[current=page]:text-foreground"
                >
-                  <Icons.users className="mb-px size-6 shrink-0 group-aria-[current=page]:hidden" />
-                  <Icons.usersSolid className="mb-px hidden size-6 shrink-0 group-aria-[current=page]:block" />
+                  <Icons.users className=" size-6 shrink-0 group-aria-[current=page]:hidden" />
+                  <Icons.usersSolid className=" hidden size-6 shrink-0 group-aria-[current=page]:block" />
                   Команда
                </Link>
             </li>
@@ -52,8 +52,8 @@ export function BottomNavigation() {
                   search={search}
                   className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-tight aria-[current=page]:text-foreground"
                >
-                  <Icons.gear className="mb-px size-6 shrink-0 group-aria-[current=page]:hidden" />
-                  <Icons.gearSolid className="mb-px hidden size-6 shrink-0 group-aria-[current=page]:block" />
+                  <Icons.gear className=" size-6 shrink-0 group-aria-[current=page]:hidden" />
+                  <Icons.gearSolid className=" hidden size-6 shrink-0 group-aria-[current=page]:block" />
                   Налаштув.
                </Link>
             </li>

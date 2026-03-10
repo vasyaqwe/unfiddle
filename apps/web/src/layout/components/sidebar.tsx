@@ -25,12 +25,12 @@ export function Sidebar({
    return (
       <aside
          className={cn(
-            "z-[10] h-svh w-[14rem] shrink-0 max-md:hidden lg:w-[14.5rem] 2xl:w-[15.5rem]",
+            "z-10 h-svh w-56 shrink-0 max-md:hidden lg:w-58 2xl:w-62",
             className,
          )}
          {...props}
       >
-         <div className="fixed flex h-full w-[14rem] flex-col lg:w-[14.5rem] 2xl:w-[15.5rem]">
+         <div className="fixed flex h-full w-56 flex-col lg:w-58 2xl:w-62">
             {children}
          </div>
       </aside>
@@ -51,7 +51,7 @@ export function SidebarContent() {
                      render={
                         <Button
                            className={cn(
-                              "!gap-1.5 justify-start",
+                              "justify-start gap-1.5!",
                               auth.workspace.image ? "md:pl-0.5" : "md:pl-1",
                            )}
                            variant={"ghost"}
@@ -196,7 +196,7 @@ export function SidebarContent() {
                <MenuTrigger
                   render={
                      <Button
-                        className="!gap-2 w-full justify-start [--active-color:var(--color-surface-3)] md:pl-1.5"
+                        className="w-full justify-start gap-2! [--active-color:var(--color-surface-3)] md:pl-1.5"
                         variant={"ghost"}
                      >
                         <UserAvatar user={auth.user} />
@@ -206,7 +206,7 @@ export function SidebarContent() {
                      </Button>
                   }
                />
-               <MenuPopup className={"!min-w-(--anchor-width)"}>
+               <MenuPopup className={"min-w-(--anchor-width)!"}>
                   <MenuItem
                      destructive
                      onClick={() => auth.signout.mutate()}

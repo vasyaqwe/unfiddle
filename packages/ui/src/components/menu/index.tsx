@@ -77,7 +77,7 @@ export function MenuCheckboxItemIndicator() {
       >
          <Icons.check
             strokeWidth={2.5}
-            className={"size-[25px] text-white/90 md:size-[22px]"}
+            className={"size-6.25 text-white/90 md:size-5.5"}
          />
       </MenuPrimitive.CheckboxItemIndicator>
    )
@@ -123,7 +123,7 @@ export function MenuSubmenuTrigger({
       >
          {children}
          <svg
-            className="!size-2 ml-auto"
+            className="ml-auto size-2!"
             viewBox="0 0 79 91"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"

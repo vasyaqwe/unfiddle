@@ -39,7 +39,7 @@ export const Icons = {
    ),
    paperClip: ({ className, ...props }: IconProps) => (
       <svg
-         className={cn("size-[22px] md:size-5", className)}
+         className={cn("size-5.5 md:size-5", className)}
          viewBox="0 0 20 20"
          {...props}
       >
@@ -569,7 +569,7 @@ export const Icons = {
          xmlns="http://www.w3.org/2000/svg"
          fill="none"
          viewBox="0 0 24 24"
-         strokeWidth="1.5"
+         strokeWidth="2"
          stroke="currentColor"
          {...props}
       >
@@ -763,7 +763,7 @@ export const Icons = {
    ),
    checkAll: ({ className, ...props }: IconProps) => (
       <svg
-         className={cn("size-6 md:size-[22px]", className)}
+         className={cn("size-6 md:size-5.5", className)}
          viewBox="0 0 24 24"
          fill="none"
          xmlns="http://www.w3.org/2000/svg"

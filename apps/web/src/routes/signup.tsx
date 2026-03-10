@@ -85,7 +85,7 @@ function RouteComponent() {
 
    return (
       <main className="grid h-svh w-full place-items-center bg-background">
-         <div className="w-full max-w-[21rem] px-5">
+         <div className="w-full max-w-84 px-5">
             {signup.isSuccess ? (
                <div>
                   <Icons.check className="size-8 text-emerald-600" />
