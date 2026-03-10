@@ -269,27 +269,31 @@ function _OrderRow({
                   className="not-data-has-client:ml-auto flex items-center gap-4"
                   data-has-client={order.client ? "" : undefined}
                >
-                  <AvatarStack
-                     size={25}
-                     className="max-md:hidden"
-                  >
-                     {order.assignees.map((assignee) => (
-                        <AvatarStackItem key={assignee.user.id}>
-                           <Tooltip>
-                              <TooltipTrigger
-                                 delay={0}
-                                 render={
-                                    <UserAvatar
-                                       size={25}
-                                       user={assignee.user}
-                                    />
-                                 }
-                              />
-                              <TooltipPopup>{assignee.user.name}</TooltipPopup>
-                           </Tooltip>
-                        </AvatarStackItem>
-                     ))}
-                  </AvatarStack>
+                  {order.assignees.length === 0 ? null : (
+                     <AvatarStack
+                        size={25}
+                        className="max-md:hidden"
+                     >
+                        {order.assignees.map((assignee) => (
+                           <AvatarStackItem key={assignee.user.id}>
+                              <Tooltip>
+                                 <TooltipTrigger
+                                    delay={0}
+                                    render={
+                                       <UserAvatar
+                                          size={25}
+                                          user={assignee.user}
+                                       />
+                                    }
+                                 />
+                                 <TooltipPopup>
+                                    {assignee.user.name}
+                                 </TooltipPopup>
+                              </Tooltip>
+                           </AvatarStackItem>
+                        ))}
+                     </AvatarStack>
+                  )}
                   {order.status &&
                   order.status !== "pending" &&
                   ORDER_STATUSES_TRANSLATION[order.status] ? (
