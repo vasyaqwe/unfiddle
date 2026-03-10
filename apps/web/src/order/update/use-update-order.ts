@@ -142,7 +142,9 @@ export function useOptimisticUpdateOrder() {
          return {
             ...oldData,
             ...input,
-            client: clients.find((c) => c.id === input.clientId) ?? null,
+            ...(input.clientId !== undefined && {
+               client: clients.find((c) => c.id === input.clientId) ?? null,
+            }),
          }
       })
 
@@ -153,7 +155,9 @@ export function useOptimisticUpdateOrder() {
                return {
                   ...item,
                   ...input,
-                  client: clients.find((c) => c.id === input.clientId) ?? null,
+                  ...(input.clientId !== undefined && {
+                     client: clients.find((c) => c.id === input.clientId) ?? null,
+                  }),
                }
             return item
          })
