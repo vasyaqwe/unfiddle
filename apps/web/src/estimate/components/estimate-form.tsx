@@ -200,6 +200,7 @@ export function Form({
                      </Field>
                      <Field>
                         <NumberField
+                           step="any"
                            placeholder={CURRENCY_SYMBOLS[currency]}
                            value={item.desiredPrice}
                            onValueChange={(desiredPrice) =>

@@ -78,6 +78,7 @@ export function OrderItemForm({
             <Field>
                <FieldLabel>Баж. ціна</FieldLabel>
                <NumberField
+                  step="any"
                   placeholder={CURRENCY_SYMBOLS[order.currency]}
                   name="desiredPrice"
                   defaultValue={

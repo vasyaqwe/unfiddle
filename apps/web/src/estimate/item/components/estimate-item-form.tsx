@@ -78,6 +78,7 @@ export function EstimateItemForm({
             <Field>
                <FieldLabel>Баж. ціна</FieldLabel>
                <NumberField
+                  step="any"
                   placeholder={CURRENCY_SYMBOLS[estimate.currency]}
                   name="desiredPrice"
                   defaultValue={

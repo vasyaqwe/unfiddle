@@ -226,6 +226,7 @@ function Form({
                      <Field>
                         <NumberField
                            data-testid="order-item-price"
+                           step="any"
                            placeholder={CURRENCY_SYMBOLS[currency]}
                            value={item.desiredPrice}
                            onValueChange={(desiredPrice) =>
@@ -294,6 +295,7 @@ function Form({
                <Field>
                   <FieldLabel>Ціна продажу</FieldLabel>
                   <NumberField
+                     step="any"
                      defaultValue={
                         order?.sellingPrice === 0
                            ? undefined

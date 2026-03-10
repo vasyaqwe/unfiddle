@@ -21,3 +21,4 @@ env.d.ts
 vite.config.ts.timestamp-*.js
 vite.config.ts.timestamp-*.mjs
 tmp
+.claude

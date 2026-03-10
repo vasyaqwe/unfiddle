@@ -114,6 +114,7 @@ export function ProcurementForm({
             <Field>
                <FieldLabel>Ціна</FieldLabel>
                <NumberField
+                  step="any"
                   required
                   defaultValue={procurement?.purchasePrice}
                   name="purchasePrice"

@@ -108,6 +108,7 @@ export function EstimateProcurementForm({
             <Field>
                <FieldLabel>Ціна</FieldLabel>
                <NumberField
+                  step="any"
                   required
                   defaultValue={estimateProcurement?.purchasePrice}
                   name="purchasePrice"
