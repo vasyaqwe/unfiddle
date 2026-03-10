@@ -10,6 +10,8 @@
       "@unfiddle/core": "workspace:*"
    },
    "devDependencies": {
+      "@types/node": "^22.15.3",
+      "@cloudflare/workers-types": "^4.20250430.0",
       "@unfiddle/tsconfig": "workspace:*",
       "wrangler": "^4.12.0"
    }

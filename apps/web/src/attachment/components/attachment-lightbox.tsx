@@ -10,6 +10,7 @@ import {
 } from "@unfiddle/ui/components/dialog"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { Separator } from "@unfiddle/ui/components/separator"
+import { cn } from "@unfiddle/ui/utils"
 import { ZoomPane } from "@unfiddle/ui/zoom-pane"
 import { ZoomImageRenderer } from "@unfiddle/ui/zoom-pane/image-renderer"
 

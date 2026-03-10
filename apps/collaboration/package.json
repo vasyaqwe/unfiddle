@@ -6,10 +6,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-      "@unfiddle/core": "workspace:*"
+    "partyserver": "^0.0.72",
+    "@unfiddle/core": "workspace:*"
   },
   "devDependencies": {
-      "@unfiddle/tsconfig": "workspace:*",
-      "wrangler": "^4.12.0"
+    "@types/node": "^22.15.3",
+    "@cloudflare/workers-types": "^4.20250430.0",
+    "@unfiddle/tsconfig": "workspace:*",
+    "wrangler": "^4.12.0"
   }
 }
