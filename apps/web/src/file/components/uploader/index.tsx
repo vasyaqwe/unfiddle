@@ -169,7 +169,7 @@ export function FileUploader(props: Props) {
             <div
                {...getRootProps()}
                className={cn(
-                  "z-[50] bg-background/25 backdrop-blur-[5px]",
+                  "z-50 bg-background/25 backdrop-blur-[5px]",
                   isDragging ? "" : "invisible",
                   isDisabled ? "pointer-events-none opacity-70" : "",
                   className,

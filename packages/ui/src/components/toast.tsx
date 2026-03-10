@@ -103,7 +103,7 @@ export function Toaster(props: React.ComponentProps<typeof Sonner>) {
                description: "!text-sm line-clamp-3 mt-0.5 !font-normal",
                icon: "!absolute top-[0.75rem] left-4",
                closeButton:
-                  "!size-6.5 absolute -top-2 -right-2 bg-background border-primary-12/12 z-[2] hover:bg-surface-2 !duration-75 !transition-colors border cursor-pointer shadow-2xs grid place-items-center rounded-full",
+                  "!size-6.5 absolute -top-2 -right-2 bg-background border-primary-12/12 z-2 hover:bg-surface-2 !duration-75 !transition-colors border cursor-pointer shadow-2xs grid place-items-center rounded-full",
             },
             className:
                "font-primary px-3 py-3 items-center gap-2 w-full shadow-[inset_0_-1px_2px_0_rgb(0_0_0_/_0.12)] flex select-none border border-neutral bg-background pointer-events-auto rounded-2xl",

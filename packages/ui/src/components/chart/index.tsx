@@ -139,7 +139,7 @@ function ChartTooltipCursor({ points, height }: any) {
             width={2}
             height={height}
             fill="url(#gradientCursor)"
-            className="relative z-[5000]"
+            className="relative z-5000"
             style={{ pointerEvents: "all" }}
          />
       </>
@@ -261,7 +261,7 @@ function ChartTooltipContent({
    return (
       <div
          className={cn(
-            "grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-surface-12/13 bg-background p-2.5 pt-1.5 text-sm shadow-xl",
+            "grid min-w-32 items-start gap-1.5 rounded-lg border border-surface-12/13 bg-background p-2.5 pt-1.5 text-sm shadow-xl",
             className,
          )}
       >

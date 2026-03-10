@@ -449,7 +449,7 @@ function Form({
          </Fieldset>
          <FileUploader
             ref={fileUploaderRef}
-            className="absolute inset-0 z-[9] h-full"
+            className="absolute inset-0 z-9 h-full"
             onUpload={attachments.upload.mutateAsync}
          />
          {children}

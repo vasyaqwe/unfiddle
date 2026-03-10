@@ -21,7 +21,7 @@ export function PopoverPopup({
       <PopoverPortal>
          <PopoverPositioner
             sideOffset={sideOffset}
-            className={"z-[51]"}
+            className={"z-51"}
             {...props}
          >
             <PopoverPrimitive.Popup

@@ -88,7 +88,7 @@ export default function AttachmentLightbox({
                <p className="line-clamp-1 font-medium">
                   {currentAttachment?.name ?? "Untitled"}
                </p>
-               <div className="z-[2] ml-auto flex items-center gap-2">
+               <div className="z-2 ml-auto flex items-center gap-2">
                   <Button
                      disabled={download.isPending}
                      onClick={() => {
@@ -103,20 +103,20 @@ export default function AttachmentLightbox({
                      <Icons.download />
                   </Button>
                   <Separator className={"h-6 w-px"} />
-                  <DialogXClose className={"-mt-0 mr-0"} />
+                  <DialogXClose className={"mt-0 mr-0"} />
                </div>
             </div>
             {attachments.length === 1 ? null : (
                <>
                   <button
                      onClick={prevAttachment}
-                     className="-translate-y-1/2 absolute top-1/2 left-3 z-[1] flex h-full w-16 cursor-pointer items-center text-muted transition-colors duration-100 hover:text-foreground md:h-full"
+                     className="-translate-y-1/2 absolute top-1/2 left-3 z-1 flex h-full w-16 cursor-pointer items-center text-muted transition-colors duration-100 hover:text-foreground md:h-full"
                   >
                      <Icons.chevronLeft className="size-6" />
                   </button>
                   <button
                      onClick={nextAttachment}
-                     className="-translate-y-1/2 absolute top-1/2 right-3.5 z-[1] flex h-full w-16 cursor-pointer items-center justify-end text-muted transition-colors duration-100 hover:text-foreground md:h-full"
+                     className="-translate-y-1/2 absolute top-1/2 right-3.5 z-1 flex h-full w-16 cursor-pointer items-center justify-end text-muted transition-colors duration-100 hover:text-foreground md:h-full"
                   >
                      <Icons.chevronRight className="size-6" />
                   </button>
