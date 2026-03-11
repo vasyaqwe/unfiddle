@@ -5,10 +5,9 @@ import { ErrorComponent } from "@/ui/components/error"
 import * as Sentry from "@sentry/react"
 import { QueryClientProvider } from "@tanstack/react-query"
 import { Link, RouterProvider, createRouter } from "@tanstack/react-router"
-import { button } from "@unfiddle/ui/components/button/constants"
+import { Button } from "@unfiddle/ui/components/button"
 import { Logo } from "@unfiddle/ui/components/logo"
 import { TooltipProvider } from "@unfiddle/ui/components/tooltip"
-import { cn } from "@unfiddle/ui/utils"
 import { ThemeProvider } from "next-themes"
 import * as React from "react"
 import ReactDOM from "react-dom/client"
@@ -46,12 +45,12 @@ function NotFound() {
          <p className="mb-5 text-muted">
             Сторінку не знайдено — <br /> може вона переїхала..
          </p>
-         <Link
-            to={"/"}
-            className={cn(button(), "text-white")}
+         <Button
+            render={<Link to={"/"} />}
+            className={"text-white"}
          >
             Додому
-         </Link>
+         </Button>
       </div>
    )
 }

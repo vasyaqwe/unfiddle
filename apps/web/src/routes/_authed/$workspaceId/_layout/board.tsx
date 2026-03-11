@@ -3,9 +3,8 @@ import { useAuth } from "@/auth/hooks"
 import { SuspenseFallback } from "@/ui/components/suspense-boundary"
 import { useSyncStore } from "@/whiteboard/hooks"
 import { Link, createFileRoute } from "@tanstack/react-router"
-import { button } from "@unfiddle/ui/components/button/constants"
+import { Button } from "@unfiddle/ui/components/button"
 import { Icons } from "@unfiddle/ui/components/icons"
-import { cn } from "@unfiddle/ui/utils"
 import { Tldraw, track } from "tldraw"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/board")({
@@ -26,18 +25,20 @@ function RouteComponent() {
             autoFocus
             store={store.store}
          />
-         <Link
-            className={cn(
-               button({ size: "lg" }),
-               "absolute right-1 bottom-1 z-999 min-w-25",
-            )}
-            to={"/$workspaceId"}
+         <Button
+            render={
+               <Link
+                  to={"/$workspaceId"}
+                  params={params}
+               />
+            }
+            size="lg"
+            className={"absolute right-1 bottom-1 z-999 min-w-25"}
             style={{ color: "white" }}
-            params={params}
          >
             <Icons.home className="size-5" />
             Додому
-         </Link>
+         </Button>
       </div>
    )
 }

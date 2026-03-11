@@ -5,7 +5,6 @@ import { WorkspaceLogo } from "@/workspace/components/workspace-logo"
 import { WorkspaceMenuPopup } from "@/workspace/components/workspace-menu"
 import { Link, useParams, useSearch } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
-import { button } from "@unfiddle/ui/components/button/constants"
 import { DrawerTrigger } from "@unfiddle/ui/components/drawer"
 import { Icons } from "@unfiddle/ui/components/icons"
 import {
@@ -70,17 +69,22 @@ export function SidebarContent() {
                   />
                   <WorkspaceMenuPopup />
                </Menu>
-               <Link
-                  to={"/$workspaceId/settings"}
-                  params={params}
-                  search={search}
-                  className={cn(
-                     button({ kind: "icon", variant: "ghost" }),
-                     "text-muted hover:text-foreground/90 aria-[current=page]:text-foreground/90",
-                  )}
+               <Button
+                  kind={"icon"}
+                  variant={"ghost"}
+                  render={
+                     <Link
+                        to={"/$workspaceId/settings"}
+                        params={params}
+                        search={search}
+                        className={
+                           "text-muted hover:text-foreground/90 aria-[current=page]:text-foreground/90"
+                        }
+                     />
+                  }
                >
                   <Icons.gear className="size-5" />
-               </Link>
+               </Button>
                {/* <Link
                   to="/$workspaceId/search"
                   params={params}

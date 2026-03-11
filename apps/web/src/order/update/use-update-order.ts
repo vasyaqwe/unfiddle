@@ -156,7 +156,8 @@ export function useOptimisticUpdateOrder() {
                   ...item,
                   ...input,
                   ...(input.clientId !== undefined && {
-                     client: clients.find((c) => c.id === input.clientId) ?? null,
+                     client:
+                        clients.find((c) => c.id === input.clientId) ?? null,
                   }),
                }
             return item
