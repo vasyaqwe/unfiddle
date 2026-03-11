@@ -17,6 +17,7 @@ import { DeleteOrderAlert } from "@/order/delete/delete-order-alert"
 import { useDeleteOrder } from "@/order/delete/use-delete-order"
 import { useOrder } from "@/order/hooks"
 import { CreateOrderItem } from "@/order/item/components/create-order-item"
+import { useUnreadCount } from "@/order/message/read/hooks"
 import { createOrderOpenAtom } from "@/order/store"
 import { UpdateOrder } from "@/order/update/update-order"
 import { useUpdateOrder } from "@/order/update/use-update-order"
@@ -39,7 +40,7 @@ import {
    useQueryClient,
    useSuspenseQuery,
 } from "@tanstack/react-query"
-import { createFileRoute } from "@tanstack/react-router"
+import { Link, createFileRoute } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
 import { formatDate } from "@unfiddle/core/date"
 import { makeShortId } from "@unfiddle/core/id"
@@ -134,9 +135,11 @@ function RouteComponent() {
          !attachment.name.endsWith(".svg"),
    )
 
+   const unreadCount = useUnreadCount(order.id)
+
    return (
       <>
-         <Header className="md:flex">
+         <Header className="md:flex md:pr-1.75">
             <HeaderBackButton />
             <HeaderTitle className="line-clamp-1">
                <span className="md:hidden">Замовлення</span>{" "}
@@ -144,6 +147,35 @@ function RouteComponent() {
             </HeaderTitle>
             <Actions />
             <div className="ml-auto flex items-center gap-1.5 max-md:hidden">
+               <Tooltip>
+                  <TooltipTrigger
+                     render={
+                        <Button
+                           kind={"icon"}
+                           variant={"secondary"}
+                           render={
+                              <Link
+                                 to="/$workspaceId/order/$orderId/chat"
+                                 params={params}
+                              />
+                           }
+                        >
+                           <Icons.chat className="size-4.75" />
+                           {unreadCount === 0 ? null : (
+                              <span className="absolute top-0.5 right-0.5 size-1.5 rounded-full bg-red-9" />
+                           )}
+                        </Button>
+                     }
+                  />
+                  {unreadCount === 0 ? null : (
+                     <TooltipPopup>
+                        {unreadCount}{" "}
+                        {unreadCount === 1
+                           ? "непрочитане повідомлення"
+                           : "непрочитаних повідомлень"}
+                     </TooltipPopup>
+                  )}
+               </Tooltip>
                <Tooltip>
                   <TooltipTrigger
                      render={
