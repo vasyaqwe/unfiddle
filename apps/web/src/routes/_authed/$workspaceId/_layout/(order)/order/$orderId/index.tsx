@@ -96,7 +96,7 @@ import { useTheme } from "next-themes"
 import * as React from "react"
 
 export const Route = createFileRoute(
-   "/_authed/$workspaceId/_layout/(order)/order/$orderId",
+   "/_authed/$workspaceId/_layout/(order)/order/$orderId/",
 )({
    component: RouteComponent,
    loader: async (opts) => {
