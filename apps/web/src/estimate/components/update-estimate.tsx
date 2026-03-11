@@ -61,7 +61,7 @@ export function UpdateEstimate({
                   estimateId={estimateId}
                >
                   <DrawerFooter>
-                     <Button>Зберегти</Button>
+                     <Button type="submit">Зберегти</Button>
                      <DrawerClose
                         render={
                            <Button variant={"secondary"}>Відмінити</Button>

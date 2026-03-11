@@ -70,7 +70,7 @@ export function UpdateProcurement({
                procurement={procurement}
             >
                <DrawerFooter>
-                  <Button>Зберегти</Button>
+                  <Button type="submit">Зберегти</Button>
                   <DrawerClose
                      render={<Button variant={"secondary"}>Відмінити</Button>}
                   />

@@ -54,7 +54,7 @@ export function UpdateEstimateItem({
                }
             >
                <DrawerFooter>
-                  <Button>Зберегти</Button>
+                  <Button type="submit">Зберегти</Button>
                </DrawerFooter>
             </EstimateItemForm>
          </DrawerPopup>

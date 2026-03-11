@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server"
 import {
    client,
    createClientSchema,
@@ -5,6 +6,7 @@ import {
 } from "@unfiddle/core/client/schema"
 import { createId } from "@unfiddle/core/id"
 import { t } from "@unfiddle/core/trpc/context"
+import { tryCatch } from "@unfiddle/core/try-catch"
 import { workspaceMemberMiddleware } from "@unfiddle/core/workspace/middleware"
 import { and, desc, eq } from "drizzle-orm"
 import { z } from "zod"
@@ -50,12 +52,27 @@ export const clientRouter = t.router({
 
          const clientId = createId("client")
 
-         await ctx.db.insert(client).values({
-            ...input,
-            id: clientId,
-            creatorId: ctx.user.id,
-            normalizedName,
-         })
+         const res = await tryCatch(
+            ctx.db.insert(client).values({
+               ...input,
+               id: clientId,
+               creatorId: ctx.user.id,
+               normalizedName,
+            }),
+         )
+
+         if (res.error) {
+            if (res.error.message.includes("UNIQUE constraint failed")) {
+               throw new TRPCError({
+                  code: "CONFLICT",
+                  message: "Клієнт вже існує",
+               })
+            }
+            throw new TRPCError({
+               code: "INTERNAL_SERVER_ERROR",
+               message: "Не вдалося створити клієнта",
+            })
+         }
 
          return { id: clientId }
       }),

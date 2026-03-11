@@ -59,7 +59,7 @@ export function UpdateOrder({ orderId, finalFocus, open, setOpen }: Props) {
                   orderId={orderId}
                >
                   <DrawerFooter>
-                     <Button>Зберегти</Button>
+                     <Button type="submit">Зберегти</Button>
                      <DrawerClose
                         render={
                            <Button variant={"secondary"}>Відмінити</Button>

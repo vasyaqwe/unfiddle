@@ -45,7 +45,7 @@ export function CreateEstimateItem({
                }}
             >
                <DrawerFooter>
-                  <Button>Додати</Button>
+                  <Button type="submit">Додати</Button>
                </DrawerFooter>
             </EstimateItemForm>
          </DrawerPopup>

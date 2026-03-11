@@ -143,6 +143,7 @@ function RouteComponent() {
                      />
                   </Field>
                   <Button
+                     type="submit"
                      disabled={signup.isPending || signup.isSuccess}
                      pending={signup.isPending || signup.isSuccess}
                      size={"lg"}

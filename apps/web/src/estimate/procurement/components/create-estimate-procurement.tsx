@@ -50,7 +50,7 @@ export function CreateEstimateProcurement() {
                }
             >
                <DrawerFooter>
-                  <Button>Додати</Button>
+                  <Button type="submit">Додати</Button>
                </DrawerFooter>
             </EstimateProcurementForm>
          </DrawerPopup>

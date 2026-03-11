@@ -54,7 +54,7 @@ export function UpdateOrderItem({
                }
             >
                <DrawerFooter>
-                  <Button>Зберегти</Button>
+                  <Button type="submit">Зберегти</Button>
                </DrawerFooter>
             </OrderItemForm>
          </DrawerPopup>

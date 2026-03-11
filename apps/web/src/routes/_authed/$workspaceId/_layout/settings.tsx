@@ -401,6 +401,7 @@ function RouteComponent() {
                               {nameFocused && (
                                  <div className="absolute top-2 right-0 flex items-center gap-0.5">
                                     <Button
+                                       type="submit"
                                        size={"sm"}
                                        kind={"icon"}
                                     >
@@ -449,6 +450,7 @@ function RouteComponent() {
                               {emailFocused && (
                                  <div className="absolute top-2 right-0 flex items-center gap-0.5">
                                     <Button
+                                       type="submit"
                                        size={"sm"}
                                        kind={"icon"}
                                     >

@@ -39,7 +39,7 @@ export function CreateOrder({ children }: { children?: React.ReactNode }) {
                }
             >
                <DrawerFooter>
-                  <Button>Додати</Button>
+                  <Button type="submit">Додати</Button>
                </DrawerFooter>
             </OrderForm>
          </DrawerPopup>

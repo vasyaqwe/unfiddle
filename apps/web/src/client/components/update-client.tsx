@@ -52,7 +52,7 @@ export function UpdateClient({ client, finalFocus, open, setOpen }: Props) {
                   client={client}
                >
                   <DrawerFooter>
-                     <Button>Зберегти</Button>
+                     <Button type="submit">Зберегти</Button>
                      <DrawerClose
                         render={
                            <Button variant={"secondary"}>Відмінити</Button>

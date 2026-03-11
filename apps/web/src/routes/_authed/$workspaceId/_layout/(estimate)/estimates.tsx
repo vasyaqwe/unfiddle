@@ -116,7 +116,7 @@ function RouteComponent() {
                      }}
                   >
                      <DrawerFooter>
-                        <Button>Додати</Button>
+                        <Button type="submit">Додати</Button>
                      </DrawerFooter>
                   </EstimateForm>
                </DrawerPopup>

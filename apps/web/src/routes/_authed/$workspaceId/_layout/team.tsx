@@ -411,6 +411,7 @@ function MemberRow({
                         }
                      />
                      <Button
+                        type="submit"
                         disabled={isUpdatePending}
                         pending={isUpdatePending}
                      >

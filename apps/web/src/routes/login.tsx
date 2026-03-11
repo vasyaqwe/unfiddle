@@ -128,6 +128,7 @@ function RouteComponent() {
                   </Link>
                </p>
                <Button
+                  type="submit"
                   disabled={email.isPending || email.isSuccess}
                   pending={email.isPending || email.isSuccess}
                   size={"lg"}

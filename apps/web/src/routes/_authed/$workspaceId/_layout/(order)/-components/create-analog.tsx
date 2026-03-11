@@ -67,7 +67,12 @@ export function CreateAnalog() {
                      name="name"
                   />
                </Field>
-               <Button className="mt-4 w-full">Додати</Button>
+               <Button
+                  className="mt-4 w-full"
+                  type="submit"
+               >
+                  Додати
+               </Button>
             </form>
          </PopoverPopup>
       </Popover>

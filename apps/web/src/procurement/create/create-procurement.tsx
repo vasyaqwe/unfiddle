@@ -56,7 +56,7 @@ export function CreateProcurement() {
                }
             >
                <DrawerFooter>
-                  <Button>Додати</Button>
+                  <Button type="submit">Додати</Button>
                </DrawerFooter>
             </ProcurementForm>
          </DrawerPopup>

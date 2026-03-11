@@ -63,7 +63,7 @@ export function UpdateEstimateProcurement({
                estimateProcurement={estimateProcurement}
             >
                <DrawerFooter>
-                  <Button>Зберегти</Button>
+                  <Button type="submit">Зберегти</Button>
                   <DrawerClose
                      render={<Button variant={"secondary"}>Відмінити</Button>}
                   />
