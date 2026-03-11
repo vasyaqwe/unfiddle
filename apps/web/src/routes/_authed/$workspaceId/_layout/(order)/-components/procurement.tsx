@@ -68,7 +68,7 @@ export function Procurement({
    procurement: ProcurementType
 }) {
    const params = useParams({
-      from: "/_authed/$workspaceId/_layout/(order)/order/$orderId",
+      from: "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout",
    })
    const order = useOrder()
    const theme = useTheme()
