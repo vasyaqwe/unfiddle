@@ -3,7 +3,9 @@ import {
    HeaderBackButton,
    HeaderTitle,
 } from "@/layout/components/header"
+import { MainScrollArea } from "@/layout/components/main"
 import { useOrder } from "@/order/hooks"
+import { CreateOrderMessage } from "@/order/message/components/create-order-message"
 import { createFileRoute } from "@tanstack/react-router"
 import { makeShortId } from "@unfiddle/core/id"
 
@@ -39,6 +41,13 @@ function RouteComponent() {
                Чат
             </HeaderTitle>
          </Header>
+         <MainScrollArea
+            className={"pt-0 lg:pt-0"}
+            container={false}
+         >
+            hello test
+         </MainScrollArea>
+         <CreateOrderMessage />
       </>
    )
 }

@@ -5,14 +5,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import type { OrderMessage } from "@unfiddle/core/order/message/types"
 import { toast } from "sonner"
 
-export function useCreateMessage({
+export function useCreateOrderMessage({
    onMutate,
    onError,
 }: { onMutate?: () => void; onError?: () => void } = {}) {
    const queryClient = useQueryClient()
    const auth = useAuth()
    const socket = useSocket()
-   const create = useOptimisticCreateMessage()
+   const create = useOptimisticCreateOrderMessage()
 
    return useMutation(
       trpc.order.message.create.mutationOptions({
@@ -83,7 +83,7 @@ export function useCreateMessage({
    )
 }
 
-export function useOptimisticCreateMessage() {
+export function useOptimisticCreateOrderMessage() {
    const queryClient = useQueryClient()
    const auth = useAuth()
 

@@ -4,6 +4,7 @@ import type {
    OrderMessage,
    OrderMessagePosition,
 } from "@unfiddle/core/order/message/types"
+import { cn } from "@unfiddle/ui/utils"
 
 function getBorderRadiusClasses(
    position: OrderMessagePosition,
@@ -41,20 +42,22 @@ export function Bubble({
    const viewerIsSender = message.creatorId === auth.user.id
    const shouldRenderAvatar = viewerIsSender
 
-   let normalizedPosition = position
+   const normalizedPosition = position
 
-   if (message.attachments.length > 0 && !!message.content) {
-      if (normalizedPosition === "only") {
-         normalizedPosition = "last"
-      } else if (normalizedPosition === "first") {
-         normalizedPosition = "middle"
-      }
-   }
+   // if (message.attachments.length > 0 && !!message.content) {
+   //    if (normalizedPosition === "only") {
+   //       normalizedPosition = "last"
+   //    } else if (normalizedPosition === "first") {
+   //       normalizedPosition = "middle"
+   //    }
+   // }
 
    const roundedClasses = getBorderRadiusClasses(
       normalizedPosition,
       viewerIsSender,
    )
+
+   const hasReactionsOnly = false
 
    return (
       <div
@@ -64,48 +67,50 @@ export function Bubble({
          <div className="flex w-full gap-2">
             {shouldRenderAvatar && (
                <span className="-translate-y-1 self-end">
-                  <UserAvatar user={message.user} />
+                  <UserAvatar user={message.creator} />
                </span>
             )}
 
             <div
-               className={cn(
-                  "group/bubble relative flex flex-1 flex-col transition-opacity",
-                  {
-                     "items-end": message.viewer_is_sender,
-                     "items-start": !message.viewer_is_sender,
-                     "mb-0.5": true,
-                  },
-               )}
+               data-viewer-is-sender={viewerIsSender ? "" : undefined}
+               className={
+                  "group/bubble relative mb-0.5 flex flex-1 flex-col items-start transition-opacity data-viewer-is-sender:items-end"
+               }
             >
                <div
-                  className={cn(
-                     "relative flex w-full max-w-[80%] flex-1 flex-col items-end gap-0.5",
-                     !message.viewer_is_sender && "items-start",
-                     !!message.call && "max-w-full",
-                     {},
-                  )}
+                  className={
+                     "relative flex w-full max-w-[80%] flex-1 flex-col items-end gap-0.5 group-not-data-viewer-is-sender/bubble:items-start"
+                  }
                >
-                  {(!!message.content || message.call) && (
+                  {!!message.content && (
                      <div
-                        className={cn(
-                           "flex w-full items-center justify-end gap-1.5",
-                           !message.viewer_is_sender && "flex-row-reverse",
-                        )}
+                        className={
+                           "flex w-full items-center justify-end gap-1.5 group-not-data-viewer-is-sender/bubble:flex-row-reverse"
+                        }
                      >
-                        {message.call && (
-                           <MessageCallBubble
-                              call={message.call}
-                              className={roundedClasses}
-                           />
-                        )}
-
                         {!!message.content && (
-                           <TextBubble
-                              message={message}
-                              position={position}
-                              className={roundedClasses}
-                           />
+                           <div
+                              className={cn(
+                                 "wrap-break-word relative select-text whitespace-pre-wrap",
+                                 roundedClasses,
+                                 {
+                                    "bg-surface-4":
+                                       !viewerIsSender && !hasReactionsOnly,
+                                    "bg-primary-7 text-white":
+                                       viewerIsSender && !hasReactionsOnly,
+                                    //  'bg-quaternary text-tertiary': message.discarded_at && !hasReactionsOnly,
+                                    "px-3.5 py-2 lg:px-3": !hasReactionsOnly,
+                                    //  'ring-2 ring-[--bg-primary]': message.reply && !hasReactionsOnly,
+                                    //  'mt-1': hasReactionsOnly && message.reply,
+                                    //  'rounded-tr': viewerIsSender && message.reply,
+                                    //  'rounded-tl': !viewerIsSender && message.reply,
+                                    "viewer-chat-prose": viewerIsSender,
+                                 },
+                              )}
+                              data-reactions-only={hasReactionsOnly}
+                           >
+                              {message.content}
+                           </div>
                         )}
                      </div>
                   )}

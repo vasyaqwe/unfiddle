@@ -40,7 +40,6 @@ export const orderMessageRouter = t.router({
 
          return messages
       }),
-
    create: t.procedure
       .use(workspaceMemberMiddleware)
       .input(createOrderMessageSchema)
@@ -76,7 +75,6 @@ export const orderMessageRouter = t.router({
 
          return enrichedMessage
       }),
-
    update: t.procedure
       .use(workspaceMemberMiddleware)
       .input(updateOrderMessageSchema)
@@ -117,7 +115,6 @@ export const orderMessageRouter = t.router({
 
          return input
       }),
-
    delete: t.procedure
       .use(workspaceMemberMiddleware)
       .input(

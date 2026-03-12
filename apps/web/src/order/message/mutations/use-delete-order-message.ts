@@ -5,17 +5,17 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import type { RouterInput } from "@unfiddle/core/trpc/types"
 import { toast } from "sonner"
 
-export function useUpdateMessage({
+export function useDeleteOrderMessage({
    onMutate,
    onError,
 }: { onMutate?: () => void; onError?: () => void } = {}) {
    const queryClient = useQueryClient()
    const auth = useAuth()
    const socket = useSocket()
-   const update = useOptimisticUpdateMessage()
+   const deleteMessage = useOptimisticDeleteOrderMessage()
 
    return useMutation(
-      trpc.order.message.update.mutationOptions({
+      trpc.order.message.delete.mutationOptions({
          onMutate: async (input) => {
             onMutate?.()
 
@@ -28,7 +28,7 @@ export function useUpdateMessage({
 
             const data = queryClient.getQueryData(listQueryOptions.queryKey)
 
-            update(input)
+            deleteMessage(input)
 
             return { data }
          },
@@ -43,14 +43,16 @@ export function useUpdateMessage({
             toast.error("Ой-ой!", {
                description: error.message,
             })
+
             onError?.()
          },
-         onSuccess: (_data, message) => {
+         onSuccess: (_, data) => {
             socket.order.send({
-               action: "update_message",
+               action: "delete_message",
                senderId: auth.user.id,
-               message,
-               orderId: message.orderId,
+               orderId: data.orderId,
+               orderMessageId: data.orderMessageId,
+               workspaceId: auth.workspace.id,
             })
          },
          onSettled: (_data, _error, input) => {
@@ -65,27 +67,19 @@ export function useUpdateMessage({
    )
 }
 
-export function useOptimisticUpdateMessage() {
-   const queryClient = useQueryClient()
+export function useOptimisticDeleteOrderMessage() {
    const auth = useAuth()
+   const queryClient = useQueryClient()
 
-   return (input: RouterInput["order"]["message"]["update"]) => {
-      const listQueryKey = trpc.order.message.list.queryOptions({
+   return (input: RouterInput["order"]["message"]["delete"]) => {
+      const queryKey = trpc.order.message.list.queryOptions({
          orderId: input.orderId,
          workspaceId: auth.workspace.id,
       }).queryKey
-
-      queryClient.setQueryData(listQueryKey, (oldData) => {
+      queryClient.setQueryData(queryKey, (oldData) => {
          if (!oldData) return oldData
-         return oldData.map((message) => {
-            if (message.id === input.orderMessageId)
-               return {
-                  ...message,
-                  content: input.content,
-                  updatedAt: new Date(),
-               }
-            return message
-         })
+
+         return oldData.filter((m) => m.id !== input.orderMessageId)
       })
    }
 }
