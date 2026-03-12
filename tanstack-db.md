@@ -1,539 +1,867 @@
-# Overview
+# Query Collection
 
-# TanStack DB - Documentation
+# Query Collection
 
-Welcome to the TanStack DB documentation.
+Query collections provide seamless integration between TanStack DB and TanStack Query, enabling automatic synchronization between your local database and remote data sources.
 
-TanStack DB is the reactive client store for your API. It solves the problems of building fast, modern apps, helping you:
+## Overview
 
-- avoid endpoint sprawl and network waterfalls by loading data into normalized collections
-- optimise client performance with sub-millisecond live queries and real-time reactivity
-- take the network off the interaction path with instant optimistic writes
+The `@tanstack/query-db-collection` package allows you to create collections that:
 
-Data loading is optimized. Interactions feel instantaneous. Your backend stays simple and your app stays blazing fast. No matter how much data you load.
+- Automatically fetch remote data via TanStack Query
+- Support optimistic updates with automatic rollback on errors
+- Handle persistence through customizable mutation handlers
+- Provide direct write capabilities for directly writing to the sync store
 
-## Remove the complexity from building fast, modern apps
+## Installation
 
-TanStack DB lets you query your data however your components need it, with a blazing-fast local query engine, real-time reactivity and instant optimistic updates.
-
-Instead of choosing between the least of two evils:
-
-1. **view-specific APIs** - complicating your backend and leading to network waterfalls
-2. **load everything and filter** - leading to slow loads and sluggish client performance
-
-TanStack DB enables a new way:
-
-3. **normalized collections** - keep your backend simple
-4. **query-driven sync** - optimizes your data loading
-5. **sub-millisecond live queries** - keep your app fast and responsive
-
-It extends TanStack Query with collections, live queries and optimistic mutations, working seamlessly with REST APIs, sync engines, or any data source.
-
-## Contents
-
-- [How it works](#how-it-works) &mdash; understand the TanStack DB development model and how the pieces fit together
-- [API reference](#api-reference) &mdash; for the primitives and function interfaces
-- [Usage examples](#usage-examples) &mdash; examples of common usage patterns
-- [More info](#more-info) &mdash; where to find support and more information
-
-## How it works
-
-TanStack DB works by:
-
-- [defining collections](#defining-collections) typed sets of objects that can be populated with data
-- [using live queries](#using-live-queries) to query data from/across collections
-- [making optimistic mutations](#making-optimistic-mutations) using transactional mutators
-
-```tsx
-// Define collections to load data into
-const todoCollection = createCollection({
-  // ...your config
-  onUpdate: updateMutationFn,
-})
-
-const Todos = () => {
-  // Bind data using live queries
-  const { data: todos } = useLiveQuery((q) =>
-    q.from({ todo: todoCollection }).where(({ todo }) => not(todo.completed))
-  )
-
-  const complete = (todo) => {
-    // Instantly applies optimistic state
-    todoCollection.update(todo.id, (draft) => {
-      draft.completed = true
-    })
-  }
-
-  return (
-    <ul>
-      {todos.map((todo) => (
-        <li key={todo.id} onClick={() => complete(todo)}>
-          {todo.text}
-        </li>
-      ))}
-    </ul>
-  )
-}
+```bash
+npm install @tanstack/query-db-collection @tanstack/query-core @tanstack/db
 ```
 
-### Defining collections
+## Basic Usage
 
-Collections are typed sets of objects that can be populated with data. They're designed to de-couple loading data into your app from binding data to your components.
+```typescript
+import { QueryClient } from "@tanstack/query-core"
+import { createCollection } from "@tanstack/db"
+import { queryCollectionOptions } from "@tanstack/query-db-collection"
 
-Collections can be populated in many ways, including:
+const queryClient = new QueryClient()
 
-- fetching data, for example [from API endpoints using TanStack Query](https://tanstack.com/query/latest)
-- syncing data, for example [using a sync engine like ElectricSQL](https://electric-sql.com/)
-- storing local data, for example [using localStorage for user preferences and settings](./collections/local-storage-collection.md) or [in-memory client data or UI state](./collections/local-only-collection.md)
-- from live collection queries, creating [derived collections as materialised views](#using-live-queries)
-
-Once you have your data in collections, you can query across them using live queries in your components.
-
-#### Sync Modes
-
-Collections support three sync modes to optimize data loading:
-
-- **Eager mode** (default): Loads entire collection upfront. Best for <10k rows of mostly static data like user preferences or small reference tables.
-- **On-demand mode**: Loads only what queries request. Best for large datasets (>50k rows), search interfaces, and catalogs where most data won't be accessed.
-- **Progressive mode**: Loads query subset immediately, syncs full dataset in background. Best for collaborative apps needing instant first paint AND sub-millisecond queries.
-
-With on-demand mode, your component's query becomes the API call:
-
-```tsx
-const productsCollection = createCollection(
+const todosCollection = createCollection(
   queryCollectionOptions({
-    queryKey: ['products'],
-    queryFn: async (ctx) => {
-      // Query predicates passed automatically in ctx.meta
-      const params = parseLoadSubsetOptions(ctx.meta?.loadSubsetOptions)
-      return api.getProducts(params) // e.g., GET /api/products?category=electronics&price_lt=100
+    queryKey: ["todos"],
+    queryFn: async () => {
+      const response = await fetch("/api/todos")
+      return response.json()
     },
-    syncMode: 'on-demand', // ← Enable query-driven sync
+    queryClient,
+    getKey: (item) => item.id,
   })
 )
 ```
 
-TanStack DB automatically collapses duplicate requests, performs delta loading when expanding queries, optimizes joins into minimal batched requests, and respects your TanStack Query cache policies. You often end up with _fewer_ network requests than custom view-specific APIs.
+## Configuration Options
 
-See the [Query Collection documentation](./collections/query-collection.md#queryfn-and-predicate-push-down) for full predicate mapping details.
+The `queryCollectionOptions` function accepts the following options:
 
-### Using live queries
+### Required Options
 
-Live queries are used to query data out of collections. Live queries are reactive: when the underlying data changes in a way that would affect the query result, the result is incrementally updated and returned from the query, triggering a re-render.
+- `queryKey`: The query key for TanStack Query
+- `queryFn`: Function that fetches data from the server
+- `queryClient`: TanStack Query client instance
+- `getKey`: Function to extract the unique key from an item
 
-TanStack DB live queries are implemented using [d2ts](https://github.com/electric-sql/d2ts), a TypeScript implementation of differential dataflow. This allows the query results to update _incrementally_ (rather than by re-running the whole query). This makes them blazing fast, usually sub-millisecond, even for highly complex queries.
+### Query Options
 
-**Performance:** Updating one row in a sorted 100,000-item collection completes in ~0.7ms on an M1 Pro MacBook—fast enough that optimistic updates feel truly instantaneous, even with complex queries and large datasets.
+- `select`: Function that lets extract array items when they're wrapped with metadata
+- `enabled`: Whether the query should automatically run (default: `true`)
+- `refetchInterval`: Refetch interval in milliseconds (default: 0 — set an interval to enable polling refetching)
+- `retry`: Retry configuration for failed queries
+- `retryDelay`: Delay between retries
+- `staleTime`: How long data is considered fresh
+- `meta`: Optional metadata that will be passed to the query function context
 
-Live queries support joins across collections. This allows you to:
+### Using with `queryOptions(...)`
 
-1. load normalised data into collections and then de-normalise it through queries; simplifying your backend by avoiding the need for bespoke API endpoints that match your client
-2. join data from multiple sources; for example, syncing some data out of a database, fetching some other data from an external API and then joining these into a unified data model for your front-end code
+If your app already uses TanStack Query's `queryOptions` helper (e.g. from `@tanstack/react-query`), you can spread those options into `queryCollectionOptions`. Note that `queryFn` must be explicitly provided since query collections require it both in types and at runtime:
 
-Every query returns another collection which can _also_ be queried.
+```typescript
+import { QueryClient } from "@tanstack/query-core"
+import { createCollection } from "@tanstack/db"
+import { queryCollectionOptions } from "@tanstack/query-db-collection"
+import { queryOptions } from "@tanstack/react-query"
 
-For more details on live queries, see the [Live Queries](./guides/live-queries.md) documentation.
+const queryClient = new QueryClient()
 
-### Making optimistic mutations
-
-Collections support `insert`, `update` and `delete` operations. When called, by default they trigger the corresponding `onInsert`, `onUpdate`, `onDelete` handlers which are responsible for writing the mutation to the backend.
-
-```ts
-// Define collection with persistence handlers
-const todoCollection = createCollection({
-  id: "todos",
-  // ... other config
-  onUpdate: async ({ transaction }) => {
-    const { original, changes } = transaction.mutations[0]
-    await api.todos.update(original.id, changes)
+const listOptions = queryOptions({
+  queryKey: ["todos"],
+  queryFn: async () => {
+    const response = await fetch("/api/todos")
+    return response.json() as Promise<Array<{ id: string; title: string }>>
   },
 })
 
-// Immediately applies optimistic state
-todoCollection.update(todo.id, (draft) => {
-  draft.completed = true
-})
+const todosCollection = createCollection(
+  queryCollectionOptions({
+    ...listOptions,
+    queryFn: (context) => listOptions.queryFn!(context),
+    queryClient,
+    getKey: (item) => item.id,
+  }),
+)
 ```
 
-The collection maintains optimistic state separately from synced data. When live queries read from the collection, they see a local view that overlays the optimistic mutations on top of the immutable synced data.
+If `queryFn` is missing at runtime, `queryCollectionOptions` throws `QueryFnRequiredError`.
 
-The optimistic state is held until the handler resolves, at which point the data is persisted to the server and synced back. If the handler throws an error, the optimistic state is rolled back.
+### Collection Options
 
-For more complex mutations, you can create custom actions with `createOptimisticAction` or custom transactions with `createTransaction`. See the [Mutations guide](./guides/mutations.md) for details.
+- `id`: Unique identifier for the collection
+- `schema`: Schema for validating items
+- `sync`: Custom sync configuration
+- `startSync`: Whether to start syncing immediately (default: `true`)
 
-### Uni-directional data flow
+### Persistence Handlers
 
-This combines to support a model of uni-directional data flow, extending the redux/flux style state management pattern beyond the client, to take in the server as well:
+- `onInsert`: Handler called before insert operations
+- `onUpdate`: Handler called before update operations
+- `onDelete`: Handler called before delete operations
 
-<figure>
-  <a href="https://raw.githubusercontent.com/TanStack/db/main/docs/unidirectional-data-flow.lg.png" target="_blank">
-    <img src="https://raw.githubusercontent.com/TanStack/db/main/docs/unidirectional-data-flow.png" />
-  </a>
-</figure>
+## Extending Meta with Custom Properties
 
-With an instant inner loop of optimistic state, superseded in time by the slower outer loop of persisting to the server and syncing the updated server state back into the collection.
+The `meta` option allows you to pass additional metadata to your query function. By default, Query Collections automatically include `loadSubsetOptions` in the meta object, which contains filtering, sorting, and pagination options for on-demand queries.
 
-## API reference
+### Type-Safe Meta Access
 
-### Collections
+The `ctx.meta.loadSubsetOptions` property is automatically typed as `LoadSubsetOptions` without requiring any additional imports or type assertions:
 
-TanStack DB provides several built-in collection types for different data sources and use cases. Each collection type has its own detailed documentation page:
-
-#### Built-in Collection Types
-
-**Fetch Collections**
-
-- **[QueryCollection](./collections/query-collection.md)** &mdash; Load data into collections using TanStack Query for REST APIs and data fetching.
-
-**Sync Collections**
-
-- **[ElectricCollection](./collections/electric-collection.md)** &mdash; Sync data into collections from Postgres using ElectricSQL's real-time sync engine.
-
-- **[TrailBaseCollection](./collections/trailbase-collection.md)** &mdash; Sync data into collections using TrailBase's self-hosted backend with real-time subscriptions.
-
-- **[RxDBCollection](./collections/rxdb-collection.md)** &mdash; Integrate with RxDB for offline-first local persistence with powerful replication and sync capabilities.
-
-- **[PowerSyncCollection](./collections/powersync-collection.md)** &mdash; Sync with PowerSync's SQLite-based database for offline-first persistence with real-time synchronization with PostgreSQL, MongoDB, and MySQL backends.
-
-**Local Collections**
-
-- **[LocalStorageCollection](./collections/local-storage-collection.md)** &mdash; Store small amounts of local-only state that persists across sessions and syncs across browser tabs.
-
-- **[LocalOnlyCollection](./collections/local-only-collection.md)** &mdash; Manage in-memory client data or UI state that doesn't need persistence or cross-tab sync.
-
-#### Collection Schemas
-
-All collections optionally (though strongly recommended) support adding a `schema`.
-
-If provided, this must be a [Standard Schema](https://standardschema.dev) compatible schema instance, such as [Zod](https://zod.dev), [Valibot](https://valibot.dev), [ArkType](https://arktype.io), or [Effect](https://effect.website/docs/schema/introduction/).
-
-**What schemas do:**
-
-1. **Runtime validation** - Ensures data meets your constraints before entering the collection
-2. **Type transformations** - Convert input types to rich output types (e.g., string → Date)
-3. **Default values** - Automatically populate missing fields
-4. **Type safety** - Infer TypeScript types from your schema
-
-**Example:**
 ```typescript
-const todoSchema = z.object({
-  id: z.string(),
-  text: z.string(),
-  completed: z.boolean().default(false),
-  created_at: z.string().transform(val => new Date(val)),  // string → Date
-  priority: z.number().default(0)
-})
+import { parseLoadSubsetOptions } from "@tanstack/query-db-collection"
 
 const collection = createCollection(
   queryCollectionOptions({
-    schema: todoSchema,
-    // ...
+    queryKey: ["products"],
+    syncMode: "on-demand",
+    queryFn: async (ctx) => {
+      // ✅ Type-safe access - no @ts-ignore needed!
+      const options = parseLoadSubsetOptions(ctx.meta?.loadSubsetOptions)
+
+      // Use the parsed options to fetch only what you need
+      return api.getProducts(options)
+    },
+    queryClient,
+    getKey: (item) => item.id,
   })
 )
-
-// Users provide simple inputs
-collection.insert({
-  id: "1",
-  text: "Buy groceries",
-  created_at: "2024-01-01T00:00:00Z"  // string
-  // completed and priority filled automatically
-})
-
-// Collection stores and returns rich types
-const todo = collection.get("1")
-console.log(todo.created_at.getFullYear())  // It's a Date!
-console.log(todo.completed)  // false (default)
 ```
 
-The collection will use the schema for its type inference. If you provide a schema, you cannot also pass an explicit type parameter (e.g., `createCollection<Todo>()`).
+### Adding Custom Meta Properties
 
-**Learn more:** See the [Schemas guide](./guides/schemas.md) for comprehensive documentation on schema validation, type transformations, and best practices.
+You can extend the meta type to include your own custom properties using TypeScript's module augmentation:
 
-#### Creating Custom Collection Types
-
-You can create your own collection types by implementing the `Collection` interface found in [`../packages/db/src/collection/index.ts`](https://github.com/TanStack/db/blob/main/packages/db/src/collection/index.ts).
-
-See the existing implementations in [`../packages/db`](https://github.com/TanStack/db/tree/main/packages/db), [`../packages/query-db-collection`](https://github.com/TanStack/db/tree/main/packages/query-db-collection), [`../packages/electric-db-collection`](https://github.com/TanStack/db/tree/main/packages/electric-db-collection) and [`../packages/trailbase-db-collection`](https://github.com/TanStack/db/tree/main/packages/trailbase-db-collection) for reference. Also see the [Collection Options Creator guide](./guides/collection-options-creator.md) for a pattern to create reusable collection configuration factories.
-
-### Live queries
-
-#### `useLiveQuery` hook
-
-Use the `useLiveQuery` hook to assign live query results to a state variable in your React components:
-
-```ts
-import { useLiveQuery } from '@tanstack/react-db'
-import { eq } from '@tanstack/db'
-
-const Todos = () => {
-  const { data: todos } = useLiveQuery((q) =>
-    q
-      .from({ todo: todoCollection })
-      .where(({ todo }) => eq(todo.completed, false))
-      .orderBy(({ todo }) => todo.created_at, 'asc')
-      .select(({ todo }) => ({
-        id: todo.id,
-        text: todo.text
-      }))
-  )
-
-  return <List items={ todos } />
+```typescript
+// In a global type definition file (e.g., types.d.ts or global.d.ts)
+declare module "@tanstack/query-db-collection" {
+  interface QueryCollectionMeta {
+    // Add your custom properties here
+    userId?: string
+    includeDeleted?: boolean
+    cacheTTL?: number
+  }
 }
 ```
 
-You can also query across collections with joins:
+Once you've extended the interface, your custom properties are fully typed throughout your application:
 
-```ts
-import { useLiveQuery } from '@tanstack/react-db'
-import { eq } from '@tanstack/db'
-
-const Todos = () => {
-  const { data: todos } = useLiveQuery((q) =>
-    q
-      .from({ todos: todoCollection })
-      .join(
-        { lists: listCollection },
-        ({ todos, lists }) => eq(lists.id, todos.listId),
-        'inner'
-      )
-      .where(({ lists }) => eq(lists.active, true))
-      .select(({ todos, lists }) => ({
-        id: todos.id,
-        title: todos.title,
-        listName: lists.name
-      }))
-  )
-
-  return <List items={ todos } />
-}
-```
-
-#### `useLiveSuspenseQuery` hook
-
-For React Suspense support, use `useLiveSuspenseQuery`. This hook suspends rendering during initial data load and guarantees that `data` is always defined:
-
-```tsx
-import { useLiveSuspenseQuery } from '@tanstack/react-db'
-import { Suspense } from 'react'
-
-const Todos = () => {
-  // data is always defined - no need for optional chaining
-  const { data: todos } = useLiveSuspenseQuery((q) =>
-    q
-      .from({ todo: todoCollection })
-      .where(({ todo }) => eq(todo.completed, false))
-  )
-
-  return <List items={ todos } />
-}
-
-const App = () => (
-  <Suspense fallback={<div>Loading...</div>}>
-    <Todos />
-  </Suspense>
-)
-```
-
-See the [React Suspense section in Live Queries](./guides/live-queries#using-with-react-suspense) for detailed usage patterns and when to use `useLiveSuspenseQuery` vs `useLiveQuery`.
-
-#### `queryBuilder`
-
-You can also build queries directly (outside of the component lifecycle) using the underlying `queryBuilder` API:
-
-```ts
-import { createLiveQueryCollection, eq } from "@tanstack/db"
-
-const completedTodos = createLiveQueryCollection({
-  startSync: true,
-  query: (q) =>
-    q
-      .from({ todo: todoCollection })
-      .where(({ todo }) => eq(todo.completed, true)),
-})
-
-const results = completedTodos.toArray
-```
-
-Note also that:
-
-1. the query results [are themselves a collection](#derived-collections)
-2. the `useLiveQuery` automatically starts and stops live query subscriptions when you mount and unmount your components; if you're creating queries manually, you need to manually manage the subscription lifecycle yourself
-
-See the [Live Queries](./guides/live-queries.md) documentation for more details.
-
-### Transactional mutators
-
-For more complex mutations beyond simple CRUD operations, TanStack DB provides `createOptimisticAction` and `createTransaction` for creating custom mutations with full control over the mutation lifecycle.
-
-See the [Mutations guide](./guides/mutations.md) for comprehensive documentation on:
-
-- Creating custom actions with `createOptimisticAction`
-- Manual transactions with `createTransaction`
-- Mutation merging behavior
-- Controlling optimistic vs non-optimistic updates
-- Handling temporary IDs
-- Transaction lifecycle states
-
-## Usage examples
-
-Here we illustrate two common ways of using TanStack DB:
-
-1. [using TanStack Query](#1-tanstack-query) with an existing REST API
-2. [using the ElectricSQL sync engine](#2-electricsql-sync) for real-time sync with your existing API
-
-> [!TIP]
-> You can combine these patterns. One of the benefits of TanStack DB is that you can integrate different ways of loading data and handling mutations into the same app. Your components don't need to know where the data came from or goes.
-
-### 1. TanStack Query
-
-You can use TanStack DB with your existing REST API via TanStack Query.
-
-The steps are to:
-
-1. create [QueryCollection](./collections/query-collection.md)s that load data using TanStack Query
-2. implement mutation handlers that handle mutations by posting them to your API endpoints
-
-```tsx
-import { useLiveQuery, createCollection } from "@tanstack/react-db"
-import { queryCollectionOptions } from "@tanstack/query-db-collection"
-
-// Load data into collections using TanStack Query.
-// It's common to define these in a `collections` module.
-const todoCollection = createCollection(
+```typescript
+const collection = createCollection(
   queryCollectionOptions({
     queryKey: ["todos"],
-    queryFn: async () => fetch("/api/todos"),
-    getKey: (item) => item.id,
-    schema: todoSchema, // any standard schema
-    onInsert: async ({ transaction }) => {
-      const { changes: newTodo } = transaction.mutations[0]
+    queryFn: async (ctx) => {
+      // ✅ Both loadSubsetOptions and custom properties are typed
+      const { loadSubsetOptions, userId, includeDeleted } = ctx.meta
 
-      // Handle the local write by sending it to your API.
-      await api.todos.create(newTodo)
+      return api.getTodos({
+        ...parseLoadSubsetOptions(loadSubsetOptions),
+        userId,
+        includeDeleted,
+      })
     },
-    // also add onUpdate, onDelete as needed.
+    queryClient,
+    getKey: (item) => item.id,
+    // Pass custom meta alongside Query Collection defaults
+    meta: {
+      userId: "user-123",
+      includeDeleted: false,
+    },
   })
 )
-const listCollection = createCollection(
+```
+
+### Important Notes
+
+- The module augmentation pattern follows TanStack Query's official approach for typing meta
+- `QueryCollectionMeta` is an interface (not a type alias), enabling proper TypeScript declaration merging
+- Your custom properties are merged with the base `loadSubsetOptions` property
+- All meta properties must be compatible with `Record<string, unknown>`
+- The augmentation should be done in a file that's included in your TypeScript compilation
+
+### Example: API Request Context
+
+A common use case is passing request context to your query function:
+
+```typescript
+// types.d.ts
+declare module "@tanstack/query-db-collection" {
+  interface QueryCollectionMeta {
+    authToken?: string
+    locale?: string
+    version?: string
+  }
+}
+
+// collections.ts
+const productsCollection = createCollection(
   queryCollectionOptions({
-    queryKey: ["todo-lists"],
-    queryFn: async () => fetch("/api/todo-lists"),
-    getKey: (item) => item.id,
-    schema: todoListSchema,
-    onInsert: async ({ transaction }) => {
-      const { changes: newTodo } = transaction.mutations[0]
+    queryKey: ["products"],
+    queryFn: async (ctx) => {
+      const { loadSubsetOptions, authToken, locale, version } = ctx.meta
 
-      // Handle the local write by sending it to your API.
-      await api.todoLists.create(newTodo)
+      return api.getProducts({
+        ...parseLoadSubsetOptions(loadSubsetOptions),
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Accept-Language": locale,
+          "API-Version": version,
+        },
+      })
     },
-    // also add onUpdate, onDelete as needed.
+    queryClient,
+    getKey: (item) => item.id,
+    meta: {
+      authToken: session.token,
+      locale: "en-US",
+      version: "v1",
+    },
+  })
+)
+```
+
+## Persistence Handlers
+
+You can define handlers that are called when mutations occur. These handlers can persist changes to your backend and control whether the query should refetch after the operation:
+
+```typescript
+const todosCollection = createCollection(
+  queryCollectionOptions({
+    queryKey: ["todos"],
+    queryFn: fetchTodos,
+    queryClient,
+    getKey: (item) => item.id,
+
+    onInsert: async ({ transaction }) => {
+      const newItems = transaction.mutations.map((m) => m.modified)
+      await api.createTodos(newItems)
+      // Returning nothing or { refetch: true } will trigger a refetch
+      // Return { refetch: false } to skip automatic refetch
+    },
+
+    onUpdate: async ({ transaction }) => {
+      const updates = transaction.mutations.map((m) => ({
+        id: m.key,
+        changes: m.changes,
+      }))
+      await api.updateTodos(updates)
+    },
+
+    onDelete: async ({ transaction }) => {
+      const ids = transaction.mutations.map((m) => m.key)
+      await api.deleteTodos(ids)
+    },
+  })
+)
+```
+
+### Controlling Refetch Behavior
+
+By default, after any persistence handler (`onInsert`, `onUpdate`, or `onDelete`) completes successfully, the query will automatically refetch to ensure the local state matches the server state.
+
+You can control this behavior by returning an object with a `refetch` property:
+
+```typescript
+onInsert: async ({ transaction }) => {
+  await api.createTodos(transaction.mutations.map((m) => m.modified))
+
+  // Skip the automatic refetch
+  return { refetch: false }
+}
+```
+
+This is useful when:
+
+- You're confident the server state matches what you sent
+- You want to avoid unnecessary network requests
+- You're handling state updates through other mechanisms (like WebSockets)
+
+## Utility Methods
+
+The collection provides these utility methods via `collection.utils`:
+
+- `refetch(opts?)`: Manually trigger a refetch of the query
+  - `opts.throwOnError`: Whether to throw an error if the refetch fails (default: `false`)
+  - Bypasses `enabled: false` to support imperative/manual refetching patterns (similar to hook `refetch()` behavior)
+  - Returns `QueryObserverResult` for inspecting the result
+
+## Direct Writes
+
+Direct writes are intended for scenarios where the normal query/mutation flow doesn't fit your needs. They allow you to write directly to the synced data store, bypassing the optimistic update system and query refetch mechanism.
+
+### Understanding the Data Stores
+
+Query Collections maintain two data stores:
+
+1. **Synced Data Store** - The authoritative state synchronized with the server via `queryFn`
+2. **Optimistic Mutations Store** - Temporary changes that are applied optimistically before server confirmation
+
+Normal collection operations (insert, update, delete) create optimistic mutations that are:
+
+- Applied immediately to the UI
+- Sent to the server via persistence handlers
+- Rolled back automatically if the server request fails
+- Replaced with server data when the query refetches
+
+Direct writes bypass this system entirely and write directly to the synced data store, making them ideal for handling real-time updates from alternative sources.
+
+### When to Use Direct Writes
+
+Direct writes should be used when:
+
+- You need to sync real-time updates from WebSockets or server-sent events
+- You're dealing with large datasets where refetching everything is too expensive
+- You receive incremental updates or server-computed field updates
+- You need to implement complex pagination or partial data loading scenarios
+
+### Individual Write Operations
+
+```typescript
+// Insert a new item directly to the synced data store
+todosCollection.utils.writeInsert({
+  id: "1",
+  text: "Buy milk",
+  completed: false,
+})
+
+// Update an existing item in the synced data store
+todosCollection.utils.writeUpdate({ id: "1", completed: true })
+
+// Delete an item from the synced data store
+todosCollection.utils.writeDelete("1")
+
+// Upsert (insert or update) in the synced data store
+todosCollection.utils.writeUpsert({
+  id: "1",
+  text: "Buy milk",
+  completed: false,
+})
+```
+
+These operations:
+
+- Write directly to the synced data store
+- Do NOT create optimistic mutations
+- Do NOT trigger automatic query refetches
+- Update the TanStack Query cache immediately
+- Are immediately visible in the UI
+
+### Batch Operations
+
+The `writeBatch` method allows you to perform multiple operations atomically. Any write operations called within the callback will be collected and executed as a single transaction:
+
+```typescript
+todosCollection.utils.writeBatch(() => {
+  todosCollection.utils.writeInsert({ id: "1", text: "Buy milk" })
+  todosCollection.utils.writeInsert({ id: "2", text: "Walk dog" })
+  todosCollection.utils.writeUpdate({ id: "3", completed: true })
+  todosCollection.utils.writeDelete("4")
+})
+```
+
+### Real-World Example: WebSocket Integration
+
+```typescript
+// Handle real-time updates from WebSocket without triggering full refetches
+ws.on("todos:update", (changes) => {
+  todosCollection.utils.writeBatch(() => {
+    changes.forEach((change) => {
+      switch (change.type) {
+        case "insert":
+          todosCollection.utils.writeInsert(change.data)
+          break
+        case "update":
+          todosCollection.utils.writeUpdate(change.data)
+          break
+        case "delete":
+          todosCollection.utils.writeDelete(change.id)
+          break
+      }
+    })
+  })
+})
+```
+
+### Example: Incremental Updates
+
+When the server returns computed fields (like server-generated IDs or timestamps), you can use the `onInsert` handler with `{ refetch: false }` to avoid unnecessary refetches while still syncing the server response:
+
+```typescript
+const todosCollection = createCollection(
+  queryCollectionOptions({
+    queryKey: ["todos"],
+    queryFn: fetchTodos,
+    queryClient,
+    getKey: (item) => item.id,
+
+    onInsert: async ({ transaction }) => {
+      const newItems = transaction.mutations.map((m) => m.modified)
+
+      // Send to server and get back items with server-computed fields
+      const serverItems = await api.createTodos(newItems)
+
+      // Sync server-computed fields (like server-generated IDs, timestamps, etc.)
+      // to the collection's synced data store
+      todosCollection.utils.writeBatch(() => {
+        serverItems.forEach((serverItem) => {
+          todosCollection.utils.writeInsert(serverItem)
+        })
+      })
+
+      // Skip automatic refetch since we've already synced the server response
+      // (optimistic state is automatically replaced when handler completes)
+      return { refetch: false }
+    },
+
+    onUpdate: async ({ transaction }) => {
+      const updates = transaction.mutations.map((m) => ({
+        id: m.key,
+        changes: m.changes,
+      }))
+      const serverItems = await api.updateTodos(updates)
+
+      // Sync server-computed fields from the update response
+      todosCollection.utils.writeBatch(() => {
+        serverItems.forEach((serverItem) => {
+          todosCollection.utils.writeUpdate(serverItem)
+        })
+      })
+
+      return { refetch: false }
+    },
   })
 )
 
-const Todos = () => {
-  // Read the data using live queries. Here we show a live
-  // query that joins across two collections.
-  const { data: todos } = useLiveQuery((q) =>
-    q
-      .from({ todo: todoCollection })
-      .join(
-        { list: listCollection },
-        ({ todo, list }) => eq(list.id, todo.list_id),
-        "inner"
-      )
-      .where(({ list }) => eq(list.active, true))
-      .select(({ todo, list }) => ({
-        id: todo.id,
-        text: todo.text,
-        status: todo.status,
-        listName: list.name,
-      }))
-  )
+// Usage is just like a regular collection
+todosCollection.insert({ text: "Buy milk", completed: false })
+```
 
+### Example: Large Dataset Pagination
+
+```typescript
+// Load additional pages without refetching existing data
+const loadMoreTodos = async (page) => {
+  const newTodos = await api.getTodos({ page, limit: 50 })
+
+  // Add new items without affecting existing ones
+  todosCollection.utils.writeBatch(() => {
+    newTodos.forEach((todo) => {
+      todosCollection.utils.writeInsert(todo)
+    })
+  })
+}
+```
+
+## Important Behaviors
+
+### Full State Sync
+
+The query collection treats the `queryFn` result as the **complete state** of the collection. This means:
+
+- Items present in the collection but not in the query result will be deleted
+- Items in the query result but not in the collection will be inserted
+- Items present in both will be updated if they differ
+
+### Empty Array Behavior
+
+When `queryFn` returns an empty array, **all items in the collection will be deleted**. This is because the collection interprets an empty array as "the server has no items".
+
+```typescript
+// This will delete all items in the collection
+queryFn: async () => []
+```
+
+### Handling Partial/Incremental Fetches
+
+Since the query collection expects `queryFn` to return the complete state, you can handle partial fetches by merging new data with existing data:
+
+```typescript
+const todosCollection = createCollection(
+  queryCollectionOptions({
+    queryKey: ["todos"],
+    queryFn: async ({ queryKey }) => {
+      // Get existing data from cache
+      const existingData = queryClient.getQueryData(queryKey) || []
+
+      // Fetch only new/updated items (e.g., changes since last sync)
+      const lastSyncTime = localStorage.getItem("todos-last-sync")
+      const newData = await fetch(`/api/todos?since=${lastSyncTime}`).then(
+        (r) => r.json()
+      )
+
+      // Merge new data with existing data
+      const existingMap = new Map(existingData.map((item) => [item.id, item]))
+
+      // Apply updates and additions
+      newData.forEach((item) => {
+        existingMap.set(item.id, item)
+      })
+
+      // Handle deletions if your API provides them
+      if (newData.deletions) {
+        newData.deletions.forEach((id) => existingMap.delete(id))
+      }
+
+      // Update sync time
+      localStorage.setItem("todos-last-sync", new Date().toISOString())
+
+      // Return the complete merged state
+      return Array.from(existingMap.values())
+    },
+    queryClient,
+    getKey: (item) => item.id,
+  })
+)
+```
+
+This pattern allows you to:
+
+- Fetch only incremental changes from your API
+- Merge those changes with existing data
+- Return the complete state that the collection expects
+- Avoid the performance overhead of fetching all data every time
+
+### Direct Writes and Query Sync
+
+Direct writes update the collection immediately and also update the TanStack Query cache. However, they do not prevent the normal query sync behavior. If your `queryFn` returns data that conflicts with your direct writes, the query data will take precedence.
+
+To handle this properly:
+
+1. Use `{ refetch: false }` in your persistence handlers when using direct writes
+2. Set appropriate `staleTime` to prevent unnecessary refetches
+3. Design your `queryFn` to be aware of incremental updates (e.g., only fetch new data)
+
+## Complete Direct Write API Reference
+
+All direct write methods are available on `collection.utils`:
+
+- `writeInsert(data)`: Insert one or more items directly
+- `writeUpdate(data)`: Update one or more items directly
+- `writeDelete(keys)`: Delete one or more items directly
+- `writeUpsert(data)`: Insert or update one or more items directly
+- `writeBatch(callback)`: Perform multiple operations atomically
+- `refetch(opts?)`: Manually trigger a refetch of the query
+
+## QueryFn and Predicate Push-Down
+
+When using `syncMode: 'on-demand'`, the collection automatically pushes down query predicates (where clauses, orderBy, limit, and offset) to your `queryFn`. This allows you to fetch only the data needed for each specific query, rather than fetching the entire dataset.
+
+### How LoadSubsetOptions Are Passed
+
+LoadSubsetOptions are passed to your `queryFn` via the query context's `meta` property:
+
+```typescript
+queryFn: async (ctx) => {
+  // Extract LoadSubsetOptions from the context
+  const { limit, offset, where, orderBy } = ctx.meta.loadSubsetOptions
+
+  // Use these to fetch only the data you need
+  // - where: filter expression (AST)
+  // - orderBy: sort expression (AST)
+  // - limit: maximum number of rows
+  // - offset: number of rows to skip (for pagination)
   // ...
 }
 ```
 
-This pattern allows you to extend an existing TanStack Query application, or any application built on a REST API, with blazing fast, cross-collection live queries and local optimistic mutations with automatically managed optimistic state.
+The `where` and `orderBy` fields are expression trees (AST - Abstract Syntax Tree) that need to be parsed. TanStack DB provides helper functions to make this easy.
 
-### 2. ElectricSQL sync
+### Expression Helpers
 
-One of the most powerful ways of using TanStack DB is with a sync engine, for a fully local-first experience with real-time sync. This allows you to incrementally adopt sync into an existing app, whilst still handling writes with your existing API.
+```typescript
+import {
+  parseWhereExpression,
+  parseOrderByExpression,
+  extractSimpleComparisons,
+  parseLoadSubsetOptions,
+} from '@tanstack/db'
+// Or from '@tanstack/query-db-collection' (re-exported for convenience)
+```
 
-#### Why Sync Engines?
+These helpers allow you to parse expression trees without manually traversing complex AST structures.
 
-While TanStack DB works great with REST APIs, sync engines provide powerful benefits:
+### Quick Start: Simple REST API
 
-- **Easy real-time updates**: No WebSocket plumbing—write to your database and changes stream automatically to all clients
-- **Automatic side-effects**: When a mutation triggers cascading changes across tables, all affected data syncs automatically without manual cache invalidation
-- **Efficient delta updates**: Only changed rows cross the wire, making it practical to load large datasets client-side
+```typescript
+import { createCollection } from '@tanstack/react-db'
+import { queryCollectionOptions } from '@tanstack/query-db-collection'
+import { parseLoadSubsetOptions } from '@tanstack/db'
+import { QueryClient } from '@tanstack/query-core'
 
-This pattern enables the "load everything once" approach that makes apps like Linear and Figma feel instant.
+const queryClient = new QueryClient()
 
-Here, we illustrate this pattern using [ElectricSQL](https://electric-sql.com) as the sync engine.
-
-```tsx
-import type { Collection } from "@tanstack/db"
-import type {
-  MutationFn,
-  PendingMutation,
-  createCollection,
-} from "@tanstack/react-db"
-import { electricCollectionOptions } from "@tanstack/electric-db-collection"
-
-export const todoCollection = createCollection(
-  electricCollectionOptions({
-    id: "todos",
-    schema: todoSchema,
-    // Electric syncs data using "shapes". These are filtered views
-    // on database tables that Electric keeps in sync for you.
-    shapeOptions: {
-      url: "https://api.electric-sql.cloud/v1/shape",
-      params: {
-        table: "todos",
-      },
-    },
+const productsCollection = createCollection(
+  queryCollectionOptions({
+    id: 'products',
+    queryKey: ['products'],
+    queryClient,
     getKey: (item) => item.id,
-    schema: todoSchema,
-    onInsert: async ({ transaction }) => {
-      const response = await api.todos.create(transaction.mutations[0].modified)
+    syncMode: 'on-demand', // Enable predicate push-down
 
-      return { txid: response.txid }
+    queryFn: async (ctx) => {
+      const { limit, offset, where, orderBy } = ctx.meta.loadSubsetOptions
+
+      // Parse the expressions into simple format
+      const parsed = parseLoadSubsetOptions({ where, orderBy, limit })
+
+      // Build query parameters from parsed filters
+      const params = new URLSearchParams()
+
+      // Add filters
+      parsed.filters.forEach(({ field, operator, value }) => {
+        const fieldName = field.join('.')
+        if (operator === 'eq') {
+          params.set(fieldName, String(value))
+        } else if (operator === 'lt') {
+          params.set(`${fieldName}_lt`, String(value))
+        } else if (operator === 'gt') {
+          params.set(`${fieldName}_gt`, String(value))
+        }
+      })
+
+      // Add sorting
+      if (parsed.sorts.length > 0) {
+        const sortParam = parsed.sorts
+          .map(s => `${s.field.join('.')}:${s.direction}`)
+          .join(',')
+        params.set('sort', sortParam)
+      }
+
+      // Add limit
+      if (parsed.limit) {
+        params.set('limit', String(parsed.limit))
+      }
+
+      // Add offset for pagination
+      if (offset) {
+        params.set('offset', String(offset))
+      }
+
+      const response = await fetch(`/api/products?${params}`)
+      return response.json()
     },
-    // You can also implement onUpdate, onDelete as needed.
   })
 )
 
-const AddTodo = () => {
-  return (
-    <Button
-      onClick={() => todoCollection.insert({ text: "🔥 Make app faster" })}
-    />
-  )
+// Usage with live queries
+import { createLiveQueryCollection } from '@tanstack/react-db'
+import { eq, lt, and } from '@tanstack/db'
+
+const affordableElectronics = createLiveQueryCollection({
+  query: (q) =>
+    q.from({ product: productsCollection })
+     .where(({ product }) => and(
+       eq(product.category, 'electronics'),
+       lt(product.price, 100)
+     ))
+     .orderBy(({ product }) => product.price, 'asc')
+     .limit(10)
+     .select(({ product }) => product)
+})
+
+// This triggers a queryFn call with:
+// GET /api/products?category=electronics&price_lt=100&sort=price:asc&limit=10
+// When paginating, offset is included: &offset=20
+```
+
+### Custom Handlers for Complex APIs
+
+For APIs with specific formats, use custom handlers:
+
+```typescript
+queryFn: async (ctx) => {
+  const { where, orderBy, limit } = ctx.meta.loadSubsetOptions
+
+  // Use custom handlers to match your API's format
+  const filters = parseWhereExpression(where, {
+    handlers: {
+      eq: (field, value) => ({
+        field: field.join('.'),
+        op: 'equals',
+        value
+      }),
+      lt: (field, value) => ({
+        field: field.join('.'),
+        op: 'lessThan',
+        value
+      }),
+      and: (...conditions) => ({
+        operator: 'AND',
+        conditions
+      }),
+      or: (...conditions) => ({
+        operator: 'OR',
+        conditions
+      }),
+    }
+  })
+
+  const sorts = parseOrderByExpression(orderBy)
+
+  return api.query({
+    filters,
+    sort: sorts.map(s => ({
+      field: s.field.join('.'),
+      order: s.direction.toUpperCase()
+    })),
+    limit
+  })
 }
 ```
 
-## React Native
+### GraphQL Example
 
-When using TanStack DB with React Native, you need to install and configure a UUID generation library since React Native doesn't include crypto.randomUUID() by default.
+```typescript
+queryFn: async (ctx) => {
+  const { where, orderBy, limit } = ctx.meta.loadSubsetOptions
 
-Install the `react-native-random-uuid` package:
+  // Convert to a GraphQL where clause format
+  const whereClause = parseWhereExpression(where, {
+    handlers: {
+      eq: (field, value) => ({
+        [field.join('_')]: { _eq: value }
+      }),
+      lt: (field, value) => ({
+        [field.join('_')]: { _lt: value }
+      }),
+      and: (...conditions) => ({ _and: conditions }),
+      or: (...conditions) => ({ _or: conditions }),
+    }
+  })
 
-```bash
-npm install react-native-random-uuid
+  // Convert to a GraphQL order_by format
+  const sorts = parseOrderByExpression(orderBy)
+  const orderByClause = sorts.map(s => ({
+    [s.field.join('_')]: s.direction
+  }))
+
+  const { data } = await graphqlClient.query({
+    query: gql`
+      query GetProducts($where: product_bool_exp, $orderBy: [product_order_by!], $limit: Int) {
+        product(where: $where, order_by: $orderBy, limit: $limit) {
+          id
+          name
+          category
+          price
+        }
+      }
+    `,
+    variables: {
+      where: whereClause,
+      orderBy: orderByClause,
+      limit
+    }
+  })
+
+  return data.product
+}
 ```
 
-Then import it at the entry point of your React Native app (e.g., in your `App.js` or `index.js`):
+### Expression Helper API Reference
 
-```javascript
-import "react-native-random-uuid"
+#### `parseLoadSubsetOptions(options)`
+
+Convenience function that parses all LoadSubsetOptions at once. Good for simple use cases.
+
+```typescript
+const { filters, sorts, limit, offset } = parseLoadSubsetOptions(ctx.meta?.loadSubsetOptions)
+// filters: [{ field: ['category'], operator: 'eq', value: 'electronics' }]
+// sorts: [{ field: ['price'], direction: 'asc', nulls: 'last' }]
+// limit: 10
+// offset: 20 (for pagination)
 ```
 
-This polyfill provides the `crypto.randomUUID()` function that TanStack DB uses internally for generating unique identifiers.
+#### `parseWhereExpression(expr, options)`
 
-## More info
+Parses a WHERE expression using custom handlers for each operator. Use this for complete control over the output format.
 
-If you have questions / need help using TanStack DB, let us know on the Discord or start a GitHub discussion:
+```typescript
+const filters = parseWhereExpression(where, {
+  handlers: {
+    eq: (field, value) => ({ [field.join('.')]: value }),
+    lt: (field, value) => ({ [`${field.join('.')}_lt`]: value }),
+    and: (...filters) => Object.assign({}, ...filters)
+  },
+  onUnknownOperator: (operator, args) => {
+    console.warn(`Unsupported operator: ${operator}`)
+    return null
+  }
+})
+```
 
-- [`#db` channel in the TanStack discord](https://discord.gg/yjUNbvbraC)
-- [GitHub discussions](https://github.com/tanstack/db/discussions)
+#### `parseOrderByExpression(orderBy)`
+
+Parses an ORDER BY expression into a simple array.
+
+```typescript
+const sorts = parseOrderByExpression(orderBy)
+// Returns: [{ field: ['price'], direction: 'asc', nulls: 'last' }]
+```
+
+#### `extractSimpleComparisons(expr)`
+
+Extracts simple AND-ed comparisons from a WHERE expression. Note: Only works for simple AND conditions.
+
+```typescript
+const comparisons = extractSimpleComparisons(where)
+// Returns: [
+//   { field: ['category'], operator: 'eq', value: 'electronics' },
+//   { field: ['price'], operator: 'lt', value: 100 }
+// ]
+```
+
+### Supported Operators
+
+- `eq` - Equality (=)
+- `gt` - Greater than (>)
+- `gte` - Greater than or equal (>=)
+- `lt` - Less than (<)
+- `lte` - Less than or equal (<=)
+- `and` - Logical AND
+- `or` - Logical OR
+- `in` - IN clause
+
+### Using Query Key Builders
+
+Create different cache entries for different filter combinations:
+
+```typescript
+const productsCollection = createCollection(
+  queryCollectionOptions({
+    id: 'products',
+    // Dynamic query key based on filters
+    queryKey: (opts) => {
+      const parsed = parseLoadSubsetOptions(opts)
+      const cacheKey = ['products']
+
+      parsed.filters.forEach(f => {
+        cacheKey.push(`${f.field.join('.')}-${f.operator}-${f.value}`)
+      })
+
+      if (parsed.limit) {
+        cacheKey.push(`limit-${parsed.limit}`)
+      }
+
+      return cacheKey
+    },
+    queryClient,
+    getKey: (item) => item.id,
+    syncMode: 'on-demand',
+    queryFn: async (ctx) => { /* ... */ },
+  })
+)
+```
+
+### Tips
+
+1. **Start with `parseLoadSubsetOptions`** for simple use cases
+2. **Use custom handlers** via `parseWhereExpression` for APIs with specific formats
+3. **Handle unsupported operators** with the `onUnknownOperator` callback
+4. **Log parsed results** during development to verify correctness

@@ -15,6 +15,8 @@
     "@sentry/react": "^9.25.1",
     "@sentry/vite-plugin": "^3.5.0",
     "@tailwindcss/vite": "^4.1.7",
+    "@tanstack/query-db-collection": "^1.0.29",
+    "@tanstack/react-db": "^0.1.76",
     "@tanstack/react-query": "^5.83.0",
     "@tanstack/react-router": "^1.166.6",
     "@tanstack/react-virtual": "^3.13.10",

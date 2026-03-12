@@ -6,6 +6,7 @@ import {
 import { MainScrollArea } from "@/layout/components/main"
 import { useOrder } from "@/order/hooks"
 import { CreateOrderMessage } from "@/order/message/components/create-order-message"
+import { useOrderMessages } from "@/order/message/hooks"
 import { createFileRoute } from "@tanstack/react-router"
 import { makeShortId } from "@unfiddle/core/id"
 
@@ -17,6 +18,7 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
    const order = useOrder()
+   const { messages } = useOrderMessages(order.id)
 
    return (
       <>
@@ -45,7 +47,19 @@ function RouteComponent() {
             className={"pt-0 lg:pt-0"}
             container={false}
          >
-            hello test
+            <div className="space-y-2 p-4">
+               {messages.map((message) => (
+                  <div
+                     key={message.id}
+                     className="rounded-lg border p-3"
+                  >
+                     <div className="font-medium text-sm">
+                        {message.creator.name}
+                     </div>
+                     <div className="text-sm">{message.content}</div>
+                  </div>
+               ))}
+            </div>
          </MainScrollArea>
          <CreateOrderMessage />
       </>

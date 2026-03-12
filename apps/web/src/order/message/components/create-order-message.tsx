@@ -1,40 +1,27 @@
-import { useCreateOrderMessage } from "@/order/message/mutations/use-create-order-message"
-import { useParams } from "@tanstack/react-router"
+import { useCreateOrderMessage } from "@/order/message/mutations"
 import { Button } from "@unfiddle/ui/components/button"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { Textarea } from "@unfiddle/ui/components/textarea"
 import * as React from "react"
 
 export function CreateOrderMessage() {
-   const params = useParams({
-      from: "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout",
-   })
    const [content, setContent] = React.useState("")
-   const [contentToRollbackTo, setContentToRollbackTo] = React.useState("")
 
    const formRef = React.useRef<HTMLFormElement>(null)
 
-   const create = useCreateOrderMessage({
-      onMutate: () => {
-         setContent("")
-         setContentToRollbackTo(content)
-      },
-      onError: () => {
-         setContent(contentToRollbackTo)
-      },
-   })
+   const createMessage = useCreateOrderMessage()
 
    return (
       <div className="max-h-[50svh] overflow-auto border-neutral border-t pr-1.75 pl-3.5 md:pr-2.5 md:pl-5">
          <form
             ref={formRef}
-            onSubmit={(e) => {
+            onSubmit={async (e) => {
                e.preventDefault()
-               create.mutate({
-                  orderId: params.orderId,
-                  workspaceId: params.workspaceId,
-                  content,
-               })
+               if (content.trim().length === 0) return
+
+               const messageContent = content
+               setContent("")
+               createMessage(messageContent)
             }}
             className="flex items-end gap-2"
          >
@@ -54,6 +41,7 @@ export function CreateOrderMessage() {
                }}
             />
             <Button
+               type="submit"
                disabled={content.trim().length === 0}
                className={"sticky bottom-1.5 rounded-full md:bottom-2.25"}
                kind={"icon"}

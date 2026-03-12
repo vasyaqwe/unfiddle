@@ -7,9 +7,7 @@ import { useOptimisticDeleteOrder } from "@/order/delete/use-delete-order"
 import { useOptimisticCreateOrderItem } from "@/order/item/mutations/use-create-order-item"
 import { useOptimisticDeleteOrderItem } from "@/order/item/mutations/use-delete-order-item"
 import { useOptimisticUpdateOrderItem } from "@/order/item/mutations/use-update-order-item"
-import { useOptimisticCreateOrderMessage } from "@/order/message/mutations/use-create-order-message"
-import { useOptimisticDeleteOrderMessage } from "@/order/message/mutations/use-delete-order-message"
-import { useOptimisticUpdateOrderMessage } from "@/order/message/mutations/use-update-order-message"
+import { orderMessageCollection } from "@/order/message/collection"
 import { useOptimisticUpdateOrder } from "@/order/update/use-update-order"
 import { trpc } from "@/trpc"
 import { useQueryClient } from "@tanstack/react-query"
@@ -27,9 +25,6 @@ export function useOrderSocket() {
    const createItem = useOptimisticCreateOrderItem()
    const updateItem = useOptimisticUpdateOrderItem()
    const deleteItem = useOptimisticDeleteOrderItem()
-   const createMessage = useOptimisticCreateOrderMessage()
-   const updateMessage = useOptimisticUpdateOrderMessage()
-   const deleteMessage = useOptimisticDeleteOrderMessage()
 
    return usePartySocket({
       host: env.COLLABORATION_URL,
@@ -56,14 +51,27 @@ export function useOrderSocket() {
          if (data.action === "update_item") return updateItem(data.item)
          if (data.action === "delete_item") return deleteItem(data)
 
-         if (data.action === "create_message")
-            return createMessage({
-               orderId: data.orderId,
-               message: data.message,
-            })
-         if (data.action === "update_message")
-            return updateMessage(data.message)
-         if (data.action === "delete_message") return deleteMessage(data)
+         if (data.action === "create_message") {
+            const collection = orderMessageCollection(
+               data.orderId,
+               data.workspaceId,
+            )
+            return collection.utils.writeInsert(data.message)
+         }
+         if (data.action === "update_message") {
+            const collection = orderMessageCollection(
+               data.orderId,
+               auth.workspace.id,
+            )
+            return collection.utils.writeUpdate(data.message)
+         }
+         if (data.action === "delete_message") {
+            const collection = orderMessageCollection(
+               data.orderId,
+               data.workspaceId,
+            )
+            return collection.utils.writeDelete(data.orderMessageId)
+         }
 
          if (data.action === "create_assignee") {
             await update({

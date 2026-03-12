@@ -72,6 +72,7 @@ export function SidebarContent() {
                <Button
                   kind={"icon"}
                   variant={"ghost"}
+                  nativeButton={false}
                   render={
                      <Link
                         to={"/$workspaceId/settings"}

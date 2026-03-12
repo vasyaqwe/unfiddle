@@ -3,7 +3,11 @@ import { d } from "@unfiddle/core/database"
 import { order } from "@unfiddle/core/order/schema"
 import { workspace } from "@unfiddle/core/workspace/schema"
 import { relations } from "drizzle-orm"
-import { createInsertSchema, createUpdateSchema } from "drizzle-zod"
+import {
+   createInsertSchema,
+   createSelectSchema,
+   createUpdateSchema,
+} from "drizzle-zod"
 import { z } from "zod"
 
 export const orderMessage = d.table(
@@ -49,6 +53,17 @@ export const orderMessageRelations = relations(orderMessage, ({ one }) => ({
       references: [workspace.id],
    }),
 }))
+
+export const orderMessageSchema = createSelectSchema(orderMessage, {
+   createdAt: z.coerce.date(),
+   updatedAt: z.coerce.date(),
+}).extend({
+   creator: z.object({
+      id: z.string(),
+      name: z.string(),
+      image: z.string().nullable(),
+   }),
+})
 
 export const createOrderMessageSchema = createInsertSchema(orderMessage)
    .omit({ id: true, creatorId: true, createdAt: true, updatedAt: true })
