@@ -56,6 +56,19 @@ export function useOrderSocket() {
                data.orderId,
                data.workspaceId,
             )
+
+            queryClient.invalidateQueries({
+               queryKey: trpc.order.message.read.getUnreadCount.queryKey({
+                  orderId: data.orderId,
+                  workspaceId: data.workspaceId,
+               }),
+            })
+            queryClient.invalidateQueries({
+               queryKey: trpc.order.message.read.getGlobalUnreadCount.queryKey({
+                  workspaceId: data.workspaceId,
+               }),
+            })
+
             return collection.utils.writeInsert(data.message)
          }
          if (data.action === "update_message") {

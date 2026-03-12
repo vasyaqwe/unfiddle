@@ -3,7 +3,7 @@ import { queryCollectionOptions } from "@tanstack/query-db-collection"
 import { createCollection } from "@tanstack/react-db"
 import { orderMessageSchema } from "@unfiddle/core/order/message/schema"
 
-export const orderMessageCollection = (orderId: string, workspaceId: string) =>
+const createCollectionInstance = (orderId: string, workspaceId: string) =>
    createCollection(
       queryCollectionOptions({
          queryClient,
@@ -49,3 +49,24 @@ export const orderMessageCollection = (orderId: string, workspaceId: string) =>
          },
       }),
    )
+
+const collectionMap = new Map<
+   string,
+   ReturnType<typeof createCollectionInstance>
+>()
+
+export const orderMessageCollection = (
+   orderId: string,
+   workspaceId: string,
+) => {
+   const key = `${orderId}:${workspaceId}`
+
+   if (!collectionMap.has(key)) {
+      collectionMap.set(key, createCollectionInstance(orderId, workspaceId))
+   }
+
+   const collection = collectionMap.get(key)
+   if (!collection) throw new Error("Failed to get collection")
+
+   return collection
+}
