@@ -14,6 +14,9 @@ import { createFileRoute } from "@tanstack/react-router"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import { formatDate } from "@unfiddle/core/date"
 import { makeShortId } from "@unfiddle/core/id"
+import type { OrderMessagePosition } from "@unfiddle/core/order/message/types"
+import { Badge } from "@unfiddle/ui/components/badge"
+import { Separator } from "@unfiddle/ui/components/separator"
 import * as React from "react"
 import * as R from "remeda"
 
@@ -29,7 +32,7 @@ function RouteComponent() {
 
    const groupedMessages = R.groupBy(query.data, (m) => formatDate(m.createdAt))
    const rows = Object.entries(groupedMessages).flatMap(
-      ([date, dateMessages], idx) => {
+      ([date, dateMessages]) => {
          return [
             {
                type: "date",
@@ -37,14 +40,51 @@ function RouteComponent() {
                message: undefined,
                prevMessage: undefined,
                nextMessage: undefined,
+               position: undefined,
             },
-            ...dateMessages.map((message) => ({
-               type: "message",
-               value: undefined,
-               message,
-               prevMessage: dateMessages[idx - 1],
-               nextMessage: dateMessages[idx + 1],
-            })),
+            ...dateMessages.map((message, messageIdx) => {
+               const prev = dateMessages[messageIdx - 1]
+               const next = dateMessages[messageIdx + 1]
+
+               const aWhile = 10 * 60 * 1000 // 10 min
+               const isFirstMessageInAWhile =
+                  !prev ||
+                  new Date(message.createdAt).getTime() -
+                     new Date(prev.createdAt).getTime() >
+                     aWhile
+               const nextIsFirstMessageInAWhile =
+                  next &&
+                  new Date(next.createdAt).getTime() -
+                     new Date(message.createdAt).getTime() >
+                     aWhile
+
+               const sameSenderAsPrev =
+                  prev?.creatorId === message.creatorId &&
+                  !isFirstMessageInAWhile
+               const sameSenderAsNext =
+                  next?.creatorId === message.creatorId &&
+                  !nextIsFirstMessageInAWhile
+
+               let position: OrderMessagePosition
+               if (!sameSenderAsPrev && !sameSenderAsNext) {
+                  position = "only"
+               } else if (!sameSenderAsPrev) {
+                  position = "first"
+               } else if (!sameSenderAsNext) {
+                  position = "last"
+               } else {
+                  position = "middle"
+               }
+
+               return {
+                  type: "message",
+                  value: undefined,
+                  message,
+                  prevMessage: prev,
+                  nextMessage: next,
+                  position,
+               }
+            }),
          ]
       },
    )
@@ -54,7 +94,7 @@ function RouteComponent() {
       count: rows.length,
       getScrollElement: () => scrollAreaRef.current,
       estimateSize: () => {
-         return window.innerWidth < 1024 ? 72 : 44
+         return window.innerWidth < 1024 ? 100 : 56
       },
       overscan: 6,
    })
@@ -90,7 +130,7 @@ function RouteComponent() {
             ref={scrollAreaRef}
          >
             <VList
-               className="relative mb-20 w-full"
+               className="relative my-6 w-full md:my-12"
                totalSize={virtualizer.getTotalSize()}
             >
                <VListContent start={data[0]?.start ?? 0}>
@@ -99,21 +139,25 @@ function RouteComponent() {
 
                      if (item?.type === "date") {
                         return (
-                           <div
-                              key={idx}
-                              className="mx-auto w-full max-w-4xl px-3 sm:px-4"
-                           >
-                              <div>{item.value}</div>
+                           <div className="flex items-center">
+                              <Separator className="w-full" />
+                              <Badge
+                                 key={idx}
+                                 className="mx-auto rounded-full font-normal"
+                              >
+                                 {item.value}
+                              </Badge>
+                              <Separator className="w-full" />
                            </div>
                         )
                      }
 
-                     if (!item?.message) return <div />
+                     if (!item?.message || !item.position) return <div />
 
                      return (
                         <div
                            key={idx}
-                           className="mx-auto w-full max-w-4xl px-3 sm:px-4"
+                           className=""
                         >
                            <OrderMessage {...item} />
                         </div>

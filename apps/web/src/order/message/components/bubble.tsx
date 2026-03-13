@@ -10,27 +10,29 @@ function getBorderRadiusClasses(
    position: OrderMessagePosition,
    viewerIsSender: boolean,
 ) {
+   // viewerIsSender: bubble on right, small corner on bottom-right
+   // !viewerIsSender: bubble on left, small corner on bottom-left
    if (viewerIsSender) {
       switch (position) {
          case "first":
-            return "rounded-[18px] rounded-br after:rounded-[18px] after:rounded-br"
+            return "rounded-[18px] rounded-br"
          case "middle":
-            return "rounded-r rounded-l-[18px] after:rounded-r after:rounded-l-[18px]"
+            return "rounded-l-[18px] rounded-r"
          case "last":
-            return "rounded-l-[18px] rounded-tr-[18px] rounded-br-[18px] after:rounded-l-[18px] after:rounded-tr-[18px] after:rounded-br-[18px]"
+            return "rounded-[18px] rounded-tr"
          case "only":
-            return "rounded-[18px] after:rounded-[18px]"
+            return "rounded-[18px]"
       }
    }
    switch (position) {
       case "first":
-         return "rounded-[18px] rounded-bl after:rounded-[18px] after:rounded-bl"
+         return "rounded-[18px] rounded-bl"
       case "middle":
-         return "rounded-l rounded-r-[18px] after:rounded-l after:rounded-r-[18px]"
+         return "rounded-r-[18px] rounded-l"
       case "last":
-         return "rounded-r-[18px] rounded-tl rounded-bl-[18px] after:rounded-r-[18px] after:rounded-tl after:rounded-bl-[18px]"
+         return "rounded-[18px] rounded-tl"
       case "only":
-         return "rounded-[18px] after:rounded-[18px]"
+         return "rounded-[18px]"
    }
 }
 
@@ -40,7 +42,8 @@ export function Bubble({
 }: { message: OrderMessage; position: OrderMessagePosition }) {
    const auth = useAuth()
    const viewerIsSender = message.creatorId === auth.user.id
-   const shouldRenderAvatar = viewerIsSender
+   const hasAvatar =
+      (position === "last" || position === "only") && !viewerIsSender
 
    const normalizedPosition = position
 
@@ -62,19 +65,25 @@ export function Bubble({
    return (
       <div
          data-viewer-is-sender={viewerIsSender ? "" : undefined}
-         className={"flex flex-col items-start data-viewer-is-sender:items-end"}
+         className={
+            "flex flex-col items-start not-data-viewer-is-sender:pl-2 data-viewer-is-sender:items-end data-viewer-is-sender:pr-2"
+         }
       >
          <div className="flex w-full gap-2">
-            {shouldRenderAvatar && (
-               <span className="-translate-y-1 self-end">
-                  <UserAvatar user={message.creator} />
+            {hasAvatar && (
+               <span className="-translate-y-1.5 self-end">
+                  <UserAvatar
+                     size={32}
+                     user={message.creator}
+                  />
                </span>
             )}
 
             <div
+               data-has-avatar={hasAvatar ? "" : undefined}
                data-viewer-is-sender={viewerIsSender ? "" : undefined}
                className={
-                  "group/bubble relative mb-0.5 flex flex-1 flex-col items-start transition-opacity data-viewer-is-sender:items-end"
+                  "group/bubble p relative mb-0.5 not-data-has-avatar:ml-10 flex flex-1 flex-col items-start transition-opacity data-viewer-is-sender:items-end"
                }
             >
                <div
@@ -96,7 +105,7 @@ export function Bubble({
                                  {
                                     "bg-surface-4":
                                        !viewerIsSender && !hasReactionsOnly,
-                                    "bg-primary-7 text-white":
+                                    "bg-primary-7 text-white selection:bg-surface-12":
                                        viewerIsSender && !hasReactionsOnly,
                                     //  'bg-quaternary text-tertiary': message.discarded_at && !hasReactionsOnly,
                                     "px-3.5 py-2 lg:px-3": !hasReactionsOnly,
@@ -104,7 +113,6 @@ export function Bubble({
                                     //  'mt-1': hasReactionsOnly && message.reply,
                                     //  'rounded-tr': viewerIsSender && message.reply,
                                     //  'rounded-tl': !viewerIsSender && message.reply,
-                                    "viewer-chat-prose": viewerIsSender,
                                  },
                               )}
                               data-reactions-only={hasReactionsOnly}
