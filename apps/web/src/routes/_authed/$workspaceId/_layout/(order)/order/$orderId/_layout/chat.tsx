@@ -1,14 +1,21 @@
+import { useForceUpdate } from "@/interactions/use-force-update"
 import {
    Header,
    HeaderBackButton,
    HeaderTitle,
 } from "@/layout/components/header"
 import { MainScrollArea } from "@/layout/components/main"
+import { VList, VListContent } from "@/layout/components/vlist"
 import { useOrder } from "@/order/hooks"
 import { CreateOrderMessage } from "@/order/message/components/create-order-message"
-import { useOrderMessages } from "@/order/message/hooks"
+import { OrderMessage } from "@/order/message/components/order-message"
+import { useOrderMessagesQuery } from "@/order/message/hooks"
 import { createFileRoute } from "@tanstack/react-router"
+import { useVirtualizer } from "@tanstack/react-virtual"
+import { formatDate } from "@unfiddle/core/date"
 import { makeShortId } from "@unfiddle/core/id"
+import * as React from "react"
+import * as R from "remeda"
 
 export const Route = createFileRoute(
    "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/chat",
@@ -18,7 +25,41 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
    const order = useOrder()
-   const { messages } = useOrderMessages(order.id)
+   const query = useOrderMessagesQuery(order.id)
+
+   const groupedMessages = R.groupBy(query.data, (m) => formatDate(m.createdAt))
+   const rows = Object.entries(groupedMessages).flatMap(
+      ([date, dateMessages], idx) => {
+         return [
+            {
+               type: "date",
+               value: date,
+               message: undefined,
+               prevMessage: undefined,
+               nextMessage: undefined,
+            },
+            ...dateMessages.map((message) => ({
+               type: "message",
+               value: undefined,
+               message,
+               prevMessage: dateMessages[idx - 1],
+               nextMessage: dateMessages[idx + 1],
+            })),
+         ]
+      },
+   )
+
+   const scrollAreaRef = React.useRef<HTMLDivElement>(null)
+   const virtualizer = useVirtualizer({
+      count: rows.length,
+      getScrollElement: () => scrollAreaRef.current,
+      estimateSize: () => {
+         return window.innerWidth < 1024 ? 72 : 44
+      },
+      overscan: 6,
+   })
+   const data = virtualizer.getVirtualItems()
+   useForceUpdate()
 
    return (
       <>
@@ -46,20 +87,40 @@ function RouteComponent() {
          <MainScrollArea
             className={"pt-0 lg:pt-0"}
             container={false}
+            ref={scrollAreaRef}
          >
-            <div className="space-y-2 p-4">
-               {messages.map((message) => (
-                  <div
-                     key={message.id}
-                     className="rounded-lg border p-3"
-                  >
-                     <div className="font-medium text-sm">
-                        {message.creator.name}
-                     </div>
-                     <div className="text-sm">{message.content}</div>
-                  </div>
-               ))}
-            </div>
+            <VList
+               className="relative mb-20 w-full"
+               totalSize={virtualizer.getTotalSize()}
+            >
+               <VListContent start={data[0]?.start ?? 0}>
+                  {data.map((_row, idx) => {
+                     const item = rows[idx]
+
+                     if (item?.type === "date") {
+                        return (
+                           <div
+                              key={idx}
+                              className="mx-auto w-full max-w-4xl px-3 sm:px-4"
+                           >
+                              <div>{item.value}</div>
+                           </div>
+                        )
+                     }
+
+                     if (!item?.message) return <div />
+
+                     return (
+                        <div
+                           key={idx}
+                           className="mx-auto w-full max-w-4xl px-3 sm:px-4"
+                        >
+                           <OrderMessage {...item} />
+                        </div>
+                     )
+                  })}
+               </VListContent>
+            </VList>
          </MainScrollArea>
          <CreateOrderMessage />
       </>
