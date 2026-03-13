@@ -93,13 +93,17 @@ function RouteComponent() {
    const virtualizer = useVirtualizer({
       count: rows.length,
       getScrollElement: () => scrollAreaRef.current,
-      estimateSize: () => {
-         return window.innerWidth < 1024 ? 100 : 56
-      },
+      estimateSize: () => 50,
       overscan: 6,
    })
    const data = virtualizer.getVirtualItems()
    useForceUpdate()
+
+   React.useLayoutEffect(() => {
+      if (rows.length > 0) {
+         virtualizer.scrollToIndex(rows.length - 1, { align: "end" })
+      }
+   }, [rows.length])
 
    return (
       <>
@@ -129,22 +133,24 @@ function RouteComponent() {
             container={false}
             ref={scrollAreaRef}
          >
-            <VList
-               className="relative my-6 w-full md:my-12"
-               totalSize={virtualizer.getTotalSize()}
-            >
-               <VListContent start={data[0]?.start ?? 0}>
-                  {data.map((_row, idx) => {
-                     const item = rows[idx]
+            <VList totalSize={virtualizer.getTotalSize()}>
+               <VListContent
+                  start={data[0]?.start ?? 0}
+                  className="py-6 md:py-12"
+               >
+                  {data.map((virtualRow) => {
+                     const item = rows[virtualRow.index]
 
                      if (item?.type === "date") {
                         return (
-                           <div className="flex items-center">
+                           <div
+                              key={virtualRow.key}
+                              data-index={virtualRow.index}
+                              ref={virtualizer.measureElement}
+                              className="flex items-center"
+                           >
                               <Separator className="w-full" />
-                              <Badge
-                                 key={idx}
-                                 className="mx-auto rounded-full font-normal"
-                              >
+                              <Badge className="mx-auto rounded-full font-normal">
                                  {item.value}
                               </Badge>
                               <Separator className="w-full" />
@@ -152,12 +158,21 @@ function RouteComponent() {
                         )
                      }
 
-                     if (!item?.message || !item.position) return <div />
+                     if (!item?.message || !item.position) {
+                        return (
+                           <div
+                              key={virtualRow.key}
+                              data-index={virtualRow.index}
+                              ref={virtualizer.measureElement}
+                           />
+                        )
+                     }
 
                      return (
                         <div
-                           key={idx}
-                           className=""
+                           key={virtualRow.key}
+                           data-index={virtualRow.index}
+                           ref={virtualizer.measureElement}
                         >
                            <OrderMessage {...item} />
                         </div>
