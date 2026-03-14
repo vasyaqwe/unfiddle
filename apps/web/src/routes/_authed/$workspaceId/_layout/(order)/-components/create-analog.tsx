@@ -19,7 +19,7 @@ import * as React from "react"
 
 export function CreateAnalog() {
    const params = useParams({
-      from: "/_authed/$workspaceId/_layout/(order)/order/$orderId",
+      from: "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout",
    })
    const order = useOrder()
    const update = useUpdateOrder({ onMutate: () => setOpen(false) })

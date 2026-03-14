@@ -47,3 +47,26 @@ export function VListContent(
 
    return element
 }
+
+export function VListItem(
+   props: useRender.ComponentProps<"div"> & {
+      start: number
+   },
+) {
+   const { render = <div />, className, start, ...otherProps } = props
+
+   const element = useRender({
+      render,
+      props: mergeProps<"div">(
+         {
+            className: cn("absolute left-0 w-full", className),
+            style: {
+               top: start,
+            },
+         },
+         otherProps,
+      ),
+   })
+
+   return element
+}

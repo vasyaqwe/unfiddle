@@ -26,8 +26,10 @@ import { Route as AuthedWorkspaceIdLayoutBoardRouteImport } from './routes/_auth
 import { Route as AuthedWorkspaceIdLayoutAnalyticsRouteImport } from './routes/_authed/$workspaceId/_layout/analytics'
 import { Route as AuthedWorkspaceIdLayouthomeIndexRouteImport } from './routes/_authed/$workspaceId/_layout/(home)/index'
 import { Route as AuthedWorkspaceIdLayoutestimateEstimatesRouteImport } from './routes/_authed/$workspaceId/_layout/(estimate)/estimates'
-import { Route as AuthedWorkspaceIdLayoutorderOrderOrderIdRouteImport } from './routes/_authed/$workspaceId/_layout/(order)/order.$orderId'
 import { Route as AuthedWorkspaceIdLayoutestimateEstimateEstimateIdRouteImport } from './routes/_authed/$workspaceId/_layout/(estimate)/estimate.$estimateId'
+import { Route as AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutRouteImport } from './routes/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout'
+import { Route as AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutIndexRouteImport } from './routes/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/index'
+import { Route as AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutChatRouteImport } from './routes/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/chat'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -121,17 +123,29 @@ const AuthedWorkspaceIdLayoutestimateEstimatesRoute =
     path: '/estimates',
     getParentRoute: () => AuthedWorkspaceIdLayoutRoute,
   } as any)
-const AuthedWorkspaceIdLayoutorderOrderOrderIdRoute =
-  AuthedWorkspaceIdLayoutorderOrderOrderIdRouteImport.update({
-    id: '/(order)/order/$orderId',
-    path: '/order/$orderId',
-    getParentRoute: () => AuthedWorkspaceIdLayoutRoute,
-  } as any)
 const AuthedWorkspaceIdLayoutestimateEstimateEstimateIdRoute =
   AuthedWorkspaceIdLayoutestimateEstimateEstimateIdRouteImport.update({
     id: '/(estimate)/estimate/$estimateId',
     path: '/estimate/$estimateId',
     getParentRoute: () => AuthedWorkspaceIdLayoutRoute,
+  } as any)
+const AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutRoute =
+  AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutRouteImport.update({
+    id: '/(order)/order/$orderId/_layout',
+    path: '/order/$orderId',
+    getParentRoute: () => AuthedWorkspaceIdLayoutRoute,
+  } as any)
+const AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutIndexRoute =
+  AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutRoute,
+  } as any)
+const AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutChatRoute =
+  AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutChatRouteImport.update({
+    id: '/chat',
+    path: '/chat',
+    getParentRoute: () => AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -152,7 +166,9 @@ export interface FileRoutesByFullPath {
   '/$workspaceId/estimates': typeof AuthedWorkspaceIdLayoutestimateEstimatesRoute
   '/$workspaceId/': typeof AuthedWorkspaceIdLayouthomeIndexRoute
   '/$workspaceId/estimate/$estimateId': typeof AuthedWorkspaceIdLayoutestimateEstimateEstimateIdRoute
-  '/$workspaceId/order/$orderId': typeof AuthedWorkspaceIdLayoutorderOrderOrderIdRoute
+  '/$workspaceId/order/$orderId': typeof AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutRouteWithChildren
+  '/$workspaceId/order/$orderId/chat': typeof AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutChatRoute
+  '/$workspaceId/order/$orderId/': typeof AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutIndexRoute
 }
 export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
@@ -171,7 +187,8 @@ export interface FileRoutesByTo {
   '/$workspaceId/estimates': typeof AuthedWorkspaceIdLayoutestimateEstimatesRoute
   '/$workspaceId': typeof AuthedWorkspaceIdLayouthomeIndexRoute
   '/$workspaceId/estimate/$estimateId': typeof AuthedWorkspaceIdLayoutestimateEstimateEstimateIdRoute
-  '/$workspaceId/order/$orderId': typeof AuthedWorkspaceIdLayoutorderOrderOrderIdRoute
+  '/$workspaceId/order/$orderId/chat': typeof AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutChatRoute
+  '/$workspaceId/order/$orderId': typeof AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -193,7 +210,9 @@ export interface FileRoutesById {
   '/_authed/$workspaceId/_layout/(estimate)/estimates': typeof AuthedWorkspaceIdLayoutestimateEstimatesRoute
   '/_authed/$workspaceId/_layout/(home)/': typeof AuthedWorkspaceIdLayouthomeIndexRoute
   '/_authed/$workspaceId/_layout/(estimate)/estimate/$estimateId': typeof AuthedWorkspaceIdLayoutestimateEstimateEstimateIdRoute
-  '/_authed/$workspaceId/_layout/(order)/order/$orderId': typeof AuthedWorkspaceIdLayoutorderOrderOrderIdRoute
+  '/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout': typeof AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutRouteWithChildren
+  '/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/chat': typeof AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutChatRoute
+  '/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/': typeof AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -216,6 +235,8 @@ export interface FileRouteTypes {
     | '/$workspaceId/'
     | '/$workspaceId/estimate/$estimateId'
     | '/$workspaceId/order/$orderId'
+    | '/$workspaceId/order/$orderId/chat'
+    | '/$workspaceId/order/$orderId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/forgot-password'
@@ -234,6 +255,7 @@ export interface FileRouteTypes {
     | '/$workspaceId/estimates'
     | '/$workspaceId'
     | '/$workspaceId/estimate/$estimateId'
+    | '/$workspaceId/order/$orderId/chat'
     | '/$workspaceId/order/$orderId'
   id:
     | '__root__'
@@ -255,7 +277,9 @@ export interface FileRouteTypes {
     | '/_authed/$workspaceId/_layout/(estimate)/estimates'
     | '/_authed/$workspaceId/_layout/(home)/'
     | '/_authed/$workspaceId/_layout/(estimate)/estimate/$estimateId'
-    | '/_authed/$workspaceId/_layout/(order)/order/$orderId'
+    | '/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout'
+    | '/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/chat'
+    | '/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -388,13 +412,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedWorkspaceIdLayoutestimateEstimatesRouteImport
       parentRoute: typeof AuthedWorkspaceIdLayoutRoute
     }
-    '/_authed/$workspaceId/_layout/(order)/order/$orderId': {
-      id: '/_authed/$workspaceId/_layout/(order)/order/$orderId'
-      path: '/order/$orderId'
-      fullPath: '/$workspaceId/order/$orderId'
-      preLoaderRoute: typeof AuthedWorkspaceIdLayoutorderOrderOrderIdRouteImport
-      parentRoute: typeof AuthedWorkspaceIdLayoutRoute
-    }
     '/_authed/$workspaceId/_layout/(estimate)/estimate/$estimateId': {
       id: '/_authed/$workspaceId/_layout/(estimate)/estimate/$estimateId'
       path: '/estimate/$estimateId'
@@ -402,8 +419,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedWorkspaceIdLayoutestimateEstimateEstimateIdRouteImport
       parentRoute: typeof AuthedWorkspaceIdLayoutRoute
     }
+    '/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout': {
+      id: '/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout'
+      path: '/order/$orderId'
+      fullPath: '/$workspaceId/order/$orderId'
+      preLoaderRoute: typeof AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutRouteImport
+      parentRoute: typeof AuthedWorkspaceIdLayoutRoute
+    }
+    '/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/': {
+      id: '/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/'
+      path: '/'
+      fullPath: '/$workspaceId/order/$orderId/'
+      preLoaderRoute: typeof AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutIndexRouteImport
+      parentRoute: typeof AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutRoute
+    }
+    '/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/chat': {
+      id: '/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/chat'
+      path: '/chat'
+      fullPath: '/$workspaceId/order/$orderId/chat'
+      preLoaderRoute: typeof AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutChatRouteImport
+      parentRoute: typeof AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutRoute
+    }
   }
 }
+
+interface AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutRouteChildren {
+  AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutChatRoute: typeof AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutChatRoute
+  AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutIndexRoute: typeof AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutIndexRoute
+}
+
+const AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutRouteChildren: AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutRouteChildren =
+  {
+    AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutChatRoute:
+      AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutChatRoute,
+    AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutIndexRoute:
+      AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutIndexRoute,
+  }
+
+const AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutRouteWithChildren =
+  AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutRoute._addFileChildren(
+    AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutRouteChildren,
+  )
 
 interface AuthedWorkspaceIdLayoutRouteChildren {
   AuthedWorkspaceIdLayoutAnalyticsRoute: typeof AuthedWorkspaceIdLayoutAnalyticsRoute
@@ -415,7 +471,7 @@ interface AuthedWorkspaceIdLayoutRouteChildren {
   AuthedWorkspaceIdLayoutestimateEstimatesRoute: typeof AuthedWorkspaceIdLayoutestimateEstimatesRoute
   AuthedWorkspaceIdLayouthomeIndexRoute: typeof AuthedWorkspaceIdLayouthomeIndexRoute
   AuthedWorkspaceIdLayoutestimateEstimateEstimateIdRoute: typeof AuthedWorkspaceIdLayoutestimateEstimateEstimateIdRoute
-  AuthedWorkspaceIdLayoutorderOrderOrderIdRoute: typeof AuthedWorkspaceIdLayoutorderOrderOrderIdRoute
+  AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutRoute: typeof AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutRouteWithChildren
 }
 
 const AuthedWorkspaceIdLayoutRouteChildren: AuthedWorkspaceIdLayoutRouteChildren =
@@ -433,8 +489,8 @@ const AuthedWorkspaceIdLayoutRouteChildren: AuthedWorkspaceIdLayoutRouteChildren
       AuthedWorkspaceIdLayouthomeIndexRoute,
     AuthedWorkspaceIdLayoutestimateEstimateEstimateIdRoute:
       AuthedWorkspaceIdLayoutestimateEstimateEstimateIdRoute,
-    AuthedWorkspaceIdLayoutorderOrderOrderIdRoute:
-      AuthedWorkspaceIdLayoutorderOrderOrderIdRoute,
+    AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutRoute:
+      AuthedWorkspaceIdLayoutorderOrderOrderIdLayoutRouteWithChildren,
   }
 
 const AuthedWorkspaceIdLayoutRouteWithChildren =
