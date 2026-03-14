@@ -9,6 +9,7 @@ import {
    HeaderTitle,
 } from "@/layout/components/header"
 import { MainScrollArea } from "@/layout/components/main"
+import { notificationPermissionStatusAtom } from "@/notification/store"
 import { useOrderQueryOptions } from "@/order/queries"
 import { trpc } from "@/trpc"
 import { UserAvatar } from "@/user/components/user-avatar"
@@ -27,6 +28,7 @@ import {
    TabsTab,
 } from "@unfiddle/ui/components/tabs"
 import { formData } from "@unfiddle/ui/utils"
+import { useAtom } from "jotai"
 import { useTheme } from "next-themes"
 import React from "react"
 import { toast } from "sonner"
@@ -49,6 +51,9 @@ function RouteComponent() {
    const queryClient = useQueryClient()
    const auth = useAuth()
    const orderQueryOptions = useOrderQueryOptions()
+   const [_permissionStatus, _setPermissionStatus] = useAtom(
+      notificationPermissionStatusAtom,
+   )
 
    const updateWorkspace = useMutation(
       trpc.workspace.update.mutationOptions({
@@ -162,7 +167,7 @@ function RouteComponent() {
                   className={"mt-3"}
                   value={"general"}
                >
-                  <div className="grid grid-cols-[100px_1fr] items-center py-4">
+                  <div className="grid grid-cols-[10rem_1fr] items-center py-4">
                      <p>Тема</p>
                      <Button
                         className="w-fit"
@@ -241,8 +246,45 @@ function RouteComponent() {
                         )}
                      </Button>
                   </div>
+                  {/* <div className="grid grid-cols-[10rem_1fr] items-center py-4">
+                     <p>Сповіщення</p>
+                     <label
+                        htmlFor="notifications"
+                        className="flex items-start gap-2"
+                     >
+                        <Switch
+                           id="notifications"
+                           checked={permissionStatus === "granted"}
+                           onCheckedChange={async (checked) => {
+                              if (checked) {
+                                 try {
+                                    let permission: NotificationPermission
+
+                                    if ("Notification" in window) {
+                                       permission =
+                                          await Notification.requestPermission()
+
+                                       return setPermissionStatus(permission)
+                                    }
+
+                                    return toast.error(
+                                       "Ваш браузер не підтримує сповіщення",
+                                    )
+                                 } catch (error) {
+                                    console.error(
+                                       "Error requesting notification permission:",
+                                       error,
+                                    )
+                                 }
+                              } else {
+                                 setPermissionStatus("denied")
+                              }
+                           }}
+                        />
+                     </label>
+                  </div> */}
                   {exportEmails.includes(auth.user.email) ? (
-                     <div className="grid grid-cols-[100px_1fr] py-4">
+                     <div className="grid grid-cols-[10rem_1fr] py-4">
                         <p>Дані</p>
                         <div>
                            <div className="flex flex-wrap gap-2">

@@ -149,10 +149,12 @@ function RouteComponent() {
             <div className="ml-auto flex items-center gap-1.5 max-md:hidden">
                <Tooltip>
                   <TooltipTrigger
+                     delay={0}
                      render={
                         <Button
                            kind={"icon"}
                            variant={"secondary"}
+                           nativeButton={false}
                            render={
                               <Link
                                  to="/$workspaceId/order/$orderId/chat"
@@ -171,8 +173,8 @@ function RouteComponent() {
                      <TooltipPopup>
                         {unreadCount}{" "}
                         {unreadCount === 1
-                           ? "непрочитане повідомлення"
-                           : "непрочитаних повідомлень"}
+                           ? "нове повідомлення"
+                           : "нових повідомлень"}
                      </TooltipPopup>
                   )}
                </Tooltip>

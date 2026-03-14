@@ -1,10 +1,13 @@
 import { useAuth } from "@/auth/hooks"
+import { notificationPermissionStatusAtom } from "@/notification/store"
+import { sendNotification } from "@/notification/utils"
 import { CreateOrder } from "@/order/create/create-order"
 import { UserAvatar } from "@/user/components/user-avatar"
 import { WorkspaceLogo } from "@/workspace/components/workspace-logo"
 import { WorkspaceMenuPopup } from "@/workspace/components/workspace-menu"
 import { Link, useParams, useSearch } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
+import { Card } from "@unfiddle/ui/components/card"
 import { DrawerTrigger } from "@unfiddle/ui/components/drawer"
 import { Icons } from "@unfiddle/ui/components/icons"
 import {
@@ -15,6 +18,9 @@ import {
 } from "@unfiddle/ui/components/menu"
 import { ScrollArea } from "@unfiddle/ui/components/scroll-area"
 import { cn } from "@unfiddle/ui/utils"
+import { useAtom } from "jotai"
+import * as React from "react"
+import { toast } from "sonner"
 
 export function Sidebar({
    children,
@@ -197,6 +203,7 @@ export function SidebarContent() {
             </ul>
          </ScrollArea>
          <div className="mt-auto p-4 pt-1">
+            <NotificationPermissionCard />
             <Menu>
                <MenuTrigger
                   render={
@@ -222,5 +229,66 @@ export function SidebarContent() {
             </Menu>
          </div>
       </Sidebar>
+   )
+}
+
+function NotificationPermissionCard() {
+   const [permissionStatus, setPermissionStatus] = useAtom(
+      notificationPermissionStatusAtom,
+   )
+
+   React.useEffect(() => {
+      if (permissionStatus === "denied") return
+
+      setPermissionStatus(Notification.permission)
+   }, [])
+
+   if (permissionStatus !== "default") return null
+
+   return (
+      <Card className="motion-preset-blur-up-sm mb-3">
+         <p className="-mt-1 text-muted text-sm">
+            Надсилати сповіщення про нові повідомлення?
+         </p>
+         <Button
+            size="sm"
+            className="mt-3 w-full"
+            onClick={async () => {
+               try {
+                  let permission: NotificationPermission
+
+                  if ("Notification" in window) {
+                     permission = await Notification.requestPermission()
+                     if (permission === "granted") {
+                        sendNotification({
+                           title: "Сповіщення увімкнено",
+                           body: "Тепер ви будете отримувати сповіщення про нові повідомлення у чаті.",
+                        })
+                     }
+                     return setPermissionStatus(permission)
+                  }
+
+                  return toast.error("Ваш браузер не підтримує сповіщення")
+               } catch (error) {
+                  console.error(
+                     "Error requesting notification permission:",
+                     error,
+                  )
+               }
+            }}
+         >
+            Так, дозволити
+         </Button>
+         <Button
+            size="sm"
+            variant={"secondary"}
+            className="mt-1.5 w-full"
+            onClick={() => {
+               return setPermissionStatus("denied")
+            }}
+         >
+            Ні, дякую
+         </Button>
+      </Card>
    )
 }

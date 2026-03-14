@@ -1,5 +1,6 @@
 import { useAuth } from "@/auth/hooks"
 import { env } from "@/env"
+import { sendNotification } from "@/notification/utils"
 import { useOptimisticCreateOrderAssignee } from "@/order/assignee/mutations/use-create-order-assignee"
 import { useOptimisticDeleteOrderAssignee } from "@/order/assignee/mutations/use-delete-order-assignee"
 import { useOptimisticCreateOrder } from "@/order/create/use-create-order"
@@ -11,10 +12,14 @@ import { orderMessageCollection } from "@/order/message/collection"
 import { useOptimisticUpdateOrder } from "@/order/update/use-update-order"
 import { trpc } from "@/trpc"
 import { useQueryClient } from "@tanstack/react-query"
+import { useMatches, useNavigate, useParams } from "@tanstack/react-router"
 import type { OrderEvent } from "@unfiddle/core/order/types"
 import usePartySocket from "partysocket/react"
 
 export function useOrderSocket() {
+   const maybeParams = useParams({ strict: false })
+   const matches = useMatches()
+   const navigate = useNavigate()
    const auth = useAuth()
    const queryClient = useQueryClient()
    const create = useOptimisticCreateOrder()
@@ -69,7 +74,32 @@ export function useOrderSocket() {
                }),
             })
 
-            return collection.utils.writeInsert(data.message)
+            collection.utils.writeInsert(data.message)
+
+            if (
+               maybeParams.orderId === data.orderId &&
+               matches.some(
+                  (m) =>
+                     m.routeId ===
+                     "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/chat",
+               )
+            )
+               return
+
+            sendNotification({
+               title: data.message.creator.name,
+               body: data.message.content,
+               icon: data.message.creator.image,
+               onClick: () => {
+                  navigate({
+                     to: "/$workspaceId/order/$orderId/chat",
+                     params: {
+                        orderId: data.orderId,
+                        workspaceId: auth.workspace.id,
+                     },
+                  })
+               },
+            })
          }
          if (data.action === "update_message") {
             const collection = orderMessageCollection(
