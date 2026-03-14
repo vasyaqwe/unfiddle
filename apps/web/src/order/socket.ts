@@ -119,7 +119,19 @@ export function useOrderSocket() {
                data.orderId,
                data.workspaceId,
             )
-            return collection.utils.writeDelete(data.orderMessageId)
+            collection.utils.writeDelete(data.orderMessageId)
+
+            queryClient.invalidateQueries({
+               queryKey: trpc.order.message.read.orderUnreadCount.queryKey({
+                  orderId: data.orderId,
+                  workspaceId: data.workspaceId,
+               }),
+            })
+            queryClient.invalidateQueries({
+               queryKey: trpc.order.message.read.unreadCount.queryKey({
+                  workspaceId: data.workspaceId,
+               }),
+            })
          }
 
          if (data.action === "create_assignee") {
