@@ -17,7 +17,7 @@ import { DeleteOrderAlert } from "@/order/delete/delete-order-alert"
 import { useDeleteOrder } from "@/order/delete/use-delete-order"
 import { useOrder } from "@/order/hooks"
 import { CreateOrderItem } from "@/order/item/components/create-order-item"
-import { useUnreadCount } from "@/order/message/read/hooks"
+import { useOrderUnreadCount } from "@/order/message/read/hooks"
 import { createOrderOpenAtom } from "@/order/store"
 import { UpdateOrder } from "@/order/update/update-order"
 import { useUpdateOrder } from "@/order/update/use-update-order"
@@ -135,7 +135,7 @@ function RouteComponent() {
          !attachment.name.endsWith(".svg"),
    )
 
-   const unreadCount = useUnreadCount(order.id)
+   const unreadCount = useOrderUnreadCount(order.id)
 
    return (
       <>

@@ -31,7 +31,7 @@ export const orderMessageReadRouter = t.router({
                },
             })
       }),
-   getUnreadCount: t.procedure
+   orderUnreadCount: t.procedure
       .use(workspaceMemberMiddleware)
       .input(
          z.object({
@@ -64,7 +64,7 @@ export const orderMessageReadRouter = t.router({
 
          return { count: unreadCount?.count ?? 0 }
       }),
-   getGlobalUnreadCount: t.procedure
+   unreadCount: t.procedure
       .use(workspaceMemberMiddleware)
       .input(
          z.object({
@@ -114,7 +114,7 @@ export const orderMessageReadRouter = t.router({
 
          return { count: totalUnread }
       }),
-   getUnreadOrders: t.procedure
+   listUnreadOrders: t.procedure
       .use(workspaceMemberMiddleware)
       .input(
          z.object({
