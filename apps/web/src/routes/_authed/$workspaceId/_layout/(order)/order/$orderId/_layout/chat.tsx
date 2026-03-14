@@ -1,3 +1,4 @@
+import { useAuth } from "@/auth/hooks"
 import {
    Header,
    HeaderBackButton,
@@ -26,6 +27,7 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
+   const auth = useAuth()
    const order = useOrder()
    const query = useOrderMessagesQuery(order.id)
 
@@ -103,15 +105,14 @@ function RouteComponent() {
    })
    const data = virtualizer.getVirtualItems()
 
-   const hasScrolledToBottomRef = React.useRef(false)
    const shouldScrollToBottomRef = React.useRef(false)
    const prevTotalSizeRef = React.useRef(0)
 
    React.useLayoutEffect(() => {
-      if (rows.length > 0 && !hasScrolledToBottomRef.current) {
+      const lastMessage = rows[rows.length - 1]
+      if (rows.length > 0 && lastMessage?.message?.creatorId !== auth.user.id) {
          requestAnimationFrame(() => {
             virtualizer.scrollToIndex(rows.length - 1, { align: "end" })
-            hasScrolledToBottomRef.current = true
          })
       }
    }, [rows.length, virtualizer])
