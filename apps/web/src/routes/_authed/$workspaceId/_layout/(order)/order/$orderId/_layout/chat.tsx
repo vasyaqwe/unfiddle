@@ -181,7 +181,11 @@ function RouteComponent() {
                </VListContent>
             </VList>
          </MainScrollArea>
-         <CreateOrderMessage />
+         <CreateOrderMessage
+            onSuccess={() => {
+               virtualizer.scrollToIndex(rows.length - 1, { align: "end" })
+            }}
+         />
       </>
    )
 }
