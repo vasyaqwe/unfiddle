@@ -1,4 +1,5 @@
 import { useAuth } from "@/auth/hooks"
+import { useDeleteOrderMessage } from "@/order/message/mutations"
 import { getBorderRadiusClasses } from "@/order/message/utils"
 import { UserAvatar } from "@/user/components/user-avatar"
 import { formatDate } from "@unfiddle/core/date"
@@ -6,6 +7,14 @@ import type {
    OrderMessagePosition,
    OrderMessage as OrderMessageType,
 } from "@unfiddle/core/order/message/types"
+import { Button } from "@unfiddle/ui/components/button"
+import { Icons } from "@unfiddle/ui/components/icons"
+import {
+   Menu,
+   MenuItem,
+   MenuPopup,
+   MenuTrigger,
+} from "@unfiddle/ui/components/menu"
 import {
    Tooltip,
    TooltipPopup,
@@ -50,6 +59,7 @@ function Bubble({
    position,
 }: { message: OrderMessageType; position: OrderMessagePosition }) {
    const auth = useAuth()
+   const deleteMessage = useDeleteOrderMessage()
    const viewerIsSender = message.creatorId === auth.user.id
    const hasAvatar =
       (position === "last" || position === "only") && !viewerIsSender
@@ -96,37 +106,74 @@ function Bubble({
             >
                <div
                   className={
-                     "relative flex w-full max-w-[80%] flex-1 flex-col items-end gap-0.5 group-not-data-viewer-is-sender/bubble:items-start"
+                     "relative flex w-full max-w-[80%] grow flex-col items-end gap-0.5 group-not-data-viewer-is-sender/bubble:items-start"
                   }
                >
                   {!!message.content && (
-                     <Tooltip>
-                        <TooltipTrigger
-                           className={cn(
-                              "wrap-break-word relative select-text whitespace-pre-wrap",
-                              roundedClasses,
-                              {
-                                 "bg-surface-4":
-                                    !viewerIsSender && !hasReactionsOnly,
-                                 "bg-primary-7 text-white selection:bg-surface-12":
-                                    viewerIsSender && !hasReactionsOnly,
-                                 //  'bg-quaternary text-tertiary': message.discarded_at && !hasReactionsOnly,
-                                 "px-3.5 py-2 lg:px-3": !hasReactionsOnly,
-                                 //  'ring-2 ring-[--bg-primary]': message.reply && !hasReactionsOnly,
-                                 //  'rounded-tr': viewerIsSender && message.reply,
-                                 //  'rounded-tl': !viewerIsSender && message.reply,
-                              },
-                           )}
-                        >
-                           {message.content}
-                        </TooltipTrigger>
-                        <TooltipPopup>
-                           {formatDate(message.createdAt, {
-                              dateStyle: "long",
-                              timeStyle: "short",
-                           })}
-                        </TooltipPopup>
-                     </Tooltip>
+                     <div
+                        className={
+                           "flex w-full items-center justify-end gap-1.5 group-not-data-viewer-is-sender/bubble:flex-row-reverse"
+                        }
+                     >
+                        <div className="invisible mt-0.5 opacity-0 group-hover/bubble:visible group-hover/bubble:opacity-100">
+                           <Menu>
+                              <MenuTrigger
+                                 render={
+                                    <Button
+                                       variant={"ghost"}
+                                       kind={"icon"}
+                                    >
+                                       <Icons.ellipsisHorizontal />
+                                    </Button>
+                                 }
+                              />
+                              <MenuPopup
+                                 align={viewerIsSender ? "end" : "start"}
+                              >
+                                 <MenuItem>
+                                    <Icons.arrowDownLeft />
+                                    Відповісти
+                                 </MenuItem>
+                                 {message.creatorId !== auth.user.id ? null : (
+                                    <MenuItem
+                                       destructive
+                                       onClick={() => deleteMessage(message.id)}
+                                    >
+                                       <Icons.trash />
+                                       Видалити
+                                    </MenuItem>
+                                 )}
+                              </MenuPopup>
+                           </Menu>
+                        </div>
+                        <Tooltip>
+                           <TooltipTrigger
+                              className={cn(
+                                 "wrap-break-word relative select-text whitespace-pre-wrap",
+                                 roundedClasses,
+                                 {
+                                    "bg-surface-4":
+                                       !viewerIsSender && !hasReactionsOnly,
+                                    "bg-primary-7 text-white selection:bg-surface-12":
+                                       viewerIsSender && !hasReactionsOnly,
+                                    //  'bg-quaternary text-tertiary': message.discarded_at && !hasReactionsOnly,
+                                    "px-3.5 py-2 lg:px-3": !hasReactionsOnly,
+                                    //  'ring-2 ring-[--bg-primary]': message.reply && !hasReactionsOnly,
+                                    //  'rounded-tr': viewerIsSender && message.reply,
+                                    //  'rounded-tl': !viewerIsSender && message.reply,
+                                 },
+                              )}
+                           >
+                              {message.content}
+                           </TooltipTrigger>
+                           <TooltipPopup>
+                              {formatDate(message.createdAt, {
+                                 dateStyle: "long",
+                                 timeStyle: "short",
+                              })}
+                           </TooltipPopup>
+                        </Tooltip>
+                     </div>
                   )}
                </div>
             </div>
