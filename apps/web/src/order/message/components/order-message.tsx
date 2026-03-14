@@ -183,7 +183,7 @@ function MessageBubble({
       <Tooltip>
          <TooltipTrigger
             className={cn(
-               "wrap-break-word relative select-text whitespace-pre-wrap",
+               "wrap-anywhere relative select-text whitespace-pre-wrap text-left",
                roundedClasses,
                {
                   "bg-surface-4": !viewerIsSender && !hasReactionsOnly,

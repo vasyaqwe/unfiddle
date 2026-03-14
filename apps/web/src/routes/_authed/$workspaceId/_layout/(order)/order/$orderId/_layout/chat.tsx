@@ -97,17 +97,40 @@ function RouteComponent() {
       count: rows.length,
       getScrollElement: () => scrollAreaRef.current,
       getItemKey: (index) => rows[index]?.key ?? index,
-      estimateSize: () => 50,
+      estimateSize: () => 80,
       paddingStart: 24,
       overscan: 6,
    })
    const data = virtualizer.getVirtualItems()
 
+   const hasScrolledToBottomRef = React.useRef(false)
+   const shouldScrollToBottomRef = React.useRef(false)
+   const prevTotalSizeRef = React.useRef(0)
+
    React.useLayoutEffect(() => {
-      if (rows.length > 0) {
-         virtualizer.scrollToIndex(rows.length - 1, { align: "end" })
+      if (rows.length > 0 && !hasScrolledToBottomRef.current) {
+         requestAnimationFrame(() => {
+            virtualizer.scrollToIndex(rows.length - 1, { align: "end" })
+            hasScrolledToBottomRef.current = true
+         })
       }
-   }, [])
+   }, [rows.length, virtualizer])
+
+   const totalSize = virtualizer.getTotalSize()
+   React.useEffect(() => {
+      if (shouldScrollToBottomRef.current && totalSize > prevTotalSizeRef.current) {
+         const scrollElement = scrollAreaRef.current
+         if (scrollElement) {
+            scrollElement.scrollTop = 999999999
+         }
+         // Keep scrolling until totalSize stabilizes
+         const timeoutId = setTimeout(() => {
+            shouldScrollToBottomRef.current = false
+         }, 100)
+         return () => clearTimeout(timeoutId)
+      }
+      prevTotalSizeRef.current = totalSize
+   }, [totalSize])
 
    return (
       <>
@@ -160,6 +183,7 @@ function RouteComponent() {
                   }
 
                   if (!item?.message || !item.position) return null
+
                   return (
                      <VListItem
                         key={item.key}
@@ -182,9 +206,7 @@ function RouteComponent() {
          </MainScrollArea>
          <CreateOrderMessage
             onSuccess={() => {
-               requestAnimationFrame(() => {
-                  virtualizer.scrollToIndex(rows.length, { align: "end" })
-               })
+               shouldScrollToBottomRef.current = true
             }}
          />
       </>
