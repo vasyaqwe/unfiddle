@@ -6,6 +6,11 @@ import type {
    OrderMessagePosition,
    OrderMessage as OrderMessageType,
 } from "@unfiddle/core/order/message/types"
+import {
+   Tooltip,
+   TooltipPopup,
+   TooltipTrigger,
+} from "@unfiddle/ui/components/tooltip"
 import { cn } from "@unfiddle/ui/utils"
 
 export function OrderMessage({
@@ -82,7 +87,6 @@ function Bubble({
                   />
                </span>
             )}
-
             <div
                data-has-avatar={hasAvatar ? "" : undefined}
                data-viewer-is-sender={viewerIsSender ? "" : undefined}
@@ -96,35 +100,33 @@ function Bubble({
                   }
                >
                   {!!message.content && (
-                     <div
-                        className={
-                           "flex w-full items-center justify-end gap-1.5 group-not-data-viewer-is-sender/bubble:flex-row-reverse"
-                        }
-                     >
-                        {!!message.content && (
-                           <div
-                              className={cn(
-                                 "wrap-break-word relative select-text whitespace-pre-wrap",
-                                 roundedClasses,
-                                 {
-                                    "bg-surface-4":
-                                       !viewerIsSender && !hasReactionsOnly,
-                                    "bg-primary-7 text-white selection:bg-surface-12":
-                                       viewerIsSender && !hasReactionsOnly,
-                                    //  'bg-quaternary text-tertiary': message.discarded_at && !hasReactionsOnly,
-                                    "px-3.5 py-2 lg:px-3": !hasReactionsOnly,
-                                    //  'ring-2 ring-[--bg-primary]': message.reply && !hasReactionsOnly,
-                                    //  'mt-1': hasReactionsOnly && message.reply,
-                                    //  'rounded-tr': viewerIsSender && message.reply,
-                                    //  'rounded-tl': !viewerIsSender && message.reply,
-                                 },
-                              )}
-                              data-reactions-only={hasReactionsOnly}
-                           >
-                              {message.content}
-                           </div>
-                        )}
-                     </div>
+                     <Tooltip>
+                        <TooltipTrigger
+                           className={cn(
+                              "wrap-break-word relative select-text whitespace-pre-wrap",
+                              roundedClasses,
+                              {
+                                 "bg-surface-4":
+                                    !viewerIsSender && !hasReactionsOnly,
+                                 "bg-primary-7 text-white selection:bg-surface-12":
+                                    viewerIsSender && !hasReactionsOnly,
+                                 //  'bg-quaternary text-tertiary': message.discarded_at && !hasReactionsOnly,
+                                 "px-3.5 py-2 lg:px-3": !hasReactionsOnly,
+                                 //  'ring-2 ring-[--bg-primary]': message.reply && !hasReactionsOnly,
+                                 //  'rounded-tr': viewerIsSender && message.reply,
+                                 //  'rounded-tl': !viewerIsSender && message.reply,
+                              },
+                           )}
+                        >
+                           {message.content}
+                        </TooltipTrigger>
+                        <TooltipPopup>
+                           {formatDate(message.createdAt, {
+                              dateStyle: "long",
+                              timeStyle: "short",
+                           })}
+                        </TooltipPopup>
+                     </Tooltip>
                   )}
                </div>
             </div>

@@ -9,10 +9,21 @@ export function Tooltip(
 }
 
 export const TooltipProvider = TooltipPrimitive.Provider
-export const TooltipTrigger = TooltipPrimitive.Trigger
 export const TooltipPortal = TooltipPrimitive.Portal
 export const TooltipPositioner = TooltipPrimitive.Positioner
 export const TooltipArrow = TooltipPrimitive.Arrow
+
+export function TooltipTrigger({
+   delay = 200,
+   ...props
+}: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
+   return (
+      <TooltipPrimitive.Trigger
+         delay={delay}
+         {...props}
+      />
+   )
+}
 
 export function TooltipPopup({
    className,

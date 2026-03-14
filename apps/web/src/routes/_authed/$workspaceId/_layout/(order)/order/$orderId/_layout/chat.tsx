@@ -1,11 +1,10 @@
-import { useForceUpdate } from "@/interactions/use-force-update"
 import {
    Header,
    HeaderBackButton,
    HeaderTitle,
 } from "@/layout/components/header"
 import { MainScrollArea } from "@/layout/components/main"
-import { VList, VListContent } from "@/layout/components/vlist"
+import { VList, VListItem } from "@/layout/components/vlist"
 import { useOrder } from "@/order/hooks"
 import { CreateOrderMessage } from "@/order/message/components/create-order-message"
 import { OrderMessage } from "@/order/message/components/order-message"
@@ -30,12 +29,15 @@ function RouteComponent() {
    const order = useOrder()
    const query = useOrderMessagesQuery(order.id)
 
-   const groupedMessages = R.groupBy(query.data, (m) => formatDate(m.createdAt))
-   const rows = Object.entries(groupedMessages).flatMap(
-      ([date, dateMessages]) => {
+   const rows = React.useMemo(() => {
+      const groupedMessages = R.groupBy(query.data, (m) =>
+         formatDate(m.createdAt),
+      )
+      return Object.entries(groupedMessages).flatMap(([date, dateMessages]) => {
          return [
             {
-               type: "date",
+               type: "date" as const,
+               key: `date-${date}`,
                value: date,
                message: undefined,
                prevMessage: undefined,
@@ -77,7 +79,8 @@ function RouteComponent() {
                }
 
                return {
-                  type: "message",
+                  type: "message" as const,
+                  key: message.id,
                   value: undefined,
                   message,
                   prevMessage: prev,
@@ -86,22 +89,23 @@ function RouteComponent() {
                }
             }),
          ]
-      },
-   )
+      })
+   }, [query.data])
 
    const scrollAreaRef = React.useRef<HTMLDivElement>(null)
    const virtualizer = useVirtualizer({
       count: rows.length,
       getScrollElement: () => scrollAreaRef.current,
+      getItemKey: (index) => rows[index]?.key ?? index,
       estimateSize: () => 50,
+      paddingStart: 24,
       overscan: 6,
    })
    const data = virtualizer.getVirtualItems()
-   useForceUpdate()
 
    React.useLayoutEffect(() => {
       if (rows.length > 0) {
-         virtualizer.scrollToIndex(rows.length - 1, { align: "end" })
+         virtualizer.scrollToOffset(virtualizer.getTotalSize())
       }
    }, [rows.length])
 
@@ -133,57 +137,60 @@ function RouteComponent() {
             container={false}
             ref={scrollAreaRef}
          >
-            <VList totalSize={virtualizer.getTotalSize()}>
-               <VListContent
-                  start={data[0]?.start ?? 0}
-                  className="py-6 md:py-12"
-               >
-                  {data.map((virtualRow) => {
-                     const item = rows[virtualRow.index]
+            <VList totalSize={virtualizer.getTotalSize() + 24}>
+               {data.map((virtualRow) => {
+                  const item = rows[virtualRow.index]
 
-                     if (item?.type === "date") {
-                        return (
-                           <div
-                              key={virtualRow.key}
-                              data-index={virtualRow.index}
-                              ref={virtualizer.measureElement}
-                              className="flex items-center"
-                           >
-                              <Separator className="w-full" />
-                              <Badge className="mx-auto rounded-full font-normal">
-                                 {item.value}
-                              </Badge>
-                              <Separator className="w-full" />
-                           </div>
-                        )
-                     }
-
-                     if (!item?.message || !item.position) {
-                        return (
-                           <div
-                              key={virtualRow.key}
-                              data-index={virtualRow.index}
-                              ref={virtualizer.measureElement}
-                           />
-                        )
-                     }
-
+                  if (item?.type === "date") {
                      return (
-                        <div
-                           key={virtualRow.key}
+                        <VListItem
+                           key={item.key}
                            data-index={virtualRow.index}
                            ref={virtualizer.measureElement}
+                           start={virtualRow.start}
+                           className="flex items-center"
                         >
-                           <OrderMessage {...item} />
-                        </div>
+                           <Separator className="w-full" />
+                           <Badge className="mx-auto rounded-full font-normal">
+                              {item.value}
+                           </Badge>
+                           <Separator className="w-full" />
+                        </VListItem>
                      )
-                  })}
-               </VListContent>
+                  }
+
+                  if (!item?.message || !item.position) {
+                     return (
+                        <VListItem
+                           key={virtualRow.index}
+                           data-index={virtualRow.index}
+                           ref={virtualizer.measureElement}
+                           start={virtualRow.start}
+                        />
+                     )
+                  }
+
+                  return (
+                     <VListItem
+                        key={item.key}
+                        data-index={virtualRow.index}
+                        ref={virtualizer.measureElement}
+                        start={virtualRow.start}
+                     >
+                        <OrderMessage {...item} />
+                     </VListItem>
+                  )
+               })}
+               <div
+                  className="absolute left-0 h-6 w-full"
+                  style={{ top: virtualizer.getTotalSize() }}
+                  aria-hidden
+               />
             </VList>
          </MainScrollArea>
          <CreateOrderMessage
             onSuccess={() => {
-               virtualizer.scrollToIndex(rows.length - 1, { align: "end" })
+               virtualizer.scrollToOffset(virtualizer.getTotalSize())
             }}
          />
       </>
