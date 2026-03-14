@@ -1,7 +1,6 @@
 import { ID_PREFIXES } from "@unfiddle/core/database/id"
 import baseX from "base-x"
 const b58 = baseX("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz")
-import crypto from "node:crypto"
 
 export const createId = (prefix: keyof typeof ID_PREFIXES) => {
    const buf = crypto.getRandomValues(new Uint8Array(20))
@@ -22,13 +21,3 @@ export const createId = (prefix: keyof typeof ID_PREFIXES) => {
 
    return `${ID_PREFIXES[prefix]}_${b58.encode(buf)}` as const
 }
-
-export const createCode = () => {
-   const buf = crypto.getRandomValues(new Uint8Array(9))
-
-   const encoded = b58.encode(buf)
-
-   return encoded.slice(0, 12)
-}
-
-export const makeShortId = (id: number) => `№${String(id).padStart(3, "0")}`

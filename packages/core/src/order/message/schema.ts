@@ -68,6 +68,9 @@ export const orderMessageSchema = createSelectSchema(orderMessage, {
 export const createOrderMessageSchema = createInsertSchema(orderMessage)
    .omit({ id: true, creatorId: true, createdAt: true, updatedAt: true })
    .required({ workspaceId: true, orderId: true, content: true })
+   .extend({
+      id: z.string(),
+   })
 
 export const updateOrderMessageSchema = createUpdateSchema(orderMessage)
    .pick({ content: true })

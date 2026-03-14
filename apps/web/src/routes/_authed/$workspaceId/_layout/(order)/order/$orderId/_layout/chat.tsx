@@ -118,12 +118,14 @@ function RouteComponent() {
 
    const totalSize = virtualizer.getTotalSize()
    React.useEffect(() => {
-      if (shouldScrollToBottomRef.current && totalSize > prevTotalSizeRef.current) {
+      if (
+         shouldScrollToBottomRef.current &&
+         totalSize > prevTotalSizeRef.current
+      ) {
          const scrollElement = scrollAreaRef.current
          if (scrollElement) {
             scrollElement.scrollTop = 999999999
          }
-         // Keep scrolling until totalSize stabilizes
          const timeoutId = setTimeout(() => {
             shouldScrollToBottomRef.current = false
          }, 100)

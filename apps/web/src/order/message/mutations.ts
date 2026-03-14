@@ -1,4 +1,5 @@
 import { useAuth } from "@/auth/hooks"
+import { createId } from "@/id"
 import { orderMessageCollection } from "@/order/message/collection"
 import { useSocket } from "@/socket"
 import { useParams } from "@tanstack/react-router"
@@ -12,10 +13,9 @@ export function useCreateOrderMessage() {
    const collection = orderMessageCollection(params.orderId, auth.workspace.id)
 
    return (content: string) => {
-      const tempId = crypto.randomUUID()
-
+      const id = createId("order_message")
       collection.insert({
-         id: tempId,
+         id,
          orderId: params.orderId,
          workspaceId: auth.workspace.id,
          creatorId: auth.user.id,
@@ -29,7 +29,7 @@ export function useCreateOrderMessage() {
          },
       })
 
-      const message = collection.get(tempId)
+      const message = collection.get(id)
       if (!message) return
 
       socket.order.send({

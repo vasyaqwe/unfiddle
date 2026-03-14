@@ -1,0 +1,15 @@
+export const ID_PREFIXES = {
+   user: "usr",
+   attachment: "att",
+   file: "file",
+   workspace: "wrk",
+   client: "cl",
+   order: "ord",
+   procurement: "pro",
+   good: "good",
+   order_item: "o_item",
+   order_message: "o_msg",
+   estimate: "est",
+   estimate_item: "e_item",
+   estimate_procurement: "e_pro",
+} as const

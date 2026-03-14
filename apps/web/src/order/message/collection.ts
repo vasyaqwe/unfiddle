@@ -22,6 +22,7 @@ const createCollectionInstance = (orderId: string, workspaceId: string) =>
          onInsert: async ({ transaction }) => {
             const { modified } = transaction.mutations[0]
             await trpcClient.order.message.create.mutate({
+               id: modified.id,
                orderId: modified.orderId,
                workspaceId: modified.workspaceId,
                content: modified.content,
