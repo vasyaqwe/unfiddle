@@ -105,7 +105,9 @@ function RouteComponent() {
 
    React.useLayoutEffect(() => {
       if (rows.length > 0) {
-         virtualizer.scrollToOffset(virtualizer.getTotalSize())
+         requestAnimationFrame(() => {
+            virtualizer.scrollToIndex(rows.length - 1, { align: "end" })
+         })
       }
    }, [rows.length])
 
@@ -190,7 +192,7 @@ function RouteComponent() {
          </MainScrollArea>
          <CreateOrderMessage
             onSuccess={() => {
-               virtualizer.scrollToOffset(virtualizer.getTotalSize())
+               virtualizer.scrollToIndex(rows.length - 1, { align: "end" })
             }}
          />
       </>
