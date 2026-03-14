@@ -105,11 +105,9 @@ function RouteComponent() {
 
    React.useLayoutEffect(() => {
       if (rows.length > 0) {
-         requestAnimationFrame(() => {
-            virtualizer.scrollToIndex(rows.length - 1, { align: "end" })
-         })
+         virtualizer.scrollToIndex(rows.length - 1, { align: "end" })
       }
-   }, [rows.length])
+   }, [])
 
    return (
       <>
@@ -161,17 +159,7 @@ function RouteComponent() {
                      )
                   }
 
-                  if (!item?.message || !item.position) {
-                     return (
-                        <VListItem
-                           key={virtualRow.index}
-                           data-index={virtualRow.index}
-                           ref={virtualizer.measureElement}
-                           start={virtualRow.start}
-                        />
-                     )
-                  }
-
+                  if (!item?.message || !item.position) return null
                   return (
                      <VListItem
                         key={item.key}
@@ -179,20 +167,24 @@ function RouteComponent() {
                         ref={virtualizer.measureElement}
                         start={virtualRow.start}
                      >
-                        <OrderMessage {...item} />
+                        <OrderMessage
+                           {...item}
+                           key={item.key}
+                        />
                      </VListItem>
                   )
                })}
-               <div
-                  className="absolute left-0 h-6 w-full"
-                  style={{ top: virtualizer.getTotalSize() }}
+               {/* <div
+                  className="absolute bottom-0 left-0 h-61 w-full"
                   aria-hidden
-               />
+               /> */}
             </VList>
          </MainScrollArea>
          <CreateOrderMessage
             onSuccess={() => {
-               virtualizer.scrollToIndex(rows.length - 1, { align: "end" })
+               requestAnimationFrame(() => {
+                  virtualizer.scrollToIndex(rows.length, { align: "end" })
+               })
             }}
          />
       </>
