@@ -1,3 +1,4 @@
+import { useAuth } from "@/auth/hooks"
 import {
    Header,
    HeaderBackButton,
@@ -14,6 +15,7 @@ import {
    useOnMessageInsert,
 } from "@/order/message/hooks"
 import { useOrderMessagesQuery } from "@/order/message/queries"
+import { useMarkMessagesAsRead } from "@/order/message/read/mutations"
 import { editingMessageIdAtom } from "@/order/message/store"
 import { createFileRoute } from "@tanstack/react-router"
 import { useVirtualizer } from "@tanstack/react-virtual"
@@ -24,6 +26,7 @@ import { Badge } from "@unfiddle/ui/components/badge"
 import { Button } from "@unfiddle/ui/components/button"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { Separator } from "@unfiddle/ui/components/separator"
+import { useTabFocused } from "@unfiddle/ui/hooks/use-tab-focused"
 import { useAtomValue } from "jotai"
 import * as React from "react"
 import * as R from "remeda"
@@ -35,10 +38,13 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
+   const auth = useAuth()
    const order = useOrder()
    const query = useOrderMessagesQuery(order.id)
    const [unreadCount, setUnreadCount] = React.useState(0)
    const editingMessageId = useAtomValue(editingMessageIdAtom)
+   const tabFocused = useTabFocused()
+   const readMessages = useMarkMessagesAsRead(order.id)
 
    const rows = React.useMemo(() => {
       const groupedMessages = R.groupBy(query.data, (m) =>
@@ -114,6 +120,12 @@ function RouteComponent() {
    })
    const data = virtualizer.getVirtualItems()
 
+   React.useEffect(() => {
+      if (!tabFocused) return
+
+      readMessages.mutate({ orderId: order.id, workspaceId: auth.workspace.id })
+   }, [tabFocused])
+
    useInitialScrollToBottom(virtualizer, rows.length)
    useOnMessageInsert(rows, (viewerIsSender) => {
       if (viewerIsSender)
@@ -185,6 +197,11 @@ function RouteComponent() {
                }
             }}
          >
+            {!query.isLoading && data.length === 0 ? (
+               <p className="absolute inset-0 m-auto size-fit text-muted">
+                  Немає повідомлень
+               </p>
+            ) : null}
             {unreadCount === 0 ? null : (
                <Button
                   variant={"tertiary"}
@@ -206,48 +223,50 @@ function RouteComponent() {
                {editingMessageId ? (
                   <div className="absolute inset-0 z-75 bg-background/60" />
                ) : null}
-               {data.map((virtualRow) => {
-                  const item = rows[virtualRow.index]
+               {query.isLoading
+                  ? null
+                  : data.map((virtualRow) => {
+                       const item = rows[virtualRow.index]
 
-                  if (item?.type === "date") {
-                     return (
-                        <VListItem
-                           key={item.key}
-                           data-index={virtualRow.index}
-                           ref={virtualizer.measureElement}
-                           start={virtualRow.start}
-                           className="flex items-center"
-                        >
-                           <Separator className="w-full" />
-                           <Badge className="mx-auto rounded-full font-normal">
-                              {item.value}
-                           </Badge>
-                           <Separator className="w-full" />
-                        </VListItem>
-                     )
-                  }
+                       if (item?.type === "date") {
+                          return (
+                             <VListItem
+                                key={item.key}
+                                data-index={virtualRow.index}
+                                ref={virtualizer.measureElement}
+                                start={virtualRow.start}
+                                className="flex items-center"
+                             >
+                                <Separator className="w-full" />
+                                <Badge className="mx-auto rounded-full font-normal">
+                                   {item.value}
+                                </Badge>
+                                <Separator className="w-full" />
+                             </VListItem>
+                          )
+                       }
 
-                  if (!item?.message || !item.position) return null
+                       if (!item?.message || !item.position) return null
 
-                  return (
-                     <VListItem
-                        key={item.key}
-                        data-index={virtualRow.index}
-                        ref={virtualizer.measureElement}
-                        start={virtualRow.start}
-                        className={
-                           item.message.id === editingMessageId
-                              ? "z-100"
-                              : undefined
-                        }
-                     >
-                        <OrderMessage
-                           {...item}
-                           key={item.key}
-                        />
-                     </VListItem>
-                  )
-               })}
+                       return (
+                          <VListItem
+                             key={item.key}
+                             data-index={virtualRow.index}
+                             ref={virtualizer.measureElement}
+                             start={virtualRow.start}
+                             className={
+                                item.message.id === editingMessageId
+                                   ? "z-100"
+                                   : undefined
+                             }
+                          >
+                             <OrderMessage
+                                {...item}
+                                key={item.key}
+                             />
+                          </VListItem>
+                       )
+                    })}
                {/* <div
                   className="absolute bottom-0 left-0 h-61 w-full"
                   aria-hidden

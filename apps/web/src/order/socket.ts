@@ -14,6 +14,7 @@ import { trpc } from "@/trpc"
 import { useQueryClient } from "@tanstack/react-query"
 import { useMatches, useNavigate, useParams } from "@tanstack/react-router"
 import type { OrderEvent } from "@unfiddle/core/order/types"
+import { useTabFocused } from "@unfiddle/ui/hooks/use-tab-focused"
 import usePartySocket from "partysocket/react"
 
 export function useOrderSocket() {
@@ -30,6 +31,7 @@ export function useOrderSocket() {
    const createItem = useOptimisticCreateOrderItem()
    const updateItem = useOptimisticUpdateOrderItem()
    const deleteItem = useOptimisticDeleteOrderItem()
+   const tabFocused = useTabFocused()
 
    return usePartySocket({
       host: env.COLLABORATION_URL,
@@ -88,7 +90,8 @@ export function useOrderSocket() {
                   (m) =>
                      m.routeId ===
                      "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/chat",
-               )
+               ) &&
+               tabFocused
             )
                return
 
