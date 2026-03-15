@@ -34,6 +34,22 @@ export const orderMessageRouter = t.router({
                      image: true,
                   },
                },
+               reply: {
+                  columns: {
+                     id: true,
+                     content: true,
+                     creatorId: true,
+                  },
+                  with: {
+                     creator: {
+                        columns: {
+                           id: true,
+                           name: true,
+                           image: true,
+                        },
+                     },
+                  },
+               },
             },
             orderBy: [desc(orderMessage.createdAt)],
          })
@@ -61,6 +77,22 @@ export const orderMessageRouter = t.router({
                      id: true,
                      name: true,
                      image: true,
+                  },
+               },
+               reply: {
+                  columns: {
+                     id: true,
+                     content: true,
+                     creatorId: true,
+                  },
+                  with: {
+                     creator: {
+                        columns: {
+                           id: true,
+                           name: true,
+                           image: true,
+                        },
+                     },
                   },
                },
             },

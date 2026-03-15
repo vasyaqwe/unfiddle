@@ -26,6 +26,7 @@ const createCollectionInstance = (orderId: string, workspaceId: string) =>
                orderId: modified.orderId,
                workspaceId: modified.workspaceId,
                content: modified.content,
+               replyToId: modified.replyToId,
             })
          },
          onUpdate: async ({ transaction }) => {

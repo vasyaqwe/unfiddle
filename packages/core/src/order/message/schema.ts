@@ -3,6 +3,7 @@ import { d } from "@unfiddle/core/database"
 import { order } from "@unfiddle/core/order/schema"
 import { workspace } from "@unfiddle/core/workspace/schema"
 import { relations } from "drizzle-orm"
+import type { AnySQLiteColumn } from "drizzle-orm/sqlite-core"
 import {
    createInsertSchema,
    createSelectSchema,
@@ -26,6 +27,9 @@ export const orderMessage = d.table(
          .text()
          .references(() => user.id, { onDelete: "cascade" })
          .notNull(),
+      replyToId: d.text().references((): AnySQLiteColumn => orderMessage.id, {
+         onDelete: "cascade",
+      }),
       content: d.text().notNull(),
       ...d.timestamps,
    },
@@ -52,6 +56,10 @@ export const orderMessageRelations = relations(orderMessage, ({ one }) => ({
       fields: [orderMessage.workspaceId],
       references: [workspace.id],
    }),
+   reply: one(orderMessage, {
+      fields: [orderMessage.replyToId],
+      references: [orderMessage.id],
+   }),
 }))
 
 export const orderMessageSchema = createSelectSchema(orderMessage, {
@@ -63,6 +71,19 @@ export const orderMessageSchema = createSelectSchema(orderMessage, {
       name: z.string(),
       image: z.string().nullable(),
    }),
+   reply: z
+      .object({
+         id: z.string(),
+         content: z.string(),
+         creatorId: z.string(),
+         creator: z.object({
+            id: z.string(),
+            name: z.string(),
+            image: z.string().nullable(),
+         }),
+      })
+      .nullable()
+      .optional(),
 })
 
 export const createOrderMessageSchema = createInsertSchema(orderMessage)

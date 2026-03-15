@@ -1,6 +1,10 @@
 import { useAuth } from "@/auth/hooks"
 import { useDeleteOrderMessage } from "@/order/message/mutations"
-import { editingMessageIdAtom, messageContentAtom } from "@/order/message/store"
+import {
+   editingMessageIdAtom,
+   messageContentAtom,
+   replyingToMessageIdAtom,
+} from "@/order/message/store"
 import { getBorderRadiusClasses } from "@/order/message/utils"
 import { UserAvatar } from "@/user/components/user-avatar"
 import { useParams } from "@tanstack/react-router"
@@ -29,11 +33,13 @@ export function OrderMessage({
    message,
    prevMessage,
    position,
+   onReply,
 }: {
    message: OrderMessageType
    prevMessage?: OrderMessageType
    nextMessage?: OrderMessageType
    position: OrderMessagePosition
+   onReply?: () => void
 }) {
    const aWhile = 10 * 60 * 1000 // 10 min
    const isFirstMessageInAWhile =
@@ -52,6 +58,7 @@ export function OrderMessage({
          <Message
             message={message}
             position={position}
+            onReply={onReply}
          />
       </>
    )
@@ -60,7 +67,12 @@ export function OrderMessage({
 function Message({
    message,
    position,
-}: { message: OrderMessageType; position: OrderMessagePosition }) {
+   onReply,
+}: {
+   message: OrderMessageType
+   position: OrderMessagePosition
+   onReply?: () => void
+}) {
    const auth = useAuth()
    const viewerIsSender = message.creatorId === auth.user.id
    const hasAvatar =
@@ -85,7 +97,10 @@ function Message({
             data-has-avatar={hasAvatar ? "" : undefined}
             data-viewer-is-sender={viewerIsSender ? "" : undefined}
          >
-            <MessageActions message={message} />
+            <MessageActions
+               message={message}
+               onReply={onReply}
+            />
             <MessageBubble
                message={message}
                position={position}
@@ -120,7 +135,13 @@ function MessageContent({ children, ...props }: React.ComponentProps<"div">) {
    )
 }
 
-function MessageActions({ message }: { message: OrderMessageType }) {
+function MessageActions({
+   message,
+   onReply,
+}: {
+   message: OrderMessageType
+   onReply?: () => void
+}) {
    const params = useParams({
       from: "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/chat",
    })
@@ -129,6 +150,7 @@ function MessageActions({ message }: { message: OrderMessageType }) {
    const viewerIsSender = message.creatorId === auth.user.id
    const setEditingMessageId = useSetAtom(editingMessageIdAtom)
    const setContent = useSetAtom(messageContentAtom)
+   const setReplyingToMessageId = useSetAtom(replyingToMessageIdAtom)
 
    return (
       <div className="invisible mt-0.5 opacity-0 group-hover/message:visible group-hover/message:opacity-100">
@@ -144,7 +166,18 @@ function MessageActions({ message }: { message: OrderMessageType }) {
                }
             />
             <MenuPopup align={viewerIsSender ? "end" : "start"}>
-               <MenuItem>
+               <MenuItem
+                  onClick={() => {
+                     setReplyingToMessageId(message.id)
+                     onReply?.()
+                     const contentEl = document.querySelector(
+                        "[data-chat-content]",
+                     ) as HTMLTextAreaElement | null
+                     setTimeout(() => {
+                        contentEl?.focus()
+                     }, 1)
+                  }}
+               >
                   <Icons.arrowDownLeft />
                   Відповісти
                </MenuItem>
@@ -205,34 +238,55 @@ function MessageBubble({
       viewerIsSender,
    )
 
+   const replyRoundedClasses = getBorderRadiusClasses("first", viewerIsSender)
+
    const hasReactionsOnly = false
 
    return (
-      <Tooltip>
-         <TooltipTrigger
-            className={cn(
-               "wrap-anywhere relative select-text whitespace-pre-wrap text-left",
-               roundedClasses,
-               {
-                  "bg-surface-4": !viewerIsSender && !hasReactionsOnly,
-                  "bg-primary-7 text-white selection:bg-surface-12":
-                     viewerIsSender && !hasReactionsOnly,
-                  //  'bg-quaternary text-tertiary': message.discarded_at && !hasReactionsOnly,
-                  "px-3.5 py-2 lg:px-3": !hasReactionsOnly,
-                  //  'ring-2 ring-[--bg-primary]': message.reply && !hasReactionsOnly,
-                  //  'rounded-tr': viewerIsSender && message.reply,
-                  //  'rounded-tl': !viewerIsSender && message.reply,
-               },
-            )}
-         >
-            {message.content}
-         </TooltipTrigger>
-         <TooltipPopup>
-            {formatDate(message.createdAt, {
-               dateStyle: "long",
-               timeStyle: "short",
-            })}
-         </TooltipPopup>
-      </Tooltip>
+      <div
+         className="flex flex-col items-start gap-1 data-viewer-is-sender:items-end"
+         data-viewer-is-sender={viewerIsSender ? "" : undefined}
+      >
+         {message.reply && (
+            <div
+               className={cn(
+                  "bg-surface-4 px-3.5 py-2 text-xs opacity-80 lg:px-3",
+                  replyRoundedClasses,
+               )}
+            >
+               <div className="flex items-center gap-1 font-medium">
+                  <Icons.arrowDownLeft className="mt-0.5 size-3 shrink-0" />
+                  {message.reply.creator.name}
+               </div>
+               <div className="line-clamp-1">{message.reply.content}</div>
+            </div>
+         )}
+         <Tooltip>
+            <TooltipTrigger
+               className={cn(
+                  "wrap-anywhere relative select-text whitespace-pre-wrap text-left",
+                  roundedClasses,
+                  {
+                     "bg-surface-4": !viewerIsSender && !hasReactionsOnly,
+                     "bg-primary-7 text-white selection:bg-surface-12":
+                        viewerIsSender && !hasReactionsOnly,
+                     //  'bg-quaternary text-tertiary': message.discarded_at && !hasReactionsOnly,
+                     "px-3.5 py-2 lg:px-3": !hasReactionsOnly,
+                     //  'ring-2 ring-[--bg-primary]': message.reply && !hasReactionsOnly,
+                     //  'rounded-tr': viewerIsSender && message.reply,
+                     //  'rounded-tl': !viewerIsSender && message.reply,
+                  },
+               )}
+            >
+               {message.content}
+            </TooltipTrigger>
+            <TooltipPopup>
+               {formatDate(message.createdAt, {
+                  dateStyle: "long",
+                  timeStyle: "short",
+               })}
+            </TooltipPopup>
+         </Tooltip>
+      </div>
    )
 }

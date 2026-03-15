@@ -157,6 +157,24 @@ function RouteComponent() {
       setUnreadCount((prev) => prev - 1)
    })
 
+   const handleReply = React.useCallback(() => {
+      const scrollElement = scrollAreaRef.current
+      if (!scrollElement) return
+
+      const isAtBottom =
+         scrollElement.scrollHeight -
+            scrollElement.scrollTop -
+            scrollElement.clientHeight <
+         100
+
+      if (isAtBottom) {
+         virtualizer.scrollToIndex(rows.length - 1, {
+            align: "end",
+            behavior: "smooth",
+         })
+      }
+   }, [virtualizer, rows.length])
+
    return (
       <>
          <Header className="md:flex md:pr-1.75">
@@ -263,6 +281,7 @@ function RouteComponent() {
                              <OrderMessage
                                 {...item}
                                 key={item.key}
+                                onReply={handleReply}
                              />
                           </VListItem>
                        )

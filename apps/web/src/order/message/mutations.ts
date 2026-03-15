@@ -12,14 +12,18 @@ export function useCreateOrderMessage() {
    const socket = useSocket()
    const collection = orderMessageCollection(params.orderId, auth.workspace.id)
 
-   return (content: string) => {
+   return (content: string, replyToId?: string) => {
       const id = createId("order_message")
+
+      const replyMessage = replyToId ? collection.get(replyToId) : null
+
       collection.insert({
          id,
          orderId: params.orderId,
          workspaceId: auth.workspace.id,
          creatorId: auth.user.id,
          content,
+         replyToId: replyToId ?? null,
          createdAt: new Date(),
          updatedAt: new Date(),
          creator: {
@@ -27,6 +31,14 @@ export function useCreateOrderMessage() {
             name: auth.user.name,
             image: auth.user.image,
          },
+         reply: replyMessage
+            ? {
+                 id: replyMessage.id,
+                 content: replyMessage.content,
+                 creatorId: replyMessage.creatorId,
+                 creator: replyMessage.creator,
+              }
+            : null,
       })
 
       const message = collection.get(id)
@@ -37,7 +49,7 @@ export function useCreateOrderMessage() {
          senderId: auth.user.id,
          workspaceId: auth.workspace.id,
          orderId: params.orderId,
-         message,
+         message: { ...message, reply: message.reply ?? null },
       })
    }
 }
@@ -58,6 +70,17 @@ export function useUpdateOrderMessage() {
 
       const message = collection.get(messageId)
       if (!message) return
+
+      // Update reply objects in all messages that reference this message
+      for (const [, msg] of collection.entries()) {
+         if (msg.replyToId === messageId && msg.reply) {
+            collection.update(msg.id, (draft) => {
+               if (draft.reply) {
+                  draft.reply.content = content
+               }
+            })
+         }
+      }
 
       socket.order.send({
          action: "update_message",

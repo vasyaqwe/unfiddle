@@ -115,7 +115,18 @@ export function useOrderSocket() {
                data.orderId,
                auth.workspace.id,
             )
-            return collection.utils.writeUpdate(data.message)
+            collection.utils.writeUpdate(data.message)
+
+            // Update reply objects in all messages that reference this message
+            for (const [, msg] of collection.entries()) {
+               if (msg.replyToId === data.message.orderMessageId && msg.reply) {
+                  collection.update(msg.id, (draft) => {
+                     if (draft.reply) {
+                        draft.reply.content = data.message.content
+                     }
+                  })
+               }
+            }
          }
          if (data.action === "delete_message") {
             const collection = orderMessageCollection(

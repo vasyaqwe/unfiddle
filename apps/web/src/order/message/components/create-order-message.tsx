@@ -1,8 +1,14 @@
+import { useAuth } from "@/auth/hooks"
 import {
    useCreateOrderMessage,
    useUpdateOrderMessage,
 } from "@/order/message/mutations"
-import { editingMessageIdAtom, messageContentAtom } from "@/order/message/store"
+import { useOrderMessagesQuery } from "@/order/message/queries"
+import {
+   editingMessageIdAtom,
+   messageContentAtom,
+   replyingToMessageIdAtom,
+} from "@/order/message/store"
 import { useParams } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
 import { Icons } from "@unfiddle/ui/components/icons"
@@ -15,9 +21,13 @@ export function CreateOrderMessage({ onSuccess }: { onSuccess?: () => void }) {
    const params = useParams({
       from: "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/chat",
    })
+   const auth = useAuth()
    const [_content, setContent] = useAtom(messageContentAtom)
    const content = _content[params.orderId] ?? ""
    const [editingMessageId, setEditingMessageId] = useAtom(editingMessageIdAtom)
+   const [replyingToMessageId, setReplyingToMessageId] = useAtom(
+      replyingToMessageIdAtom,
+   )
 
    const formRef = React.useRef<HTMLFormElement>(null)
    const textareaRef = React.useRef<HTMLTextAreaElement>(null)
@@ -25,8 +35,19 @@ export function CreateOrderMessage({ onSuccess }: { onSuccess?: () => void }) {
    const create = useCreateOrderMessage()
    const update = useUpdateOrderMessage()
 
+   const { data: messages } = useOrderMessagesQuery(params.orderId)
+
+   const replyingToMessage = replyingToMessageId
+      ? messages?.find((m) => m.id === replyingToMessageId)
+      : null
+
+   const rootParentMessage = replyingToMessage?.replyToId
+      ? messages?.find((m) => m.id === replyingToMessage.replyToId)
+      : replyingToMessage
+
    const cancelEditing = () => {
       setEditingMessageId(null)
+      setReplyingToMessageId(null)
       setContent((prev) => ({
          ...prev,
          [params.orderId]: "",
@@ -49,28 +70,53 @@ export function CreateOrderMessage({ onSuccess }: { onSuccess?: () => void }) {
    }, [])
 
    return (
-      <div className="z-60 max-h-[50svh] overflow-auto border-neutral border-t bg-background pr-1.75 pl-3.5 md:pr-2.5 md:pl-5">
-         <form
-            ref={formRef}
-            onSubmit={async (e) => {
-               e.preventDefault()
-               if (content.trim().length === 0) return
+      <form
+         ref={formRef}
+         onSubmit={async (e) => {
+            e.preventDefault()
+            if (content.trim().length === 0) return
 
-               if (editingMessageId) {
-                  update(editingMessageId, content)
-                  setEditingMessageId(null)
-               } else {
-                  create(content)
-               }
-               setContent((prev) => ({
-                  ...prev,
-                  [params.orderId]: "",
-               }))
+            if (editingMessageId) {
+               update(editingMessageId, content)
+               setEditingMessageId(null)
+            } else {
+               const parentId = rootParentMessage?.id
+               create(content, parentId)
+            }
+            setReplyingToMessageId(null)
+            setContent((prev) => ({
+               ...prev,
+               [params.orderId]: "",
+            }))
 
-               onSuccess?.()
-            }}
-            className="flex items-end gap-2"
-         >
+            onSuccess?.()
+         }}
+         className="z-60 max-h-[50svh] overflow-auto border-neutral border-t bg-background"
+      >
+         {rootParentMessage && (
+            <div className="flex w-full items-center justify-between gap-2 border-neutral border-b bg-surface-2 px-3 py-2 text-muted text-sm">
+               <div className="flex w-full items-center gap-2">
+                  <Icons.arrowDownLeft className="size-4 shrink-0" />
+                  <span className="line-clamp-1">
+                     Відповідь до{" "}
+                     {rootParentMessage.creator.id === auth.user.id
+                        ? "себе"
+                        : rootParentMessage.creator.name}{" "}
+                     '{rootParentMessage.content}'
+                  </span>
+               </div>
+               <Button
+                  type="button"
+                  kind="icon"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setReplyingToMessageId(null)}
+               >
+                  <Icons.xMark />
+               </Button>
+            </div>
+         )}
+         <div className="flex w-full items-end gap-2 pr-1.75 pl-3.5 md:pr-2.5 md:pl-5">
             <Textarea
                data-chat-content
                ref={textareaRef}
@@ -103,7 +149,7 @@ export function CreateOrderMessage({ onSuccess }: { onSuccess?: () => void }) {
             >
                {editingMessageId ? <Icons.check /> : <Icons.arrowUp />}
             </Button>
-         </form>
-      </div>
+         </div>
+      </form>
    )
 }
