@@ -1,4 +1,3 @@
-import { useAuth } from "@/auth/hooks"
 import {
    Header,
    HeaderBackButton,
@@ -9,6 +8,10 @@ import { VList, VListItem } from "@/layout/components/vlist"
 import { useOrder } from "@/order/hooks"
 import { CreateOrderMessage } from "@/order/message/components/create-order-message"
 import { OrderMessage } from "@/order/message/components/order-message"
+import {
+   useAutoScrollOnNewMessage,
+   useInitialScrollToBottom,
+} from "@/order/message/hooks"
 import { useOrderMessagesQuery } from "@/order/message/queries"
 import { createFileRoute } from "@tanstack/react-router"
 import { useVirtualizer } from "@tanstack/react-virtual"
@@ -27,7 +30,6 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
-   const auth = useAuth()
    const order = useOrder()
    const query = useOrderMessagesQuery(order.id)
 
@@ -105,35 +107,8 @@ function RouteComponent() {
    })
    const data = virtualizer.getVirtualItems()
 
-   const shouldScrollToBottomRef = React.useRef(false)
-   const prevTotalSizeRef = React.useRef(0)
-
-   React.useLayoutEffect(() => {
-      const lastMessage = rows[rows.length - 1]
-      if (rows.length > 0 && lastMessage?.message?.creatorId !== auth.user.id) {
-         requestAnimationFrame(() => {
-            virtualizer.scrollToIndex(rows.length - 1, { align: "end" })
-         })
-      }
-   }, [rows.length, virtualizer])
-
-   const totalSize = virtualizer.getTotalSize()
-   React.useEffect(() => {
-      if (
-         shouldScrollToBottomRef.current &&
-         totalSize > prevTotalSizeRef.current
-      ) {
-         const scrollElement = scrollAreaRef.current
-         if (scrollElement) {
-            scrollElement.scrollTop = 999999999
-         }
-         const timeoutId = setTimeout(() => {
-            shouldScrollToBottomRef.current = false
-         }, 100)
-         return () => clearTimeout(timeoutId)
-      }
-      prevTotalSizeRef.current = totalSize
-   }, [totalSize])
+   useInitialScrollToBottom(virtualizer, rows.length)
+   useAutoScrollOnNewMessage(virtualizer, scrollAreaRef, rows)
 
    return (
       <>
@@ -207,11 +182,7 @@ function RouteComponent() {
                /> */}
             </VList>
          </MainScrollArea>
-         <CreateOrderMessage
-            onSuccess={() => {
-               shouldScrollToBottomRef.current = true
-            }}
-         />
+         <CreateOrderMessage />
       </>
    )
 }
