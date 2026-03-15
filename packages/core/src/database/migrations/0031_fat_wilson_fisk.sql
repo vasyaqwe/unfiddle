@@ -1,0 +1,1 @@
+ALTER TABLE `order_message` ADD `reply_to_id` text REFERENCES order_message(id);

@@ -4,6 +4,7 @@ import { Main } from "@/layout/components/main"
 import { PendingComponent } from "@/layout/components/pending-component"
 import { Sidebar } from "@/layout/components/sidebar"
 import { SidebarContent } from "@/layout/components/sidebar"
+import { useUnreadCount } from "@/order/message/read/queries"
 import { SocketProvider } from "@/socket/provider"
 import { trpc } from "@/trpc"
 import { validator } from "@/validator"
@@ -13,6 +14,7 @@ import {
    notFound,
    useMatches,
 } from "@tanstack/react-router"
+import { useEffect } from "react"
 import { z } from "zod"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout")({
@@ -53,6 +55,18 @@ function RouteComponent() {
    const isOnBoard = matches.some(
       (m) => m.routeId === "/_authed/$workspaceId/_layout/board",
    )
+   const unreadCount = useUnreadCount()
+
+   useEffect(() => {
+      const faviconLink = document.querySelector(
+         "link[rel='icon']",
+      ) as HTMLLinkElement | null
+
+      if (faviconLink) {
+         faviconLink.href =
+            unreadCount > 0 ? "/favicon_unread.ico" : "/favicon.ico"
+      }
+   }, [unreadCount])
 
    return (
       <SocketProvider>

@@ -46,10 +46,7 @@ export function HeaderBackButton({
          aria-label="Go back"
          {...props}
       >
-         <Icons.arrowLeft
-            className="size-6"
-            strokeWidth={2}
-         />
+         <Icons.arrowLeft className="size-6" />
       </BackButton>
    )
 }

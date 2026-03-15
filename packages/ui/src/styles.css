@@ -62,6 +62,9 @@
    --container-padding: 1rem;
    --width-prose: 60ch;
 
+   --sidepanel-width: calc(var(--spacing) * 60);
+   --sidebar-width: calc(var(--spacing) * 56);
+
    --ease-vaul: cubic-bezier(0.32, 0.72, 0, 1);
 
    --animate-accordion-down: accordion-down 0.15s var(--ease-vaul);

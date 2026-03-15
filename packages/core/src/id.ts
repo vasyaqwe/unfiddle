@@ -1,21 +1,7 @@
+import { ID_PREFIXES } from "@unfiddle/core/database/id"
 import baseX from "base-x"
 const b58 = baseX("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz")
 import crypto from "node:crypto"
-
-export const ID_PREFIXES = {
-   user: "usr",
-   attachment: "att",
-   file: "file",
-   workspace: "wrk",
-   client: "cl",
-   order: "ord",
-   procurement: "pro",
-   good: "good",
-   order_item: "o_item",
-   estimate: "est",
-   estimate_item: "e_item",
-   estimate_procurement: "e_pro",
-} as const
 
 export const createId = (prefix: keyof typeof ID_PREFIXES) => {
    const buf = crypto.getRandomValues(new Uint8Array(20))

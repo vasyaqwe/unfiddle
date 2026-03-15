@@ -5,7 +5,7 @@ import invariant from "@unfiddle/core/invariant"
 
 export function useOrder() {
    const params = useParams({
-      from: "/_authed/$workspaceId/_layout/(order)/order/$orderId",
+      from: "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout",
    })
    const query = useSuspenseQuery(trpc.order.one.queryOptions(params))
    const order = query.data

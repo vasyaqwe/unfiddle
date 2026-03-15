@@ -103,7 +103,7 @@ export function Textarea({
       <textarea
          className={cn(
             input(),
-            "md:!pt-2.5 !pt-3.5 min-h-12 resize-none pb-2 md:min-h-10",
+            "min-h-12 resize-none pt-3.5! pb-2 md:min-h-10 md:pt-2.5!",
             className,
          )}
          {...props}

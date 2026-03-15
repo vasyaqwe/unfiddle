@@ -22,7 +22,7 @@ export function OrderItem({
    item: OrderItemType
 }) {
    const params = useParams({
-      from: "/_authed/$workspaceId/_layout/(order)/order/$orderId",
+      from: "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout",
    })
    const order = useOrder()
    const [updateOpen, setUpdateOpen] = React.useState(false)
