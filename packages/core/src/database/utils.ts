@@ -1,4 +1,5 @@
-import { type ID_PREFIXES, createId } from "@unfiddle/core/id"
+import type { ID_PREFIXES } from "@unfiddle/core/database/id"
+import { createId } from "@unfiddle/core/id"
 import { customType, integer, sqliteTable, text } from "drizzle-orm/sqlite-core"
 
 export const id = (prefix: keyof typeof ID_PREFIXES) =>
