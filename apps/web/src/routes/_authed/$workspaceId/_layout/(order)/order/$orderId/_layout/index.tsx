@@ -140,7 +140,7 @@ function RouteComponent() {
    return (
       <>
          <Header className="md:flex md:pr-1.75">
-            <HeaderBackButton />
+            <HeaderBackButton className={"mr-1.5 md:flex"} />
             <HeaderTitle className="line-clamp-1">
                <span className="md:hidden">Замовлення</span>{" "}
                {makeShortId(order.shortId)}

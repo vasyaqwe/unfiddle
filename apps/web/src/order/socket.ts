@@ -94,7 +94,9 @@ export function useOrderSocket() {
                },
             )
 
-            collection.utils.writeInsert(data.message)
+            if (collection.status === "ready") {
+               collection.utils.writeInsert(data.message)
+            }
 
             if (
                maybeParams.orderId === data.orderId &&
@@ -127,16 +129,21 @@ export function useOrderSocket() {
                data.orderId,
                auth.workspace.id,
             )
-            collection.utils.writeUpdate(data.message)
 
-            // Update reply objects in all messages that reference this message
-            for (const [, msg] of collection.entries()) {
-               if (msg.replyToId === data.message.orderMessageId && msg.reply) {
-                  collection.update(msg.id, (draft) => {
-                     if (draft.reply) {
-                        draft.reply.content = data.message.content
-                     }
-                  })
+            if (collection.status === "ready") {
+               collection.utils.writeUpdate(data.message)
+
+               for (const [, msg] of collection.entries()) {
+                  if (
+                     msg.replyToId === data.message.orderMessageId &&
+                     msg.reply
+                  ) {
+                     collection.update(msg.id, (draft) => {
+                        if (draft.reply) {
+                           draft.reply.content = data.message.content
+                        }
+                     })
+                  }
                }
             }
          }
@@ -145,24 +152,29 @@ export function useOrderSocket() {
                data.orderId,
                data.workspaceId,
             )
-            collection.utils.writeDelete(data.orderMessageId)
 
-            queryClient.invalidateQueries({
-               queryKey: trpc.order.message.read.orderUnreadCount.queryKey({
-                  orderId: data.orderId,
-                  workspaceId: data.workspaceId,
-               }),
-            })
-            queryClient.invalidateQueries({
-               queryKey: trpc.order.message.read.unreadCount.queryKey({
-                  workspaceId: data.workspaceId,
-               }),
-            })
-            queryClient.invalidateQueries({
-               queryKey: trpc.order.message.read.listUnreadOrders.queryKey({
-                  workspaceId: data.workspaceId,
-               }),
-            })
+            if (collection.status === "ready") {
+               collection.utils.writeDelete(data.orderMessageId)
+            }
+
+            setTimeout(() => {
+               queryClient.invalidateQueries({
+                  queryKey: trpc.order.message.read.orderUnreadCount.queryKey({
+                     orderId: data.orderId,
+                     workspaceId: data.workspaceId,
+                  }),
+               })
+               queryClient.invalidateQueries({
+                  queryKey: trpc.order.message.read.unreadCount.queryKey({
+                     workspaceId: data.workspaceId,
+                  }),
+               })
+               queryClient.invalidateQueries({
+                  queryKey: trpc.order.message.read.listUnreadOrders.queryKey({
+                     workspaceId: data.workspaceId,
+                  }),
+               })
+            }, 100)
          }
 
          if (data.action === "create_assignee") {

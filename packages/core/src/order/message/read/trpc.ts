@@ -2,7 +2,7 @@ import { orderMessageRead } from "@unfiddle/core/order/message/read/schema"
 import { orderMessage } from "@unfiddle/core/order/message/schema"
 import { t } from "@unfiddle/core/trpc/context"
 import { workspaceMemberMiddleware } from "@unfiddle/core/workspace/middleware"
-import { and, count, eq, gt, sql } from "drizzle-orm"
+import { and, count, eq, gt, ne, sql } from "drizzle-orm"
 import { z } from "zod"
 
 export const orderMessageReadRouter = t.router({
@@ -55,6 +55,7 @@ export const orderMessageReadRouter = t.router({
                and(
                   eq(orderMessage.orderId, input.orderId),
                   eq(orderMessage.workspaceId, input.workspaceId),
+                  ne(orderMessage.creatorId, ctx.user.id),
                   readRecord
                      ? gt(orderMessage.createdAt, readRecord.lastReadAt)
                      : sql`1=1`,
@@ -102,6 +103,7 @@ export const orderMessageReadRouter = t.router({
                   and(
                      eq(orderMessage.orderId, order.id),
                      eq(orderMessage.workspaceId, input.workspaceId),
+                     ne(orderMessage.creatorId, ctx.user.id),
                      lastReadAt
                         ? gt(orderMessage.createdAt, lastReadAt)
                         : sql`1=1`,
@@ -152,6 +154,7 @@ export const orderMessageReadRouter = t.router({
                   and(
                      eq(orderMessage.orderId, order.id),
                      eq(orderMessage.workspaceId, input.workspaceId),
+                     ne(orderMessage.creatorId, ctx.user.id),
                      lastReadAt
                         ? gt(orderMessage.createdAt, lastReadAt)
                         : sql`1=1`,
