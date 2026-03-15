@@ -81,6 +81,18 @@ export function useOrderSocket() {
                   count: (old?.count ?? 0) + 1,
                }),
             )
+            queryClient.setQueryData(
+               trpc.order.message.read.listUnreadOrders.queryKey({
+                  workspaceId: data.workspaceId,
+               }),
+               (old: { orderIds: string[] } | undefined) => {
+                  const currentOrderIds = old?.orderIds ?? []
+                  if (currentOrderIds.includes(data.orderId)) {
+                     return old
+                  }
+                  return { orderIds: [...currentOrderIds, data.orderId] }
+               },
+            )
 
             collection.utils.writeInsert(data.message)
 
@@ -143,6 +155,11 @@ export function useOrderSocket() {
             })
             queryClient.invalidateQueries({
                queryKey: trpc.order.message.read.unreadCount.queryKey({
+                  workspaceId: data.workspaceId,
+               }),
+            })
+            queryClient.invalidateQueries({
+               queryKey: trpc.order.message.read.listUnreadOrders.queryKey({
                   workspaceId: data.workspaceId,
                }),
             })

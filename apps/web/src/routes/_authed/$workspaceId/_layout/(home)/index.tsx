@@ -15,6 +15,7 @@ import { ArchiveOrderAlert } from "@/order/components/archive-order-alert"
 import { OrderSeverityIcon } from "@/order/components/order-severity-icon"
 import { DeleteOrderAlert } from "@/order/delete/delete-order-alert"
 import { useDeleteOrder } from "@/order/delete/use-delete-order"
+import { useUnreadOrders } from "@/order/message/read/queries"
 import { useOrderQueryOptions } from "@/order/queries"
 import { createOrderOpenAtom } from "@/order/store"
 import { UpdateOrder } from "@/order/update/update-order"
@@ -208,6 +209,8 @@ function _OrderRow({
    const createAssignee = useCreateOrderAssignee()
    const deleteAssignee = useDeleteOrderAssignee()
 
+   const unread = useUnreadOrders()
+
    return (
       <ContextMenu>
          <ContextMenuTrigger
@@ -248,6 +251,9 @@ function _OrderRow({
                   className="col-span-2 col-start-1 row-start-2 mt-px line-clamp-1 break-normal font-semibold data-vat:text-orange-10"
                >
                   {order.name}
+                  {unread.includes(order.id) ? (
+                     <span className="motion-scale-in motion-duration-150 ml-2 inline-block size-2 rounded-full bg-red-9" />
+                  ) : null}
                </p>
                {order.client ? (
                   <Tooltip>
