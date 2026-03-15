@@ -49,7 +49,7 @@ export function useCreateOrderMessage() {
          senderId: auth.user.id,
          workspaceId: auth.workspace.id,
          orderId: params.orderId,
-         message: { ...message, reply: message.reply ?? null },
+         message,
       })
    }
 }

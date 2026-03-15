@@ -82,8 +82,7 @@ export const orderMessageSchema = createSelectSchema(orderMessage, {
             image: z.string().nullable(),
          }),
       })
-      .nullable()
-      .optional(),
+      .nullable(),
 })
 
 export const createOrderMessageSchema = createInsertSchema(orderMessage)

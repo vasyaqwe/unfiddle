@@ -223,34 +223,46 @@ function MessageBubble({
    const auth = useAuth()
    const viewerIsSender = message.creatorId === auth.user.id
 
-   const normalizedPosition = position
+   let normalizedPosition = position
+   let replyPosition: OrderMessagePosition = "first"
 
-   // if (message.attachments.length > 0 && !!message.content) {
-   //    if (normalizedPosition === "only") {
-   //       normalizedPosition = "last"
-   //    } else if (normalizedPosition === "first") {
-   //       normalizedPosition = "middle"
-   //    }
-   // }
+   if (message.reply && !!message.content) {
+      if (normalizedPosition === "only") {
+         normalizedPosition = "last"
+         replyPosition = "first"
+      } else if (normalizedPosition === "first") {
+         normalizedPosition = "middle"
+         replyPosition = "first"
+      } else if (normalizedPosition === "middle") {
+         normalizedPosition = "middle"
+         replyPosition = "middle"
+      } else if (normalizedPosition === "last") {
+         normalizedPosition = "last"
+         replyPosition = "middle"
+      }
+   }
 
    const roundedClasses = getBorderRadiusClasses(
       normalizedPosition,
       viewerIsSender,
    )
 
-   const replyRoundedClasses = getBorderRadiusClasses("first", viewerIsSender)
+   const replyRoundedClasses = getBorderRadiusClasses(
+      replyPosition,
+      viewerIsSender,
+   )
 
    const hasReactionsOnly = false
 
    return (
       <div
-         className="flex flex-col items-start gap-1 data-viewer-is-sender:items-end"
+         className="flex flex-col items-start gap-0.5 data-viewer-is-sender:items-end"
          data-viewer-is-sender={viewerIsSender ? "" : undefined}
       >
          {message.reply && (
             <div
                className={cn(
-                  "bg-surface-4 px-3.5 py-2 text-xs opacity-80 lg:px-3",
+                  "bg-surface-5 px-3.5 py-2 text-xs opacity-80 lg:px-3",
                   replyRoundedClasses,
                )}
             >
