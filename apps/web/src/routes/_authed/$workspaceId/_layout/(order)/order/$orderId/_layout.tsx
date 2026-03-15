@@ -79,7 +79,7 @@ function RouteComponent() {
          </div>
          <div
             className={
-               "relative flex w-full shrink-0 grow flex-col border-neutral bg-surface-1 max-lg:hidden lg:max-w-60 lg:border-l xl:max-w-76"
+               "relative flex w-full shrink-0 grow flex-col border-neutral bg-surface-1 max-lg:hidden lg:max-w-(--sidepanel-width) lg:border-l xl:[--sidepanel-width:calc(var(--spacing)*76)]"
             }
          >
             <ScrollArea className="px-5 pb-4">

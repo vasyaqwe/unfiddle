@@ -9,8 +9,9 @@ import { useOrder } from "@/order/hooks"
 import { CreateOrderMessage } from "@/order/message/components/create-order-message"
 import { OrderMessage } from "@/order/message/components/order-message"
 import {
-   useAutoScrollOnNewMessage,
    useInitialScrollToBottom,
+   useOnMessageDelete,
+   useOnMessageInsert,
 } from "@/order/message/hooks"
 import { useOrderMessagesQuery } from "@/order/message/queries"
 import { createFileRoute } from "@tanstack/react-router"
@@ -19,6 +20,8 @@ import { formatDate } from "@unfiddle/core/date"
 import { makeShortId } from "@unfiddle/core/id"
 import type { OrderMessagePosition } from "@unfiddle/core/order/message/types"
 import { Badge } from "@unfiddle/ui/components/badge"
+import { Button } from "@unfiddle/ui/components/button"
+import { Icons } from "@unfiddle/ui/components/icons"
 import { Separator } from "@unfiddle/ui/components/separator"
 import * as React from "react"
 import * as R from "remeda"
@@ -32,6 +35,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
    const order = useOrder()
    const query = useOrderMessagesQuery(order.id)
+   const [unreadCount, setUnreadCount] = React.useState(0)
 
    const rows = React.useMemo(() => {
       const groupedMessages = R.groupBy(query.data, (m) =>
@@ -108,7 +112,35 @@ function RouteComponent() {
    const data = virtualizer.getVirtualItems()
 
    useInitialScrollToBottom(virtualizer, rows.length)
-   useAutoScrollOnNewMessage(virtualizer, scrollAreaRef, rows)
+   useOnMessageInsert(rows, (viewerIsSender) => {
+      if (viewerIsSender)
+         return virtualizer.scrollToIndex(rows.length - 1, {
+            align: "end",
+            behavior: "smooth",
+         })
+
+      const scrollElement = scrollAreaRef.current
+
+      if (scrollElement) {
+         const isAtBottom =
+            scrollElement.scrollHeight -
+               scrollElement.scrollTop -
+               scrollElement.clientHeight <
+            100
+
+         if (isAtBottom)
+            return virtualizer.scrollToIndex(rows.length - 1, {
+               align: "end",
+               behavior: "smooth",
+            })
+
+         setUnreadCount((prev) => prev + 1)
+      }
+   })
+   useOnMessageDelete(rows, (viewerIsSender) => {
+      if (viewerIsSender) return
+      setUnreadCount((prev) => prev - 1)
+   })
 
    return (
       <>
@@ -137,7 +169,36 @@ function RouteComponent() {
             className={"pt-0 lg:pt-0"}
             container={false}
             ref={scrollAreaRef}
+            onScroll={(e) => {
+               const scrollElement = e.currentTarget
+               const isAtBottom =
+                  scrollElement.scrollHeight -
+                     scrollElement.scrollTop -
+                     scrollElement.clientHeight <
+                  10
+
+               if (isAtBottom && unreadCount > 0) {
+                  setUnreadCount(0)
+               }
+            }}
          >
+            {unreadCount === 0 ? null : (
+               <Button
+                  variant={"tertiary"}
+                  className={
+                     "fixed bottom-18 left-[calc(var(--sidebar-width)+1rem)] z-50 w-fit border-transparent bg-red-11 font-medium text-white shadow-md hover:bg-red-10 active:bg-red-11"
+                  }
+                  onClick={() => {
+                     virtualizer.scrollToIndex(rows.length - 1, {
+                        align: "end",
+                     })
+                     setUnreadCount(0)
+                  }}
+               >
+                  <Icons.arrowDown className="size-4" />
+                  {unreadCount}
+               </Button>
+            )}
             <VList totalSize={virtualizer.getTotalSize() + 24}>
                {data.map((virtualRow) => {
                   const item = rows[virtualRow.index]

@@ -26,7 +26,7 @@ export function CreateOrderMessage({ onSuccess }: { onSuccess?: () => void }) {
    }, [])
 
    return (
-      <div className="max-h-[50svh] overflow-auto border-neutral border-t pr-1.75 pl-3.5 md:pr-2.5 md:pl-5">
+      <div className="z-60 max-h-[50svh] overflow-auto border-neutral border-t bg-background pr-1.75 pl-3.5 md:pr-2.5 md:pl-5">
          <form
             ref={formRef}
             onSubmit={async (e) => {

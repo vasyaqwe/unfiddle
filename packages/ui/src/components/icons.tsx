@@ -744,6 +744,37 @@ export const Icons = {
          />
       </svg>
    ),
+   arrowDown: (props: IconProps) => (
+      <svg
+         xmlns="http://www.w3.org/2000/svg"
+         width="20"
+         height="20"
+         viewBox="0 0 20 20"
+         {...props}
+      >
+         <g fill="currentColor">
+            <line
+               x1="10"
+               y1="3"
+               x2="10"
+               y2="17"
+               fill="none"
+               stroke="currentColor"
+               strokeLinecap="round"
+               strokeLinejoin="round"
+               strokeWidth="2"
+            />
+            <polyline
+               points="5 12 10 17 15 12"
+               fill="none"
+               stroke="currentColor"
+               strokeLinecap="round"
+               strokeLinejoin="round"
+               strokeWidth="2"
+            />
+         </g>
+      </svg>
+   ),
    arrowLeft: ({ className, ...props }: IconProps) => (
       <svg
          className={cn("size-6", className)}

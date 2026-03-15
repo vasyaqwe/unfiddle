@@ -30,12 +30,12 @@ export function Sidebar({
    return (
       <aside
          className={cn(
-            "z-10 h-svh w-56 shrink-0 max-md:hidden lg:w-58 2xl:w-62",
+            "z-10 h-svh w-(--sidebar-width) shrink-0 max-md:hidden",
             className,
          )}
          {...props}
       >
-         <div className="fixed flex h-full w-56 flex-col lg:w-58 2xl:w-62">
+         <div className="fixed flex h-full w-(--sidebar-width) flex-col">
             {children}
          </div>
       </aside>
