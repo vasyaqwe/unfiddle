@@ -41,10 +41,6 @@ export function CreateOrderMessage({ onSuccess }: { onSuccess?: () => void }) {
       ? messages?.find((m) => m.id === replyingToMessageId)
       : null
 
-   const rootParentMessage = replyingToMessage?.replyToId
-      ? messages?.find((m) => m.id === replyingToMessage.replyToId)
-      : replyingToMessage
-
    const cancelEditing = () => {
       setEditingMessageId(null)
       setReplyingToMessageId(null)
@@ -80,7 +76,9 @@ export function CreateOrderMessage({ onSuccess }: { onSuccess?: () => void }) {
                update(editingMessageId, content)
                setEditingMessageId(null)
             } else {
-               const parentId = rootParentMessage?.id
+               const parentId = replyingToMessage?.replyToId
+                  ? replyingToMessage.replyToId
+                  : replyingToMessage?.id
                create(content, parentId)
             }
             setReplyingToMessageId(null)
@@ -93,16 +91,16 @@ export function CreateOrderMessage({ onSuccess }: { onSuccess?: () => void }) {
          }}
          className="z-60 max-h-[50svh] overflow-auto border-neutral border-t bg-background"
       >
-         {rootParentMessage && (
+         {replyingToMessage && (
             <div className="flex w-full items-center justify-between gap-2 border-neutral border-b bg-surface-2 px-3 py-2 text-muted text-sm">
                <div className="flex w-full items-center gap-2">
                   <Icons.arrowDownLeft className="size-4 shrink-0" />
                   <span className="line-clamp-1">
                      Відповідь до{" "}
-                     {rootParentMessage.creator.id === auth.user.id
+                     {replyingToMessage.creator.id === auth.user.id
                         ? "себе"
-                        : rootParentMessage.creator.name}{" "}
-                     '{rootParentMessage.content}'
+                        : replyingToMessage.creator.name}{" "}
+                     '{replyingToMessage.content}'
                   </span>
                </div>
                <Button
