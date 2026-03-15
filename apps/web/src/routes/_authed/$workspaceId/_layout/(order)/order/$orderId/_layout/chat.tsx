@@ -14,6 +14,7 @@ import {
    useOnMessageInsert,
 } from "@/order/message/hooks"
 import { useOrderMessagesQuery } from "@/order/message/queries"
+import { editingMessageIdAtom } from "@/order/message/store"
 import { createFileRoute } from "@tanstack/react-router"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import { formatDate } from "@unfiddle/core/date"
@@ -23,6 +24,7 @@ import { Badge } from "@unfiddle/ui/components/badge"
 import { Button } from "@unfiddle/ui/components/button"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { Separator } from "@unfiddle/ui/components/separator"
+import { useAtomValue } from "jotai"
 import * as React from "react"
 import * as R from "remeda"
 
@@ -36,6 +38,7 @@ function RouteComponent() {
    const order = useOrder()
    const query = useOrderMessagesQuery(order.id)
    const [unreadCount, setUnreadCount] = React.useState(0)
+   const editingMessageId = useAtomValue(editingMessageIdAtom)
 
    const rows = React.useMemo(() => {
       const groupedMessages = R.groupBy(query.data, (m) =>
@@ -200,6 +203,9 @@ function RouteComponent() {
                </Button>
             )}
             <VList totalSize={virtualizer.getTotalSize() + 24}>
+               {editingMessageId ? (
+                  <div className="absolute inset-0 z-75 bg-background/60" />
+               ) : null}
                {data.map((virtualRow) => {
                   const item = rows[virtualRow.index]
 
@@ -229,6 +235,11 @@ function RouteComponent() {
                         data-index={virtualRow.index}
                         ref={virtualizer.measureElement}
                         start={virtualRow.start}
+                        className={
+                           item.message.id === editingMessageId
+                              ? "z-100"
+                              : undefined
+                        }
                      >
                         <OrderMessage
                            {...item}

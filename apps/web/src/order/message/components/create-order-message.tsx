@@ -1,16 +1,39 @@
-import { useCreateOrderMessage } from "@/order/message/mutations"
+import {
+   useCreateOrderMessage,
+   useUpdateOrderMessage,
+} from "@/order/message/mutations"
+import { editingMessageIdAtom, messageContentAtom } from "@/order/message/store"
+import { useParams } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { Textarea } from "@unfiddle/ui/components/textarea"
+import { useAtom } from "jotai"
 import * as React from "react"
+import { useHotkeys } from "react-hotkeys-hook"
 
 export function CreateOrderMessage({ onSuccess }: { onSuccess?: () => void }) {
-   const [content, setContent] = React.useState("")
+   const params = useParams({
+      from: "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/chat",
+   })
+   const [_content, setContent] = useAtom(messageContentAtom)
+   const content = _content[params.orderId] ?? ""
+   const [editingMessageId, setEditingMessageId] = useAtom(editingMessageIdAtom)
 
    const formRef = React.useRef<HTMLFormElement>(null)
    const textareaRef = React.useRef<HTMLTextAreaElement>(null)
 
-   const createMessage = useCreateOrderMessage()
+   const create = useCreateOrderMessage()
+   const update = useUpdateOrderMessage()
+
+   const cancelEditing = () => {
+      setEditingMessageId(null)
+      setContent((prev) => ({
+         ...prev,
+         [params.orderId]: "",
+      }))
+   }
+
+   useHotkeys(["Esc"], cancelEditing)
 
    React.useEffect(() => {
       textareaRef.current?.focus()
@@ -33,20 +56,36 @@ export function CreateOrderMessage({ onSuccess }: { onSuccess?: () => void }) {
                e.preventDefault()
                if (content.trim().length === 0) return
 
-               const messageContent = content
-               setContent("")
-               createMessage(messageContent)
+               if (editingMessageId) {
+                  update(editingMessageId, content)
+                  setEditingMessageId(null)
+               } else {
+                  create(content)
+               }
+               setContent((prev) => ({
+                  ...prev,
+                  [params.orderId]: "",
+               }))
+
                onSuccess?.()
             }}
             className="flex items-end gap-2"
          >
             <Textarea
+               data-chat-content
                ref={textareaRef}
                className="border-b-0 pt-3.5! pb-3.5! md:pt-3.5! md:pb-3.5!"
                placeholder="Напишіть повідомлення..."
                value={content}
-               onChange={(e) => setContent(e.target.value)}
+               onChange={(e) =>
+                  setContent((prev) => ({
+                     ...prev,
+                     [params.orderId]: e.target.value,
+                  }))
+               }
                onKeyDown={(e) => {
+                  if (e.key === "Escape") return cancelEditing()
+
                   if (e.key === "Enter" && content.length === 0)
                      return e.preventDefault()
 
@@ -62,7 +101,7 @@ export function CreateOrderMessage({ onSuccess }: { onSuccess?: () => void }) {
                className={"sticky bottom-1.5 rounded-full md:bottom-2.25"}
                kind={"icon"}
             >
-               <Icons.arrowUp />
+               {editingMessageId ? <Icons.check /> : <Icons.arrowUp />}
             </Button>
          </form>
       </div>

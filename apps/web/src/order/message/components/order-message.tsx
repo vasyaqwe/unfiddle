@@ -1,7 +1,9 @@
 import { useAuth } from "@/auth/hooks"
 import { useDeleteOrderMessage } from "@/order/message/mutations"
+import { editingMessageIdAtom, messageContentAtom } from "@/order/message/store"
 import { getBorderRadiusClasses } from "@/order/message/utils"
 import { UserAvatar } from "@/user/components/user-avatar"
+import { useParams } from "@tanstack/react-router"
 import { formatDate } from "@unfiddle/core/date"
 import type {
    OrderMessagePosition,
@@ -21,6 +23,7 @@ import {
    TooltipTrigger,
 } from "@unfiddle/ui/components/tooltip"
 import { cn } from "@unfiddle/ui/utils"
+import { useSetAtom } from "jotai"
 
 export function OrderMessage({
    message,
@@ -118,9 +121,14 @@ function MessageContent({ children, ...props }: React.ComponentProps<"div">) {
 }
 
 function MessageActions({ message }: { message: OrderMessageType }) {
+   const params = useParams({
+      from: "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/chat",
+   })
    const auth = useAuth()
    const deleteMessage = useDeleteOrderMessage()
    const viewerIsSender = message.creatorId === auth.user.id
+   const setEditingMessageId = useSetAtom(editingMessageIdAtom)
+   const setContent = useSetAtom(messageContentAtom)
 
    return (
       <div className="invisible mt-0.5 opacity-0 group-hover/message:visible group-hover/message:opacity-100">
@@ -141,13 +149,33 @@ function MessageActions({ message }: { message: OrderMessageType }) {
                   Відповісти
                </MenuItem>
                {message.creatorId !== auth.user.id ? null : (
-                  <MenuItem
-                     destructive
-                     onClick={() => deleteMessage(message.id)}
-                  >
-                     <Icons.trash />
-                     Видалити
-                  </MenuItem>
+                  <>
+                     <MenuItem
+                        onClick={() => {
+                           setEditingMessageId(message.id)
+                           setContent((prev) => ({
+                              ...prev,
+                              [params.orderId]: message.content,
+                           }))
+                           const contentEl = document.querySelector(
+                              "[data-chat-content]",
+                           ) as HTMLTextAreaElement | null
+                           setTimeout(() => {
+                              contentEl?.focus()
+                           }, 1)
+                        }}
+                     >
+                        <Icons.pencil />
+                        Редагувати
+                     </MenuItem>
+                     <MenuItem
+                        destructive
+                        onClick={() => deleteMessage(message.id)}
+                     >
+                        <Icons.trash />
+                        Видалити
+                     </MenuItem>
+                  </>
                )}
             </MenuPopup>
          </Menu>
