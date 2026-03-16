@@ -17,7 +17,6 @@ import { notFound } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
 import { formatDate } from "@unfiddle/core/date"
 import { ORDER_PAYMENT_TYPES_TRANSLATION } from "@unfiddle/core/order/constants"
-import { formatOrderDate } from "@unfiddle/core/order/utils"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import {
    AvatarStack,
@@ -164,9 +163,13 @@ function RouteComponent() {
                      </Tooltip>
                      {new Date(order.createdAt).getDate() ===
                      new Date().getDate()
-                        ? "Сьогодні о "
-                        : ""}
-                     {formatOrderDate(order.createdAt)}
+                        ? `Сьогодні, ${formatDate(order.createdAt, {
+                             timeStyle: "short",
+                          })}`
+                        : formatDate(order.createdAt, {
+                             dateStyle: "short",
+                             timeStyle: "short",
+                          })}
                   </p>
                </section>
                <section className="group/section py-3">

@@ -63,6 +63,7 @@ export function useCreateProcurement({
                note: input.note ?? "",
                provider: input.provider ?? null,
                orderItemId: input.orderItemId ?? null,
+               createdAt: new Date(),
                attachments: [],
             })
 

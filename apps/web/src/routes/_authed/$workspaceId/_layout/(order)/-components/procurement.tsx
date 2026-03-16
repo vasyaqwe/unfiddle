@@ -13,6 +13,7 @@ import { UserAvatar } from "@/user/components/user-avatar"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useParams } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
+import { formatDate } from "@unfiddle/core/date"
 import { formatNumber } from "@unfiddle/core/number"
 import {
    PROCUREMENT_STATUSES,
@@ -260,6 +261,17 @@ export function Procurement({
                {formatCurrency(procurement.purchasePrice, {
                   currency: order.currency,
                })}
+            </p>
+            <p className="ml-auto text-muted text-xs">
+               {new Date(procurement.createdAt).getDate() ===
+               new Date().getDate()
+                  ? `Сьогодні, ${formatDate(procurement.createdAt, {
+                       timeStyle: "short",
+                    })}`
+                  : formatDate(procurement.createdAt, {
+                       dateStyle: "short",
+                       timeStyle: "short",
+                    })}
             </p>
          </div>
          <p className="mt-2 whitespace-pre-wrap empty:hidden lg:mt-2.5 lg:max-w-[80ch]!">

@@ -36,6 +36,7 @@ export const procurementRouter = t.router({
                note: true,
                provider: true,
                orderItemId: true,
+               createdAt: true,
             },
             with: {
                creator: {

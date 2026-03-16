@@ -25,6 +25,7 @@ import { UserAvatar } from "@/user/components/user-avatar"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, notFound } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
+import { formatDate } from "@unfiddle/core/date"
 import { formatEstimateDate } from "@unfiddle/core/estimate/utils"
 import { makeShortId } from "@unfiddle/core/id"
 import { Badge } from "@unfiddle/ui/components/badge"
@@ -235,9 +236,13 @@ function RouteComponent() {
                      </Tooltip>
                      {new Date(estimate.createdAt).getDate() ===
                      new Date().getDate()
-                        ? "Сьогодні о "
-                        : ""}
-                     {formatEstimateDate(estimate.createdAt)}
+                        ? `Сьогодні, ${formatDate(estimate.createdAt, {
+                             timeStyle: "short",
+                          })}`
+                        : formatDate(estimate.createdAt, {
+                             dateStyle: "short",
+                             timeStyle: "short",
+                          })}
                   </p>
                </section>
             </ScrollArea>
