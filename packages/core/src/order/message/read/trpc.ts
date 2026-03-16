@@ -73,48 +73,26 @@ export const orderMessageReadRouter = t.router({
          }),
       )
       .query(async ({ ctx, input }) => {
-         // Get all orders in workspace
-         const orders = await ctx.db.query.order.findMany({
-            where: eq(orderMessage.workspaceId, input.workspaceId),
-            columns: { id: true },
-         })
+         const result = await ctx.db
+            .select({ count: count() })
+            .from(orderMessage)
+            .leftJoin(
+               orderMessageRead,
+               and(
+                  eq(orderMessageRead.orderId, orderMessage.orderId),
+                  eq(orderMessageRead.userId, ctx.user.id),
+               ),
+            )
+            .where(
+               and(
+                  eq(orderMessage.workspaceId, input.workspaceId),
+                  ne(orderMessage.creatorId, ctx.user.id),
+                  sql`(${orderMessageRead.lastReadAt} IS NULL OR ${orderMessage.createdAt} > ${orderMessageRead.lastReadAt})`,
+               ),
+            )
+            .get()
 
-         // Get user's read records for this workspace
-         const readRecords = await ctx.db.query.orderMessageRead.findMany({
-            where: and(
-               eq(orderMessageRead.userId, ctx.user.id),
-               eq(orderMessageRead.workspaceId, input.workspaceId),
-            ),
-         })
-
-         const readRecordMap = new Map(
-            readRecords.map((r) => [r.orderId, r.lastReadAt]),
-         )
-
-         // Count unread messages for each order
-         let totalUnread = 0
-         for (const order of orders) {
-            const lastReadAt = readRecordMap.get(order.id)
-
-            const unreadCount = await ctx.db
-               .select({ count: count() })
-               .from(orderMessage)
-               .where(
-                  and(
-                     eq(orderMessage.orderId, order.id),
-                     eq(orderMessage.workspaceId, input.workspaceId),
-                     ne(orderMessage.creatorId, ctx.user.id),
-                     lastReadAt
-                        ? gt(orderMessage.createdAt, lastReadAt)
-                        : sql`1=1`,
-                  ),
-               )
-               .get()
-
-            totalUnread += unreadCount?.count ?? 0
-         }
-
-         return { count: totalUnread }
+         return { count: result?.count ?? 0 }
       }),
    listUnreadOrders: t.procedure
       .use(workspaceMemberMiddleware)
@@ -124,49 +102,24 @@ export const orderMessageReadRouter = t.router({
          }),
       )
       .query(async ({ ctx, input }) => {
-         // Get all orders in workspace
-         const orders = await ctx.db.query.order.findMany({
-            where: eq(orderMessage.workspaceId, input.workspaceId),
-            columns: { id: true },
-         })
+         const results = await ctx.db
+            .selectDistinct({ orderId: orderMessage.orderId })
+            .from(orderMessage)
+            .leftJoin(
+               orderMessageRead,
+               and(
+                  eq(orderMessageRead.orderId, orderMessage.orderId),
+                  eq(orderMessageRead.userId, ctx.user.id),
+               ),
+            )
+            .where(
+               and(
+                  eq(orderMessage.workspaceId, input.workspaceId),
+                  ne(orderMessage.creatorId, ctx.user.id),
+                  sql`(${orderMessageRead.lastReadAt} IS NULL OR ${orderMessage.createdAt} > ${orderMessageRead.lastReadAt})`,
+               ),
+            )
 
-         // Get user's read records for this workspace
-         const readRecords = await ctx.db.query.orderMessageRead.findMany({
-            where: and(
-               eq(orderMessageRead.userId, ctx.user.id),
-               eq(orderMessageRead.workspaceId, input.workspaceId),
-            ),
-         })
-
-         const readRecordMap = new Map(
-            readRecords.map((r) => [r.orderId, r.lastReadAt]),
-         )
-
-         // Find orders with unread messages
-         const unreadOrderIds: string[] = []
-         for (const order of orders) {
-            const lastReadAt = readRecordMap.get(order.id)
-
-            const unreadCount = await ctx.db
-               .select({ count: count() })
-               .from(orderMessage)
-               .where(
-                  and(
-                     eq(orderMessage.orderId, order.id),
-                     eq(orderMessage.workspaceId, input.workspaceId),
-                     ne(orderMessage.creatorId, ctx.user.id),
-                     lastReadAt
-                        ? gt(orderMessage.createdAt, lastReadAt)
-                        : sql`1=1`,
-                  ),
-               )
-               .get()
-
-            if ((unreadCount?.count ?? 0) > 0) {
-               unreadOrderIds.push(order.id)
-            }
-         }
-
-         return { orderIds: [] }
+         return { orderIds: results.map((r) => r.orderId) }
       }),
 })

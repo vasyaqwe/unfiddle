@@ -22,11 +22,15 @@ export function useOnMessageInsert(
    rows: Array<{ message?: { creatorId: string } }>,
    cb: (viewerIsSender: boolean) => void,
 ) {
-   const prevRowsLengthRef = React.useRef(0)
+   const prevRowsLengthRef = React.useRef<number | null>(null)
    const auth = useAuth()
 
    React.useLayoutEffect(() => {
-      if (rows.length > prevRowsLengthRef.current && rows.length > 0) {
+      // Skip initial load (null -> any), only trigger on actual inserts
+      if (
+         prevRowsLengthRef.current !== null &&
+         rows.length > prevRowsLengthRef.current
+      ) {
          const lastMessage = rows[rows.length - 1]
          const viewerIsSender = lastMessage?.message?.creatorId === auth.user.id
          cb(viewerIsSender)
