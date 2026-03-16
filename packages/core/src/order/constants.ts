@@ -39,10 +39,16 @@ export const ORDER_SEVERITIES_TRANSLATION: Record<OrderSeverity, string> = {
    critical: "Критично",
 }
 
-export const ORDER_PAYMENT_TYPES = ["llc_vat", "fop", "cash"] as const
+export const ORDER_PAYMENT_TYPES = [
+   "llc_no_vat",
+   "llc_vat",
+   "fop",
+   "cash",
+] as const
 
 export const ORDER_PAYMENT_TYPES_TRANSLATION: Record<OrderPaymentType, string> =
    {
+      llc_no_vat: "ТОВ без ПДВ",
       llc_vat: "ТОВ з ПДВ",
       fop: "ФОП",
       cash: "Готівка",
