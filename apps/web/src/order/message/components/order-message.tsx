@@ -59,6 +59,9 @@ export function OrderMessage({
             message={message}
             position={position}
             onReply={onReply}
+            className={
+               prevMessage?.creatorId !== message.creatorId ? "mt-3" : ""
+            }
          />
       </>
    )
@@ -68,10 +71,12 @@ function Message({
    message,
    position,
    onReply,
+   className,
 }: {
    message: OrderMessageType
    position: OrderMessagePosition
    onReply?: () => void
+   className?: string
 }) {
    const auth = useAuth()
    const viewerIsSender = message.creatorId === auth.user.id
@@ -81,9 +86,10 @@ function Message({
    return (
       <div
          data-viewer-is-sender={viewerIsSender ? "" : undefined}
-         className={
-            "flex w-full gap-2 not-data-viewer-is-sender:pl-2 data-viewer-is-sender:items-end data-viewer-is-sender:pr-2"
-         }
+         className={cn(
+            "flex w-full gap-2 not-data-viewer-is-sender:pl-2 data-viewer-is-sender:items-end data-viewer-is-sender:pr-2",
+            className,
+         )}
       >
          {hasAvatar && (
             <span className="-translate-y-1.5 self-end">

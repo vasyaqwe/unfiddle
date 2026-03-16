@@ -137,6 +137,11 @@ function RouteComponent() {
       const scrollElement = scrollAreaRef.current
 
       if (scrollElement) {
+         const isScrollable =
+            scrollElement.scrollHeight > scrollElement.clientHeight
+
+         if (!isScrollable) return
+
          const isAtBottom =
             scrollElement.scrollHeight -
                scrollElement.scrollTop -
@@ -154,6 +159,7 @@ function RouteComponent() {
    })
    useOnMessageDelete(rows, (viewerIsSender) => {
       if (viewerIsSender) return
+      if (unreadCount === 0) return
       setUnreadCount((prev) => prev - 1)
    })
 
@@ -272,11 +278,12 @@ function RouteComponent() {
                              data-index={virtualRow.index}
                              ref={virtualizer.measureElement}
                              start={virtualRow.start}
-                             className={
-                                item.message.id === editingMessageId
-                                   ? "z-100"
+                             data-editing-message-id={
+                                editingMessageId === item.message.id
+                                   ? ""
                                    : undefined
                              }
+                             className={"data-editing-message-id:z-100"}
                           >
                              <OrderMessage
                                 {...item}
@@ -286,10 +293,6 @@ function RouteComponent() {
                           </VListItem>
                        )
                     })}
-               {/* <div
-                  className="absolute bottom-0 left-0 h-61 w-full"
-                  aria-hidden
-               /> */}
             </VList>
          </MainScrollArea>
          <CreateOrderMessage />
