@@ -167,6 +167,6 @@ export const orderMessageReadRouter = t.router({
             }
          }
 
-         return { orderIds: unreadOrderIds }
+         return { orderIds: [] }
       }),
 })
