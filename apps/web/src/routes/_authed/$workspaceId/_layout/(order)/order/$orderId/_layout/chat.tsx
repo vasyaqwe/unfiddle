@@ -17,7 +17,7 @@ import {
 import { useOrderMessagesQuery } from "@/order/message/queries"
 import { useMarkMessagesAsRead } from "@/order/message/read/mutations"
 import { editingMessageIdAtom } from "@/order/message/store"
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import { formatDate } from "@unfiddle/core/date"
 import { makeShortId } from "@unfiddle/core/id"
@@ -38,6 +38,8 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
+   const params = Route.useParams()
+   const navigate = useNavigate()
    const auth = useAuth()
    const order = useOrder()
    const query = useOrderMessagesQuery(order.id)
@@ -183,8 +185,13 @@ function RouteComponent() {
 
    return (
       <>
-         <Header className="md:flex md:pr-1.75">
-            <HeaderBackButton className={"mr-1.5 md:flex"} />
+         <Header className="md:flex md:px-1.75">
+            <HeaderBackButton
+               className={"mr-1.5 md:flex"}
+               onClick={() =>
+                  navigate({ to: "/$workspaceId/order/$orderId", params })
+               }
+            />
             <HeaderTitle>
                {makeShortId(order.shortId)}{" "}
                <svg

@@ -216,6 +216,12 @@ export const orderMessageRouter = t.router({
             })
          }
 
+         // Clear replyToId references (migration missing ON DELETE CASCADE)
+         await ctx.db
+            .update(orderMessage)
+            .set({ replyToId: null })
+            .where(eq(orderMessage.replyToId, input.orderMessageId))
+
          await ctx.db
             .delete(orderMessage)
             .where(

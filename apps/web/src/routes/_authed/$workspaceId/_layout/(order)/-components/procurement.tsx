@@ -1,7 +1,6 @@
 import { ImagesCarousel } from "@/attachment/components/images-carousel"
-import { useDownloadAttachment } from "@/attachment/hooks"
 import { useAuth } from "@/auth/hooks"
-import { truncate } from "@/file/components/uploader/utils"
+import { FileItem } from "@/file/components/file-item"
 import { useOrder } from "@/order/hooks"
 import { useDeleteProcurement } from "@/procurement/delete/use-delete-procurement"
 import { updateProcurementOpenAtom } from "@/procurement/store"
@@ -10,7 +9,7 @@ import { useUpdateProcurement } from "@/procurement/update/use-update-procuremen
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { UserAvatar } from "@/user/components/user-avatar"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useQueryClient } from "@tanstack/react-query"
 import { useParams } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
 import { formatDate } from "@unfiddle/core/date"
@@ -45,14 +44,7 @@ import {
    MenuPopup,
    MenuTrigger,
 } from "@unfiddle/ui/components/menu"
-import {
-   ContextMenu,
-   ContextMenuItem,
-   ContextMenuPopup,
-   ContextMenuTrigger,
-} from "@unfiddle/ui/components/menu/context"
 import { Separator } from "@unfiddle/ui/components/separator"
-import { SVGPreview } from "@unfiddle/ui/components/svg-preview"
 import {
    Tooltip,
    TooltipPopup,
@@ -294,7 +286,22 @@ export function Procurement({
                <FileItem
                   key={attachment.id}
                   attachment={attachment}
-                  procurement={procurement}
+                  subjectId={procurement.id}
+                  onDeleteSuccess={() => {
+                     socket.procurement.send({
+                        action: "delete_attachment",
+                        senderId: auth.user.id,
+                        procurementId: procurement.id,
+                        orderId: order.id,
+                        workspaceId: auth.workspace.id,
+                     })
+                     queryClient.invalidateQueries(
+                        trpc.procurement.list.queryOptions({
+                           orderId: order.id,
+                           workspaceId: auth.workspace.id,
+                        }),
+                     )
+                  }}
                />
             ))}
          </div>
@@ -378,87 +385,5 @@ export function Procurement({
             </AlertDialog>
          </div>
       </div>
-   )
-}
-
-function FileItem({
-   attachment,
-   procurement,
-}: {
-   attachment: ProcurementType["attachments"][number]
-   procurement: ProcurementType
-}) {
-   const auth = useAuth()
-   const download = useDownloadAttachment()
-   const deleteItem = useMutation(trpc.attachment.delete.mutationOptions())
-   const socket = useSocket()
-   const queryClient = useQueryClient()
-   const order = useOrder()
-   const [contextMenuOpen, setContextMenuOpen] = React.useState(false)
-
-   return (
-      <ContextMenu
-         open={contextMenuOpen}
-         onOpenChange={setContextMenuOpen}
-      >
-         <ContextMenuTrigger
-            render={
-               <Button
-                  variant={"secondary"}
-                  key={attachment.id}
-                  disabled={download.isPending}
-                  onClick={() => download.mutate([attachment])}
-                  className="pl-2 md:pl-2"
-                  data-popup-open={contextMenuOpen ? "" : undefined}
-               >
-                  {attachment.name.endsWith(".svg") ? (
-                     <SVGPreview
-                        className="size-5"
-                        url={attachment.url}
-                     />
-                  ) : (
-                     <Icons.attachment />
-                  )}
-                  <span className="font-medium text-muted text-sm">
-                     {truncate(attachment.name, 36)}
-                  </span>
-               </Button>
-            }
-         />
-         <ContextMenuPopup>
-            <ContextMenuItem
-               destructive
-               onClick={async () => {
-                  deleteItem.mutate(
-                     {
-                        attachmentId: attachment.id,
-                        workspaceId: auth.workspace.id,
-                        subjectId: procurement.id,
-                     },
-                     {
-                        onSuccess: () => {
-                           socket.procurement.send({
-                              action: "delete_attachment",
-                              senderId: auth.user.id,
-                              procurementId: procurement.id,
-                              orderId: order.id,
-                              workspaceId: auth.workspace.id,
-                           })
-                           queryClient.invalidateQueries(
-                              trpc.procurement.list.queryOptions({
-                                 orderId: order.id,
-                                 workspaceId: auth.workspace.id,
-                              }),
-                           )
-                        },
-                     },
-                  )
-               }}
-            >
-               <Icons.trash />
-               Видалити
-            </ContextMenuItem>
-         </ContextMenuPopup>
-      </ContextMenu>
    )
 }

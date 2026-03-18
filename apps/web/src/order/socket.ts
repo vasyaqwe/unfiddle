@@ -111,7 +111,10 @@ export function useOrderSocket() {
 
             sendNotification({
                title: data.message.creator.name,
-               body: data.message.content,
+               body:
+                  data.message.content.length === 0
+                     ? "Надіслав файли"
+                     : data.message.content,
                icon: data.message.creator.image,
                onClick: () => {
                   navigate({
