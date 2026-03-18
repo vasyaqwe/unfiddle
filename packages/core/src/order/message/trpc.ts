@@ -1,10 +1,11 @@
 import { TRPCError } from "@trpc/server"
+import { attachment } from "@unfiddle/core/attachment/schema"
 import { orderMessageReadRouter } from "@unfiddle/core/order/message/read/trpc"
+import { orderMessage } from "@unfiddle/core/order/message/schema"
 import {
    createOrderMessageSchema,
-   orderMessage,
    updateOrderMessageSchema,
-} from "@unfiddle/core/order/message/schema"
+} from "@unfiddle/core/order/message/zod"
 import { t } from "@unfiddle/core/trpc/context"
 import { workspaceMemberMiddleware } from "@unfiddle/core/workspace/middleware"
 import { and, desc, eq } from "drizzle-orm"
@@ -50,6 +51,18 @@ export const orderMessageRouter = t.router({
                      },
                   },
                },
+               attachments: {
+                  columns: {
+                     id: true,
+                     url: true,
+                     type: true,
+                     size: true,
+                     name: true,
+                     width: true,
+                     height: true,
+                  },
+                  orderBy: [desc(attachment.createdAt)],
+               },
             },
             orderBy: [desc(orderMessage.createdAt)],
          })
@@ -60,14 +73,28 @@ export const orderMessageRouter = t.router({
       .use(workspaceMemberMiddleware)
       .input(createOrderMessageSchema)
       .mutation(async ({ ctx, input }) => {
+         const { attachments, ...messageData } = input
+
          const message = await ctx.db
             .insert(orderMessage)
             .values({
-               ...input,
+               ...messageData,
                creatorId: ctx.user.id,
             })
             .returning()
             .get()
+
+         if (attachments && attachments.length > 0) {
+            await ctx.db.insert(attachment).values(
+               attachments.map((a) => ({
+                  ...a,
+                  subjectId: message.id,
+                  subjectType: "order_message" as const,
+                  workspaceId: input.workspaceId,
+                  creatorId: ctx.user.id,
+               })),
+            )
+         }
 
          const enrichedMessage = await ctx.db.query.orderMessage.findFirst({
             where: eq(orderMessage.id, message.id),
@@ -93,6 +120,17 @@ export const orderMessageRouter = t.router({
                            image: true,
                         },
                      },
+                  },
+               },
+               attachments: {
+                  columns: {
+                     id: true,
+                     url: true,
+                     type: true,
+                     size: true,
+                     name: true,
+                     width: true,
+                     height: true,
                   },
                },
             },

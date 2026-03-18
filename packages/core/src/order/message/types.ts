@@ -1,4 +1,4 @@
-import type { updateOrderMessageSchema } from "@unfiddle/core/order/message/schema"
+import type { updateOrderMessageSchema } from "@unfiddle/core/order/message/zod"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import type { z } from "zod"
 

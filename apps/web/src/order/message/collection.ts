@@ -27,6 +27,15 @@ const createCollectionInstance = (orderId: string, workspaceId: string) =>
                workspaceId: modified.workspaceId,
                content: modified.content,
                replyToId: modified.replyToId,
+               attachments: modified.attachments?.map((a) => ({
+                  id: a.id,
+                  url: a.url,
+                  type: a.type,
+                  size: a.size,
+                  name: a.name,
+                  width: a.width,
+                  height: a.height,
+               })),
             })
          },
          onUpdate: async ({ transaction }) => {

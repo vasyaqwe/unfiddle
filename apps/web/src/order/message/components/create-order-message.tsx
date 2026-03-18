@@ -1,4 +1,7 @@
+import { UploadedAttachment } from "@/attachment/components/uploaded-attachment"
+import { useAttachments } from "@/attachment/hooks"
 import { useAuth } from "@/auth/hooks"
+import { FileUploader } from "@/file/components/uploader"
 import {
    useCreateOrderMessage,
    useUpdateOrderMessage,
@@ -31,9 +34,13 @@ export function CreateOrderMessage({ onSuccess }: { onSuccess?: () => void }) {
 
    const formRef = React.useRef<HTMLFormElement>(null)
    const textareaRef = React.useRef<HTMLTextAreaElement>(null)
+   const fileUploaderRef = React.useRef<HTMLDivElement>(null)
 
    const create = useCreateOrderMessage()
    const update = useUpdateOrderMessage()
+   const attachments = useAttachments({
+      subjectId: `${params.orderId}_message`,
+   })
 
    const { data: messages } = useOrderMessagesQuery(params.orderId)
 
@@ -48,6 +55,7 @@ export function CreateOrderMessage({ onSuccess }: { onSuccess?: () => void }) {
          ...prev,
          [params.orderId]: "",
       }))
+      attachments.clear()
    }
 
    useHotkeys(["Esc"], cancelEditing)
@@ -70,7 +78,10 @@ export function CreateOrderMessage({ onSuccess }: { onSuccess?: () => void }) {
          ref={formRef}
          onSubmit={async (e) => {
             e.preventDefault()
-            if (content.trim().length === 0) return
+            const hasContent = content.trim().length > 0
+            const hasAttachments = attachments.uploaded.length > 0
+
+            if (!hasContent && !hasAttachments) return
 
             if (editingMessageId) {
                update(editingMessageId, content)
@@ -79,17 +90,22 @@ export function CreateOrderMessage({ onSuccess }: { onSuccess?: () => void }) {
                const parentId = replyingToMessage?.replyToId
                   ? replyingToMessage.replyToId
                   : replyingToMessage?.id
-               create(content, parentId)
+               create(
+                  content,
+                  parentId,
+                  hasAttachments ? attachments.uploaded : undefined,
+               )
             }
             setReplyingToMessageId(null)
             setContent((prev) => ({
                ...prev,
                [params.orderId]: "",
             }))
+            attachments.clear()
 
             onSuccess?.()
          }}
-         className="z-60 max-h-[50svh] overflow-auto border-neutral border-t bg-background"
+         className="relative z-60 max-h-[50svh] overflow-auto border-neutral border-t bg-background"
       >
          {replyingToMessage && (
             <div className="flex w-full items-center justify-between gap-2 border-neutral border-b bg-surface-2 px-3 py-2 text-muted text-sm">
@@ -112,6 +128,17 @@ export function CreateOrderMessage({ onSuccess }: { onSuccess?: () => void }) {
                >
                   <Icons.xMark />
                </Button>
+            </div>
+         )}
+         {attachments.uploaded.length > 0 && (
+            <div className="flex flex-wrap gap-2 border-neutral border-b px-3.5 py-2 md:px-5">
+               {attachments.uploaded.map((file) => (
+                  <UploadedAttachment
+                     key={file.id}
+                     file={file}
+                     onRemove={() => attachments.remove(file.id)}
+                  />
+               ))}
             </div>
          )}
          <div className="flex w-full items-end gap-2 pr-1.75 pl-3.5 md:pr-2.5 md:pl-5">
@@ -138,16 +165,34 @@ export function CreateOrderMessage({ onSuccess }: { onSuccess?: () => void }) {
                      return formRef.current?.requestSubmit()
                   }
                }}
+               onPaste={(e) => attachments.onPaste(e)}
             />
             <Button
+               type="button"
+               onClick={() => fileUploaderRef.current?.click()}
+               className={"sticky bottom-1.5 rounded-full md:bottom-2.25"}
+               kind={"icon"}
+               variant={"ghost"}
+            >
+               <Icons.paperClip />
+            </Button>
+            <Button
                type="submit"
-               disabled={content.trim().length === 0}
+               disabled={
+                  content.trim().length === 0 &&
+                  attachments.uploaded.length === 0
+               }
                className={"sticky bottom-1.5 rounded-full md:bottom-2.25"}
                kind={"icon"}
             >
                {editingMessageId ? <Icons.check /> : <Icons.arrowUp />}
             </Button>
          </div>
+         <FileUploader
+            ref={fileUploaderRef}
+            className="absolute inset-0 z-9 h-full"
+            onUpload={attachments.upload.mutateAsync}
+         />
       </form>
    )
 }

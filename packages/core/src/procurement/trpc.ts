@@ -3,10 +3,8 @@ import {
    createAttachmentsSchema,
 } from "@unfiddle/core/attachment/schema"
 import type { Attachment } from "@unfiddle/core/attachment/types"
-import {
-   procurement,
-   updateProcurementSchema,
-} from "@unfiddle/core/procurement/schema"
+import { procurement } from "@unfiddle/core/procurement/schema"
+import { updateProcurementSchema } from "@unfiddle/core/procurement/zod"
 import { t } from "@unfiddle/core/trpc/context"
 import { workspaceMemberMiddleware } from "@unfiddle/core/workspace/middleware"
 import { and, desc, eq } from "drizzle-orm"

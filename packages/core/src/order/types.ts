@@ -6,7 +6,7 @@ import type {
    ORDER_STATUSES,
 } from "@unfiddle/core/order/constants"
 import type { OrderItem } from "@unfiddle/core/order/item/types"
-import type { updateOrderMessageSchema } from "@unfiddle/core/order/message/schema"
+import type { updateOrderMessageSchema } from "@unfiddle/core/order/message/zod"
 import type { updateOrderSchema } from "@unfiddle/core/order/schema"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import type { z } from "zod"

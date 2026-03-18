@@ -1,6 +1,11 @@
 import { ATTACHMENT_SUBJECT_TYPES } from "@unfiddle/core/attachment/constants"
 import { d } from "@unfiddle/core/database"
-import { order, procurement, user } from "@unfiddle/core/database/schema"
+import {
+   order,
+   orderMessage,
+   procurement,
+   user,
+} from "@unfiddle/core/database/schema"
 import { workspace } from "@unfiddle/core/workspace/schema"
 import { relations } from "drizzle-orm"
 import { createInsertSchema } from "drizzle-zod"
@@ -42,6 +47,10 @@ export const attachmentRelations = relations(attachment, ({ one }) => ({
    procurement: one(procurement, {
       fields: [attachment.subjectId],
       references: [procurement.id],
+   }),
+   orderMessage: one(orderMessage, {
+      fields: [attachment.subjectId],
+      references: [orderMessage.id],
    }),
    creator: one(user, {
       fields: [attachment.creatorId],

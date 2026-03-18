@@ -1,3 +1,4 @@
+import { UploadedAttachment } from "@/attachment/components/uploaded-attachment"
 import { useAuth } from "@/auth/hooks"
 import { useDeleteOrderMessage } from "@/order/message/mutations"
 import {
@@ -279,32 +280,44 @@ function MessageBubble({
                <div className="line-clamp-1">{message.reply.content}</div>
             </div>
          )}
-         <Tooltip>
-            <TooltipTrigger
-               className={cn(
-                  "wrap-anywhere relative select-text whitespace-pre-wrap text-left",
-                  roundedClasses,
-                  {
-                     "bg-surface-4": !viewerIsSender && !hasReactionsOnly,
-                     "bg-primary-7 text-white selection:bg-surface-12":
-                        viewerIsSender && !hasReactionsOnly,
-                     //  'bg-quaternary text-tertiary': message.discarded_at && !hasReactionsOnly,
-                     "px-3.5 py-2 lg:px-3": !hasReactionsOnly,
-                     //  'ring-2 ring-[--bg-primary]': message.reply && !hasReactionsOnly,
-                     //  'rounded-tr': viewerIsSender && message.reply,
-                     //  'rounded-tl': !viewerIsSender && message.reply,
-                  },
-               )}
-            >
-               {message.content}
-            </TooltipTrigger>
-            <TooltipPopup>
-               {formatDate(message.createdAt, {
-                  dateStyle: "long",
-                  timeStyle: "short",
-               })}
-            </TooltipPopup>
-         </Tooltip>
+         {message.content && (
+            <Tooltip>
+               <TooltipTrigger
+                  className={cn(
+                     "wrap-anywhere relative select-text whitespace-pre-wrap text-left",
+                     roundedClasses,
+                     {
+                        "bg-surface-4": !viewerIsSender && !hasReactionsOnly,
+                        "bg-primary-7 text-white selection:bg-surface-12":
+                           viewerIsSender && !hasReactionsOnly,
+                        //  'bg-quaternary text-tertiary': message.discarded_at && !hasReactionsOnly,
+                        "px-3.5 py-2 lg:px-3": !hasReactionsOnly,
+                        //  'ring-2 ring-[--bg-primary]': message.reply && !hasReactionsOnly,
+                        //  'rounded-tr': viewerIsSender && message.reply,
+                        //  'rounded-tl': !viewerIsSender && message.reply,
+                     },
+                  )}
+               >
+                  {message.content}
+               </TooltipTrigger>
+               <TooltipPopup>
+                  {formatDate(message.createdAt, {
+                     dateStyle: "long",
+                     timeStyle: "short",
+                  })}
+               </TooltipPopup>
+            </Tooltip>
+         )}
+         {message.attachments && message.attachments.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+               {message.attachments.map((file) => (
+                  <UploadedAttachment
+                     key={file.id}
+                     file={file}
+                  />
+               ))}
+            </div>
+         )}
       </div>
    )
 }

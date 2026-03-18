@@ -1,3 +1,4 @@
+import type { UploadedAttachment } from "@/attachment/types"
 import { useAuth } from "@/auth/hooks"
 import { createId } from "@/id"
 import { orderMessageCollection } from "@/order/message/collection"
@@ -12,7 +13,11 @@ export function useCreateOrderMessage() {
    const socket = useSocket()
    const collection = orderMessageCollection(params.orderId, auth.workspace.id)
 
-   return (content: string, replyToId?: string) => {
+   return (
+      content: string,
+      replyToId?: string,
+      attachments?: UploadedAttachment[],
+   ) => {
       const id = createId("order_message")
 
       const replyMessage = replyToId ? collection.get(replyToId) : null
@@ -39,6 +44,16 @@ export function useCreateOrderMessage() {
                  creator: replyMessage.creator,
               }
             : null,
+         attachments:
+            attachments?.map((a) => ({
+               id: a.id,
+               name: a.name,
+               type: a.type,
+               url: a.url,
+               size: a.size,
+               width: a.width ?? null,
+               height: a.height ?? null,
+            })) ?? [],
       })
 
       const message = collection.get(id)
