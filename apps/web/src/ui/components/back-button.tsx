@@ -9,8 +9,8 @@ export function BackButton({
 
    return (
       <Button
-         onClick={() => {
-            if (onClick) return onClick()
+         onClick={(e) => {
+            if (onClick) return onClick(e)
             router.history.back()
          }}
          {...props}
