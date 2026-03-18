@@ -35,6 +35,7 @@ export const procurement = d.table(
          .text({ enum: PROCUREMENT_STATUSES })
          .notNull()
          .default("pending"),
+      deliversAt: d.integer({ mode: "timestamp" }),
       note: d.text().default(""),
       provider: d.text(),
       ...d.timestamps,

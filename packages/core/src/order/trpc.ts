@@ -546,7 +546,8 @@ export const orderRouter = t.router({
                   .array(createInsertSchema(orderItem).omit({ orderId: true }))
                   .min(1),
                attachments: createAttachmentsSchema,
-            }),
+            })
+            .required({ deliversAt: true }),
       )
       .mutation(async ({ ctx, input }) => {
          const existingCounter = await ctx.db.query.orderCounter.findFirst({

@@ -32,6 +32,7 @@ describe("CreateProcurement form", () => {
                note: input.note ?? null,
                orderItemId,
                provider: input.provider ?? null,
+               deliversAt: input.deliversAt ?? null,
                attachments: [],
                createdAt: new Date(),
                updatedAt: new Date(),
@@ -49,6 +50,7 @@ describe("CreateProcurement form", () => {
       await user.type(popup.getByLabelText("Кількість"), "1")
       await user.type(popup.getByLabelText("Ціна"), "1.1")
       await user.type(popup.getByLabelText("Постачальник"), "mock")
+      await user.type(popup.getByLabelText("Термін постачання"), "2025-12-31")
       await user.type(popup.getByLabelText("Комент"), "mock")
 
       await user.click(popup.getByText("Додати"))

@@ -5,6 +5,7 @@ import { useOrder } from "@/order/hooks"
 import { CURRENCY_SYMBOLS } from "@unfiddle/core/currency/constants"
 import type { Procurement } from "@unfiddle/core/procurement/types"
 import { Button } from "@unfiddle/ui/components/button"
+import { DateInput } from "@unfiddle/ui/components/date-input"
 import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { NumberField } from "@unfiddle/ui/components/number-field"
@@ -26,6 +27,7 @@ type FormData = {
    purchasePrice: string
    provider: string
    orderItemId: string
+   deliversAt: Date
 }
 
 export function ProcurementForm({
@@ -38,6 +40,9 @@ export function ProcurementForm({
    children: React.ReactNode
 }) {
    const order = useOrder()
+   const [deliversAt, setDeliversAt] = React.useState<Date | null>(
+      procurement?.deliversAt ?? null,
+   )
    const formRef = React.useRef<HTMLFormElement>(null)
    const fileUploaderRef = React.useRef<HTMLDivElement>(null)
    const attachments = useAttachments({
@@ -56,7 +61,8 @@ export function ProcurementForm({
             }
 
             requestAnimationFrame(() => {
-               onSubmit(formData<FormData>(e.target))
+               if (!deliversAt) return
+               onSubmit({ ...formData<FormData>(e.target), deliversAt })
             })
          }}
       >
@@ -123,14 +129,25 @@ export function ProcurementForm({
                />
             </Field>
          </div>
-         <Field>
-            <FieldLabel>Постачальник</FieldLabel>
-            <FieldControl
-               name="provider"
-               placeholder="Уведіть постачальника"
-               defaultValue={procurement?.provider ?? ""}
-            />
-         </Field>
+         <div className="grid grid-cols-2 gap-3">
+            <Field>
+               <FieldLabel>Постачальник</FieldLabel>
+               <FieldControl
+                  name="provider"
+                  placeholder="Уведіть постачальника"
+                  defaultValue={procurement?.provider ?? ""}
+               />
+            </Field>
+            <Field>
+               <FieldLabel>Термін постачання</FieldLabel>
+               <DateInput
+                  required
+                  inDialog
+                  value={deliversAt}
+                  onValueChange={setDeliversAt}
+               />
+            </Field>
+         </div>
          <div>
             <Field>
                <FieldLabel>Комент</FieldLabel>

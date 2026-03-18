@@ -51,6 +51,7 @@ export function CreateProcurement() {
                      orderId: order.id,
                      purchasePrice: number(form.purchasePrice),
                      quantity: number(form.quantity),
+                     deliversAt: form.deliversAt,
                      attachments: attachments.uploaded,
                   })
                }

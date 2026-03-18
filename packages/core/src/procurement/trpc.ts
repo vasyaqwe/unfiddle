@@ -36,6 +36,7 @@ export const procurementRouter = t.router({
                note: true,
                provider: true,
                orderItemId: true,
+               deliversAt: true,
                createdAt: true,
             },
             with: {
@@ -65,9 +66,12 @@ export const procurementRouter = t.router({
    create: t.procedure
       .use(workspaceMemberMiddleware)
       .input(
-         createInsertSchema(procurement).omit({ creatorId: true }).extend({
-            attachments: createAttachmentsSchema,
-         }),
+         createInsertSchema(procurement)
+            .omit({ creatorId: true })
+            .extend({
+               attachments: createAttachmentsSchema,
+            })
+            .required({ deliversAt: true }),
       )
       .mutation(async ({ ctx, input }) => {
          const createdProcurement = await ctx.db

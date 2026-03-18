@@ -327,6 +327,7 @@ function Form({
                   id="term"
                   value={deliversAt}
                   onValueChange={setDeliversAt}
+                  required
                />
             </Field>
             <FieldGroup>

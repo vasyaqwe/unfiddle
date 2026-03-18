@@ -117,6 +117,7 @@ export function Procurement({
    }
 
    const provider = procurement.provider
+   const deliversAt = procurement.deliversAt
 
    return (
       <div className="gap-3 border-neutral border-t p-3 text-left first:border-none lg:gap-4 lg:p-2 lg:pl-3">
@@ -150,6 +151,17 @@ export function Procurement({
                         Натисніть щоб скопіювати постачальника
                      </TooltipPopup>
                   </Tooltip>
+               ) : null}
+               {deliversAt ? (
+                  <Badge
+                     size={"sm"}
+                     variant="secondary"
+                  >
+                     До{" "}
+                     {formatDate(deliversAt, {
+                        dateStyle: "short",
+                     })}
+                  </Badge>
                ) : null}
                <Combobox
                   value={procurement.status}

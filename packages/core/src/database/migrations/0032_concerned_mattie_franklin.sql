@@ -1,0 +1,1 @@
+ALTER TABLE `procurement` ADD `delivers_at` integer;
