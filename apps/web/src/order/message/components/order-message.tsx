@@ -391,7 +391,7 @@ function MessageAttachments({ message }: { message: OrderMessageType }) {
                      key={attachment.id}
                      src={attachment.url}
                      alt={attachment.name}
-                     className="w-[calc(var(--base-width)*var(--aspect-ratio))] cursor-pointer rounded-xl border border-neutral object-cover transition-opacity hover:opacity-80"
+                     className="w-full max-w-[calc(var(--base-width)*var(--aspect-ratio))] cursor-pointer rounded-xl border border-neutral object-cover transition-opacity hover:opacity-80"
                   />
                )
             })}

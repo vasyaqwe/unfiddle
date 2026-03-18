@@ -23,6 +23,8 @@ export function useOnMessageInsert(
    cb: (viewerIsSender: boolean) => void,
 ) {
    const prevRowsLengthRef = React.useRef<number | null>(null)
+   const cbRef = React.useRef(cb)
+   cbRef.current = cb
    const auth = useAuth()
 
    React.useLayoutEffect(() => {
@@ -33,10 +35,10 @@ export function useOnMessageInsert(
       ) {
          const lastMessage = rows[rows.length - 1]
          const viewerIsSender = lastMessage?.message?.creatorId === auth.user.id
-         cb(viewerIsSender)
+         cbRef.current(viewerIsSender)
       }
       prevRowsLengthRef.current = rows.length
-   }, [rows.length, auth.user.id, cb])
+   }, [rows.length, auth.user.id])
 }
 
 export function useOnMessageDelete(
