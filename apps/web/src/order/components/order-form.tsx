@@ -323,11 +323,11 @@ function Form({
                   Термін постачання
                </label>
                <DateInput
+                  required
                   inDialog
                   id="term"
                   value={deliversAt}
                   onValueChange={setDeliversAt}
-                  required
                />
             </Field>
             <FieldGroup>

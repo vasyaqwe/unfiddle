@@ -139,10 +139,16 @@ export function ProcurementForm({
                />
             </Field>
             <Field>
-               <FieldLabel>Термін постачання</FieldLabel>
+               <label
+                  htmlFor="term"
+                  className="font-medium text-sm"
+               >
+                  Термін постачання
+               </label>
                <DateInput
                   required
                   inDialog
+                  id="term"
                   value={deliversAt}
                   onValueChange={setDeliversAt}
                />
