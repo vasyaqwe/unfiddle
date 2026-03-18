@@ -1,4 +1,7 @@
+import { UploadedAttachment } from "@/attachment/components/uploaded-attachment"
+import { useAttachments } from "@/attachment/hooks"
 import { useAuth } from "@/auth/hooks"
+import { FileUploader } from "@/file/components/uploader"
 import {
    useCreateOrderMessage,
    useUpdateOrderMessage,
@@ -31,9 +34,13 @@ export function CreateOrderMessage({ onSuccess }: { onSuccess?: () => void }) {
 
    const formRef = React.useRef<HTMLFormElement>(null)
    const textareaRef = React.useRef<HTMLTextAreaElement>(null)
+   const fileUploaderRef = React.useRef<HTMLDivElement>(null)
 
    const create = useCreateOrderMessage()
    const update = useUpdateOrderMessage()
+   const attachments = useAttachments({
+      subjectId: `${params.orderId}_message`,
+   })
 
    const { data: messages } = useOrderMessagesQuery(params.orderId)
 
@@ -48,6 +55,7 @@ export function CreateOrderMessage({ onSuccess }: { onSuccess?: () => void }) {
          ...prev,
          [params.orderId]: "",
       }))
+      attachments.clear()
    }
 
    useHotkeys(["Esc"], cancelEditing)
@@ -66,88 +74,133 @@ export function CreateOrderMessage({ onSuccess }: { onSuccess?: () => void }) {
    }, [])
 
    return (
-      <form
-         ref={formRef}
-         onSubmit={async (e) => {
-            e.preventDefault()
-            if (content.trim().length === 0) return
+      <>
+         <form
+            ref={formRef}
+            onSubmit={async (e) => {
+               e.preventDefault()
+               const hasContent = content.trim().length > 0
+               const hasAttachments = attachments.uploaded.length > 0
 
-            if (editingMessageId) {
-               update(editingMessageId, content)
-               setEditingMessageId(null)
-            } else {
-               const parentId = replyingToMessage?.replyToId
-                  ? replyingToMessage.replyToId
-                  : replyingToMessage?.id
-               create(content, parentId)
-            }
-            setReplyingToMessageId(null)
-            setContent((prev) => ({
-               ...prev,
-               [params.orderId]: "",
-            }))
+               if (!hasContent && !hasAttachments) return
 
-            onSuccess?.()
-         }}
-         className="z-60 max-h-[50svh] overflow-auto border-neutral border-t bg-background"
-      >
-         {replyingToMessage && (
-            <div className="flex w-full items-center justify-between gap-2 border-neutral border-b bg-surface-2 px-3 py-2 text-muted text-sm">
-               <div className="flex w-full items-center gap-2">
-                  <Icons.arrowDownLeft className="size-4 shrink-0" />
-                  <span className="line-clamp-1">
-                     Відповідь до{" "}
-                     {replyingToMessage.creator.id === auth.user.id
-                        ? "себе"
-                        : replyingToMessage.creator.name}{" "}
-                     '{replyingToMessage.content}'
-                  </span>
+               if (editingMessageId) {
+                  update(editingMessageId, content)
+                  setEditingMessageId(null)
+               } else {
+                  const parentId = replyingToMessage?.replyToId
+                     ? replyingToMessage.replyToId
+                     : replyingToMessage?.id
+                  create(
+                     content,
+                     parentId,
+                     hasAttachments ? attachments.uploaded : undefined,
+                  )
+               }
+               setReplyingToMessageId(null)
+               setContent((prev) => ({
+                  ...prev,
+                  [params.orderId]: "",
+               }))
+               attachments.clear()
+
+               onSuccess?.()
+            }}
+            className="relative z-60 max-h-[50svh] overflow-auto border-neutral border-t bg-background"
+         >
+            {replyingToMessage && (
+               <div className="flex w-full items-center justify-between gap-2 border-neutral border-b bg-surface-2 px-3 py-2 text-muted text-sm">
+                  <div className="flex w-full items-center gap-2">
+                     <Icons.arrowDownLeft className="size-4 shrink-0" />
+                     <span className="line-clamp-1">
+                        Відповідь до{" "}
+                        {replyingToMessage.creator.id === auth.user.id
+                           ? "себе"
+                           : replyingToMessage.creator.name}{" "}
+                        {replyingToMessage.content.length === 0
+                           ? null
+                           : `'${replyingToMessage.content}'`}
+                     </span>
+                  </div>
+                  <Button
+                     type="button"
+                     kind="icon"
+                     variant="ghost"
+                     size="sm"
+                     onClick={() => setReplyingToMessageId(null)}
+                  >
+                     <Icons.xMark />
+                  </Button>
                </div>
+            )}
+            {attachments.uploaded.length > 0 && (
+               <div className="flex flex-wrap gap-2 px-3 pt-3">
+                  {attachments.uploaded.map((file) => (
+                     <UploadedAttachment
+                        key={file.id}
+                        file={file}
+                        onRemove={() => attachments.remove(file.id)}
+                     />
+                  ))}
+               </div>
+            )}
+            <div className="flex w-full items-end gap-2 pr-1.75 pl-1.5 md:pr-2.5 md:pl-2.5">
                <Button
                   type="button"
-                  kind="icon"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setReplyingToMessageId(null)}
+                  onClick={() => fileUploaderRef.current?.click()}
+                  className={"sticky bottom-1.5 rounded-full md:bottom-2.25"}
+                  kind={"icon"}
+                  variant={"ghost"}
                >
-                  <Icons.xMark />
+                  <Icons.paperClip />
+               </Button>
+               <Textarea
+                  data-chat-content
+                  ref={textareaRef}
+                  className="border-b-0 pt-3.5! pb-3.5! md:pt-3.5! md:pb-3.5!"
+                  placeholder="Напишіть повідомлення..."
+                  value={content}
+                  onChange={(e) =>
+                     setContent((prev) => ({
+                        ...prev,
+                        [params.orderId]: e.target.value,
+                     }))
+                  }
+                  onKeyDown={(e) => {
+                     if (e.key === "Escape") return cancelEditing()
+
+                     if (
+                        e.key === "Enter" &&
+                        content.length === 0 &&
+                        attachments.uploaded.length === 0
+                     )
+                        return e.preventDefault()
+
+                     if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault()
+                        return formRef.current?.requestSubmit()
+                     }
+                  }}
+                  onPaste={(e) => attachments.onPaste(e)}
+               />
+               <Button
+                  type="submit"
+                  disabled={
+                     content.trim().length === 0 &&
+                     attachments.uploaded.length === 0
+                  }
+                  className={"sticky bottom-1.5 rounded-full md:bottom-2.25"}
+                  kind={"icon"}
+               >
+                  {editingMessageId ? <Icons.check /> : <Icons.arrowUp />}
                </Button>
             </div>
-         )}
-         <div className="flex w-full items-end gap-2 pr-1.75 pl-3.5 md:pr-2.5 md:pl-5">
-            <Textarea
-               data-chat-content
-               ref={textareaRef}
-               className="border-b-0 pt-3.5! pb-3.5! md:pt-3.5! md:pb-3.5!"
-               placeholder="Напишіть повідомлення..."
-               value={content}
-               onChange={(e) =>
-                  setContent((prev) => ({
-                     ...prev,
-                     [params.orderId]: e.target.value,
-                  }))
-               }
-               onKeyDown={(e) => {
-                  if (e.key === "Escape") return cancelEditing()
-
-                  if (e.key === "Enter" && content.length === 0)
-                     return e.preventDefault()
-
-                  if (e.key === "Enter" && !e.shiftKey) {
-                     e.preventDefault()
-                     return formRef.current?.requestSubmit()
-                  }
-               }}
-            />
-            <Button
-               type="submit"
-               disabled={content.trim().length === 0}
-               className={"sticky bottom-1.5 rounded-full md:bottom-2.25"}
-               kind={"icon"}
-            >
-               {editingMessageId ? <Icons.check /> : <Icons.arrowUp />}
-            </Button>
-         </div>
-      </form>
+         </form>
+         <FileUploader
+            ref={fileUploaderRef}
+            className="absolute inset-0 z-9"
+            onUpload={attachments.upload.mutateAsync}
+         />
+      </>
    )
 }

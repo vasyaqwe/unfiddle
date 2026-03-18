@@ -16,3 +16,11 @@ export const number = (str: string) => {
    // const result = parseFloat(cleanedStr)
    // return Number.isNaN(result) ? 0 : result
 }
+
+export const formatList = (items: string[], locale = "uk") => {
+   const formatter = new Intl.ListFormat(locale, {
+      style: "long",
+      type: "conjunction",
+   })
+   return formatter.format(items)
+}

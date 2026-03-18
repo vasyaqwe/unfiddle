@@ -40,7 +40,7 @@ import {
    useQueryClient,
    useSuspenseQuery,
 } from "@tanstack/react-query"
-import { Link, createFileRoute } from "@tanstack/react-router"
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
 import { formatDate } from "@unfiddle/core/date"
 import { makeShortId } from "@unfiddle/core/id"
@@ -74,6 +74,7 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
    const params = Route.useParams()
+   const navigate = useNavigate()
    const auth = useAuth()
    const order = useOrder()
    const update = useUpdateOrder()
@@ -139,8 +140,11 @@ function RouteComponent() {
 
    return (
       <>
-         <Header className="md:flex md:pr-1.75">
-            <HeaderBackButton className={"mr-1.5 md:flex"} />
+         <Header className="md:flex md:px-1.75">
+            <HeaderBackButton
+               className={"mr-1.5 md:flex"}
+               onClick={() => navigate({ to: "/$workspaceId", params })}
+            />
             <HeaderTitle className="line-clamp-1">
                <span className="md:hidden">Замовлення</span>{" "}
                {makeShortId(order.shortId)}

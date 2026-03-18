@@ -1,6 +1,6 @@
 import { user } from "@unfiddle/core/auth/schema"
 import { d } from "@unfiddle/core/database"
-import { estimateItem } from "@unfiddle/core/database/schema"
+import { estimateItem } from "@unfiddle/core/estimate/item/schema"
 import { estimate } from "@unfiddle/core/estimate/schema"
 import { workspace } from "@unfiddle/core/workspace/schema"
 import { relations } from "drizzle-orm"

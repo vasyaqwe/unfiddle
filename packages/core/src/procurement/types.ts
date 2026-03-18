@@ -1,5 +1,5 @@
 import type { PROCUREMENT_STATUSES } from "@unfiddle/core/procurement/constants"
-import type { updateProcurementSchema } from "@unfiddle/core/procurement/schema"
+import type { updateProcurementSchema } from "@unfiddle/core/procurement/zod"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import type { z } from "zod"
 

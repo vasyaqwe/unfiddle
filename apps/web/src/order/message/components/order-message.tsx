@@ -1,4 +1,5 @@
 import { useAuth } from "@/auth/hooks"
+import { FileItem } from "@/file/components/file-item"
 import { useDeleteOrderMessage } from "@/order/message/mutations"
 import {
    editingMessageIdAtom,
@@ -7,7 +8,7 @@ import {
 } from "@/order/message/store"
 import { getBorderRadiusClasses } from "@/order/message/utils"
 import { UserAvatar } from "@/user/components/user-avatar"
-import { useParams } from "@tanstack/react-router"
+import { useNavigate, useParams } from "@tanstack/react-router"
 import { formatDate } from "@unfiddle/core/date"
 import type {
    OrderMessagePosition,
@@ -28,6 +29,11 @@ import {
 } from "@unfiddle/ui/components/tooltip"
 import { cn } from "@unfiddle/ui/utils"
 import { useSetAtom } from "jotai"
+import * as React from "react"
+
+const AttachmentLightbox = React.lazy(
+   () => import("@/attachment/components/attachment-lightbox"),
+)
 
 export function OrderMessage({
    message,
@@ -120,7 +126,7 @@ function MessageContent({ children, ...props }: React.ComponentProps<"div">) {
    return (
       <div
          className={
-            "group/message relative mb-0.5 not-data-has-avatar:ml-10 flex flex-1 flex-col items-start transition-opacity data-viewer-is-sender:items-end"
+            "group/message relative mb-0.5 not-data-has-avatar:ml-10 flex min-w-0 flex-1 flex-col items-start transition-opacity data-viewer-is-sender:items-end"
          }
          {...props}
       >
@@ -276,35 +282,120 @@ function MessageBubble({
                   <Icons.arrowDownLeft className="mt-0.5 size-3 shrink-0" />
                   {message.reply.creator.name}
                </div>
-               <div className="line-clamp-1">{message.reply.content}</div>
+               <div className="line-clamp-1">
+                  {message.reply.content.length === 0
+                     ? null
+                     : message.reply.content}
+               </div>
             </div>
          )}
-         <Tooltip>
-            <TooltipTrigger
-               className={cn(
-                  "wrap-anywhere relative select-text whitespace-pre-wrap text-left",
-                  roundedClasses,
-                  {
-                     "bg-surface-4": !viewerIsSender && !hasReactionsOnly,
-                     "bg-primary-7 text-white selection:bg-surface-12":
-                        viewerIsSender && !hasReactionsOnly,
-                     //  'bg-quaternary text-tertiary': message.discarded_at && !hasReactionsOnly,
-                     "px-3.5 py-2 lg:px-3": !hasReactionsOnly,
-                     //  'ring-2 ring-[--bg-primary]': message.reply && !hasReactionsOnly,
-                     //  'rounded-tr': viewerIsSender && message.reply,
-                     //  'rounded-tl': !viewerIsSender && message.reply,
-                  },
-               )}
-            >
-               {message.content}
-            </TooltipTrigger>
-            <TooltipPopup>
-               {formatDate(message.createdAt, {
-                  dateStyle: "long",
-                  timeStyle: "short",
-               })}
-            </TooltipPopup>
-         </Tooltip>
+         {message.content && (
+            <Tooltip>
+               <TooltipTrigger
+                  className={cn(
+                     "wrap-anywhere relative select-text whitespace-pre-wrap text-left",
+                     roundedClasses,
+                     {
+                        "bg-surface-4": !viewerIsSender && !hasReactionsOnly,
+                        "bg-primary-7 text-white selection:bg-surface-12":
+                           viewerIsSender && !hasReactionsOnly,
+                        //  'bg-quaternary text-tertiary': message.discarded_at && !hasReactionsOnly,
+                        "px-3.5 py-2 lg:px-3": !hasReactionsOnly,
+                        //  'ring-2 ring-[--bg-primary]': message.reply && !hasReactionsOnly,
+                        //  'rounded-tr': viewerIsSender && message.reply,
+                        //  'rounded-tl': !viewerIsSender && message.reply,
+                     },
+                  )}
+               >
+                  {message.content}
+               </TooltipTrigger>
+               <TooltipPopup>
+                  {formatDate(message.createdAt, {
+                     dateStyle: "long",
+                     timeStyle: "short",
+                  })}
+               </TooltipPopup>
+            </Tooltip>
+         )}
+         {message.attachments && message.attachments.length > 0 && (
+            <MessageAttachments message={message} />
+         )}
       </div>
+   )
+}
+
+function MessageAttachments({ message }: { message: OrderMessageType }) {
+   const navigate = useNavigate()
+   const auth = useAuth()
+   const viewerIsSender = message.creatorId === auth.user.id
+
+   // const auth = useAuth()
+   // const socket = useSocket()
+   // const queryClient = useQueryClient()
+   // const params = useParams({
+   //    from: "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/chat",
+   // })
+
+   const imageAttachments = message.attachments.filter(
+      (attachment) =>
+         attachment.type.startsWith("image/") &&
+         !attachment.name.endsWith(".svg"),
+   )
+   const otherAttachments = message.attachments.filter(
+      (attachment) =>
+         !attachment.type.startsWith("image/") ||
+         attachment.name.endsWith(".svg"),
+   )
+
+   return (
+      <>
+         {otherAttachments.length > 0 && (
+            <div
+               data-viewer-is-sender={viewerIsSender ? "" : undefined}
+               className="my-px flex flex-wrap gap-1 data-viewer-is-sender:justify-end"
+            >
+               {otherAttachments.map((attachment) => (
+                  <FileItem
+                     key={attachment.id}
+                     attachment={attachment}
+                     subjectId={message.id}
+                  />
+               ))}
+            </div>
+         )}
+         <React.Suspense fallback={null}>
+            <AttachmentLightbox attachments={imageAttachments} />
+         </React.Suspense>
+         <div
+            data-viewer-is-sender={viewerIsSender ? "" : undefined}
+            className="flex min-w-0 flex-wrap gap-1 [--base-width:160px] data-viewer-is-sender:justify-end md:[--base-width:220px]"
+         >
+            {imageAttachments.map((attachment) => {
+               const { width, height } = attachment
+               const aspectRatio = width && height ? width / height : 1
+
+               return (
+                  <img
+                     onClick={() => {
+                        navigate({
+                           to: ".",
+                           search: { attachmentId: attachment.id },
+                        })
+                     }}
+                     style={
+                        {
+                           aspectRatio,
+                           "--aspect-ratio": aspectRatio,
+                        } as never
+                     }
+                     key={attachment.id}
+                     src={attachment.url}
+                     alt={attachment.name}
+                     className="w-full max-w-[calc(var(--base-width)*var(--aspect-ratio))] cursor-pointer rounded-xl border border-neutral object-cover transition-opacity hover:opacity-80"
+                  />
+               )
+            })}
+         </div>
+      </>
    )
 }

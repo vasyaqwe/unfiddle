@@ -73,7 +73,7 @@ function RouteComponent() {
 
    return (
       <div className="flex grow">
-         <div className="flex grow flex-col">
+         <div className="relative flex grow flex-col">
             <Outlet />
          </div>
          <div

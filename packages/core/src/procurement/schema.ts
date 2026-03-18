@@ -1,16 +1,11 @@
-import {
-   attachment,
-   createAttachmentsSchema,
-} from "@unfiddle/core/attachment/schema"
+import { attachment } from "@unfiddle/core/attachment/schema"
 import { user } from "@unfiddle/core/auth/schema"
 import { d } from "@unfiddle/core/database"
-import { orderItem } from "@unfiddle/core/database/schema"
+import { orderItem } from "@unfiddle/core/order/item/schema"
 import { order } from "@unfiddle/core/order/schema"
 import { PROCUREMENT_STATUSES } from "@unfiddle/core/procurement/constants"
 import { workspace } from "@unfiddle/core/workspace/schema"
 import { relations } from "drizzle-orm"
-import { createUpdateSchema } from "drizzle-zod"
-import { z } from "zod"
 
 export const procurement = d.table(
    "procurement",
@@ -62,20 +57,3 @@ export const procurementRelations = relations(procurement, ({ one, many }) => ({
    }),
    attachments: many(attachment),
 }))
-
-export const updateProcurementSchema = createUpdateSchema(procurement)
-   .pick({
-      note: true,
-      quantity: true,
-      status: true,
-      purchasePrice: true,
-      provider: true,
-      workspaceId: true,
-      orderItemId: true,
-      orderId: true,
-   })
-   .required({ workspaceId: true, orderId: true })
-   .extend({
-      procurementId: z.string(),
-      attachments: createAttachmentsSchema,
-   })
