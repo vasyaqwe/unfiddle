@@ -98,12 +98,18 @@ function Message({
          )}
       >
          {hasAvatar && (
-            <span className="-translate-y-1.5 self-end">
-               <UserAvatar
-                  size={32}
-                  user={message.creator}
-               />
-            </span>
+            <Tooltip>
+               <TooltipTrigger
+                  delay={0}
+                  className="-translate-y-1.5 self-end"
+               >
+                  <UserAvatar
+                     size={32}
+                     user={message.creator}
+                  />
+               </TooltipTrigger>
+               <TooltipPopup>{message.creator.name}</TooltipPopup>
+            </Tooltip>
          )}
          <MessageContent
             data-has-avatar={hasAvatar ? "" : undefined}
