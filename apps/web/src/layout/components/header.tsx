@@ -132,3 +132,22 @@ export function HeaderTitle({
       />
    )
 }
+
+export function HeaderSeparator() {
+   return (
+      <svg
+         viewBox="0 0 15 15"
+         fill="none"
+         xmlns="http://www.w3.org/2000/svg"
+         className="-mt-0.5 inline-block size-5 md:size-4"
+      >
+         <path
+            d="M12 3.5L4 11.5"
+            stroke="currentColor"
+            strokeWidth="1.33"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+         />
+      </svg>
+   )
+}

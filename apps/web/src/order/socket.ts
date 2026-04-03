@@ -113,7 +113,7 @@ export function useOrderSocket() {
                title: data.message.creator.name,
                body:
                   data.message.content.length === 0
-                     ? "Надіслав файли"
+                     ? "Надіслав(-ла) файли"
                      : data.message.content,
                icon: data.message.creator.image,
                onClick: () => {

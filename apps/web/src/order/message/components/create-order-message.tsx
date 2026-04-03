@@ -1,17 +1,18 @@
 import { UploadedAttachment } from "@/attachment/components/uploaded-attachment"
 import { useAttachments } from "@/attachment/hooks"
 import { useAuth } from "@/auth/hooks"
+import {
+   editingMessageIdAtom,
+   messageContentAtom,
+   replyingToMessageIdAtom,
+} from "@/chat/store"
 import { FileUploader } from "@/file/components/uploader"
+import { useFocusOnTabFocus } from "@/interactions/use-focus-on-tab-focus"
 import {
    useCreateOrderMessage,
    useUpdateOrderMessage,
 } from "@/order/message/mutations"
 import { useOrderMessagesQuery } from "@/order/message/queries"
-import {
-   editingMessageIdAtom,
-   messageContentAtom,
-   replyingToMessageIdAtom,
-} from "@/order/message/store"
 import { useParams } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
 import { Icons } from "@unfiddle/ui/components/icons"
@@ -59,19 +60,7 @@ export function CreateOrderMessage({ onSuccess }: { onSuccess?: () => void }) {
    }
 
    useHotkeys(["Esc"], cancelEditing)
-
-   React.useEffect(() => {
-      textareaRef.current?.focus()
-
-      const onVisibilityChange = () => {
-         if (document.visibilityState === "visible") {
-            textareaRef.current?.focus()
-         }
-      }
-      document.addEventListener("visibilitychange", onVisibilityChange)
-      return () =>
-         document.removeEventListener("visibilitychange", onVisibilityChange)
-   }, [])
+   useFocusOnTabFocus(textareaRef)
 
    return (
       <>

@@ -1,7 +1,11 @@
 import { useAuth } from "@/auth/hooks"
+import { UnreadCountButton } from "@/chat/components/unread-count-button"
+import { editingMessageIdAtom } from "@/chat/store"
+import { groupMessages } from "@/chat/utils"
 import {
    Header,
    HeaderBackButton,
+   HeaderSeparator,
    HeaderTitle,
 } from "@/layout/components/header"
 import { MainScrollArea } from "@/layout/components/main"
@@ -16,20 +20,14 @@ import {
 } from "@/order/message/hooks"
 import { useOrderMessagesQuery } from "@/order/message/queries"
 import { useMarkMessagesAsRead } from "@/order/message/read/mutations"
-import { editingMessageIdAtom } from "@/order/message/store"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useVirtualizer } from "@tanstack/react-virtual"
-import { formatDate } from "@unfiddle/core/date"
 import { makeShortId } from "@unfiddle/core/id"
-import type { OrderMessagePosition } from "@unfiddle/core/order/message/types"
 import { Badge } from "@unfiddle/ui/components/badge"
-import { Button } from "@unfiddle/ui/components/button"
-import { Icons } from "@unfiddle/ui/components/icons"
 import { Separator } from "@unfiddle/ui/components/separator"
 import { useTabFocused } from "@unfiddle/ui/hooks/use-tab-focused"
 import { useAtomValue } from "jotai"
 import * as React from "react"
-import * as R from "remeda"
 
 export const Route = createFileRoute(
    "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/chat",
@@ -48,68 +46,7 @@ function RouteComponent() {
    const tabFocused = useTabFocused()
    const readMessages = useMarkMessagesAsRead(order.id)
 
-   const rows = React.useMemo(() => {
-      const groupedMessages = R.groupBy(query.data, (m) =>
-         formatDate(m.createdAt),
-      )
-      return Object.entries(groupedMessages).flatMap(([date, dateMessages]) => {
-         return [
-            {
-               type: "date" as const,
-               key: `date-${date}`,
-               value: date,
-               message: undefined,
-               prevMessage: undefined,
-               nextMessage: undefined,
-               position: undefined,
-            },
-            ...dateMessages.map((message, messageIdx) => {
-               const prev = dateMessages[messageIdx - 1]
-               const next = dateMessages[messageIdx + 1]
-
-               const aWhile = 10 * 60 * 1000 // 10 min
-               const isFirstMessageInAWhile =
-                  !prev ||
-                  new Date(message.createdAt).getTime() -
-                     new Date(prev.createdAt).getTime() >
-                     aWhile
-               const nextIsFirstMessageInAWhile =
-                  next &&
-                  new Date(next.createdAt).getTime() -
-                     new Date(message.createdAt).getTime() >
-                     aWhile
-
-               const sameSenderAsPrev =
-                  prev?.creatorId === message.creatorId &&
-                  !isFirstMessageInAWhile
-               const sameSenderAsNext =
-                  next?.creatorId === message.creatorId &&
-                  !nextIsFirstMessageInAWhile
-
-               let position: OrderMessagePosition
-               if (!sameSenderAsPrev && !sameSenderAsNext) {
-                  position = "only"
-               } else if (!sameSenderAsPrev) {
-                  position = "first"
-               } else if (!sameSenderAsNext) {
-                  position = "last"
-               } else {
-                  position = "middle"
-               }
-
-               return {
-                  type: "message" as const,
-                  key: message.id,
-                  value: undefined,
-                  message,
-                  prevMessage: prev,
-                  nextMessage: next,
-                  position,
-               }
-            }),
-         ]
-      })
-   }, [query.data])
+   const rows = React.useMemo(() => groupMessages(query.data), [query.data])
 
    const scrollAreaRef = React.useRef<HTMLDivElement>(null)
    const virtualizer = useVirtualizer({
@@ -165,24 +102,6 @@ function RouteComponent() {
       setUnreadCount((prev) => prev - 1)
    })
 
-   const handleReply = React.useCallback(() => {
-      const scrollElement = scrollAreaRef.current
-      if (!scrollElement) return
-
-      const isAtBottom =
-         scrollElement.scrollHeight -
-            scrollElement.scrollTop -
-            scrollElement.clientHeight <
-         100
-
-      if (isAtBottom) {
-         virtualizer.scrollToIndex(rows.length - 1, {
-            align: "end",
-            behavior: "smooth",
-         })
-      }
-   }, [virtualizer, rows.length])
-
    return (
       <>
          <Header className="md:flex md:px-1.75">
@@ -193,21 +112,7 @@ function RouteComponent() {
                }
             />
             <HeaderTitle>
-               {makeShortId(order.shortId)}{" "}
-               <svg
-                  viewBox="0 0 15 15"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="-mt-0.5 inline-block size-5 md:size-4"
-               >
-                  <path
-                     d="M12 3.5L4 11.5"
-                     stroke="currentColor"
-                     strokeWidth="1.33"
-                     strokeLinecap="round"
-                     strokeLinejoin="round"
-                  />
-               </svg>{" "}
+               {makeShortId(order.shortId)} <HeaderSeparator />
                Чат
             </HeaderTitle>
          </Header>
@@ -234,11 +139,7 @@ function RouteComponent() {
                </p>
             ) : null}
             {unreadCount === 0 ? null : (
-               <Button
-                  variant={"tertiary"}
-                  className={
-                     "fixed bottom-18 left-[calc(var(--sidebar-width)+1rem)] z-50 w-fit border-transparent bg-red-11 font-medium text-white shadow-md hover:bg-red-10 active:bg-red-11"
-                  }
+               <UnreadCountButton
                   onClick={() => {
                      virtualizer.scrollToIndex(rows.length - 1, {
                         align: "end",
@@ -246,9 +147,8 @@ function RouteComponent() {
                      setUnreadCount(0)
                   }}
                >
-                  <Icons.arrowDown className="size-4" />
                   {unreadCount}
-               </Button>
+               </UnreadCountButton>
             )}
             <VList totalSize={virtualizer.getTotalSize() + 24}>
                {editingMessageId ? (
@@ -295,7 +195,26 @@ function RouteComponent() {
                              <OrderMessage
                                 {...item}
                                 key={item.key}
-                                onReply={handleReply}
+                                onReply={() => {
+                                   const scrollElement = scrollAreaRef.current
+                                   if (!scrollElement) return
+
+                                   const isAtBottom =
+                                      scrollElement.scrollHeight -
+                                         scrollElement.scrollTop -
+                                         scrollElement.clientHeight <
+                                      100
+
+                                   if (isAtBottom) {
+                                      virtualizer.scrollToIndex(
+                                         rows.length - 1,
+                                         {
+                                            align: "end",
+                                            behavior: "smooth",
+                                         },
+                                      )
+                                   }
+                                }}
                              />
                           </VListItem>
                        )
