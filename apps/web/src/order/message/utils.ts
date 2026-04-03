@@ -1,7 +1,7 @@
-import type { OrderMessagePosition } from "@unfiddle/core/order/message/types"
+import type { ChatMessagePosition } from "@/chat/types"
 
 export const getBorderRadiusClasses = (
-   position: OrderMessagePosition,
+   position: ChatMessagePosition,
    viewerIsSender: boolean,
 ) => {
    // viewerIsSender: bubble on right, small corner on bottom-right

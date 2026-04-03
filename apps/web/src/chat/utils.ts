@@ -1,5 +1,5 @@
+import type { ChatMessagePosition } from "@/chat/types"
 import { formatDate } from "@unfiddle/core/date"
-import type { OrderMessagePosition } from "@unfiddle/core/order/message/types"
 import * as R from "remeda"
 
 type MessageRow<T> =
@@ -19,7 +19,7 @@ type MessageRow<T> =
         message: T
         prevMessage: T | undefined
         nextMessage: T | undefined
-        position: OrderMessagePosition
+        position: ChatMessagePosition
      }
 
 type MessageLike = {
@@ -66,7 +66,7 @@ export function groupMessages<T extends MessageLike>(
                next?.creatorId === message.creatorId &&
                !nextIsFirstMessageInAWhile
 
-            let position: OrderMessagePosition
+            let position: ChatMessagePosition
             if (!sameSenderAsPrev && !sameSenderAsNext) {
                position = "only"
             } else if (!sameSenderAsPrev) {
