@@ -3,6 +3,7 @@ import {} from "@unfiddle/core/attachment/schema"
 import { estimateItem } from "@unfiddle/core/database/schema"
 import { estimateFilterSchema } from "@unfiddle/core/estimate/filter"
 import { estimateItemRouter } from "@unfiddle/core/estimate/item/trpc"
+import { estimateProcurement } from "@unfiddle/core/estimate/procurement/schema"
 import {
    estimate,
    estimateCounter,
@@ -249,6 +250,14 @@ export const estimateRouter = t.router({
 
          await ctx.db.batch([
             ctx.db
+               .delete(estimateProcurement)
+               .where(
+                  and(
+                     eq(estimateProcurement.estimateId, input.estimateId),
+                     eq(estimateProcurement.workspaceId, input.workspaceId),
+                  ),
+               ),
+            ctx.db
                .delete(estimate)
                .where(
                   and(
@@ -256,14 +265,6 @@ export const estimateRouter = t.router({
                      eq(estimate.workspaceId, input.workspaceId),
                   ),
                ),
-            // ctx.db
-            //    .delete(attachment)
-            //    .where(
-            //       and(
-            //          eq(attachment.subjectId, input.estimateId),
-            //          eq(attachment.workspaceId, input.workspaceId),
-            //       ),
-            //    ),
          ])
       }),
 })
