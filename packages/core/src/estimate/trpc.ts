@@ -3,6 +3,7 @@ import {} from "@unfiddle/core/attachment/schema"
 import { estimateItem } from "@unfiddle/core/database/schema"
 import { estimateFilterSchema } from "@unfiddle/core/estimate/filter"
 import { estimateItemRouter } from "@unfiddle/core/estimate/item/trpc"
+import { estimateMessageRouter } from "@unfiddle/core/estimate/message/trpc"
 import { estimateProcurement } from "@unfiddle/core/estimate/procurement/schema"
 import {
    estimate,
@@ -19,6 +20,7 @@ import { z } from "zod"
 
 export const estimateRouter = t.router({
    item: estimateItemRouter,
+   message: estimateMessageRouter,
    one: t.procedure
       .use(workspaceMemberMiddleware)
       .input(

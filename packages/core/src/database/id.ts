@@ -12,4 +12,5 @@ export const ID_PREFIXES = {
    estimate: "est",
    estimate_item: "e_item",
    estimate_procurement: "e_pro",
+   estimate_message: "e_msg",
 } as const

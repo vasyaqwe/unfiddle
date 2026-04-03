@@ -4,12 +4,11 @@ import {
    messageContentAtom,
    replyingToMessageIdAtom,
 } from "@/chat/store"
-import type { ChatMessagePosition } from "@/chat/types"
+import type { ChatMessage, ChatMessagePosition } from "@/chat/types"
 import { getBorderRadiusClasses } from "@/chat/utils"
 import { FileItem } from "@/file/components/file-item"
 import { useNavigate } from "@tanstack/react-router"
 import { formatDate } from "@unfiddle/core/date"
-import type { OrderMessage as OrderMessageType } from "@unfiddle/core/order/message/types"
 import { Button } from "@unfiddle/ui/components/button"
 import { Icons } from "@unfiddle/ui/components/icons"
 import {
@@ -32,7 +31,7 @@ const AttachmentLightbox = React.lazy(
 )
 
 const MessageContext = React.createContext<{
-   message: OrderMessageType
+   message: ChatMessage
 } | null>(null)
 
 function useMessageContext() {
@@ -48,7 +47,7 @@ export function Message({
    hasAvatar,
    children,
 }: {
-   message: OrderMessageType
+   message: ChatMessage
    hasAvatar?: boolean
    children: React.ReactNode
 }) {
@@ -281,13 +280,6 @@ function MessageAttachments() {
    const auth = useAuth()
    const ctx = useMessageContext()
    const viewerIsSender = ctx.message.creatorId === auth.user.id
-
-   // const auth = useAuth()
-   // const socket = useSocket()
-   // const queryClient = useQueryClient()
-   // const params = useParams({
-   //    from: "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/chat",
-   // })
 
    const imageAttachments = ctx.message.attachments.filter(
       (attachment) =>
