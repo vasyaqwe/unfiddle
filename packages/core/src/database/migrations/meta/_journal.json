@@ -211,6 +211,13 @@
       "when": 1773833186635,
       "tag": "0032_concerned_mattie_franklin",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "6",
+      "when": 1775235607421,
+      "tag": "0033_daffy_energizer",
+      "breakpoints": true
     }
   ]
 }
