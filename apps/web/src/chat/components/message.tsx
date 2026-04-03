@@ -5,8 +5,8 @@ import {
    replyingToMessageIdAtom,
 } from "@/chat/store"
 import type { ChatMessagePosition } from "@/chat/types"
+import { getBorderRadiusClasses } from "@/chat/utils"
 import { FileItem } from "@/file/components/file-item"
-import { getBorderRadiusClasses } from "@/order/message/utils"
 import { useNavigate } from "@tanstack/react-router"
 import { formatDate } from "@unfiddle/core/date"
 import type { OrderMessage as OrderMessageType } from "@unfiddle/core/order/message/types"
