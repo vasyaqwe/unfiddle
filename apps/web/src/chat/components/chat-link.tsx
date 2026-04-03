@@ -9,9 +9,11 @@ import {
 
 export function ChatLink({
    unreadCount,
+   className,
    ...props
 }: {
    unreadCount: number
+   className?: string
 } & LinkProps) {
    return (
       <Tooltip>
@@ -22,6 +24,7 @@ export function ChatLink({
                   kind={"icon"}
                   variant={"secondary"}
                   nativeButton={false}
+                  className={className}
                   render={<Link {...props} />}
                >
                   <Icons.chat className="size-4.75" />

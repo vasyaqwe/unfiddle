@@ -224,9 +224,15 @@ function RouteComponent() {
             >
                <TotalProfit />
             </SuspenseBoundary>
-            <p className="mt-2 mb-3 font-semibold text-xl md:text-2xl">
-               {order.name}
-            </p>
+            <div className="mt-2 mb-3 flex gap-2">
+               <p className="font-semibold text-xl md:text-2xl">{order.name}</p>
+               <ChatLink
+                  unreadCount={unreadCount}
+                  to="/$workspaceId/order/$orderId/chat"
+                  params={params}
+                  className="-mt-1.5 ml-auto md:hidden"
+               />
+            </div>
             <p className="mb-1 whitespace-pre-wrap">{order.note}</p>
             <ImagesCarousel
                className="mb-1"

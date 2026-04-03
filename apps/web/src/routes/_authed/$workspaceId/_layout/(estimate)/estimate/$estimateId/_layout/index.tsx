@@ -7,7 +7,6 @@ import { useEstimate } from "@/estimate/hooks"
 import { CreateEstimateItem } from "@/estimate/item/components/create-estimate-item"
 import { useEstimateUnreadCount } from "@/estimate/message/read/queries"
 import { useDeleteEstimate } from "@/estimate/mutations/use-delete-estimate"
-import { useUpdateEstimate } from "@/estimate/mutations/use-update-estimate"
 import { CreateEstimateProcurement } from "@/estimate/procurement/components/create-estimate-procurement"
 import {
    Header,
@@ -81,9 +80,17 @@ function RouteComponent() {
             >
                <TotalProfit />
             </SuspenseBoundary>
-            <p className="mt-2 mb-3 font-semibold text-xl md:text-2xl">
-               {estimate.name}
-            </p>
+            <div className="mt-2 mb-3 flex gap-2">
+               <p className="font-semibold text-xl md:text-2xl">
+                  {estimate.name}
+               </p>
+               <ChatLink
+                  unreadCount={unreadCount}
+                  to="/$workspaceId/estimate/$estimateId/chat"
+                  params={params}
+                  className="-mt-1.5 ml-auto md:hidden"
+               />
+            </div>
             <p className="mb-1 whitespace-pre-wrap">{estimate.note}</p>
             <div className="mb-6 grid grid-cols-[40%_1fr] gap-y-4 lg:hidden">
                <section className="group/section">
@@ -198,7 +205,6 @@ function Actions() {
    const params = Route.useParams()
    const auth = useAuth()
    const estimate = useEstimate()
-   const _update = useUpdateEstimate()
    const deleteItem = useDeleteEstimate()
 
    const [editOpen, setEditOpen] = React.useState(false)
