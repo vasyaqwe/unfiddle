@@ -240,7 +240,9 @@ function NotificationPermissionCard() {
    React.useEffect(() => {
       if (permissionStatus === "denied") return
 
-      setPermissionStatus(Notification.permission)
+      if ("Notification" in window) {
+         setPermissionStatus(Notification.permission)
+      }
    }, [])
 
    if (permissionStatus !== "default") return null
