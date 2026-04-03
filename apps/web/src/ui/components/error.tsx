@@ -1,4 +1,3 @@
-import { env } from "@/env"
 import type { TRPCError } from "@/trpc"
 import * as Sentry from "@sentry/react"
 import { useQueryErrorResetBoundary } from "@tanstack/react-query"
@@ -62,11 +61,13 @@ export function ErrorComponent({ error, reset, className, ...props }: Props) {
                </Button>
             </div>
          </div>
-         {env.DEV && error ? (
+         {error ? (
             <div className="mx-auto mt-12 w-fit">
                <RouterErrorComponent error={error} />
             </div>
-         ) : null}
+         ) : (
+            "..."
+         )}
       </div>
    )
 }
