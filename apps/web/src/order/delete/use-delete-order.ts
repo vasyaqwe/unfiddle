@@ -11,7 +11,7 @@ export function useDeleteOrder({
    onMutate,
    onError,
 }: { onMutate?: () => void; onError?: () => void } = {}) {
-   const maybeParams = useParams({ strict: false })
+   const _maybeParams = useParams({ strict: false })
    const queryClient = useQueryClient()
    const auth = useAuth()
    const socket = useSocket()
@@ -36,9 +36,7 @@ export function useDeleteOrder({
             const listData = queryClient.getQueryData(
                queryOptions.list.queryKey,
             )
-            const oneData = maybeParams.orderId
-               ? queryClient.getQueryData(oneQueryOptions.queryKey)
-               : null
+            const oneData = queryClient.getQueryData(oneQueryOptions.queryKey)
 
             deleteItem(input)
 

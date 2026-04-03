@@ -13,7 +13,7 @@ export function useUpdateOrder({
    onMutate,
    onError,
 }: { onMutate?: () => void; onError?: () => void } = {}) {
-   const maybeParams = useParams({ strict: false })
+   const _maybeParams = useParams({ strict: false })
    const queryClient = useQueryClient()
    const auth = useAuth()
    const socket = useSocket()
@@ -38,9 +38,7 @@ export function useUpdateOrder({
             const listData = queryClient.getQueryData(
                queryOptions.list.queryKey,
             )
-            const oneData = maybeParams.orderId
-               ? queryClient.getQueryData(oneQueryOptions.queryKey)
-               : null
+            const oneData = queryClient.getQueryData(oneQueryOptions.queryKey)
 
             update(input)
 
@@ -83,13 +81,6 @@ export function useUpdateOrder({
                   id: auth.workspace.id,
                }),
             )
-            queryClient.invalidateQueries(
-               trpc.order.one.queryOptions({
-                  orderId: input.orderId,
-                  workspaceId: input.workspaceId,
-               }),
-            )
-
             queryClient.invalidateQueries(queryOptions.list)
             queryClient.invalidateQueries(
                trpc.order.one.queryOptions({
