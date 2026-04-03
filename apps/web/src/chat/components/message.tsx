@@ -26,6 +26,41 @@ import { cn } from "@unfiddle/ui/utils"
 import { useSetAtom } from "jotai"
 import * as React from "react"
 
+const URL_REGEX = /(https?:\/\/[^\s<>"{}|\\^`[\]]+?)(?=[.,;:!?)]*(?:\s|$)|$)/gi
+
+function linkifyContent(content: string): React.ReactNode {
+   const parts: React.ReactNode[] = []
+   let lastIndex = 0
+   let match: RegExpExecArray | null
+
+   // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
+   while ((match = URL_REGEX.exec(content)) !== null) {
+      if (match.index > lastIndex) {
+         parts.push(content.slice(lastIndex, match.index))
+      }
+      const url = match[1]
+      parts.push(
+         <a
+            key={match.index}
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:no-underline"
+            onClick={(e) => e.stopPropagation()}
+         >
+            {url}
+         </a>,
+      )
+      lastIndex = match.index + match[0].length
+   }
+
+   if (lastIndex < content.length) {
+      parts.push(content.slice(lastIndex))
+   }
+
+   return parts.length > 0 ? parts : content
+}
+
 const AttachmentLightbox = React.lazy(
    () => import("@/attachment/components/attachment-lightbox"),
 )
@@ -258,7 +293,7 @@ export function MessageBubble({ position }: { position: ChatMessagePosition }) {
                      },
                   )}
                >
-                  {ctx.message.content}
+                  {linkifyContent(ctx.message.content)}
                </TooltipTrigger>
                <TooltipPopup>
                   {formatDate(ctx.message.createdAt, {
