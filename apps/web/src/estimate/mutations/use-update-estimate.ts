@@ -11,7 +11,7 @@ export function useUpdateEstimate({
    onMutate,
    onError,
 }: { onMutate?: () => void; onError?: () => void } = {}) {
-   const maybeParams = useParams({ strict: false })
+   const _maybeParams = useParams({ strict: false })
    const search = useSearch({ strict: false })
    const queryClient = useQueryClient()
    const auth = useAuth()
@@ -38,22 +38,22 @@ export function useUpdateEstimate({
             ])
 
             const listData = queryClient.getQueryData(listQueryOptions.queryKey)
-            const oneData = maybeParams.estimateId
-               ? queryClient.getQueryData(oneQueryOptions.queryKey)
-               : null
+            const oneData = queryClient.getQueryData(oneQueryOptions.queryKey)
 
             update(input)
 
             return { listData, oneData }
          },
          onError: (error, input, context) => {
+            const oneQueryOptions = trpc.estimate.one.queryOptions({
+               estimateId: input.estimateId,
+               workspaceId: input.workspaceId,
+            })
             queryClient.setQueryData(
-               trpc.estimate.one.queryOptions({
-                  estimateId: input.estimateId,
-                  workspaceId: input.workspaceId,
-               }).queryKey,
-               context?.oneData,
+               listQueryOptions.queryKey,
+               context?.listData,
             )
+            queryClient.setQueryData(oneQueryOptions.queryKey, context?.oneData)
             toast.error("Ой-ой!", {
                description: error.message,
             })
@@ -71,6 +71,7 @@ export function useUpdateEstimate({
                estimateId: input.estimateId,
                workspaceId: input.workspaceId,
             })
+            queryClient.invalidateQueries(listQueryOptions)
             queryClient.invalidateQueries(oneQueryOptions)
          },
       }),
