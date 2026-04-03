@@ -112,8 +112,7 @@ function RouteComponent() {
                }
             />
             <HeaderTitle>
-               {makeShortId(order.shortId)} <HeaderSeparator />
-               Чат
+               {makeShortId(order.shortId)} <HeaderSeparator /> Чат
             </HeaderTitle>
          </Header>
          <MainScrollArea
