@@ -22,7 +22,7 @@ export function EstimateItem({
    item: EstimateItemType
 }) {
    const params = useParams({
-      from: "/_authed/$workspaceId/_layout/(estimate)/estimate/$estimateId",
+      from: "/_authed/$workspaceId/_layout/(estimate)/estimate/$estimateId/_layout",
    })
    const estimate = useEstimate()
    const [updateOpen, setUpdateOpen] = React.useState(false)

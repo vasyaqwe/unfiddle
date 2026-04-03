@@ -5,7 +5,7 @@ import invariant from "@unfiddle/core/invariant"
 
 export function useEstimate() {
    const params = useParams({
-      from: "/_authed/$workspaceId/_layout/(estimate)/estimate/$estimateId",
+      from: "/_authed/$workspaceId/_layout/(estimate)/estimate/$estimateId/_layout",
    })
    const query = useSuspenseQuery(trpc.estimate.one.queryOptions(params))
    const estimate = query.data

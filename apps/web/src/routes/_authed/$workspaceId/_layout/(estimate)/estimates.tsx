@@ -295,16 +295,18 @@ function EstimateRow({
                <Icons.pencil />
                Редагувати
             </ContextMenuItem>
-            <MenuSeparator />
             {auth.workspace.role === "owner" ||
             auth.workspace.role === "admin" ? (
-               <ContextMenuItem
-                  destructive
-                  onClick={() => setDeleteAlertOpen(true)}
-               >
-                  <Icons.trash />
-                  Видалити
-               </ContextMenuItem>
+               <>
+                  <MenuSeparator />
+                  <ContextMenuItem
+                     destructive
+                     onClick={() => setDeleteAlertOpen(true)}
+                  >
+                     <Icons.trash />
+                     Видалити
+                  </ContextMenuItem>
+               </>
             ) : null}
          </ContextMenuPopup>
       </ContextMenu>

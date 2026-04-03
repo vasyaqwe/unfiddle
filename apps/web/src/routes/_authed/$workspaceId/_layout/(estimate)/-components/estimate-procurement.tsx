@@ -38,7 +38,7 @@ export function EstimateProcurement({
    estimateProcurement: EstimateProcurementType
 }) {
    const params = useParams({
-      from: "/_authed/$workspaceId/_layout/(estimate)/estimate/$estimateId",
+      from: "/_authed/$workspaceId/_layout/(estimate)/estimate/$estimateId/_layout",
    })
    const estimate = useEstimate()
    const deleteItem = useDeleteEstimateProcurement()
