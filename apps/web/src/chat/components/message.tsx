@@ -8,7 +8,7 @@ import { FileItem } from "@/file/components/file-item"
 import { useDeleteOrderMessage } from "@/order/message/mutations"
 import { getBorderRadiusClasses } from "@/order/message/utils"
 import { UserAvatar } from "@/user/components/user-avatar"
-import { useNavigate, useParams } from "@tanstack/react-router"
+import { useNavigate } from "@tanstack/react-router"
 import { formatDate } from "@unfiddle/core/date"
 import type {
    OrderMessagePosition,
@@ -40,11 +40,13 @@ export function Message({
    position,
    onReply,
    className,
+   subjectId,
 }: {
    message: OrderMessageType
    position: OrderMessagePosition
    onReply?: () => void
    className?: string
+   subjectId: string
 }) {
    const auth = useAuth()
    const viewerIsSender = message.creatorId === auth.user.id
@@ -80,6 +82,7 @@ export function Message({
             <MessageActions
                message={message}
                onReply={onReply}
+               subjectId={subjectId}
             />
             <MessageBubble
                message={message}
@@ -121,13 +124,12 @@ export function MessageContent({
 export function MessageActions({
    message,
    onReply,
+   subjectId,
 }: {
    message: OrderMessageType
    onReply?: () => void
+   subjectId: string
 }) {
-   const params = useParams({
-      from: "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/chat",
-   })
    const auth = useAuth()
    const deleteMessage = useDeleteOrderMessage()
    const viewerIsSender = message.creatorId === auth.user.id
@@ -171,7 +173,7 @@ export function MessageActions({
                            setEditingMessageId(message.id)
                            setContent((prev) => ({
                               ...prev,
-                              [params.orderId]: message.content,
+                              [subjectId]: message.content,
                            }))
                            const contentEl = document.querySelector(
                               "[data-chat-content]",

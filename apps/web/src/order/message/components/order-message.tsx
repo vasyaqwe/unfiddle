@@ -1,4 +1,5 @@
 import { Message } from "@/chat/components/message"
+import { useParams } from "@tanstack/react-router"
 import { formatDate } from "@unfiddle/core/date"
 import type {
    OrderMessagePosition,
@@ -17,6 +18,9 @@ export function OrderMessage({
    position: OrderMessagePosition
    onReply?: () => void
 }) {
+   const params = useParams({
+      from: "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/chat",
+   })
    const aWhile = 10 * 60 * 1000 // 10 min
    const isFirstMessageInAWhile =
       !prevMessage ||
@@ -38,6 +42,7 @@ export function OrderMessage({
             className={
                prevMessage?.creatorId !== message.creatorId ? "mt-3" : ""
             }
+            subjectId={params.orderId}
          />
       </>
    )
