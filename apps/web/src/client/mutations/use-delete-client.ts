@@ -20,22 +20,11 @@ export function useDeleteClient({
          onMutate: async (input) => {
             onMutate?.()
 
-            // const oneQueryOptions = trpc.client.one.queryOptions({
-            //    clientId: input.clientId,
-            //    workspaceId: input.workspaceId,
-            // })
-
-            await Promise.all([
-               queryClient.cancelQueries(listQueryOptions),
-               // queryClient.cancelQueries(oneQueryOptions),
-            ])
+            await queryClient.cancelQueries(listQueryOptions)
 
             await Promise.all([queryClient.cancelQueries(listQueryOptions)])
 
             const listData = queryClient.getQueryData(listQueryOptions.queryKey)
-            // const oneData = maybeParams.clientId
-            //    ? queryClient.getQueryData(oneQueryOptions.queryKey)
-            //    : null
 
             deleteItem(input)
 
@@ -59,8 +48,6 @@ export function useDeleteClient({
 }
 
 export function useOptimisticDeleteClient() {
-   // const params = useParams({ strict: false })
-   // const navigate = useNavigate()
    const queryClient = useQueryClient()
    const auth = useAuth()
    const listQueryOptions = trpc.client.list.queryOptions({
@@ -68,24 +55,9 @@ export function useOptimisticDeleteClient() {
    })
 
    return (input: RouterInput["client"]["delete"]) => {
-      // const oneQueryKey = trpc.client.one.queryOptions({
-      //    clientId: input.clientId,
-      //    workspaceId: input.workspaceId,
-      // }).queryKey
-
       queryClient.setQueryData(listQueryOptions.queryKey, (oldData) => {
          if (!oldData) return oldData
          return oldData.filter((item) => item.id !== input.clientId)
       })
-      // queryClient.setQueryData(oneQueryKey, (oldData) => {
-      //    if (!oldData) return oldData
-      //    if (params.clientId) {
-      //       navigate({
-      //          to: "/$workspaceId/clients",
-      //          params: { workspaceId: input.workspaceId },
-      //       })
-      //    }
-      //    return null
-      // })
    }
 }

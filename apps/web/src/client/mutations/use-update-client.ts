@@ -8,7 +8,6 @@ export function useUpdateClient({
    onMutate,
    onError,
 }: { onMutate?: () => void; onError?: () => void } = {}) {
-   // const maybeParams = useParams({ strict: false })
    const queryClient = useQueryClient()
    const auth = useAuth()
    const update = useOptimisticUpdateClient()
@@ -21,20 +20,9 @@ export function useUpdateClient({
          onMutate: async (input) => {
             onMutate?.()
 
-            // const oneQueryOptions = trpc.client.one.queryOptions({
-            //    clientId: input.clientId,
-            //    workspaceId: input.workspaceId,
-            // })
-
-            await Promise.all([
-               queryClient.cancelQueries(listQueryOptions),
-               // queryClient.cancelQueries(oneQueryOptions),
-            ])
+            await queryClient.cancelQueries(listQueryOptions)
 
             const listData = queryClient.getQueryData(listQueryOptions.queryKey)
-            // const oneData = maybeParams.clientId
-            //    ? queryClient.getQueryData(oneQueryOptions.queryKey)
-            //    : null
 
             update(input)
 
@@ -65,15 +53,6 @@ export function useOptimisticUpdateClient() {
    })
 
    return async (input: RouterInput["client"]["update"]) => {
-      // const oneQueryKey = trpc.client.one.queryOptions({
-      //    clientId: input.clientId,
-      //    workspaceId: auth.workspace.id,
-      // }).queryKey
-
-      // queryClient.setQueryData(oneQueryKey, (oldData) => {
-      //    if (!oldData) return oldData
-      //    return { ...oldData, ...input }
-      // })
       queryClient.setQueryData(listQueryOptions.queryKey, (oldData) => {
          if (!oldData) return oldData
          return oldData.map((item) => {
