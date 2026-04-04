@@ -2,6 +2,7 @@ import { ImagesCarousel } from "@/attachment/components/images-carousel"
 import { useAttachments } from "@/attachment/hooks"
 import type { UploadedAttachment } from "@/attachment/types"
 import { useAuth } from "@/auth/hooks"
+import { ChatLink } from "@/chat/components/chat-link"
 import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
 import { FileUploader } from "@/file/components/uploader"
 import {
@@ -40,7 +41,7 @@ import {
    useQueryClient,
    useSuspenseQuery,
 } from "@tanstack/react-query"
-import { Link, createFileRoute, useNavigate } from "@tanstack/react-router"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
 import { formatDate } from "@unfiddle/core/date"
 import { makeShortId } from "@unfiddle/core/id"
@@ -151,37 +152,11 @@ function RouteComponent() {
             </HeaderTitle>
             <Actions />
             <div className="ml-auto flex items-center gap-1.5 max-md:hidden">
-               <Tooltip>
-                  <TooltipTrigger
-                     delay={0}
-                     render={
-                        <Button
-                           kind={"icon"}
-                           variant={"secondary"}
-                           nativeButton={false}
-                           render={
-                              <Link
-                                 to="/$workspaceId/order/$orderId/chat"
-                                 params={params}
-                              />
-                           }
-                        >
-                           <Icons.chat className="size-4.75" />
-                           {unreadCount === 0 ? null : (
-                              <span className="motion-scale-in motion-duration-150 absolute top-0.5 right-0.5 size-2 rounded-full bg-red-9" />
-                           )}
-                        </Button>
-                     }
-                  />
-                  {unreadCount === 0 ? null : (
-                     <TooltipPopup>
-                        {unreadCount}{" "}
-                        {unreadCount === 1
-                           ? "нове повідомлення"
-                           : "нових повідомлень"}
-                     </TooltipPopup>
-                  )}
-               </Tooltip>
+               <ChatLink
+                  unreadCount={unreadCount}
+                  to="/$workspaceId/order/$orderId/chat"
+                  params={params}
+               />
                <Tooltip>
                   <TooltipTrigger
                      render={
@@ -249,9 +224,15 @@ function RouteComponent() {
             >
                <TotalProfit />
             </SuspenseBoundary>
-            <p className="mt-2 mb-3 font-semibold text-xl md:text-2xl">
-               {order.name}
-            </p>
+            <div className="mt-2 mb-3 flex gap-2">
+               <p className="font-semibold text-xl md:text-2xl">{order.name}</p>
+               <ChatLink
+                  unreadCount={unreadCount}
+                  to="/$workspaceId/order/$orderId/chat"
+                  params={params}
+                  className="-mt-1.5 ml-auto md:hidden"
+               />
+            </div>
             <p className="mb-1 whitespace-pre-wrap">{order.note}</p>
             <ImagesCarousel
                className="mb-1"

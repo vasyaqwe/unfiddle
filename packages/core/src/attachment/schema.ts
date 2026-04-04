@@ -1,6 +1,7 @@
 import { ATTACHMENT_SUBJECT_TYPES } from "@unfiddle/core/attachment/constants"
 import { d } from "@unfiddle/core/database"
 import {
+   estimateMessage,
    order,
    orderMessage,
    procurement,
@@ -51,6 +52,10 @@ export const attachmentRelations = relations(attachment, ({ one }) => ({
    orderMessage: one(orderMessage, {
       fields: [attachment.subjectId],
       references: [orderMessage.id],
+   }),
+   estimateMessage: one(estimateMessage, {
+      fields: [attachment.subjectId],
+      references: [estimateMessage.id],
    }),
    creator: one(user, {
       fields: [attachment.creatorId],

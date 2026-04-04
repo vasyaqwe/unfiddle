@@ -4,12 +4,11 @@ import {
    messageContentAtom,
    replyingToMessageIdAtom,
 } from "@/chat/store"
-import type { ChatMessagePosition } from "@/chat/types"
+import type { ChatMessage, ChatMessagePosition } from "@/chat/types"
 import { getBorderRadiusClasses } from "@/chat/utils"
 import { FileItem } from "@/file/components/file-item"
 import { useNavigate } from "@tanstack/react-router"
 import { formatDate } from "@unfiddle/core/date"
-import type { OrderMessage as OrderMessageType } from "@unfiddle/core/order/message/types"
 import { Button } from "@unfiddle/ui/components/button"
 import { Icons } from "@unfiddle/ui/components/icons"
 import {
@@ -27,12 +26,47 @@ import { cn } from "@unfiddle/ui/utils"
 import { useSetAtom } from "jotai"
 import * as React from "react"
 
+const URL_REGEX = /(https?:\/\/[^\s<>"{}|\\^`[\]]+?)(?=[.,;:!?)]*(?:\s|$)|$)/gi
+
+function linkifyContent(content: string): React.ReactNode {
+   const parts: React.ReactNode[] = []
+   let lastIndex = 0
+   let match: RegExpExecArray | null
+
+   // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
+   while ((match = URL_REGEX.exec(content)) !== null) {
+      if (match.index > lastIndex) {
+         parts.push(content.slice(lastIndex, match.index))
+      }
+      const url = match[1]
+      parts.push(
+         <a
+            key={match.index}
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:no-underline"
+            onClick={(e) => e.stopPropagation()}
+         >
+            {url}
+         </a>,
+      )
+      lastIndex = match.index + match[0].length
+   }
+
+   if (lastIndex < content.length) {
+      parts.push(content.slice(lastIndex))
+   }
+
+   return parts.length > 0 ? parts : content
+}
+
 const AttachmentLightbox = React.lazy(
    () => import("@/attachment/components/attachment-lightbox"),
 )
 
 const MessageContext = React.createContext<{
-   message: OrderMessageType
+   message: ChatMessage
 } | null>(null)
 
 function useMessageContext() {
@@ -48,7 +82,7 @@ export function Message({
    hasAvatar,
    children,
 }: {
-   message: OrderMessageType
+   message: ChatMessage
    hasAvatar?: boolean
    children: React.ReactNode
 }) {
@@ -259,7 +293,7 @@ export function MessageBubble({ position }: { position: ChatMessagePosition }) {
                      },
                   )}
                >
-                  {ctx.message.content}
+                  {linkifyContent(ctx.message.content)}
                </TooltipTrigger>
                <TooltipPopup>
                   {formatDate(ctx.message.createdAt, {
@@ -281,13 +315,6 @@ function MessageAttachments() {
    const auth = useAuth()
    const ctx = useMessageContext()
    const viewerIsSender = ctx.message.creatorId === auth.user.id
-
-   // const auth = useAuth()
-   // const socket = useSocket()
-   // const queryClient = useQueryClient()
-   // const params = useParams({
-   //    from: "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/chat",
-   // })
 
    const imageAttachments = ctx.message.attachments.filter(
       (attachment) =>
