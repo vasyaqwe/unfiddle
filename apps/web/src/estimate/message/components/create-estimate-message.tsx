@@ -6,31 +6,31 @@ import {
    replyingToMessageIdAtom,
 } from "@/chat/store"
 import {
-   useCreateOrderMessage,
-   useUpdateOrderMessage,
-} from "@/order/message/mutations"
-import { useOrderMessagesQuery } from "@/order/message/queries"
+   useCreateEstimateMessage,
+   useUpdateEstimateMessage,
+} from "@/estimate/message/mutations"
+import { useEstimateMessagesQuery } from "@/estimate/message/queries"
 import { useParams } from "@tanstack/react-router"
 import { useAtom } from "jotai"
 
-export function CreateOrderMessage() {
+export function CreateEstimateMessage() {
    const params = useParams({
-      from: "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/chat",
+      from: "/_authed/$workspaceId/_layout/(estimate)/estimate/$estimateId/_layout/chat",
    })
    const [_content, setContent] = useAtom(messageContentAtom)
-   const content = _content[params.orderId] ?? ""
+   const content = _content[params.estimateId] ?? ""
    const [editingMessageId, setEditingMessageId] = useAtom(editingMessageIdAtom)
    const [replyingToMessageId, setReplyingToMessageId] = useAtom(
       replyingToMessageIdAtom,
    )
 
-   const create = useCreateOrderMessage()
-   const update = useUpdateOrderMessage()
+   const create = useCreateEstimateMessage()
+   const update = useUpdateEstimateMessage()
    const attachments = useAttachments({
-      subjectId: `${params.orderId}_message`,
+      subjectId: `${params.estimateId}_message`,
    })
 
-   const { data: messages } = useOrderMessagesQuery(params.orderId)
+   const { data: messages } = useEstimateMessagesQuery(params.estimateId)
 
    const replyingToMessage = replyingToMessageId
       ? messages?.find((m) => m.id === replyingToMessageId)
@@ -38,7 +38,7 @@ export function CreateOrderMessage() {
 
    return (
       <CreateMessage
-         subjectId={params.orderId}
+         subjectId={params.estimateId}
          replyingToMessage={replyingToMessage}
          onSubmit={() => {
             const hasContent = content.trim().length > 0
@@ -62,7 +62,7 @@ export function CreateOrderMessage() {
             setReplyingToMessageId(null)
             setContent((prev) => ({
                ...prev,
-               [params.orderId]: "",
+               [params.estimateId]: "",
             }))
             attachments.clear()
          }}

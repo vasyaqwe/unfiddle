@@ -3,6 +3,7 @@ import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
 import { DeleteEstimateAlert } from "@/estimate/components/delete-estimate-alert"
 import { EstimateForm } from "@/estimate/components/estimate-form"
 import { UpdateEstimate } from "@/estimate/components/update-estimate"
+import { useUnreadEstimates } from "@/estimate/message/read/queries"
 import { useCreateEstimate } from "@/estimate/mutations/use-create-estimate"
 import { useDeleteEstimate } from "@/estimate/mutations/use-delete-estimate"
 import { useForceUpdate } from "@/interactions/use-force-update"
@@ -198,6 +199,8 @@ function EstimateRow({
    const menuTriggerRef = React.useRef<HTMLDivElement>(null)
    const [contextMenuOpen, setContextMenuOpen] = React.useState(false)
 
+   const unread = useUnreadEstimates()
+
    return (
       <ContextMenu
          open={contextMenuOpen}
@@ -235,6 +238,9 @@ function EstimateRow({
                </div>
                <p className="col-span-2 col-start-1 row-start-2 mt-px line-clamp-1 break-normal font-semibold data-vat:text-orange-10">
                   {estimate.name}
+                  {unread.includes(estimate.id) ? (
+                     <span className="motion-scale-in motion-duration-150 ml-2 inline-block size-2 rounded-full bg-red-9" />
+                  ) : null}
                </p>
                {estimate.client ? (
                   <Tooltip>
