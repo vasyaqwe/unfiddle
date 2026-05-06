@@ -28,7 +28,6 @@ export function useOnMessageInsert(
    const auth = useAuth()
 
    React.useLayoutEffect(() => {
-      // Skip initial load (null -> any), only trigger on actual inserts
       if (
          prevRowsLengthRef.current !== null &&
          rows.length > prevRowsLengthRef.current
@@ -37,7 +36,11 @@ export function useOnMessageInsert(
          const viewerIsSender = lastMessage?.message?.creatorId === auth.user.id
          cbRef.current(viewerIsSender)
       }
-      prevRowsLengthRef.current = rows.length
+      // Only start tracking after we have actual data,
+      // so the initial query load (0 -> N) stays guarded by the null check
+      if (rows.length > 0 || prevRowsLengthRef.current !== null) {
+         prevRowsLengthRef.current = rows.length
+      }
    }, [rows.length, auth.user.id])
 }
 
