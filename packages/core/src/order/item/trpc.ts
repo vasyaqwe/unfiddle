@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server"
+import { orderItemAssigneeRouter } from "@unfiddle/core/order/item/assignee/trpc"
 import {
    orderItem,
    updateOrderItemSchema,
@@ -11,6 +12,7 @@ import { createInsertSchema } from "drizzle-zod"
 import { z } from "zod"
 
 export const orderItemRouter = t.router({
+   assignee: orderItemAssigneeRouter,
    create: t.procedure
       .use(workspaceMemberMiddleware)
       .input(createInsertSchema(orderItem).extend({ workspaceId: z.string() }))

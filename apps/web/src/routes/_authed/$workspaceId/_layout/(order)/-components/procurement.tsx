@@ -266,7 +266,7 @@ export function Procurement({
                   currency: order.currency,
                })}
             </p>
-            <p className="ml-auto text-muted text-xs">
+            <p className="ml-auto whitespace-nowrap text-muted text-xs">
                {new Date(procurement.createdAt).getDate() ===
                new Date().getDate()
                   ? `Сьогодні, ${formatDate(procurement.createdAt, {

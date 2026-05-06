@@ -5,6 +5,8 @@ import { useOptimisticCreateOrderAssignee } from "@/order/assignee/mutations/use
 import { useOptimisticDeleteOrderAssignee } from "@/order/assignee/mutations/use-delete-order-assignee"
 import { useOptimisticCreateOrder } from "@/order/create/use-create-order"
 import { useOptimisticDeleteOrder } from "@/order/delete/use-delete-order"
+import { useOptimisticCreateOrderItemAssignee } from "@/order/item/assignee/mutations/use-create-order-item-assignee"
+import { useOptimisticDeleteOrderItemAssignee } from "@/order/item/assignee/mutations/use-delete-order-item-assignee"
 import { useOptimisticCreateOrderItem } from "@/order/item/mutations/use-create-order-item"
 import { useOptimisticDeleteOrderItem } from "@/order/item/mutations/use-delete-order-item"
 import { useOptimisticUpdateOrderItem } from "@/order/item/mutations/use-update-order-item"
@@ -31,6 +33,8 @@ export function useOrderSocket() {
    const createItem = useOptimisticCreateOrderItem()
    const updateItem = useOptimisticUpdateOrderItem()
    const deleteItem = useOptimisticDeleteOrderItem()
+   const createItemAssignee = useOptimisticCreateOrderItemAssignee()
+   const deleteItemAssignee = useOptimisticDeleteOrderItemAssignee()
    const tabFocused = useTabFocused()
 
    return usePartySocket({
@@ -179,6 +183,11 @@ export function useOrderSocket() {
                })
             }, 100)
          }
+
+         if (data.action === "create_item_assignee")
+            return createItemAssignee(data)
+         if (data.action === "delete_item_assignee")
+            return deleteItemAssignee(data)
 
          if (data.action === "create_assignee") {
             await update({

@@ -1,4 +1,5 @@
 import { d } from "@unfiddle/core/database"
+import { orderItemAssignee } from "@unfiddle/core/order/item/assignee/schema"
 import { order } from "@unfiddle/core/order/schema"
 import { workspace } from "@unfiddle/core/workspace/schema"
 import { relations } from "drizzle-orm"
@@ -22,11 +23,12 @@ export const orderItem = d.table(
    (table) => [d.index("order_item_order_id_idx").on(table.orderId)],
 )
 
-export const orderItemRelations = relations(orderItem, ({ one }) => ({
+export const orderItemRelations = relations(orderItem, ({ one, many }) => ({
    order: one(order, {
       fields: [orderItem.orderId],
       references: [order.id],
    }),
+   assignees: many(orderItemAssignee),
 }))
 
 export const updateOrderItemSchema = createUpdateSchema(orderItem)
