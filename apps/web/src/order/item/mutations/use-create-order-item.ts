@@ -35,6 +35,7 @@ export function useCreateOrderItem({
                   name: input.name,
                   quantity: input.quantity,
                   desiredPrice: input.desiredPrice ?? null,
+                  assignees: [],
                },
             })
 
@@ -60,7 +61,10 @@ export function useCreateOrderItem({
                senderId: auth.user.id,
                workspaceId: auth.workspace.id,
                orderId: item.orderId,
-               item,
+               item: {
+                  ...item,
+                  assignees: [],
+               },
             })
          },
          onSettled: (_data, _error, input) => {

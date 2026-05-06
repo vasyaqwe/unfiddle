@@ -109,6 +109,7 @@ function Form({
          name: "",
          quantity: 1,
          desiredPrice: null,
+         assignees: [],
       },
    ])
    const [clientId, setClientId] = React.useState(order?.clientId ?? undefined)
@@ -265,6 +266,7 @@ function Form({
                            name: "",
                            quantity: 1,
                            desiredPrice: null,
+                           assignees: [],
                         },
                      ])
 

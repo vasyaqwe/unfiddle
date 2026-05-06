@@ -5,6 +5,7 @@ import type {
    ORDER_SEVERITIES,
    ORDER_STATUSES,
 } from "@unfiddle/core/order/constants"
+import type { OrderItemAssignee } from "@unfiddle/core/order/item/assignee/types"
 import type { OrderItem } from "@unfiddle/core/order/item/types"
 import type { updateOrderMessageSchema } from "@unfiddle/core/order/message/zod"
 import type { updateOrderSchema } from "@unfiddle/core/order/schema"
@@ -69,6 +70,22 @@ export type OrderEvent =
         action: "delete_item"
         orderId: string
         orderItemId: string
+        workspaceId: string
+        senderId: string
+     }
+   | {
+        action: "create_item_assignee"
+        assignee: OrderItemAssignee
+        orderId: string
+        orderItemId: string
+        workspaceId: string
+        senderId: string
+     }
+   | {
+        action: "delete_item_assignee"
+        orderId: string
+        orderItemId: string
+        userId: string
         workspaceId: string
         senderId: string
      }

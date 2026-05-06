@@ -5,7 +5,11 @@ import {
 } from "@unfiddle/core/attachment/schema"
 import { formatCurrency } from "@unfiddle/core/currency"
 import { CURRENCIES } from "@unfiddle/core/currency/constants"
-import { orderAssignee, orderItem } from "@unfiddle/core/database/schema"
+import {
+   orderAssignee,
+   orderItem,
+   orderItemAssignee,
+} from "@unfiddle/core/database/schema"
 import { createId } from "@unfiddle/core/id"
 import { orderAssigneeRouter } from "@unfiddle/core/order/assignee/trpc"
 import {
@@ -363,6 +367,21 @@ export const orderRouter = t.router({
                      name: true,
                      quantity: true,
                      desiredPrice: true,
+                  },
+                  with: {
+                     assignees: {
+                        columns: {},
+                        with: {
+                           user: {
+                              columns: {
+                                 id: true,
+                                 name: true,
+                                 image: true,
+                              },
+                           },
+                        },
+                        orderBy: [desc(orderItemAssignee.createdAt)],
+                     },
                   },
                },
                creator: {

@@ -25,6 +25,7 @@ vi.mock("@/order/hooks", () => ({
                   name: "mock",
                   quantity: 1,
                   desiredPrice: 1,
+                  assignees: [],
                },
             ],
             assignees: [],
