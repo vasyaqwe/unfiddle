@@ -179,6 +179,20 @@ function RouteComponent() {
                   </p>
                </section>
                <Files fileUploaderRef={fileUploaderRef} />
+               {order.crmUrl ? (
+                  <section className="group/section py-3">
+                     <p className="mb-2 text-muted text-sm">CRM посилання</p>
+                     <a
+                        href={order.crmUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 py-2 font-medium text-sm underline hover:no-underline"
+                     >
+                        Переглянути замовлення в CRM
+                        <Icons.arrowUpRight className="size-4 shrink-0" />
+                     </a>
+                  </section>
+               ) : null}
             </ScrollArea>
          </div>
       </div>

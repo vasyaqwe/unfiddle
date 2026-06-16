@@ -34,7 +34,10 @@ import { Link, createFileRoute } from "@tanstack/react-router"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import { formatCurrency } from "@unfiddle/core/currency"
 import { makeShortId } from "@unfiddle/core/id"
-import { ORDER_STATUSES_TRANSLATION } from "@unfiddle/core/order/constants"
+import {
+   CRM_ORDER_URL_PREFIX,
+   ORDER_STATUSES_TRANSLATION,
+} from "@unfiddle/core/order/constants"
 import { ORDER_STATUSES } from "@unfiddle/core/order/constants"
 import { orderFilterSchema } from "@unfiddle/core/order/filter"
 import {
@@ -205,6 +208,7 @@ function _OrderRow({
          acc + ((order.sellingPrice ?? 0) - p.purchasePrice) * p.quantity,
       0,
    )
+   const hasCrmUrl = order.crmUrl.includes(CRM_ORDER_URL_PREFIX)
    const assigned = order.assignees.some((a) => a.user.id === auth.user.id)
    const createAssignee = useCreateOrderAssignee()
    const deleteAssignee = useDeleteOrderAssignee()
@@ -235,6 +239,7 @@ function _OrderRow({
                   <p className="whitespace-nowrap font-medium font-mono text-muted text-sm">
                      {makeShortId(order.shortId)}
                   </p>
+
                   <p className="flex items-center gap-1.5 font-medium text-sm lg:w-27.5">
                      <UserAvatar
                         size={25}
@@ -255,12 +260,35 @@ function _OrderRow({
                      <span className="motion-scale-in motion-duration-150 ml-2 inline-block size-2 rounded-full bg-red-9" />
                   ) : null}
                </p>
+               <Tooltip>
+                  <TooltipTrigger
+                     delay={0}
+                     render={
+                        hasCrmUrl ? (
+                           <span className="ml-auto grid size-5 place-items-center rounded-full bg-green-9">
+                              <Icons.check
+                                 className={"size-4 shrink-0 text-white"}
+                              />
+                           </span>
+                        ) : (
+                           <Icons.alert
+                              className={"ml-auto size-5 shrink-0 text-red-9"}
+                           />
+                        )
+                     }
+                  />
+                  <TooltipPopup>
+                     {hasCrmUrl
+                        ? "Замовлення створене в CRM"
+                        : "Немає посилання на замовлення в CRM"}
+                  </TooltipPopup>
+               </Tooltip>
                {order.client ? (
                   <Tooltip>
                      <TooltipTrigger
                         delay={0}
                         render={
-                           <Badge className="ml-auto gap-1 max-lg:hidden">
+                           <Badge className="gap-1 max-lg:hidden">
                               <Icons.briefcase className="size-4.5" />
                               <ClientSeverityIcon
                                  severity={order.client.severity}
@@ -272,7 +300,7 @@ function _OrderRow({
                   </Tooltip>
                ) : null}
                <div
-                  className="not-data-has-client:ml-auto flex items-center gap-4"
+                  className="flex items-center gap-4"
                   data-has-client={order.client ? "" : undefined}
                >
                   {order.assignees.length === 0 ? null : (

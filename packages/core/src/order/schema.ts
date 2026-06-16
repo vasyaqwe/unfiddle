@@ -54,6 +54,7 @@ export const order = d.table(
       sellingPrice: d.numeric({ mode: "number" }).notNull(),
       severity: d.text({ enum: ORDER_SEVERITIES }).notNull().default("low"),
       note: d.text().notNull().default(""),
+      crmUrl: d.text().notNull().default(""),
       status: d.text({ enum: ORDER_STATUSES }).notNull().default("pending"),
       vat: d.integer({ mode: "boolean" }).notNull().default(false),
       paymentType: d
@@ -113,6 +114,7 @@ export const updateOrderSchema = createUpdateSchema(order)
       workspaceId: true,
       name: true,
       note: true,
+      crmUrl: true,
       sellingPrice: true,
       status: true,
       severity: true,

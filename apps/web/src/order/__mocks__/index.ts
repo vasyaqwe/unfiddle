@@ -41,6 +41,7 @@ vi.mock("@/order/hooks", () => ({
             goodId: "mock",
             groupId: "mock",
             note: "mock",
+            crmUrl: "",
             clientId: "mock",
             client: {
                name: "mock",

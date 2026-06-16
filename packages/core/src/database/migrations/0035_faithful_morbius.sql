@@ -1,0 +1,1 @@
+ALTER TABLE `order` ADD `crm_url` text DEFAULT '' NOT NULL;

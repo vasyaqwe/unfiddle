@@ -15,6 +15,9 @@ export const ORDER_STATUSES = [
 
 export const ORDER_SEVERITIES = ["low", "high", "critical"] as const
 
+export const CRM_ORDER_URL_PREFIX =
+   "https://luckyskyforce.keycrm.app/app/orders/"
+
 type TailwindColor = keyof typeof tailwindColors
 
 export const ORDER_STATUSES_COLORS: Record<OrderStatus, TailwindColor> = {

@@ -45,6 +45,7 @@ export function useCreateOrder({
                ...input,
                id: crypto.randomUUID(),
                shortId: 0,
+               crmUrl: input.crmUrl ?? "",
                currency: input.currency ?? "UAH",
                severity: input.severity ?? "low",
                creator: auth.user,
@@ -74,6 +75,7 @@ export function useCreateOrder({
                senderId: auth.user.id,
                order: {
                   ...order,
+                  crmUrl: order.crmUrl ?? "",
                   currency: order.currency ?? "UAH",
                   severity: order.severity ?? "low",
                   status: "pending",

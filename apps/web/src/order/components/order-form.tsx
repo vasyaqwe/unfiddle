@@ -50,6 +50,7 @@ type FormData = {
    name: string
    sellingPrice: string
    note: string
+   crmUrl: string
    clientId: string | null
    severity: OrderSeverity
    paymentType: OrderPaymentType
@@ -442,6 +443,15 @@ function Form({
                   ))}
                </div>
             </div>
+            <Field>
+               <FieldLabel>Посилання на замовлення в CRM</FieldLabel>
+               <FieldControl
+                  type="url"
+                  name="crmUrl"
+                  placeholder="https://luckyskyforce.keycrm.app/app/orders/..."
+                  defaultValue={order?.crmUrl ?? ""}
+               />
+            </Field>
             {/* <Field className={"mt-3 flex flex-row items-center gap-2"}>
                <Checkbox
                   name="vat"

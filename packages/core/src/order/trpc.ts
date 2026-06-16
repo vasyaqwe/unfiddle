@@ -511,6 +511,7 @@ export const orderRouter = t.router({
                status: true,
                paymentType: true,
                sellingPrice: true,
+               crmUrl: true,
                deletedAt: true,
                createdAt: true,
             },
