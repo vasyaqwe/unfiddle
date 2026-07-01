@@ -3,6 +3,9 @@
    "main": "src/index.ts",
    "compatibility_flags": ["nodejs_compat"],
    "compatibility_date": "2025-04-01",
+   "triggers": {
+      "crons": ["*/10 * * * *"]
+   },
    "observability": {
       "enabled": true,
       "head_sampling_rate": 1
@@ -55,6 +58,9 @@
             }
          ],
          "name": "unfiddle-api",
+         "triggers": {
+            "crons": ["*/10 * * * *"]
+         },
          "unsafe": {
             "bindings": [
                {

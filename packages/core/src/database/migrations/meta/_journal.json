@@ -232,6 +232,13 @@
       "when": 1781622732640,
       "tag": "0035_faithful_morbius",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "6",
+      "when": 1782911188430,
+      "tag": "0036_demonic_magma",
+      "breakpoints": true
     }
   ]
 }

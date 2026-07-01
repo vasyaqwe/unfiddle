@@ -1,3 +1,7 @@
 import { routes } from "@unfiddle/core/api"
+import { scheduled } from "@unfiddle/core/api/scheduled"
 
-export default routes
+export default {
+   fetch: routes.fetch,
+   scheduled,
+}
