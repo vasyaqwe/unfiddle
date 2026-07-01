@@ -15,6 +15,7 @@ import { orderAssigneeRouter } from "@unfiddle/core/order/assignee/trpc"
 import {
    ORDER_PAYMENT_TYPES_TRANSLATION,
    ORDER_SEVERITIES_TRANSLATION,
+   ORDER_SEVERITY_RANK,
    ORDER_STATUSES_TRANSLATION,
 } from "@unfiddle/core/order/constants"
 import { orderFilterSchema } from "@unfiddle/core/order/filter"
@@ -449,6 +450,20 @@ export const orderRouter = t.router({
       .query(async ({ ctx, input }) => {
          const filter = input.filter
 
+         // Order by severity rank (see ORDER_SEVERITY_RANK) — exhaustive over
+         // OrderSeverity, so adding a severity is a compile error until ranked.
+         const severityOrder = sql.join(
+            [
+               sql`case`,
+               ...Object.entries(ORDER_SEVERITY_RANK).map(
+                  ([severity, rank]) =>
+                     sql`when ${order.severity} = ${severity} then ${rank}`,
+               ),
+               sql`end`,
+            ],
+            sql` `,
+         )
+
          const whereConditions = [eq(order.workspaceId, input.workspaceId)]
 
          if (filter.status?.length)
@@ -550,7 +565,7 @@ export const orderRouter = t.router({
                   },
                },
             },
-            orderBy: [desc(order.createdAt)],
+            orderBy: [severityOrder, desc(order.createdAt)],
          })
 
          return orders
