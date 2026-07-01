@@ -1,0 +1,1 @@
+CREATE INDEX `order_message_created_at_idx` ON `order_message` (`created_at`);

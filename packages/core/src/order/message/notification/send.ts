@@ -9,7 +9,8 @@ import { orderMessageNotification } from "@unfiddle/core/order/message/notificat
 import { orderMessageRead } from "@unfiddle/core/order/message/read/schema"
 import { orderMessage } from "@unfiddle/core/order/message/schema"
 import { tryCatch } from "@unfiddle/core/try-catch"
-import { gt, inArray } from "drizzle-orm"
+import { workspaceMember } from "@unfiddle/core/workspace/schema"
+import { and, gt, inArray, isNull } from "drizzle-orm"
 
 // Bound the cron scan; older unread messages won't trigger an email.
 const LOOKBACK_MS = 24 * 60 * 60 * 1000
@@ -27,6 +28,15 @@ const escapeHtml = (value: string) =>
       .replaceAll('"', "&quot;")
 
 const key = (userId: string, orderId: string) => `${userId}:${orderId}`
+
+const messagesLabel = (n: number) => {
+   const mod10 = n % 10
+   const mod100 = n % 100
+   if (mod10 === 1 && mod100 !== 11) return `${n} нове повідомлення`
+   if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14))
+      return `${n} нові повідомлення`
+   return `${n} нових повідомлень`
+}
 
 const avatarHtml = (creator: { name: string; image: string | null }) => {
    if (creator.image)
@@ -67,8 +77,9 @@ export async function sendUnreadOrderMessageEmails(deps: {
    if (recentMessages.length === 0) return { sent: 0 }
 
    const orderIds = [...new Set(recentMessages.map((m) => m.orderId))]
+   const workspaceIds = [...new Set(recentMessages.map((m) => m.workspaceId))]
 
-   const [assignees, reads, notifications] = await Promise.all([
+   const [allAssignees, reads, notifications, members] = await Promise.all([
       db.query.orderAssignee.findMany({
          where: inArray(orderAssignee.orderId, orderIds),
          with: {
@@ -81,7 +92,22 @@ export async function sendUnreadOrderMessageEmails(deps: {
       db.query.orderMessageNotification.findMany({
          where: inArray(orderMessageNotification.orderId, orderIds),
       }),
+      db.query.workspaceMember.findMany({
+         where: and(
+            inArray(workspaceMember.workspaceId, workspaceIds),
+            isNull(workspaceMember.deletedAt),
+         ),
+         columns: { userId: true, workspaceId: true },
+      }),
    ])
+
+   // Skip assignees who were removed from the workspace (soft-deleted member).
+   const activeMembers = new Set(
+      members.map((m) => key(m.userId, m.workspaceId)),
+   )
+   const assignees = allAssignees.filter((a) =>
+      activeMembers.has(key(a.userId, a.workspaceId)),
+   )
 
    const messagesByOrder = new Map<string, typeof recentMessages>()
    for (const message of recentMessages) {
@@ -101,46 +127,62 @@ export async function sendUnreadOrderMessageEmails(deps: {
 
    const graceCutoff = now.getTime() - GRACE_MS
 
+   // Group assignments by user so each recipient gets a single digest across
+   // all their orders, not one email per order.
+   const byUser = new Map<string, typeof assignees>()
    for (const assignee of assignees) {
-      const orderMessages = messagesByOrder.get(assignee.orderId)
-      if (!orderMessages || orderMessages.length === 0) continue
+      const list = byUser.get(assignee.userId) ?? []
+      list.push(assignee)
+      byUser.set(assignee.userId, list)
+   }
 
-      const k = key(assignee.userId, assignee.orderId)
-      const lastRead = readAt.get(k) ?? EPOCH
-      const lastNotified = notifiedAt.get(k) ?? EPOCH
-      const threshold =
-         lastRead.getTime() > lastNotified.getTime() ? lastRead : lastNotified
+   for (const userAssignees of byUser.values()) {
+      const recipient = userAssignees[0]
+      if (!recipient) continue
 
-      const unread = orderMessages
-         .filter(
-            (m) =>
-               m.creatorId !== assignee.userId &&
-               m.createdAt.getTime() > threshold.getTime() &&
-               m.createdAt.getTime() < graceCutoff,
-         )
-         .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+      const sections: string[] = []
+      // Orders to mark notified, applied only after a successful send.
+      const markers: { orderId: string; workspaceId: string; through: Date }[] =
+         []
+      let totalUnread = 0
 
-      if (unread.length === 0) continue
+      for (const assignee of userAssignees) {
+         const orderMessages = messagesByOrder.get(assignee.orderId)
+         if (!orderMessages || orderMessages.length === 0) continue
 
-      const first = unread[0]
-      const latest = unread[unread.length - 1]
-      if (!first || !latest) continue
-      const { order } = first
-      // Mark up to the newest emailed message, not `now`, so grace-window
-      // messages stay eligible next run.
-      const notifiedThrough = latest.createdAt
+         const k = key(assignee.userId, assignee.orderId)
+         const lastRead = readAt.get(k) ?? EPOCH
+         const lastNotified = notifiedAt.get(k) ?? EPOCH
+         const threshold =
+            lastRead.getTime() > lastNotified.getTime()
+               ? lastRead
+               : lastNotified
 
-      const url = `${env.WEB_URL}/${assignee.workspaceId}/order/${order.id}/chat`
-      const listed = unread.slice(0, MAX_LISTED)
-      const remaining = unread.length - listed.length
+         const unread = orderMessages
+            .filter(
+               (m) =>
+                  m.creatorId !== assignee.userId &&
+                  m.createdAt.getTime() > threshold.getTime() &&
+                  m.createdAt.getTime() < graceCutoff,
+            )
+            .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
 
-      const rows = listed
-         .map((m) => {
-            const body =
-               m.content.trim().length === 0
-                  ? "Надіслав(-ла) файли"
-                  : escapeHtml(m.content)
-            return `<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;margin:0 0 12px;border-collapse:collapse;">
+         const first = unread[0]
+         const latest = unread[unread.length - 1]
+         if (!first || !latest) continue
+
+         const { order } = first
+         const url = `${env.WEB_URL}/${assignee.workspaceId}/order/${order.id}/chat`
+         const listed = unread.slice(0, MAX_LISTED)
+         const remaining = unread.length - listed.length
+
+         const rows = listed
+            .map((m) => {
+               const body =
+                  m.content.trim().length === 0
+                     ? "Надіслав(-ла) файли"
+                     : escapeHtml(m.content)
+               return `<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;margin:0 0 12px;border-collapse:collapse;">
                <tr>
                   <td width="32" valign="top" style="padding-right:10px;">${avatarHtml(m.creator)}</td>
                   <td valign="top" style="font-size:14px;line-height:1.4;">
@@ -148,27 +190,45 @@ export async function sendUnreadOrderMessageEmails(deps: {
                   </td>
                </tr>
             </table>`
-         })
-         .join("")
+            })
+            .join("")
 
-      const content = `
-         <p style="font-size:16px;font-weight:600;margin:0 0 16px;">
-            ${unread.length} ${unread.length === 1 ? "нове повідомлення" : "нових повідомлень"} у замовленні #${order.shortId} · ${escapeHtml(order.name)}
-         </p>
-         ${rows}
-         ${remaining > 0 ? `<p style="margin:0 0 16px;color:#666;">…та ще ${remaining}</p>` : ""}
-         <a href="${url}" style="display:inline-block;padding:10px 16px;background:#141414;color:#fff;border-radius:8px;text-decoration:none;">Переглянути чат</a>
-      `
+         sections.push(`
+         <div style="margin:0 0 28px;">
+            <p style="font-size:16px;font-weight:600;margin:0 0 12px;">
+               ${messagesLabel(unread.length)} у замовленні #${order.shortId} · ${escapeHtml(order.name)}
+            </p>
+            ${rows}
+            ${remaining > 0 ? `<p style="margin:0 0 16px;color:#666;">…та ще ${remaining}</p>` : ""}
+            <a href="${url}" style="display:inline-block;padding:10px 16px;background:#141414;color:#fff;border-radius:8px;text-decoration:none;">Переглянути чат</a>
+         </div>`)
+
+         // Mark up to the newest emailed message, not `now`, so grace-window
+         // messages stay eligible next run.
+         markers.push({
+            orderId: assignee.orderId,
+            workspaceId: assignee.workspaceId,
+            through: latest.createdAt,
+         })
+         totalUnread += unread.length
+      }
+
+      if (sections.length === 0) continue
+
+      const summary =
+         sections.length === 1
+            ? messagesLabel(totalUnread)
+            : `${messagesLabel(totalUnread)} у ${sections.length} замовленнях`
 
       const result = await tryCatch(
          email.emails.send({
             from: EMAIL_FROM,
-            to: assignee.user.email,
-            subject: `Нові повідомлення у замовленні #${order.shortId}`,
+            to: recipient.user.email,
+            subject: "Нові повідомлення",
             html: emailTemplate({
                title: "Нові повідомлення",
-               preheader: `${unread.length} нових повідомлень у замовленні #${order.shortId}`,
-               content,
+               preheader: summary,
+               content: sections.join(""),
             }),
          }),
       )
@@ -177,22 +237,24 @@ export async function sendUnreadOrderMessageEmails(deps: {
          continue
       }
 
-      // Advance the marker only after a successful send, so failures retry.
-      await db
-         .insert(orderMessageNotification)
-         .values({
-            userId: assignee.userId,
-            orderId: assignee.orderId,
-            workspaceId: assignee.workspaceId,
-            lastNotifiedAt: notifiedThrough,
-         })
-         .onConflictDoUpdate({
-            target: [
-               orderMessageNotification.userId,
-               orderMessageNotification.orderId,
-            ],
-            set: { lastNotifiedAt: notifiedThrough, updatedAt: now },
-         })
+      // Advance the markers only after a successful send, so failures retry.
+      for (const marker of markers) {
+         await db
+            .insert(orderMessageNotification)
+            .values({
+               userId: recipient.userId,
+               orderId: marker.orderId,
+               workspaceId: marker.workspaceId,
+               lastNotifiedAt: marker.through,
+            })
+            .onConflictDoUpdate({
+               target: [
+                  orderMessageNotification.userId,
+                  orderMessageNotification.orderId,
+               ],
+               set: { lastNotifiedAt: marker.through, updatedAt: now },
+            })
+      }
 
       sent++
    }

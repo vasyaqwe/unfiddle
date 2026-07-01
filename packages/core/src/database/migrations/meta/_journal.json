@@ -239,6 +239,13 @@
       "when": 1782911188430,
       "tag": "0036_demonic_magma",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "6",
+      "when": 1782913256592,
+      "tag": "0037_majestic_boomer",
+      "breakpoints": true
     }
   ]
 }

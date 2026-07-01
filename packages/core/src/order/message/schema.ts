@@ -37,6 +37,7 @@ export const orderMessage = d.table(
       d
          .index("order_message_workspace_id_created_at_idx")
          .on(table.workspaceId, table.createdAt),
+      d.index("order_message_created_at_idx").on(table.createdAt),
    ],
 )
 
