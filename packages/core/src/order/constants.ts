@@ -42,11 +42,28 @@ export const ORDER_SEVERITIES_TRANSLATION: Record<OrderSeverity, string> = {
    critical: "Критично",
 }
 
-// Sort weight: critical first, then high, then low.
 export const ORDER_SEVERITY_RANK: Record<OrderSeverity, number> = {
    critical: 0,
    high: 1,
    low: 2,
+}
+
+export const ORDER_SORTS = [
+   "severity",
+   "items",
+   "creator",
+   "deliversAt",
+   "createdAt",
+] as const
+
+export type OrderSort = (typeof ORDER_SORTS)[number]
+
+export const ORDER_SORTS_TRANSLATION: Record<OrderSort, string> = {
+   severity: "Пріоритет",
+   items: "Кількість товарів",
+   creator: "Менеджер",
+   deliversAt: "Термін постачання",
+   createdAt: "Дата створення",
 }
 
 export const ORDER_PAYMENT_TYPES = [

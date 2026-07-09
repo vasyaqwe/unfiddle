@@ -17,10 +17,11 @@ import { DeleteOrderAlert } from "@/order/delete/delete-order-alert"
 import { useDeleteOrder } from "@/order/delete/use-delete-order"
 import { useUnreadOrders } from "@/order/message/read/queries"
 import { useOrderQueryOptions } from "@/order/queries"
-import { createOrderOpenAtom } from "@/order/store"
+import { createOrderOpenAtom, orderSortAtom } from "@/order/store"
 import { UpdateOrder } from "@/order/update/update-order"
 import { useUpdateOrder } from "@/order/update/use-update-order"
 import { DateFilter } from "@/routes/_authed/$workspaceId/_layout/(home)/-components/date-filter"
+import { DisplayPopover } from "@/routes/_authed/$workspaceId/_layout/(home)/-components/display-popover"
 import { HomeEmpty } from "@/routes/_authed/$workspaceId/_layout/(home)/-components/empty"
 import { FilterMenu } from "@/routes/_authed/$workspaceId/_layout/(home)/-components/filter-menu"
 import { Search } from "@/routes/_authed/$workspaceId/_layout/(home)/-components/search"
@@ -72,7 +73,7 @@ import {
    TooltipPopup,
    TooltipTrigger,
 } from "@unfiddle/ui/components/tooltip"
-import { useSetAtom } from "jotai"
+import { getDefaultStore, useSetAtom } from "jotai"
 import { useTheme } from "next-themes"
 import * as React from "react"
 
@@ -83,7 +84,10 @@ export const Route = createFileRoute("/_authed/$workspaceId/_layout/(home)/")({
       opts.context.queryClient.prefetchQuery(
          trpc.order.list.queryOptions({
             workspaceId: opts.params.workspaceId,
-            filter: opts.deps.search,
+            filter: {
+               ...opts.deps.search,
+               ...getDefaultStore().get(orderSortAtom),
+            },
          }),
       )
    },
@@ -128,6 +132,7 @@ function RouteComponent() {
             <div className="sticky top-0 z-5 flex min-h-12 items-center gap-1 border-surface-12/13 border-b bg-background px-1.5 shadow-xs/4 lg:min-h-10">
                <ToggleArchived />
                <DateFilter />
+               <DisplayPopover />
                <FilterMenu />
                <Search />
             </div>

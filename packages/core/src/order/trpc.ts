@@ -31,6 +31,7 @@ import { t } from "@unfiddle/core/trpc/context"
 import { workspaceMemberMiddleware } from "@unfiddle/core/workspace/middleware"
 import {
    and,
+   asc,
    desc,
    eq,
    gte,
@@ -450,8 +451,6 @@ export const orderRouter = t.router({
       .query(async ({ ctx, input }) => {
          const filter = input.filter
 
-         // Order by severity rank (see ORDER_SEVERITY_RANK) — exhaustive over
-         // OrderSeverity, so adding a severity is a compile error until ranked.
          const severityOrder = sql.join(
             [
                sql`case`,
@@ -463,6 +462,25 @@ export const orderRouter = t.router({
             ],
             sql` `,
          )
+
+         const dir = filter.direction === "asc" ? asc : desc
+         const orderBy = (() => {
+            switch (filter.sort) {
+               case "severity":
+                  return [
+                     filter.direction === "asc"
+                        ? desc(severityOrder)
+                        : asc(severityOrder),
+                     desc(order.createdAt),
+                  ]
+               case "deliversAt":
+                  return [dir(order.deliversAt), desc(order.createdAt)]
+               case "createdAt":
+                  return [dir(order.createdAt)]
+               default:
+                  return [severityOrder, desc(order.createdAt)]
+            }
+         })()
 
          const whereConditions = [eq(order.workspaceId, input.workspaceId)]
 
@@ -565,8 +583,38 @@ export const orderRouter = t.router({
                   },
                },
             },
-            orderBy: [severityOrder, desc(order.createdAt)],
+            orderBy,
          })
+
+         const factor = filter.direction === "asc" ? 1 : -1
+
+         if (filter.sort === "creator")
+            orders.sort(
+               (a, b) =>
+                  a.creator.name.localeCompare(b.creator.name, "uk") * factor,
+            )
+
+         if (filter.sort === "items" && orders.length) {
+            const counts = await ctx.db
+               .select({
+                  orderId: orderItem.orderId,
+                  count: sql<number>`count(*)`,
+               })
+               .from(orderItem)
+               .where(
+                  inArray(
+                     orderItem.orderId,
+                     orders.map((o) => o.id),
+                  ),
+               )
+               .groupBy(orderItem.orderId)
+            const countMap = new Map(counts.map((c) => [c.orderId, c.count]))
+            orders.sort(
+               (a, b) =>
+                  ((countMap.get(a.id) ?? 0) - (countMap.get(b.id) ?? 0)) *
+                  factor,
+            )
+         }
 
          return orders
       }),
