@@ -1,5 +1,6 @@
 import {
    ORDER_SEVERITIES,
+   ORDER_SORTS,
    ORDER_STATUSES,
 } from "@unfiddle/core/order/constants"
 import { z } from "zod"
@@ -13,4 +14,6 @@ export const orderFilterSchema = z.object({
    archived: z.boolean().optional(),
    startDate: z.string().optional(),
    endDate: z.string().optional(),
+   sort: z.enum(ORDER_SORTS).optional(),
+   direction: z.enum(["asc", "desc"]).optional(),
 })
