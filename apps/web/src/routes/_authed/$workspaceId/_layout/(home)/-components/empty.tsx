@@ -1,6 +1,6 @@
-import { useAuth } from "@/auth/hooks"
 import { useSearch } from "@tanstack/react-router"
 import { Icons } from "@unfiddle/ui/components/icons"
+import { useAuth } from "@/auth/hooks"
 
 export function HomeEmpty() {
    const search = useSearch({
@@ -9,7 +9,7 @@ export function HomeEmpty() {
    const auth = useAuth()
 
    return (
-      <div className="-translate-y-8 absolute inset-0 m-auto size-fit text-center">
+      <div className="absolute inset-0 m-auto size-fit -translate-y-8 text-center">
          <div className="mx-auto mb-5 flex max-w-30 flex-col items-center">
             {auth.workspace.image ? (
                <img

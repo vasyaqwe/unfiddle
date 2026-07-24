@@ -1,5 +1,5 @@
-import { useAuth } from "@/auth/hooks"
 import { useLiveQuery } from "@tanstack/react-db"
+import { useAuth } from "@/auth/hooks"
 import { orderMessageCollection } from "./collection"
 
 export function useOrderMessagesQuery(orderId: string) {

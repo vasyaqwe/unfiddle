@@ -49,7 +49,7 @@ export function DialogXClose({
       <DialogClose
          render={
             <Button
-               className={cn("-mr-1.5 -mt-0.5 float-right", className)}
+               className={cn("float-right -mt-0.5 -mr-1.5", className)}
                variant={"ghost"}
                kind={"icon"}
             >

@@ -1,5 +1,3 @@
-import { trpc } from "@/trpc"
-import { UserAvatar } from "@/user/components/user-avatar"
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate, useParams, useSearch } from "@tanstack/react-router"
 import {
@@ -17,6 +15,8 @@ import {
    ComboboxTriggerIcon,
 } from "@unfiddle/ui/components/combobox"
 import { Icons } from "@unfiddle/ui/components/icons"
+import { trpc } from "@/trpc"
+import { UserAvatar } from "@/user/components/user-avatar"
 
 export function WhoCombobox() {
    const params = useParams({ from: "/_authed/$workspaceId/_layout/analytics" })

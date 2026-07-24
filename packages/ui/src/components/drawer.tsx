@@ -52,7 +52,7 @@ function DrawerPopup({
 function DrawerSeparator({ className, ...props }: React.ComponentProps<"div">) {
    return (
       <Separator
-         className={cn("-mx-4 md:-mx-5 my-5 bg-surface-4", className)}
+         className={cn("-mx-4 my-5 bg-surface-4 md:-mx-5", className)}
          {...props}
       />
    )
@@ -97,13 +97,13 @@ function DrawerDescription({
 
 export {
    Drawer,
-   DrawerPortal,
    DrawerBackdrop,
-   DrawerTrigger,
-   DrawerSeparator,
    DrawerClose,
-   DrawerPopup,
-   DrawerFooter,
-   DrawerTitle,
    DrawerDescription,
+   DrawerFooter,
+   DrawerPopup,
+   DrawerPortal,
+   DrawerSeparator,
+   DrawerTitle,
+   DrawerTrigger,
 }

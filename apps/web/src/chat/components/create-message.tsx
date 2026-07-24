@@ -1,3 +1,9 @@
+import { Button } from "@unfiddle/ui/components/button"
+import { Icons } from "@unfiddle/ui/components/icons"
+import { Textarea } from "@unfiddle/ui/components/textarea"
+import { useAtom, useSetAtom } from "jotai"
+import * as React from "react"
+import { useHotkeys } from "react-hotkeys-hook"
 import { UploadedAttachment } from "@/attachment/components/uploaded-attachment"
 import { useAttachments } from "@/attachment/hooks"
 import { useAuth } from "@/auth/hooks"
@@ -9,12 +15,6 @@ import {
 import type { ChatMessage } from "@/chat/types"
 import { FileUploader } from "@/file/components/uploader"
 import { useFocusOnTabFocus } from "@/interactions/use-focus-on-tab-focus"
-import { Button } from "@unfiddle/ui/components/button"
-import { Icons } from "@unfiddle/ui/components/icons"
-import { Textarea } from "@unfiddle/ui/components/textarea"
-import { useAtom, useSetAtom } from "jotai"
-import * as React from "react"
-import { useHotkeys } from "react-hotkeys-hook"
 
 export function CreateMessage({
    subjectId,

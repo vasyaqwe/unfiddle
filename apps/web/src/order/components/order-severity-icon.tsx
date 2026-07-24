@@ -5,7 +5,10 @@ import { cn } from "@unfiddle/ui/utils"
 export function OrderSeverityIcon({
    severity,
    className = "",
-}: { severity: OrderSeverity; className?: string }) {
+}: {
+   severity: OrderSeverity
+   className?: string
+}) {
    return severity === "critical" ? (
       <Icons.alert
          className={cn("size-5 text-red-9 dark:text-red-10", className)}

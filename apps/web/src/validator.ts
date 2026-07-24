@@ -1,11 +1,11 @@
 import type { ValidatorAdapter } from "@tanstack/react-router"
 
 export interface ZodTypeLike {
-   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+   // biome-ignore lint/suspicious/noExplicitAny: ...
    _input: any
-   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+   // biome-ignore lint/suspicious/noExplicitAny: ...
    _output: any
-   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+   // biome-ignore lint/suspicious/noExplicitAny: ...
    parse: (input: any) => any
 }
 

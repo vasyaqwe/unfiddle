@@ -72,7 +72,7 @@ export function Combobox(props: ComboboxProps) {
       } else {
          setInternalValue(newValue)
       }
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      // biome-ignore lint/suspicious/noExplicitAny: ...
       onValueChange?.(newValue as any)
    }
 
@@ -174,7 +174,7 @@ export function ComboboxInput({
          <CommandInput
             placeholder="Шукати.."
             className={cn(
-               "-top-0.75 absolute h-10 w-full border-transparent bg-transparent px-2 placeholder:text-white/70 focus:outline-hidden md:h-9 md:text-sm",
+               "absolute -top-0.75 h-10 w-full border-transparent bg-transparent px-2 placeholder:text-white/70 focus:outline-hidden md:h-9 md:text-sm",
                className,
             )}
             {...props}
@@ -234,7 +234,7 @@ export function ComboboxItem({
          <Icons.check
             strokeWidth={2.5}
             className={cn(
-               "-mr-1 md:-mr-0.5 ml-auto size-6.25 text-white/90! md:size-5.5",
+               "-mr-1 ml-auto size-6.25 text-white/90! md:-mr-0.5 md:size-5.5",
                isSelected ? "" : "invisible",
             )}
          />

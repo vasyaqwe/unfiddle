@@ -1,7 +1,3 @@
-import { useEstimate } from "@/estimate/hooks"
-import { UpdateEstimateProcurement } from "@/estimate/procurement/components/update-estimate-procurement"
-import { useDeleteEstimateProcurement } from "@/estimate/procurement/mutations/use-delete-estimate-procurement"
-import { UserAvatar } from "@/user/components/user-avatar"
 import { useParams } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
 import type { EstimateProcurement as EstimateProcurementType } from "@unfiddle/core/estimate/procurement/types"
@@ -31,6 +27,10 @@ import {
 } from "@unfiddle/ui/components/tooltip"
 import * as React from "react"
 import { toast } from "sonner"
+import { useEstimate } from "@/estimate/hooks"
+import { UpdateEstimateProcurement } from "@/estimate/procurement/components/update-estimate-procurement"
+import { useDeleteEstimateProcurement } from "@/estimate/procurement/mutations/use-delete-estimate-procurement"
+import { UserAvatar } from "@/user/components/user-avatar"
 
 export function EstimateProcurement({
    estimateProcurement,
@@ -73,7 +73,7 @@ export function EstimateProcurement({
 
    return (
       <div className="gap-3 border-neutral border-t p-3 text-left first:border-none lg:gap-4 lg:p-2 lg:pl-3">
-         <div className="max-lg:-mt-1.5 max-lg:-mr-1.5 flex items-center">
+         <div className="flex items-center max-lg:-mt-1.5 max-lg:-mr-1.5">
             {estimateItem?.name ? (
                <p className="line-clamp-1 font-medium max-lg:w-[calc(100%-2rem)] lg:mr-3">
                   {estimateItem.name}

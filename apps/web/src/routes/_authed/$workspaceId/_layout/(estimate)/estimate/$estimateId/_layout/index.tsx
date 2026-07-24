@@ -1,3 +1,21 @@
+import { useSuspenseQuery } from "@tanstack/react-query"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { formatCurrency } from "@unfiddle/core/currency"
+import { formatEstimateDate } from "@unfiddle/core/estimate/utils"
+import { makeShortId } from "@unfiddle/core/id"
+import { Badge } from "@unfiddle/ui/components/badge"
+import { Button } from "@unfiddle/ui/components/button"
+import { Card } from "@unfiddle/ui/components/card"
+import { DrawerTrigger } from "@unfiddle/ui/components/drawer"
+import { Expandable } from "@unfiddle/ui/components/expandable"
+import { Icons } from "@unfiddle/ui/components/icons"
+import {
+   Menu,
+   MenuItem,
+   MenuPopup,
+   MenuTrigger,
+} from "@unfiddle/ui/components/menu"
+import * as React from "react"
 import { useAuth } from "@/auth/hooks"
 import { ChatLink } from "@/chat/components/chat-link"
 import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
@@ -19,25 +37,6 @@ import { EstimateProcurement } from "@/routes/_authed/$workspaceId/_layout/(esti
 import { trpc } from "@/trpc"
 import { SuspenseBoundary } from "@/ui/components/suspense-boundary"
 import { UserAvatar } from "@/user/components/user-avatar"
-import { useSuspenseQuery } from "@tanstack/react-query"
-import { useNavigate } from "@tanstack/react-router"
-import { createFileRoute } from "@tanstack/react-router"
-import { formatCurrency } from "@unfiddle/core/currency"
-import { formatEstimateDate } from "@unfiddle/core/estimate/utils"
-import { makeShortId } from "@unfiddle/core/id"
-import { Badge } from "@unfiddle/ui/components/badge"
-import { Button } from "@unfiddle/ui/components/button"
-import { Card } from "@unfiddle/ui/components/card"
-import { DrawerTrigger } from "@unfiddle/ui/components/drawer"
-import { Expandable } from "@unfiddle/ui/components/expandable"
-import { Icons } from "@unfiddle/ui/components/icons"
-import {
-   Menu,
-   MenuItem,
-   MenuPopup,
-   MenuTrigger,
-} from "@unfiddle/ui/components/menu"
-import * as React from "react"
 
 export const Route = createFileRoute(
    "/_authed/$workspaceId/_layout/(estimate)/estimate/$estimateId/_layout/",

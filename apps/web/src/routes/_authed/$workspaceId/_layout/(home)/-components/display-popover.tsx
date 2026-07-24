@@ -1,4 +1,3 @@
-import { orderSortAtom } from "@/order/store"
 import {
    ORDER_SORTS,
    ORDER_SORTS_TRANSLATION,
@@ -21,6 +20,7 @@ import {
 } from "@unfiddle/ui/components/select"
 import { useAtom } from "jotai"
 import * as React from "react"
+import { orderSortAtom } from "@/order/store"
 
 const DIRECTIONS_TRANSLATION = {
    desc: "За спаданням",

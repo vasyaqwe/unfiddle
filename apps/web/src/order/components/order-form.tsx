@@ -1,19 +1,12 @@
-import { UploadedAttachment } from "@/attachment/components/uploaded-attachment"
-import { useAttachments } from "@/attachment/hooks"
-import { useAuth } from "@/auth/hooks"
-import { ClientCombobox } from "@/client/components/client-combobox"
-import { FileUploader } from "@/file/components/uploader"
-import { trpc } from "@/trpc"
-import { SuspenseBoundary } from "@/ui/components/suspense-boundary"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { CURRENCIES, CURRENCY_SYMBOLS } from "@unfiddle/core/currency/constants"
 import type { Currency } from "@unfiddle/core/currency/types"
 import {
    ORDER_PAYMENT_TYPES,
    ORDER_PAYMENT_TYPES_TRANSLATION,
+   ORDER_SEVERITIES,
    ORDER_SEVERITIES_TRANSLATION,
 } from "@unfiddle/core/order/constants"
-import { ORDER_SEVERITIES } from "@unfiddle/core/order/constants"
 import type { OrderItem } from "@unfiddle/core/order/item/types"
 import type {
    OrderPaymentType,
@@ -43,6 +36,13 @@ import {
 import { Textarea } from "@unfiddle/ui/components/textarea"
 import { formData } from "@unfiddle/ui/utils"
 import * as React from "react"
+import { UploadedAttachment } from "@/attachment/components/uploaded-attachment"
+import { useAttachments } from "@/attachment/hooks"
+import { useAuth } from "@/auth/hooks"
+import { ClientCombobox } from "@/client/components/client-combobox"
+import { FileUploader } from "@/file/components/uploader"
+import { trpc } from "@/trpc"
+import { SuspenseBoundary } from "@/ui/components/suspense-boundary"
 
 type BareItem = Omit<OrderItem, "id">
 

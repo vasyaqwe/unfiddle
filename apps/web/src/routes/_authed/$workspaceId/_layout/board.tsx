@@ -1,11 +1,11 @@
 import "tldraw/tldraw.css"
-import { useAuth } from "@/auth/hooks"
-import { SuspenseFallback } from "@/ui/components/suspense-boundary"
-import { useSyncStore } from "@/whiteboard/hooks"
-import { Link, createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, Link } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { Tldraw, track } from "tldraw"
+import { useAuth } from "@/auth/hooks"
+import { SuspenseFallback } from "@/ui/components/suspense-boundary"
+import { useSyncStore } from "@/whiteboard/hooks"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/board")({
    component: RouteComponent,

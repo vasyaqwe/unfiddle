@@ -1,6 +1,3 @@
-import { CACHE_SHORT } from "@/api"
-import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
-import { trpc } from "@/trpc"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { useParams } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
@@ -14,6 +11,9 @@ import {
    ComboboxTriggerIcon,
 } from "@unfiddle/ui/components/combobox"
 import { Field, FieldLabel } from "@unfiddle/ui/components/field"
+import { CACHE_SHORT } from "@/api"
+import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
+import { trpc } from "@/trpc"
 
 export function ClientCombobox({
    clientId,

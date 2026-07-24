@@ -19,7 +19,13 @@ const tileUrl = ({
    y,
    width,
    height,
-}: { src: string; x: number; y: number; width: number; height: number }) => {
+}: {
+   src: string
+   x: number
+   y: number
+   width: number
+   height: number
+}) => {
    if (src.startsWith("data:")) return src
 
    const url = new URL(src)

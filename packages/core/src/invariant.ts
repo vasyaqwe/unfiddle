@@ -17,7 +17,7 @@ const prefix: string = "Invariant failed"
  * ```
  */
 export default function invariant(
-   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+   // biome-ignore lint/suspicious/noExplicitAny: ...
    condition: any,
    // Not providing an inline default argument for message as the result is smaller
    /**

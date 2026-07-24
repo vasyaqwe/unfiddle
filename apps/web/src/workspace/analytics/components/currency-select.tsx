@@ -9,7 +9,10 @@ import {
 export const CurrencySelect = ({
    value,
    onValueChange,
-}: { value: string; onValueChange: (value: string) => void }) => {
+}: {
+   value: string
+   onValueChange: (value: string) => void
+}) => {
    return (
       <Select
          value={value}

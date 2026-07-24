@@ -1,15 +1,18 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import type { RouterInput } from "@unfiddle/core/trpc/types"
+import { toast } from "sonner"
 import { useAuth } from "@/auth/hooks"
 import { useEstimate } from "@/estimate/hooks"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import type { RouterInput } from "@unfiddle/core/trpc/types"
-import { toast } from "sonner"
 
 export function useUpdateEstimateItem({
    onMutate,
    onError,
-}: { onMutate?: () => void; onError?: () => void } = {}) {
+}: {
+   onMutate?: () => void
+   onError?: () => void
+} = {}) {
    const estimate = useEstimate()
    const queryClient = useQueryClient()
    const auth = useAuth()

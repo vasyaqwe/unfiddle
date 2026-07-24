@@ -1,6 +1,3 @@
-import { trpc } from "@/trpc"
-import { ErrorComponent } from "@/ui/components/error"
-import { isChartDataEmpty } from "@/workspace/analytics/utils"
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
 import { CatchBoundary, useParams, useSearch } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
@@ -27,6 +24,9 @@ import {
    XAxis,
    YAxis,
 } from "recharts"
+import { trpc } from "@/trpc"
+import { ErrorComponent } from "@/ui/components/error"
+import { isChartDataEmpty } from "@/workspace/analytics/utils"
 
 const COLORS: Record<number, string> = {
    0: "var(--color-primary-6)",

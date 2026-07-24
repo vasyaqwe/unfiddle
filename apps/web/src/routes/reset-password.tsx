@@ -1,5 +1,3 @@
-import { authClient } from "@/auth"
-import { validator } from "@/validator"
 import { useMutation } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { MIN_PASSWORD_LENGTH } from "@unfiddle/core/auth/constants"
@@ -10,6 +8,8 @@ import { Logo } from "@unfiddle/ui/components/logo"
 import { formData } from "@unfiddle/ui/utils"
 import { toast } from "sonner"
 import { z } from "zod"
+import { authClient } from "@/auth"
+import { validator } from "@/validator"
 
 export const Route = createFileRoute("/reset-password")({
    component: RouteComponent,

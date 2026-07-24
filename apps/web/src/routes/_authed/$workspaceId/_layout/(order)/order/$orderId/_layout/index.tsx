@@ -1,3 +1,33 @@
+import {
+   useMutation,
+   useQueryClient,
+   useSuspenseQuery,
+} from "@tanstack/react-query"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { formatCurrency } from "@unfiddle/core/currency"
+import { formatDate } from "@unfiddle/core/date"
+import { makeShortId } from "@unfiddle/core/id"
+import { formatOrderDate } from "@unfiddle/core/order/utils"
+import { Badge } from "@unfiddle/ui/components/badge"
+import { Button } from "@unfiddle/ui/components/button"
+import { Card } from "@unfiddle/ui/components/card"
+import { DrawerTrigger } from "@unfiddle/ui/components/drawer"
+import { Expandable } from "@unfiddle/ui/components/expandable"
+import { Icons } from "@unfiddle/ui/components/icons"
+import {
+   Menu,
+   MenuItem,
+   MenuPopup,
+   MenuTrigger,
+} from "@unfiddle/ui/components/menu"
+import { Toggle } from "@unfiddle/ui/components/toggle"
+import {
+   Tooltip,
+   TooltipPopup,
+   TooltipTrigger,
+} from "@unfiddle/ui/components/tooltip"
+import { useAtomValue } from "jotai"
+import * as React from "react"
 import { ImagesCarousel } from "@/attachment/components/images-carousel"
 import { useAttachments } from "@/attachment/hooks"
 import type { UploadedAttachment } from "@/attachment/types"
@@ -36,36 +66,6 @@ import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
 import { SuspenseBoundary } from "@/ui/components/suspense-boundary"
 import { UserAvatar } from "@/user/components/user-avatar"
-import {
-   useMutation,
-   useQueryClient,
-   useSuspenseQuery,
-} from "@tanstack/react-query"
-import { createFileRoute, useNavigate } from "@tanstack/react-router"
-import { formatCurrency } from "@unfiddle/core/currency"
-import { formatDate } from "@unfiddle/core/date"
-import { makeShortId } from "@unfiddle/core/id"
-import { formatOrderDate } from "@unfiddle/core/order/utils"
-import { Badge } from "@unfiddle/ui/components/badge"
-import { Button } from "@unfiddle/ui/components/button"
-import { Card } from "@unfiddle/ui/components/card"
-import { DrawerTrigger } from "@unfiddle/ui/components/drawer"
-import { Expandable } from "@unfiddle/ui/components/expandable"
-import { Icons } from "@unfiddle/ui/components/icons"
-import {
-   Menu,
-   MenuItem,
-   MenuPopup,
-   MenuTrigger,
-} from "@unfiddle/ui/components/menu"
-import { Toggle } from "@unfiddle/ui/components/toggle"
-import {
-   Tooltip,
-   TooltipPopup,
-   TooltipTrigger,
-} from "@unfiddle/ui/components/tooltip"
-import { useAtomValue } from "jotai"
-import * as React from "react"
 
 export const Route = createFileRoute(
    "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout/",

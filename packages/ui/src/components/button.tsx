@@ -2,7 +2,7 @@ import { Button as ButtonPrimitive } from "@base-ui/react"
 import { Loading } from "@unfiddle/ui/components/loading"
 import { FOCUS_STYLES } from "@unfiddle/ui/constants"
 import { cn } from "@unfiddle/ui/utils"
-import { type VariantProps, cva } from "class-variance-authority"
+import { cva, type VariantProps } from "class-variance-authority"
 
 const button = cva(
    [
@@ -38,13 +38,13 @@ const button = cva(
          {
             kind: "default",
             size: "sm",
-            className: "md:[&>svg]:-ml-[0.15rem] [&>svg]:-ml-[0.05rem]",
+            className: "[&>svg]:-ml-[0.05rem] md:[&>svg]:-ml-[0.15rem]",
          },
          {
             kind: "default",
             size: "md",
             className:
-               "md:[&>svg]:-ml-[0.25rem] [&>svg]:-ml-[0.2rem] has-[svg]:gap-1",
+               "has-[svg]:gap-1 [&>svg]:-ml-[0.2rem] md:[&>svg]:-ml-[0.25rem]",
          },
       ],
       defaultVariants: {
@@ -93,7 +93,7 @@ export function Button({
             <>
                <span
                   className={cn(
-                     "data-inactive:-translate-y-8 md:data-inactive:-translate-y-6 invisible flex items-center justify-center gap-2 data-active:visible data-active:translate-y-0 data-inactive:scale-90 data-active:opacity-100 data-inactive:opacity-0",
+                     "invisible flex items-center justify-center gap-2 data-active:visible data-active:translate-y-0 data-inactive:-translate-y-8 data-inactive:scale-90 data-active:opacity-100 data-inactive:opacity-0 md:data-inactive:-translate-y-6",
                   )}
                   data-active={!pending ? "" : undefined}
                   data-inactive={pending ? "" : undefined}

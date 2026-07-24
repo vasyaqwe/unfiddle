@@ -1,17 +1,20 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useParams } from "@tanstack/react-router"
+import type { OrderAssignee } from "@unfiddle/core/order/assignee/types"
+import { toast } from "sonner"
 import { useAuth } from "@/auth/hooks"
 import { useOrderQueryOptions } from "@/order/queries"
 import { useOptimisticUpdateOrder } from "@/order/update/use-update-order"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useParams } from "@tanstack/react-router"
-import type { OrderAssignee } from "@unfiddle/core/order/assignee/types"
-import { toast } from "sonner"
 
 export function useCreateOrderAssignee({
    onMutate,
    onError,
-}: { onMutate?: () => void; onError?: () => void } = {}) {
+}: {
+   onMutate?: () => void
+   onError?: () => void
+} = {}) {
    const maybeParams = useParams({ strict: false })
    const queryClient = useQueryClient()
    const auth = useAuth()

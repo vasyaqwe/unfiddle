@@ -1,7 +1,3 @@
-import { UploadedAttachment } from "@/attachment/components/uploaded-attachment"
-import { useAttachments } from "@/attachment/hooks"
-import { FileUploader } from "@/file/components/uploader"
-import { useOrder } from "@/order/hooks"
 import { CURRENCY_SYMBOLS } from "@unfiddle/core/currency/constants"
 import type { Procurement } from "@unfiddle/core/procurement/types"
 import { Button } from "@unfiddle/ui/components/button"
@@ -20,6 +16,10 @@ import {
 import { Textarea } from "@unfiddle/ui/components/textarea"
 import { formData } from "@unfiddle/ui/utils"
 import * as React from "react"
+import { UploadedAttachment } from "@/attachment/components/uploaded-attachment"
+import { useAttachments } from "@/attachment/hooks"
+import { FileUploader } from "@/file/components/uploader"
+import { useOrder } from "@/order/hooks"
 
 type FormData = {
    note: string

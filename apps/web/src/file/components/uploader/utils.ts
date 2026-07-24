@@ -1,6 +1,6 @@
-import type { UploadedAttachment } from "@/attachment/types"
 import type { FileRejection } from "react-dropzone"
 import { toast } from "sonner"
+import type { UploadedAttachment } from "@/attachment/types"
 
 export const handleFiles = ({
    files,

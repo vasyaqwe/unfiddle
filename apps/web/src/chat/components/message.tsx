@@ -1,12 +1,3 @@
-import { useAuth } from "@/auth/hooks"
-import {
-   editingMessageIdAtom,
-   messageContentAtom,
-   replyingToMessageIdAtom,
-} from "@/chat/store"
-import type { ChatMessage, ChatMessagePosition } from "@/chat/types"
-import { getBorderRadiusClasses } from "@/chat/utils"
-import { FileItem } from "@/file/components/file-item"
 import { useNavigate } from "@tanstack/react-router"
 import { formatDate } from "@unfiddle/core/date"
 import { Button } from "@unfiddle/ui/components/button"
@@ -25,6 +16,15 @@ import {
 import { cn } from "@unfiddle/ui/utils"
 import { useSetAtom } from "jotai"
 import * as React from "react"
+import { useAuth } from "@/auth/hooks"
+import {
+   editingMessageIdAtom,
+   messageContentAtom,
+   replyingToMessageIdAtom,
+} from "@/chat/store"
+import type { ChatMessage, ChatMessagePosition } from "@/chat/types"
+import { getBorderRadiusClasses } from "@/chat/utils"
+import { FileItem } from "@/file/components/file-item"
 
 const URL_REGEX = /(https?:\/\/[^\s<>"{}|\\^`[\]]+?)(?=[.,;:!?)]*(?:\s|$)|$)/gi
 
@@ -33,7 +33,7 @@ function linkifyContent(content: string): React.ReactNode {
    let lastIndex = 0
    let match: RegExpExecArray | null
 
-   // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
+   // biome-ignore lint/suspicious/noAssignInExpressions: ...
    while ((match = URL_REGEX.exec(content)) !== null) {
       if (match.index > lastIndex) {
          parts.push(content.slice(lastIndex, match.index))
@@ -224,7 +224,7 @@ export function MessageBubble({ position }: { position: ChatMessagePosition }) {
    let normalizedPosition = position
    let replyPosition: ChatMessagePosition = "first"
 
-   if (ctx.message.reply && !!ctx.message.content) {
+   if (ctx.message.reply && ctx.message.content) {
       if (normalizedPosition === "only") {
          normalizedPosition = "last"
          replyPosition = "first"

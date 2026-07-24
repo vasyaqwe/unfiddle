@@ -1,5 +1,5 @@
 {
-   "$schema": "https://biomejs.dev/schemas/1.8.2/schema.json",
+   "$schema": "https://biomejs.dev/schemas/2.5.5/schema.json",
    "formatter": {
       "enabled": true,
       "formatWithErrors": false,
@@ -10,20 +10,24 @@
       "attributePosition": "multiline"
    },
    "files": {
-      "ignore": [
-         "dist",
-         "out",
-         ".turbo",
-         ".astro",
-         "*.astro",
-         "routeTree.gen.ts",
-         "migrations/meta",
-         "package.json",
-         ".wrangler",
-         ".tanstack"
+      "includes": [
+         "**",
+         "!**/dist",
+         "!**/out",
+         "!**/.turbo",
+         "!**/.astro",
+         "!**/*.astro",
+         "!**/routeTree.gen.ts",
+         "!**/migrations/meta",
+         "!**/package.json",
+         "!**/.wrangler",
+         "!**/.tanstack"
       ]
    },
    "css": {
+      "parser": {
+         "tailwindDirectives": true
+      },
       "formatter": {
          "enabled": true
       }
@@ -40,12 +44,10 @@
          "attributePosition": "multiline"
       }
    },
-   "organizeImports": {
-      "enabled": true
-   },
+   "assist": { "actions": { "source": { "organizeImports": "on" } } },
    "overrides": [
       {
-         "include": [
+         "includes": [
             "**/*.test.ts",
             "**/*.test.tsx",
             "**/tests/**",
@@ -67,21 +69,28 @@
    "linter": {
       "enabled": true,
       "rules": {
-         "recommended": true,
+         "preset": "recommended",
          "security": {
             "noDangerouslySetInnerHtml": "off"
          },
+         "complexity": {
+            "noImportantStyles": "off"
+         },
          "style": {
+            "noDescendingSpecificity": "off",
             "useNumberNamespace": "off",
             "noUnusedTemplateLiteral": "off",
             "useNodejsImportProtocol": "off"
          },
          "correctness": {
+            "useParseIntRadix": "off",
+            "useHookAtTopLevel": "off",
             "useExhaustiveDependencies": "off",
             "noUnusedVariables": "error",
             "noUnusedImports": "error"
          },
          "a11y": {
+            "noStaticElementInteractions": "off",
             "noAutofocus": "off",
             "useMediaCaption": "off",
             "noSvgWithoutTitle": "off",

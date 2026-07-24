@@ -1,6 +1,3 @@
-import { useDownloadAttachment } from "@/attachment/hooks"
-import type { UploadedAttachment } from "@/attachment/types"
-import { FilePreview } from "@/file/components/uploader"
 import { useNavigate, useSearch } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
 import {
@@ -13,10 +10,15 @@ import { Separator } from "@unfiddle/ui/components/separator"
 import { cn } from "@unfiddle/ui/utils"
 import { ZoomPane } from "@unfiddle/ui/zoom-pane"
 import { ZoomImageRenderer } from "@unfiddle/ui/zoom-pane/image-renderer"
+import { useDownloadAttachment } from "@/attachment/hooks"
+import type { UploadedAttachment } from "@/attachment/types"
+import { FilePreview } from "@/file/components/uploader"
 
 export default function AttachmentLightbox({
    attachments,
-}: { attachments: UploadedAttachment[] }) {
+}: {
+   attachments: UploadedAttachment[]
+}) {
    const search = useSearch({ from: "/_authed/$workspaceId/_layout" })
    const navigate = useNavigate()
    const currentAttachment = attachments.find(
@@ -110,13 +112,13 @@ export default function AttachmentLightbox({
                <>
                   <button
                      onClick={prevAttachment}
-                     className="-translate-y-1/2 absolute top-1/2 left-3 z-1 flex h-full w-16 cursor-pointer items-center text-muted transition-colors duration-100 hover:text-foreground md:h-full"
+                     className="absolute top-1/2 left-3 z-1 flex h-full w-16 -translate-y-1/2 cursor-pointer items-center text-muted transition-colors duration-100 hover:text-foreground md:h-full"
                   >
                      <Icons.chevronLeft className="size-6" />
                   </button>
                   <button
                      onClick={nextAttachment}
-                     className="-translate-y-1/2 absolute top-1/2 right-3.5 z-1 flex h-full w-16 cursor-pointer items-center justify-end text-muted transition-colors duration-100 hover:text-foreground md:h-full"
+                     className="absolute top-1/2 right-3.5 z-1 flex h-full w-16 -translate-y-1/2 cursor-pointer items-center justify-end text-muted transition-colors duration-100 hover:text-foreground md:h-full"
                   >
                      <Icons.chevronRight className="size-6" />
                   </button>

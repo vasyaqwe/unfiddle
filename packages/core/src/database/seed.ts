@@ -24,7 +24,7 @@ export const seed = async (c: Context<HonoEnv>) => {
 
       const sixMonthsAgo = new Date()
       sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
-      const timeSpan = new Date().getTime() - sixMonthsAgo.getTime()
+      const timeSpan = Date.now() - sixMonthsAgo.getTime()
       const increment = timeSpan / 100
 
       for (let i = 0; i < 100; i++) {

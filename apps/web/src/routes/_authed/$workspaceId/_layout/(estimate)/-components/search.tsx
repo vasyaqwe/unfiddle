@@ -1,4 +1,3 @@
-import { useOrderQueryOptions } from "@/order/queries"
 import { useQueryClient } from "@tanstack/react-query"
 import { useNavigate, useSearch } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
@@ -6,6 +5,7 @@ import { Icons } from "@unfiddle/ui/components/icons"
 import { Input } from "@unfiddle/ui/components/input"
 import * as React from "react"
 import * as R from "remeda"
+import { useOrderQueryOptions } from "@/order/queries"
 
 export function Search() {
    const search = useSearch({

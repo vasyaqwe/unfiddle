@@ -5,7 +5,7 @@ import {
 
 export const noop = () => {}
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/suspicious/noExplicitAny: ...
 export const pick = <Obj extends { [key: string]: any }, Key extends keyof Obj>(
    props: Key[],
    obj: Obj,

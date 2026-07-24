@@ -11,15 +11,15 @@ import {
 } from "@unfiddle/core/workspace/analytics/filter"
 import { workspaceMemberMiddleware } from "@unfiddle/core/workspace/middleware"
 import {
-   type Column,
-   type SQL,
    and,
    asc,
+   type Column,
    count,
    eq,
    gte,
    inArray,
    or,
+   type SQL,
    sql,
    sum,
 } from "drizzle-orm"
@@ -221,7 +221,7 @@ END) ELSE 0 END`
          const formattedDateExpr = sql<string>`strftime('%Y-%m-%d', ${order.createdAt}, 'unixepoch', ${offsetStr})`
          const formattedMonthlyDateExpr = sql<string>`strftime('%Y-%m', ${order.createdAt}, 'unixepoch', ${offsetStr})`
 
-         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+         // biome-ignore lint/suspicious/noExplicitAny: ...
          const selectFields: Record<string, SQL.Aliased | SQL<any> | Column> =
             {}
          const whereConditions: (SQL | undefined)[] = [

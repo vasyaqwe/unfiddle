@@ -1,6 +1,6 @@
-import { useAuth } from "@/auth/hooks"
 import type { Virtualizer } from "@tanstack/react-virtual"
 import * as React from "react"
+import { useAuth } from "@/auth/hooks"
 
 export function useInitialScrollToBottom(
    virtualizer: Virtualizer<HTMLDivElement, Element>,

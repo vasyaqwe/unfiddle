@@ -1,6 +1,6 @@
 import type { DatabaseClient } from "@unfiddle/core/database/core"
-import { EMAIL_FROM } from "@unfiddle/core/email"
 import type { EmailClient } from "@unfiddle/core/email"
+import { EMAIL_FROM } from "@unfiddle/core/email"
 import { email as emailTemplate } from "@unfiddle/core/email/email"
 import type { Env } from "@unfiddle/core/env"
 import { logger } from "@unfiddle/core/logger"

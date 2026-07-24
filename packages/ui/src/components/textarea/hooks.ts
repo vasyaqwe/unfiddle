@@ -48,13 +48,13 @@ export const useComposedRef = <T extends HTMLElement>(
    )
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/suspicious/noExplicitAny: ...
 type UnknownFunction = (...args: any[]) => any
 
 type InferEventType<TTarget> = TTarget extends {
    // we infer from 2 overloads which are super common for event targets in the DOM lib
    // we "prioritize" the first one as the first one is always more specific
-   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+   // biome-ignore lint/suspicious/noExplicitAny: ...
    addEventListener(type: infer P, ...args: any): void
 }
    ? P & string
@@ -87,7 +87,7 @@ function useListener<
 
 export const useFormResetListener = (
    libRef: React.RefObject<HTMLTextAreaElement | null>,
-   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+   // biome-ignore lint/suspicious/noExplicitAny: ...
    listener: (event: Event) => any,
 ) => {
    useListener(document.body, "reset", (ev) => {
@@ -97,13 +97,13 @@ export const useFormResetListener = (
    })
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/suspicious/noExplicitAny: ...
 export const useWindowResizeListener = (listener: (event: UIEvent) => any) => {
-   // @ts-ignore
+   // @ts-expect-error
    useListener(window, "resize", listener)
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/suspicious/noExplicitAny: ...
 export const useFontsLoadedListener = (listener: (event: Event) => any) => {
    useListener(document.fonts, "loadingdone", listener)
 }

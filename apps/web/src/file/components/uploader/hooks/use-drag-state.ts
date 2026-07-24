@@ -1,5 +1,5 @@
-import { useEventListener } from "@/interactions/use-event-listener"
 import * as React from "react"
+import { useEventListener } from "@/interactions/use-event-listener"
 
 export function useDragState() {
    const [isDragging, setIsDragging] = React.useState(false)

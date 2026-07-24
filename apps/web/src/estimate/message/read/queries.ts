@@ -1,6 +1,6 @@
+import { useQuery } from "@tanstack/react-query"
 import { useAuth } from "@/auth/hooks"
 import { trpc } from "@/trpc"
-import { useQuery } from "@tanstack/react-query"
 
 export function useEstimateUnreadCount(estimateId: string): number {
    const auth = useAuth()

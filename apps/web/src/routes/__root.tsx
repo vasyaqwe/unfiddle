@@ -1,7 +1,7 @@
 import type { QueryClient } from "@tanstack/react-query"
 import {
-   Outlet,
    createRootRouteWithContext,
+   Outlet,
    useMatches,
 } from "@tanstack/react-router"
 import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query"

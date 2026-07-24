@@ -1,18 +1,20 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useParams } from "@tanstack/react-router"
+import type { RouterInput } from "@unfiddle/core/trpc/types"
+import { toast } from "sonner"
 import { CACHE_SHORT } from "@/api"
 import { useAuth } from "@/auth/hooks"
 import { useOrderQueryOptions } from "@/order/queries"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
-import { useQuery } from "@tanstack/react-query"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useParams } from "@tanstack/react-router"
-import type { RouterInput } from "@unfiddle/core/trpc/types"
-import { toast } from "sonner"
 
 export function useUpdateOrder({
    onMutate,
    onError,
-}: { onMutate?: () => void; onError?: () => void } = {}) {
+}: {
+   onMutate?: () => void
+   onError?: () => void
+} = {}) {
    const _maybeParams = useParams({ strict: false })
    const queryClient = useQueryClient()
    const auth = useAuth()

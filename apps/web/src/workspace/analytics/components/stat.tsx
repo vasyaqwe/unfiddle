@@ -76,8 +76,8 @@ export function StatValueSup({
       <sup
          className={cn(
             multipleSelected
-               ? "xl:-top-1.5 -top-1 text-xs max-sm:hidden lg:text-sm"
-               : "xl:-top-2 -top-1.5 text-base",
+               ? "-top-1 text-xs max-sm:hidden lg:text-sm xl:-top-1.5"
+               : "-top-1.5 text-base xl:-top-2",
             className,
          )}
          {...props}

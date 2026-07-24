@@ -1,12 +1,12 @@
-import { store } from "@/tests/store"
-import { trpc } from "@/trpc"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import {
-   RouterProvider,
    createRootRoute,
    createRouter,
+   RouterProvider,
 } from "@tanstack/react-router"
 import { Provider } from "jotai"
+import { store } from "@/tests/store"
+import { trpc } from "@/trpc"
 
 const testQueryClient = new QueryClient({
    defaultOptions: {

@@ -1,5 +1,3 @@
-import { useOrder } from "@/order/hooks"
-import { useUpdateOrder } from "@/order/update/use-update-order"
 import { useParams } from "@tanstack/react-router"
 import {
    ORDER_STATUSES,
@@ -16,6 +14,8 @@ import {
    ComboboxTrigger,
 } from "@unfiddle/ui/components/combobox"
 import { useTheme } from "next-themes"
+import { useOrder } from "@/order/hooks"
+import { useUpdateOrder } from "@/order/update/use-update-order"
 
 export function StatusCombobox() {
    const params = useParams({

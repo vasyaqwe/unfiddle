@@ -1,5 +1,5 @@
-import { trpc } from "@/trpc"
 import { createFileRoute, redirect } from "@tanstack/react-router"
+import { trpc } from "@/trpc"
 
 export const Route = createFileRoute("/_authed/")({
    component: () => null,

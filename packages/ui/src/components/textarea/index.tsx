@@ -8,10 +8,10 @@ import {
    useWindowResizeListener,
 } from "./hooks"
 import {
-   type SizingData,
    calculateNodeHeight,
    getSizingData,
    noop,
+   type SizingData,
 } from "./utils"
 
 type TextareaProps = React.ComponentProps<"textarea">

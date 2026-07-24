@@ -1,9 +1,9 @@
 // src/server.ts
 import { throttle } from "@tldraw/utils"
-import { Server } from "partyserver"
 import type { Connection } from "partyserver"
-import { createTLSchema } from "tldraw"
+import { Server } from "partyserver"
 import type { HistoryEntry, TLRecord, TLStoreSnapshot } from "tldraw"
+import { createTLSchema } from "tldraw"
 
 export class Whiteboard extends Server {
    static override options = {

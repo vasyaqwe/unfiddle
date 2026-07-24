@@ -1,6 +1,6 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useAuth } from "@/auth/hooks"
 import { trpc } from "@/trpc"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 export function useMarkMessagesAsRead(estimateId: string) {
    const auth = useAuth()
