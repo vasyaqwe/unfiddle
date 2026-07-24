@@ -1,5 +1,3 @@
-//courtesy of https://github.com/sadmann7
-
 import { Icons } from "@unfiddle/ui/components/icons"
 import { SVGPreview } from "@unfiddle/ui/components/svg-preview"
 import { cn } from "@unfiddle/ui/utils"
@@ -13,25 +11,6 @@ import { MAX_FILE_SIZE } from "./constants"
 import { useControllableState } from "./hooks/use-controllable-state"
 import { useDragState } from "./hooks/use-drag-state"
 import { formatBytes, handleFiles, handleRejectedFiles } from "./utils"
-
-type NativeDropFile = {
-   path: string
-   contents: Uint8Array
-}
-
-export type NativeDragDropEvent =
-   | {
-        type: "drag"
-        x: number
-        y: number
-     }
-   | {
-        type: "drop"
-        files: NativeDropFile[]
-     }
-   | {
-        type: "cancel"
-     }
 
 interface Props extends React.ComponentProps<"div"> {
    /**

@@ -48,7 +48,7 @@ export function useUpdateClient({
    )
 }
 
-export function useOptimisticUpdateClient() {
+function useOptimisticUpdateClient() {
    const auth = useAuth()
    const queryClient = useQueryClient()
    const listQueryOptions = trpc.client.list.queryOptions({

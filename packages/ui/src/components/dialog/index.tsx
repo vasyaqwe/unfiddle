@@ -8,8 +8,8 @@ import { DIALOG_STYLES, dialog } from "./constants"
 export const Dialog = DialogPrimitive.Root
 export const DialogTrigger = DialogPrimitive.Trigger
 export const DialogClose = DialogPrimitive.Close
-export const DialogPortal = DialogPrimitive.Portal
-export const DialogBackdrop = DialogPrimitive.Backdrop
+const DialogPortal = DialogPrimitive.Portal
+const DialogBackdrop = DialogPrimitive.Backdrop
 
 export function DialogPopup({
    className,

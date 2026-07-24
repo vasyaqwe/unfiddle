@@ -6,7 +6,7 @@ import {
 export const noop = () => {}
 
 // biome-ignore lint/suspicious/noExplicitAny: ...
-export const pick = <Obj extends { [key: string]: any }, Key extends keyof Obj>(
+const pick = <Obj extends { [key: string]: any }, Key extends keyof Obj>(
    props: Key[],
    obj: Obj,
 ): Pick<Obj, Key> =>
@@ -18,7 +18,7 @@ export const pick = <Obj extends { [key: string]: any }, Key extends keyof Obj>(
       {} as Pick<Obj, Key>,
    )
 
-export const forceHiddenStyles = (node: HTMLElement) => {
+const forceHiddenStyles = (node: HTMLElement) => {
    for (const key of Object.keys(HIDDEN_TEXTAREA_STYLE)) {
       node.style.setProperty(
          key,

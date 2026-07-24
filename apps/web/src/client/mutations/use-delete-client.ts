@@ -50,7 +50,7 @@ export function useDeleteClient({
    )
 }
 
-export function useOptimisticDeleteClient() {
+function useOptimisticDeleteClient() {
    const queryClient = useQueryClient()
    const auth = useAuth()
    const listQueryOptions = trpc.client.list.queryOptions({

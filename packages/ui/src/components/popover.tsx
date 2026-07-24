@@ -4,9 +4,8 @@ import { cn } from "../utils"
 
 export const Popover = PopoverPrimitive.Root
 export const PopoverTrigger = PopoverPrimitive.Trigger
-export const PopoverPortal = PopoverPrimitive.Portal
-export const PopoverPositioner = PopoverPrimitive.Positioner
-export const PopoverArrow = PopoverPrimitive.Arrow
+const PopoverPortal = PopoverPrimitive.Portal
+const PopoverPositioner = PopoverPrimitive.Positioner
 
 export function PopoverPopup({
    className,

@@ -93,11 +93,6 @@ export function useCreateOrder({
                },
             })
             attachments.clear()
-            // notify({
-            //    title: `➕ ${auth.user.name} додав замовлення`,
-            //    body: order.name,
-            //    priority: order.severity === "high" ? "max" : "default",
-            // })
          },
          onSettled: () => {
             queryClient.invalidateQueries(

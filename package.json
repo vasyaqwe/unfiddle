@@ -2,7 +2,9 @@
   "name": "unfiddle",
   "devDependencies": {
     "@biomejs/biome": "^2.5.5",
+    "@types/node": "^26.1.1",
     "concurrently": "^9.1.2",
+    "knip": "^6.29.0",
     "turbo": "^2.3.3",
     "typescript": "^7.0.2"
   },
@@ -28,8 +30,18 @@
     "format-lint:fix": "biome check --write",
     "typecheck": "turbo typecheck",
     "test": "turbo run test",
-    "test:ui": "turbo run test:ui"
+    "test:ui": "turbo run test:ui",
+    "knip": "knip"
   },
-  "trustedDependencies": ["@biomejs/biome", "core-js", "esbuild", "workerd"],
-  "workspaces": ["apps/*", "packages/*", "tooling/*"]
+  "trustedDependencies": [
+    "@biomejs/biome",
+    "core-js",
+    "esbuild",
+    "workerd"
+  ],
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "tooling/*"
+  ]
 }

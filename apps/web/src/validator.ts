@@ -9,7 +9,7 @@ export interface ZodTypeLike {
    parse: (input: any) => any
 }
 
-export type InputOutputOption = "input" | "output"
+type InputOutputOption = "input" | "output"
 
 export interface zodValidatorOptions {
    readonly schema: ZodTypeLike
@@ -17,25 +17,23 @@ export interface zodValidatorOptions {
    readonly output?: InputOutputOption
 }
 
-export type zodValidatorInput<
-   TOptions extends ZodTypeLike | zodValidatorOptions,
-> = TOptions extends zodValidatorOptions
-   ? "input" extends TOptions["input"]
-      ? TOptions["schema"]["_input"]
-      : TOptions["schema"]["_output"]
-   : TOptions extends ZodTypeLike
-     ? TOptions["_input"]
-     : never
+type zodValidatorInput<TOptions extends ZodTypeLike | zodValidatorOptions> =
+   TOptions extends zodValidatorOptions
+      ? "input" extends TOptions["input"]
+         ? TOptions["schema"]["_input"]
+         : TOptions["schema"]["_output"]
+      : TOptions extends ZodTypeLike
+        ? TOptions["_input"]
+        : never
 
-export type zodValidatorOutput<
-   TOptions extends ZodTypeLike | zodValidatorOptions,
-> = TOptions extends zodValidatorOptions
-   ? "output" extends TOptions["output"]
-      ? TOptions["schema"]["_output"]
-      : TOptions["schema"]["_input"]
-   : TOptions extends ZodTypeLike
-     ? TOptions["_output"]
-     : never
+type zodValidatorOutput<TOptions extends ZodTypeLike | zodValidatorOptions> =
+   TOptions extends zodValidatorOptions
+      ? "output" extends TOptions["output"]
+         ? TOptions["schema"]["_output"]
+         : TOptions["schema"]["_input"]
+      : TOptions extends ZodTypeLike
+        ? TOptions["_output"]
+        : never
 
 export type zodValidatorAdapter<
    TOptions extends ZodTypeLike | zodValidatorOptions,

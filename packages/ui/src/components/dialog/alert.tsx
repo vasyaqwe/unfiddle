@@ -6,8 +6,8 @@ import { DIALOG_STYLES, dialog } from "./constants"
 export const AlertDialog = AlertDialogPrimitive.Root
 export const AlertDialogTrigger = AlertDialogPrimitive.Trigger
 export const AlertDialogClose = AlertDialogPrimitive.Close
-export const AlertDialogPortal = AlertDialogPrimitive.Portal
-export const AlertDialogBackdrop = AlertDialogPrimitive.Backdrop
+const AlertDialogPortal = AlertDialogPrimitive.Portal
+const AlertDialogBackdrop = AlertDialogPrimitive.Backdrop
 
 export function AlertDialogPopup({
    className,

@@ -1,23 +1,5 @@
 import * as chrono from "chrono-node"
 
-export const startOfDay = () => "00:00"
-export const endOfDay = () => "23:59"
-
-export const now = () => {
-   const date = new Date()
-   const hours = date.getHours().toString().padStart(2, "0")
-   const minutes = date.getMinutes().toString().padStart(2, "0")
-   return `${hours}:${minutes}`
-}
-
-export const nHoursFromNow = (n: number) => {
-   const date = new Date()
-   date.setHours(date.getHours() + n)
-   const hours = date.getHours().toString().padStart(n, "0")
-   const minutes = date.getMinutes().toString().padStart(n, "0")
-   return `${hours}:${minutes}`
-}
-
 export const parseDateTime = (str: Date | string) => {
    if (str instanceof Date) return str
    return chrono.uk.parseDate(str)

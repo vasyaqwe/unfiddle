@@ -28,7 +28,6 @@ export type ApiClientError = {
    message: string
 }
 
-export const CACHE_NONE = 0
 export const CACHE_SHORT = 30 * 1000 // 30 sec
 export const CACHE_AWHILE = 900 * 1000 // 15 min
 export const CACHE_FOREVER = Infinity

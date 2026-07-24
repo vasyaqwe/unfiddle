@@ -10,10 +10,9 @@ export const ContextMenuTrigger = ContextMenuPrimitive.Trigger
 export const ContextMenuGroup = ContextMenuPrimitive.Group
 // export const ContextMenuRadioGroup = ContextMenuPrimitive.RadioGroup
 export const ContextMenuRadioItem = ContextMenuPrimitive.RadioItem
-export const ContextMenuPortal = ContextMenuPrimitive.Portal
-export const ContextMenuBackdrop = ContextMenuPrimitive.Backdrop
-export const ContextMenuPositioner = ContextMenuPrimitive.Positioner
-export const ContextMenuArrow = ContextMenuPrimitive.Arrow
+const ContextMenuPortal = ContextMenuPrimitive.Portal
+const ContextMenuBackdrop = ContextMenuPrimitive.Backdrop
+const ContextMenuPositioner = ContextMenuPrimitive.Positioner
 
 export function ContextMenuGroupLabel({
    className,
@@ -113,7 +112,7 @@ export function ContextMenuSubmenuTrigger({
       >
          {children}
          <svg
-            className="!size-2 ml-auto"
+            className="ml-auto size-2!"
             viewBox="0 0 79 91"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"

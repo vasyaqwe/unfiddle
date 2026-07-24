@@ -41,18 +41,6 @@ export function TabsTab({
    )
 }
 
-export function TabsIndicator({
-   className,
-   ...props
-}: React.ComponentProps<typeof TabsPrimitive.Indicator>) {
-   return (
-      <TabsPrimitive.Indicator
-         className={cn("", className)}
-         {...props}
-      />
-   )
-}
-
 export function TabsPanel({
    className,
    ...props

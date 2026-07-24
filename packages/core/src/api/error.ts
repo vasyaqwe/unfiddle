@@ -37,22 +37,6 @@ export const statusToCode = (status: number): ApiErrorCode => {
    return "INTERNAL_SERVER_ERROR"
 }
 
-export const codeToStatus = (code: ApiErrorCode): number => {
-   if (code === "BAD_REQUEST") return 400
-   if (code === "UNAUTHORIZED") return 401
-   if (code === "FORBIDDEN") return 403
-   if (code === "NOT_FOUND") return 404
-   if (code === "METHOD_NOT_ALLOWED") return 405
-   if (code === "CONFLICT") return 409
-   if (code === "PARSE_ERROR") return 422
-   if (code === "TOO_MANY_REQUESTS") return 429
-   if (code === "NOT_IMPLEMENTED") return 501
-   if (code === "INTERNAL_SERVER_ERROR") return 500
-
-   return 500
-}
-
-// Props to cal.com: https://github.com/calcom/cal.com/blob/5d325495a9c30c5a9d89fc2adfa620b8fde9346e/packages/lib/server/getServerErrorFromUnknown.ts#L17
 export const parseZodErrorIssues = (issues: ZodIssue[]): string => {
    return issues
       .map((i) =>

@@ -97,12 +97,10 @@ function DrawerDescription({
 
 export {
    Drawer,
-   DrawerBackdrop,
    DrawerClose,
    DrawerDescription,
    DrawerFooter,
    DrawerPopup,
-   DrawerPortal,
    DrawerSeparator,
    DrawerTitle,
    DrawerTrigger,

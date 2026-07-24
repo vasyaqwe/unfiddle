@@ -15,18 +15,6 @@ export function useEstimateUnreadCount(estimateId: string): number {
    return data?.count ?? 0
 }
 
-export function useUnreadCount(): number {
-   const auth = useAuth()
-
-   const { data } = useQuery(
-      trpc.estimate.message.read.unreadCount.queryOptions({
-         workspaceId: auth.workspace.id,
-      }),
-   )
-
-   return data?.count ?? 0
-}
-
 export function useUnreadEstimates(): string[] {
    const auth = useAuth()
 

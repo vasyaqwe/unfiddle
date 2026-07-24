@@ -81,11 +81,6 @@ export function useCreateEstimate({
                },
             })
             attachments.clear()
-            // notify({
-            //    title: `➕ ${auth.user.name} додав замовлення`,
-            //    body: estimate.name,
-            //    priority: estimate.severity === "high" ? "max" : "default",
-            // })
          },
          onSettled: () => {
             queryClient.invalidateQueries(queryOptions)

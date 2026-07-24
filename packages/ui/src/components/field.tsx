@@ -83,12 +83,6 @@ export function FieldControl({
    )
 }
 
-export function UnstyledFieldControl({
-   ...props
-}: React.ComponentProps<typeof FieldPrimitive.Control>) {
-   return <FieldPrimitive.Control {...props} />
-}
-
 export function FieldError({
    className,
    ...props

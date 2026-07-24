@@ -66,7 +66,7 @@ export function ClientForm(props: Props) {
 //    )
 // }
 
-export function Form({
+function Form({
    onSubmit,
    children,
    client,

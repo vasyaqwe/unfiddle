@@ -324,7 +324,6 @@ export function Procurement({ procurement }: { procurement: ProcurementType }) {
                )
             }}
          />
-
          {/* <p className="col-start-1 whitespace-nowrap font-medium font-mono text-[1rem] max-lg:order-3 max-lg:self-center lg:mt-1 lg:ml-auto lg:text-right">
             {profit === 0 ? null : (
                <ProfitArrow

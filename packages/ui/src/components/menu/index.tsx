@@ -11,10 +11,9 @@ export const SubmenuTrigger = MenuPrimitive.SubmenuTrigger
 export const MenuGroup = MenuPrimitive.Group
 // export const MenuRadioGroup = MenuPrimitive.RadioGroup
 export const MenuRadioItem = MenuPrimitive.RadioItem
-export const MenuPortal = MenuPrimitive.Portal
-export const MenuBackdrop = MenuPrimitive.Backdrop
-export const MenuPositioner = MenuPrimitive.Positioner
-export const MenuArrow = MenuPrimitive.Arrow
+const MenuPortal = MenuPrimitive.Portal
+const MenuBackdrop = MenuPrimitive.Backdrop
+const MenuPositioner = MenuPrimitive.Positioner
 
 export function MenuGroupLabel({
    className,

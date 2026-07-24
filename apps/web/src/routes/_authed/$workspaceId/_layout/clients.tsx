@@ -245,7 +245,7 @@ function ClientRow({
    )
 }
 
-export function ClientsEmpty() {
+function ClientsEmpty() {
    const auth = useAuth()
 
    return (

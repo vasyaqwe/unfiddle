@@ -9,9 +9,8 @@ export function Tooltip(
 }
 
 export const TooltipProvider = TooltipPrimitive.Provider
-export const TooltipPortal = TooltipPrimitive.Portal
-export const TooltipPositioner = TooltipPrimitive.Positioner
-export const TooltipArrow = TooltipPrimitive.Arrow
+const TooltipPortal = TooltipPrimitive.Portal
+const TooltipPositioner = TooltipPrimitive.Positioner
 
 export function TooltipTrigger({
    delay = 200,
@@ -41,7 +40,7 @@ export function TooltipPopup({
                className={cn(
                   POPUP_STYLES.base,
                   POPUP_STYLES.transition,
-                  "flex items-center gap-px rounded-md px-2 py-1 text-sm has-[[data-kbd]]:pr-1",
+                  "flex items-center gap-px rounded-md px-2 py-1 text-sm has-data-kbd:pr-1",
                   className,
                )}
             >

@@ -11,10 +11,9 @@ export const SelectIcon = SelectPrimitive.Icon
 export const SelectItemIndicator = SelectPrimitive.ItemIndicator
 export const SelectItemText = SelectPrimitive.ItemText
 export const SelectGroup = SelectPrimitive.Group
-export const SelectPortal = SelectPrimitive.Portal
-export const SelectBackdrop = SelectPrimitive.Backdrop
-export const SelectPositioner = SelectPrimitive.Positioner
-export const SelectArrow = SelectPrimitive.Arrow
+const SelectPortal = SelectPrimitive.Portal
+const SelectBackdrop = SelectPrimitive.Backdrop
+const SelectPositioner = SelectPrimitive.Positioner
 
 export function SelectGroupLabel({
    className,

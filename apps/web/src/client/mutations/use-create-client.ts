@@ -51,7 +51,7 @@ export function useCreateClient({
    )
 }
 
-export function useOptimisticCreateClient() {
+function useOptimisticCreateClient() {
    const queryClient = useQueryClient()
    const auth = useAuth()
    const queryOptions = trpc.client.list.queryOptions({

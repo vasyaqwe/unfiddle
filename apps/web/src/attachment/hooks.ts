@@ -5,7 +5,7 @@ import {
    useQueryClient,
 } from "@tanstack/react-query"
 import type { InferResponseType } from "hono"
-import { useAtom, useSetAtom } from "jotai"
+import { useAtom } from "jotai"
 import type React from "react"
 import type { FileRejection } from "react-dropzone"
 import { toast } from "sonner"
@@ -178,27 +178,6 @@ export function useAttachments({
       clear,
       upload,
       onPaste,
-   }
-}
-
-export function useClearAttachments() {
-   const queryClient = useQueryClient()
-   const setUploadedIds = useSetAtom(uploadedIdsAtom)
-
-   return (subjectId: string) => {
-      setUploadedIds((prev) => {
-         queryClient.setQueryData(
-            attachmentListQueryOptions({ subjectId, ids: [] }).queryKey,
-            () => ({
-               attachments: [],
-            }),
-         )
-
-         return {
-            ...prev,
-            [subjectId]: [],
-         }
-      })
    }
 }
 

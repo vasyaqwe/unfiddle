@@ -71,32 +71,3 @@ export const formatDate = (
    new Intl.DateTimeFormat("uk-UA", {
       ...options,
    }).format(new Date(date))
-
-export const formatMinutesToTime = (minutes: number) => {
-   if (minutes === 0) return "0 min"
-
-   const hours = Math.floor(minutes / 60)
-   const mins = minutes % 60
-
-   let result = ""
-
-   if (hours > 0) {
-      if (hours === 1) {
-         result += "1 hour"
-      } else if (hours === 1.5) {
-         result += "1.5 hours"
-      } else {
-         result += `${hours} hours`
-      }
-
-      if (mins > 0) {
-         result += ", "
-      }
-   }
-
-   if (mins > 0) {
-      result += `${mins} min`
-   }
-
-   return result
-}

@@ -5,18 +5,12 @@ import {
    httpBatchLink,
    type TRPCClientErrorLike,
 } from "@trpc/client"
-import {
-   createTRPCContext,
-   createTRPCOptionsProxy,
-} from "@trpc/tanstack-react-query"
+import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query"
 import type { AppRouter } from "@unfiddle/core/trpc/types"
 import { toast } from "sonner"
 import superjson from "superjson"
 import { CACHE_AWHILE } from "@/api"
 import { env } from "@/env"
-
-export const { TRPCProvider, useTRPC, useTRPCClient } =
-   createTRPCContext<AppRouter>()
 
 export const queryClient = new QueryClient({
    defaultOptions: {
