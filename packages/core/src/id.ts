@@ -1,6 +1,8 @@
 import { ID_PREFIXES } from "@unfiddle/core/database/id"
 import baseX from "base-x"
+
 const b58 = baseX("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz")
+
 import crypto from "node:crypto"
 
 export const createId = (prefix: keyof typeof ID_PREFIXES) => {

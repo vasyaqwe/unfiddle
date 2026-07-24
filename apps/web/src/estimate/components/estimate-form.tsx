@@ -1,7 +1,3 @@
-import { useAuth } from "@/auth/hooks"
-import { ClientCombobox } from "@/client/components/client-combobox"
-import { trpc } from "@/trpc"
-import { SuspenseBoundary } from "@/ui/components/suspense-boundary"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { CURRENCIES, CURRENCY_SYMBOLS } from "@unfiddle/core/currency/constants"
 import type { Currency } from "@unfiddle/core/currency/types"
@@ -27,6 +23,10 @@ import {
 import { Textarea } from "@unfiddle/ui/components/textarea"
 import { formData } from "@unfiddle/ui/utils"
 import * as React from "react"
+import { useAuth } from "@/auth/hooks"
+import { ClientCombobox } from "@/client/components/client-combobox"
+import { trpc } from "@/trpc"
+import { SuspenseBoundary } from "@/ui/components/suspense-boundary"
 
 type BareItem = Omit<EstimateItem, "id">
 

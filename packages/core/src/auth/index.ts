@@ -14,7 +14,7 @@ import type { Context } from "hono"
 
 export type AuthClient = ReturnType<typeof authClient>
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/suspicious/noExplicitAny: ...
 export const authClient: any = (c: Context<HonoEnv>) => {
    return betterAuth({
       appName: "unfiddle",

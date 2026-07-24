@@ -74,7 +74,7 @@ export function useChartZoom({ initialData }: { initialData: DataPoint[] }) {
 
    // const total = zoomedData().reduce((acc, curr) => acc + curr.value, 0)
 
-   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+   // biome-ignore lint/suspicious/noExplicitAny: ...
    const onMouseDown = (e: any) => {
       if (e.activeLabel) {
          setRefAreaLeft(e.activeLabel)
@@ -82,7 +82,7 @@ export function useChartZoom({ initialData }: { initialData: DataPoint[] }) {
       }
    }
 
-   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+   // biome-ignore lint/suspicious/noExplicitAny: ...
    const onMouseMove = (e: any) => {
       if (isSelecting && e.activeLabel) setRefAreaRight(e.activeLabel)
    }
@@ -130,12 +130,12 @@ export function useChartZoom({ initialData }: { initialData: DataPoint[] }) {
             touch1.clientY - touch2.clientY,
          )
 
-         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+         // biome-ignore lint/suspicious/noExplicitAny: ...
          if ((e as any).lastTouchDistance) {
-            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+            // biome-ignore lint/suspicious/noExplicitAny: ...
             direction = currentDistance > (e as any).lastTouchDistance ? 1 : -1
          }
-         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+         // biome-ignore lint/suspicious/noExplicitAny: ...
          ;(e as any).lastTouchDistance = currentDistance
 
          clientX = (touch1.clientX + touch2.clientX) / 2

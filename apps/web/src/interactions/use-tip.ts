@@ -6,7 +6,11 @@ export const useTip = ({
    message,
    key,
    autoTrigger = false,
-}: { key: string; message: string; autoTrigger?: boolean }) => {
+}: {
+   key: string
+   message: string
+   autoTrigger?: boolean
+}) => {
    const [seen, setSeen] = useLocalStorage(`tip_${key}`, false)
    const trigger = () => {
       if (seen) return

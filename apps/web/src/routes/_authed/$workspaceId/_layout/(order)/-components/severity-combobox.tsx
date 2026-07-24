@@ -1,6 +1,3 @@
-import { OrderSeverityIcon } from "@/order/components/order-severity-icon"
-import { useOrder } from "@/order/hooks"
-import { useUpdateOrder } from "@/order/update/use-update-order"
 import { useParams } from "@tanstack/react-router"
 import {
    ORDER_SEVERITIES,
@@ -15,6 +12,9 @@ import {
    ComboboxTrigger,
 } from "@unfiddle/ui/components/combobox"
 import { cn } from "@unfiddle/ui/utils"
+import { OrderSeverityIcon } from "@/order/components/order-severity-icon"
+import { useOrder } from "@/order/hooks"
+import { useUpdateOrder } from "@/order/update/use-update-order"
 
 export function SeverityCombobox({
    className,

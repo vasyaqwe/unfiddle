@@ -1,12 +1,12 @@
-import { authClient } from "@/auth"
-import { env } from "@/env"
 import { useMutation } from "@tanstack/react-query"
-import { Link, createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, Link } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
 import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { Logo } from "@unfiddle/ui/components/logo"
 import { formData } from "@unfiddle/ui/utils"
+import { authClient } from "@/auth"
+import { env } from "@/env"
 
 export const Route = createFileRoute("/forgot-password")({
    component: RouteComponent,

@@ -4,7 +4,7 @@ import { type D3ZoomEvent, zoom } from "d3-zoom"
 import { useAtomValue, useSetAtom } from "jotai"
 import * as React from "react"
 import { useResizeHandler } from "./hooks"
-import { setZoomAtom, setupZoomAtom, zoomAtom } from "./store"
+import { setupZoomAtom, setZoomAtom, zoomAtom } from "./store"
 import {
    constrainedFitTransform,
    eventTargetClickDisabled,
@@ -69,12 +69,12 @@ export function ZoomPane({
 
       d3ZoomInstance.on(
          "zoom.pane",
-         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+         // biome-ignore lint/suspicious/noExplicitAny: ...
          (event: D3ZoomEvent<HTMLDivElement, any>) =>
             setZoom({ transform: event.transform }),
       )
 
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      // biome-ignore lint/suspicious/noExplicitAny: ...
       d3ZoomInstance.filter((event: any) => {
          if (event.type === "dblclick") return false
 
@@ -106,14 +106,13 @@ export function ZoomPane({
    React.useEffect(() => {
       if (!d3Zoom) return
 
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      // biome-ignore lint/suspicious/noExplicitAny: ...
       d3Zoom.on("start.pane", (event: D3ZoomEvent<HTMLDivElement, any>) => {
-         if (!event.sourceEvent || event.sourceEvent.type !== "mousedown")
-            return
+         if (event.sourceEvent?.type !== "mousedown") return
          setZoom({ panning: true })
       })
 
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      // biome-ignore lint/suspicious/noExplicitAny: ...
       d3Zoom.on("end.pane", (event: D3ZoomEvent<HTMLDivElement, any>) => {
          if (!event.sourceEvent) return
          setZoom({ panning: false })
@@ -127,7 +126,7 @@ export function ZoomPane({
 
       d3Container.on(
          "wheel.pane",
-         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+         // biome-ignore lint/suspicious/noExplicitAny: ...
          (event: any) => {
             if (eventTargetWheelDisabled(event.target)) return
 
@@ -179,7 +178,7 @@ export function ZoomPane({
    React.useEffect(() => {
       if (!d3Container) return
 
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      // biome-ignore lint/suspicious/noExplicitAny: ...
       d3Container.on("click.pane", (event: any) => {
          if (eventTargetClickDisabled(event.target)) return
 

@@ -1,6 +1,5 @@
 //courtesy of https://github.com/sadmann7
 
-import type { UploadedAttachment } from "@/attachment/types"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { SVGPreview } from "@unfiddle/ui/components/svg-preview"
 import { cn } from "@unfiddle/ui/utils"
@@ -9,6 +8,7 @@ import Dropzone, {
    type DropzoneProps,
    type FileRejection,
 } from "react-dropzone"
+import type { UploadedAttachment } from "@/attachment/types"
 import { MAX_FILE_SIZE } from "./constants"
 import { useControllableState } from "./hooks/use-controllable-state"
 import { useDragState } from "./hooks/use-drag-state"
@@ -196,11 +196,7 @@ export function FileUploader(props: Props) {
 const isFileWithPreview = (file: File): file is File & { preview: string } =>
    "preview" in file && typeof file.preview === "string"
 
-export function FilePreview({
-   file,
-}: {
-   file: UploadedAttachment
-}) {
+export function FilePreview({ file }: { file: UploadedAttachment }) {
    if (file.type.startsWith("image/")) {
       if (file.name.endsWith(".svg")) return <SVGPreview url={file.url} />
 

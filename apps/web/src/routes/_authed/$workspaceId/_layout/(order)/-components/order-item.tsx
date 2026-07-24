@@ -1,10 +1,3 @@
-import { useAuth } from "@/auth/hooks"
-import { useOrder } from "@/order/hooks"
-import { useCreateOrderItemAssignee } from "@/order/item/assignee/mutations/use-create-order-item-assignee"
-import { useDeleteOrderItemAssignee } from "@/order/item/assignee/mutations/use-delete-order-item-assignee"
-import { UpdateOrderItem } from "@/order/item/components/update-order-item"
-import { useDeleteOrderItem } from "@/order/item/mutations/use-delete-order-item"
-import { UserAvatar } from "@/user/components/user-avatar"
 import { useParams } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
 import type { OrderItem as OrderItemType } from "@unfiddle/core/order/item/types"
@@ -28,12 +21,15 @@ import {
    TooltipTrigger,
 } from "@unfiddle/ui/components/tooltip"
 import * as React from "react"
+import { useAuth } from "@/auth/hooks"
+import { useOrder } from "@/order/hooks"
+import { useCreateOrderItemAssignee } from "@/order/item/assignee/mutations/use-create-order-item-assignee"
+import { useDeleteOrderItemAssignee } from "@/order/item/assignee/mutations/use-delete-order-item-assignee"
+import { UpdateOrderItem } from "@/order/item/components/update-order-item"
+import { useDeleteOrderItem } from "@/order/item/mutations/use-delete-order-item"
+import { UserAvatar } from "@/user/components/user-avatar"
 
-export function OrderItem({
-   item,
-}: {
-   item: OrderItemType
-}) {
+export function OrderItem({ item }: { item: OrderItemType }) {
    const params = useParams({
       from: "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout",
    })

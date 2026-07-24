@@ -1,12 +1,4 @@
-import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
-import { useEstimate } from "@/estimate/hooks"
-import { Header, HeaderBackButton } from "@/layout/components/header"
-import { MainScrollArea } from "@/layout/components/main"
-import { ErrorComponent } from "@/ui/components/error"
-import { SuspenseFallback } from "@/ui/components/suspense-boundary"
-import { UserAvatar } from "@/user/components/user-avatar"
-import { Outlet, createFileRoute } from "@tanstack/react-router"
-import { notFound } from "@tanstack/react-router"
+import { createFileRoute, notFound, Outlet } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
 import { formatDate } from "@unfiddle/core/date"
 import { ScrollArea } from "@unfiddle/ui/components/scroll-area"
@@ -15,6 +7,13 @@ import {
    TooltipPopup,
    TooltipTrigger,
 } from "@unfiddle/ui/components/tooltip"
+import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
+import { useEstimate } from "@/estimate/hooks"
+import { Header, HeaderBackButton } from "@/layout/components/header"
+import { MainScrollArea } from "@/layout/components/main"
+import { ErrorComponent } from "@/ui/components/error"
+import { SuspenseFallback } from "@/ui/components/suspense-boundary"
+import { UserAvatar } from "@/user/components/user-avatar"
 
 export const Route = createFileRoute(
    "/_authed/$workspaceId/_layout/(estimate)/estimate/$estimateId/_layout",

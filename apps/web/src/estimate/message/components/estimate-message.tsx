@@ -1,3 +1,12 @@
+import { useParams } from "@tanstack/react-router"
+import { formatDate } from "@unfiddle/core/date"
+import type { EstimateMessage as EstimateMessageType } from "@unfiddle/core/estimate/message/types"
+import {
+   Tooltip,
+   TooltipPopup,
+   TooltipTrigger,
+} from "@unfiddle/ui/components/tooltip"
+import { cn } from "@unfiddle/ui/utils"
 import { useAuth } from "@/auth/hooks"
 import {
    Message,
@@ -10,15 +19,6 @@ import {
 import type { ChatMessagePosition } from "@/chat/types"
 import { useDeleteEstimateMessage } from "@/estimate/message/mutations"
 import { UserAvatar } from "@/user/components/user-avatar"
-import { useParams } from "@tanstack/react-router"
-import { formatDate } from "@unfiddle/core/date"
-import type { EstimateMessage as EstimateMessageType } from "@unfiddle/core/estimate/message/types"
-import {
-   Tooltip,
-   TooltipPopup,
-   TooltipTrigger,
-} from "@unfiddle/ui/components/tooltip"
-import { cn } from "@unfiddle/ui/utils"
 
 export function EstimateMessage({
    message,

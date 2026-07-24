@@ -1,10 +1,7 @@
-import { CACHE_FOREVER, api } from "@/api"
-import { trpc } from "@/trpc"
-import { WorkspaceLogo } from "@/workspace/components/workspace-logo"
 import { useMutation } from "@tanstack/react-query"
 import {
-   Link,
    createFileRoute,
+   Link,
    notFound,
    redirect,
    useNavigate,
@@ -12,6 +9,9 @@ import {
 import { Button } from "@unfiddle/ui/components/button"
 import { Loading } from "@unfiddle/ui/components/loading"
 import { Logo } from "@unfiddle/ui/components/logo"
+import { api, CACHE_FOREVER } from "@/api"
+import { trpc } from "@/trpc"
+import { WorkspaceLogo } from "@/workspace/components/workspace-logo"
 
 export const Route = createFileRoute("/join/$code")({
    component: RouteComponent,
@@ -50,7 +50,7 @@ export const Route = createFileRoute("/join/$code")({
          <main className="grid h-svh w-full place-items-center bg-background text-center">
             <Loading
                size={"xl"}
-               className="-translate-y-8 inset-0 m-auto"
+               className="inset-0 m-auto -translate-y-8"
             />
          </main>
       )
@@ -79,7 +79,7 @@ function RouteComponent() {
          >
             <Logo />
          </Link>
-         <div className="-mt-16 relative w-full max-w-lg">
+         <div className="relative -mt-16 w-full max-w-lg">
             <WorkspaceLogo
                workspace={workspace}
                size={40}

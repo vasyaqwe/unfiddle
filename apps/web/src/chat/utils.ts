@@ -1,6 +1,6 @@
-import type { ChatMessagePosition } from "@/chat/types"
 import { formatDate } from "@unfiddle/core/date"
 import * as R from "remeda"
+import type { ChatMessagePosition } from "@/chat/types"
 
 type MessageRow<T> =
    | {

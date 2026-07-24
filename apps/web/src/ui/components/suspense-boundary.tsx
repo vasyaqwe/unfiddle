@@ -1,7 +1,7 @@
-import { ErrorComponent } from "@/ui/components/error"
 import { CatchBoundary } from "@tanstack/react-router"
 import { Loading } from "@unfiddle/ui/components/loading"
 import * as React from "react"
+import { ErrorComponent } from "@/ui/components/error"
 
 export function SuspenseBoundary({
    children,
@@ -41,7 +41,7 @@ export function SuspenseFallback() {
    return (
       <Loading
          size={"xl"}
-         className="-translate-y-5 !absolute inset-0 m-auto"
+         className="!absolute inset-0 m-auto -translate-y-5"
       />
    )
 }

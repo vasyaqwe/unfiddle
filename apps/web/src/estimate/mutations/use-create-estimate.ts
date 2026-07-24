@@ -1,17 +1,20 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useSearch } from "@tanstack/react-router"
+import type { RouterOutput } from "@unfiddle/core/trpc/types"
+import { toast } from "sonner"
 import { CACHE_SHORT } from "@/api"
 import { useAttachments } from "@/attachment/hooks"
 import { useAuth } from "@/auth/hooks"
 import { useSocket } from "@/socket"
 import { trpc } from "@/trpc"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useSearch } from "@tanstack/react-router"
-import type { RouterOutput } from "@unfiddle/core/trpc/types"
-import { toast } from "sonner"
 
 export function useCreateEstimate({
    onMutate,
    onError,
-}: { onMutate?: () => void; onError?: () => void } = {}) {
+}: {
+   onMutate?: () => void
+   onError?: () => void
+} = {}) {
    const search = useSearch({ strict: false })
    const queryClient = useQueryClient()
    const auth = useAuth()

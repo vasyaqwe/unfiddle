@@ -1,7 +1,3 @@
-import { useAuth } from "@/auth/hooks"
-import { ClientForm } from "@/client/components/client-form"
-import { useUpdateClient } from "@/client/mutations/use-update-client"
-import { SuspenseBoundary } from "@/ui/components/suspense-boundary"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import { Button } from "@unfiddle/ui/components/button"
 import {
@@ -11,6 +7,10 @@ import {
    DrawerPopup,
    DrawerTitle,
 } from "@unfiddle/ui/components/drawer"
+import { useAuth } from "@/auth/hooks"
+import { ClientForm } from "@/client/components/client-form"
+import { useUpdateClient } from "@/client/mutations/use-update-client"
+import { SuspenseBoundary } from "@/ui/components/suspense-boundary"
 
 interface Props {
    client: RouterOutput["client"]["list"][number]

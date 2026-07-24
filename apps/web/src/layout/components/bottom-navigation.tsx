@@ -16,8 +16,8 @@ export function BottomNavigation() {
                   activeOptions={{ exact: true, includeSearch: false }}
                   className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-tight aria-[current=page]:text-foreground"
                >
-                  <Icons.home className=" size-6 shrink-0 group-aria-[current=page]:hidden" />
-                  <Icons.homeSolid className=" hidden size-6 shrink-0 group-aria-[current=page]:block" />
+                  <Icons.home className="size-6 shrink-0 group-aria-[current=page]:hidden" />
+                  <Icons.homeSolid className="hidden size-6 shrink-0 group-aria-[current=page]:block" />
                   Головна
                </Link>
             </li>
@@ -40,8 +40,8 @@ export function BottomNavigation() {
                   search={search}
                   className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-tight aria-[current=page]:text-foreground"
                >
-                  <Icons.users className=" size-6 shrink-0 group-aria-[current=page]:hidden" />
-                  <Icons.usersSolid className=" hidden size-6 shrink-0 group-aria-[current=page]:block" />
+                  <Icons.users className="size-6 shrink-0 group-aria-[current=page]:hidden" />
+                  <Icons.usersSolid className="hidden size-6 shrink-0 group-aria-[current=page]:block" />
                   Команда
                </Link>
             </li>
@@ -52,8 +52,8 @@ export function BottomNavigation() {
                   search={search}
                   className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-tight aria-[current=page]:text-foreground"
                >
-                  <Icons.gear className=" size-6 shrink-0 group-aria-[current=page]:hidden" />
-                  <Icons.gearSolid className=" hidden size-6 shrink-0 group-aria-[current=page]:block" />
+                  <Icons.gear className="size-6 shrink-0 group-aria-[current=page]:hidden" />
+                  <Icons.gearSolid className="hidden size-6 shrink-0 group-aria-[current=page]:block" />
                   Налаштув.
                </Link>
             </li>

@@ -1,10 +1,3 @@
-import { trpc } from "@/trpc"
-import {
-   Stat,
-   StatLabel,
-   StatValue,
-   StatValueSup,
-} from "@/workspace/analytics/components/stat"
 import { useQuery } from "@tanstack/react-query"
 import { useParams, useSearch } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
@@ -17,6 +10,13 @@ import {
    CardTitle,
 } from "@unfiddle/ui/components/card"
 import { cn } from "@unfiddle/ui/utils"
+import { trpc } from "@/trpc"
+import {
+   Stat,
+   StatLabel,
+   StatValue,
+   StatValueSup,
+} from "@/workspace/analytics/components/stat"
 
 export function QuickStats() {
    const params = useParams({ from: "/_authed/$workspaceId/_layout/analytics" })

@@ -12,9 +12,9 @@ import { storageRouter } from "@unfiddle/core/storage/api"
 import { appRouter } from "@unfiddle/core/trpc"
 import type { TRPCContext } from "@unfiddle/core/trpc/context"
 import { workspaceRouter } from "@unfiddle/core/workspace/api"
-import { partyserverMiddleware } from "hono-party"
 import { cors } from "hono/cors"
 import { logger as honoLogger } from "hono/logger"
+import { partyserverMiddleware } from "hono-party"
 
 const app = createRouter()
    .use(honoLogger())

@@ -1,5 +1,5 @@
-import { Server } from "partyserver"
 import type { Connection, WSMessage } from "partyserver"
+import { Server } from "partyserver"
 
 export class Procurement extends Server {
    static override options = {

@@ -1,7 +1,7 @@
-import { queryClient, trpc, trpcClient } from "@/trpc"
 import { queryCollectionOptions } from "@tanstack/query-db-collection"
 import { createCollection } from "@tanstack/react-db"
 import { orderMessageSchema } from "@unfiddle/core/order/message/schema"
+import { queryClient, trpc, trpcClient } from "@/trpc"
 
 const createCollectionInstance = (orderId: string, workspaceId: string) =>
    createCollection(

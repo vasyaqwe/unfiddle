@@ -73,7 +73,7 @@ export function MenuCheckboxItem({
 export function MenuCheckboxItemIndicator() {
    return (
       <MenuPrimitive.CheckboxItemIndicator
-         className={"-mr-1 md:-mr-0.5 ml-auto"}
+         className={"-mr-1 ml-auto md:-mr-0.5"}
       >
          <Icons.check
             strokeWidth={2.5}

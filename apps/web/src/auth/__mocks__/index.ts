@@ -1,5 +1,5 @@
-import type { useAuth } from "@/auth/hooks"
 import { vi } from "vitest"
+import type { useAuth } from "@/auth/hooks"
 
 vi.mock("@/auth/hooks", () => ({
    useAuth: vi.fn(

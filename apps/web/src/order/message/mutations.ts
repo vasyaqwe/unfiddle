@@ -1,9 +1,9 @@
+import { useParams } from "@tanstack/react-router"
 import type { UploadedAttachment } from "@/attachment/types"
 import { useAuth } from "@/auth/hooks"
 import { createId } from "@/id"
 import { orderMessageCollection } from "@/order/message/collection"
 import { useSocket } from "@/socket"
-import { useParams } from "@tanstack/react-router"
 
 export function useCreateOrderMessage() {
    const params = useParams({

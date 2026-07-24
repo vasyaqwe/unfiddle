@@ -1,12 +1,11 @@
-export * from "./utils"
 export * from "drizzle-orm/sqlite-core"
+export * from "./utils"
+
 import type { ApiEnv, ClientEnv } from "@unfiddle/core/env"
 import { drizzle } from "drizzle-orm/d1"
 import * as schema from "./schema"
 
-export const client = (c: {
-   var: { env: ApiEnv & ClientEnv }
-}) => {
+export const client = (c: { var: { env: ApiEnv & ClientEnv } }) => {
    return drizzle(c.var.env.DATABASE, {
       casing: "snake_case",
       schema,

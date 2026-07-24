@@ -2,7 +2,11 @@ export const email = ({
    content,
    title,
    preheader,
-}: { content: string; title: string; preheader?: string | undefined }) => `
+}: {
+   content: string
+   title: string
+   preheader?: string | undefined
+}) => `
 <!DOCTYPE html>
 <html lang="en">
 

@@ -1,8 +1,5 @@
-import { useOrderQueryOptions } from "@/order/queries"
-import { trpc } from "@/trpc"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { useParams, useSearch } from "@tanstack/react-router"
-import { useNavigate } from "@tanstack/react-router"
+import { useNavigate, useParams, useSearch } from "@tanstack/react-router"
 import { Badge } from "@unfiddle/ui/components/badge"
 import { Button } from "@unfiddle/ui/components/button"
 import { Icons } from "@unfiddle/ui/components/icons"
@@ -15,6 +12,8 @@ import {
    MenuTrigger,
    Submenu,
 } from "@unfiddle/ui/components/menu"
+import { useOrderQueryOptions } from "@/order/queries"
+import { trpc } from "@/trpc"
 
 export function FilterMenu() {
    const params = useParams({

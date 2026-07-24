@@ -1,14 +1,3 @@
-import { ImagesCarousel } from "@/attachment/components/images-carousel"
-import { useAuth } from "@/auth/hooks"
-import { FileItem } from "@/file/components/file-item"
-import { useOrder } from "@/order/hooks"
-import { useDeleteProcurement } from "@/procurement/delete/use-delete-procurement"
-import { updateProcurementOpenAtom } from "@/procurement/store"
-import { UpdateProcurement } from "@/procurement/update/update-procurement"
-import { useUpdateProcurement } from "@/procurement/update/use-update-procurement"
-import { useSocket } from "@/socket"
-import { trpc } from "@/trpc"
-import { UserAvatar } from "@/user/components/user-avatar"
 import { useQueryClient } from "@tanstack/react-query"
 import { useParams } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
@@ -54,12 +43,19 @@ import { useSetAtom } from "jotai"
 import { useTheme } from "next-themes"
 import * as React from "react"
 import { toast } from "sonner"
+import { ImagesCarousel } from "@/attachment/components/images-carousel"
+import { useAuth } from "@/auth/hooks"
+import { FileItem } from "@/file/components/file-item"
+import { useOrder } from "@/order/hooks"
+import { useDeleteProcurement } from "@/procurement/delete/use-delete-procurement"
+import { updateProcurementOpenAtom } from "@/procurement/store"
+import { UpdateProcurement } from "@/procurement/update/update-procurement"
+import { useUpdateProcurement } from "@/procurement/update/use-update-procurement"
+import { useSocket } from "@/socket"
+import { trpc } from "@/trpc"
+import { UserAvatar } from "@/user/components/user-avatar"
 
-export function Procurement({
-   procurement,
-}: {
-   procurement: ProcurementType
-}) {
+export function Procurement({ procurement }: { procurement: ProcurementType }) {
    const params = useParams({
       from: "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout",
    })
@@ -113,7 +109,7 @@ export function Procurement({
 
    return (
       <div className="gap-3 border-neutral border-t p-3 text-left first:border-none lg:gap-4 lg:p-2 lg:pl-3">
-         <div className="max-lg:-mt-1.5 max-lg:-mr-1.5 flex items-center">
+         <div className="flex items-center max-lg:-mt-1.5 max-lg:-mr-1.5">
             {orderItem?.name ? (
                <p className="line-clamp-1 font-medium max-lg:w-[calc(100%-2rem)] lg:mr-3">
                   {orderItem.name}

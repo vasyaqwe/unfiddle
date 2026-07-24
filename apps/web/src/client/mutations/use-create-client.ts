@@ -1,13 +1,16 @@
-import { useAuth } from "@/auth/hooks"
-import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import type { RouterOutput } from "@unfiddle/core/trpc/types"
 import { toast } from "sonner"
+import { useAuth } from "@/auth/hooks"
+import { trpc } from "@/trpc"
 
 export function useCreateClient({
    onMutate,
    onError,
-}: { onMutate?: () => void; onError?: () => void } = {}) {
+}: {
+   onMutate?: () => void
+   onError?: () => void
+} = {}) {
    const queryClient = useQueryClient()
    const auth = useAuth()
    const queryOptions = trpc.client.list.queryOptions({

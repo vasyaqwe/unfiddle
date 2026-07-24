@@ -1,19 +1,5 @@
-import { useDownloadAttachment } from "@/attachment/hooks"
-import { useAuth } from "@/auth/hooks"
-import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
-import { Header, HeaderBackButton } from "@/layout/components/header"
-import { MainScrollArea } from "@/layout/components/main"
-import { useOrder } from "@/order/hooks"
-import { SeverityCombobox } from "@/routes/_authed/$workspaceId/_layout/(order)/-components/severity-combobox"
-import { StatusCombobox } from "@/routes/_authed/$workspaceId/_layout/(order)/-components/status-combobox"
-import { useSocket } from "@/socket"
-import { trpc } from "@/trpc"
-import { ErrorComponent } from "@/ui/components/error"
-import { SuspenseFallback } from "@/ui/components/suspense-boundary"
-import { UserAvatar } from "@/user/components/user-avatar"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { Outlet, createFileRoute } from "@tanstack/react-router"
-import { notFound } from "@tanstack/react-router"
+import { createFileRoute, notFound, Outlet } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
 import { formatDate } from "@unfiddle/core/date"
 import { ORDER_PAYMENT_TYPES_TRANSLATION } from "@unfiddle/core/order/constants"
@@ -32,6 +18,19 @@ import {
    TooltipTrigger,
 } from "@unfiddle/ui/components/tooltip"
 import * as React from "react"
+import { useDownloadAttachment } from "@/attachment/hooks"
+import { useAuth } from "@/auth/hooks"
+import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
+import { Header, HeaderBackButton } from "@/layout/components/header"
+import { MainScrollArea } from "@/layout/components/main"
+import { useOrder } from "@/order/hooks"
+import { SeverityCombobox } from "@/routes/_authed/$workspaceId/_layout/(order)/-components/severity-combobox"
+import { StatusCombobox } from "@/routes/_authed/$workspaceId/_layout/(order)/-components/status-combobox"
+import { useSocket } from "@/socket"
+import { trpc } from "@/trpc"
+import { ErrorComponent } from "@/ui/components/error"
+import { SuspenseFallback } from "@/ui/components/suspense-boundary"
+import { UserAvatar } from "@/user/components/user-avatar"
 
 export const Route = createFileRoute(
    "/_authed/$workspaceId/_layout/(order)/order/$orderId/_layout",
@@ -87,7 +86,7 @@ function RouteComponent() {
                </div>
                <section className="group/section flex flex-col py-3">
                   <StatusCombobox />
-                  <SeverityCombobox className="-ml-2 mt-2 " />
+                  <SeverityCombobox className="mt-2 -ml-2" />
                   {order.assignees.length === 0 ? null : (
                      <AvatarStack
                         size={26}
@@ -201,7 +200,9 @@ function RouteComponent() {
 
 function Files({
    fileUploaderRef,
-}: { fileUploaderRef: React.RefObject<HTMLDivElement | null> }) {
+}: {
+   fileUploaderRef: React.RefObject<HTMLDivElement | null>
+}) {
    const order = useOrder()
 
    const otherAttachments = order.attachments.filter(

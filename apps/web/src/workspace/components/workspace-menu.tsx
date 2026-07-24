@@ -1,5 +1,3 @@
-import { CACHE_FOREVER } from "@/api"
-import { trpc } from "@/trpc"
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate, useParams } from "@tanstack/react-router"
 import { Icons } from "@unfiddle/ui/components/icons"
@@ -12,6 +10,8 @@ import {
    MenuSubmenuTrigger,
    Submenu,
 } from "@unfiddle/ui/components/menu"
+import { CACHE_FOREVER } from "@/api"
+import { trpc } from "@/trpc"
 
 export function WorkspaceMenuPopup() {
    const params = useParams({ from: "/_authed/$workspaceId/_layout" })

@@ -1,16 +1,19 @@
-import { CACHE_SHORT } from "@/api"
-import { useAuth } from "@/auth/hooks"
-import { useSocket } from "@/socket"
-import { trpc } from "@/trpc"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useParams, useSearch } from "@tanstack/react-router"
 import type { RouterInput } from "@unfiddle/core/trpc/types"
 import { toast } from "sonner"
+import { CACHE_SHORT } from "@/api"
+import { useAuth } from "@/auth/hooks"
+import { useSocket } from "@/socket"
+import { trpc } from "@/trpc"
 
 export function useUpdateEstimate({
    onMutate,
    onError,
-}: { onMutate?: () => void; onError?: () => void } = {}) {
+}: {
+   onMutate?: () => void
+   onError?: () => void
+} = {}) {
    const _maybeParams = useParams({ strict: false })
    const search = useSearch({ strict: false })
    const queryClient = useQueryClient()

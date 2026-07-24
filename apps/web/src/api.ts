@@ -1,8 +1,8 @@
-import { env } from "@/env"
 import type { ApiErrorCode } from "@unfiddle/core/api/error"
 import type { ApiRoutes } from "@unfiddle/core/api/types"
 import { type ClientResponse, hc } from "hono/client"
 import type { StatusCode } from "hono/utils/http-status"
+import { env } from "@/env"
 
 export const api = hc<ApiRoutes>(env.API_URL, {
    fetch: ((input, init) => {

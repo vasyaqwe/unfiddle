@@ -1,6 +1,6 @@
+import * as React from "react"
 import { useEventCallback } from "@/interactions/use-event-callback"
 import { useEventListener } from "@/interactions/use-event-listener"
-import * as React from "react"
 
 declare global {
    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -93,7 +93,7 @@ export function useLocalStorage<T>(
    // ... persists the new value to localStorage.
    // @ts-expect-error
    const setValue: Dispatch<SetStateAction<T>> = useEventCallback(
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      // biome-ignore lint/suspicious/noExplicitAny: ...
       (value: (arg0: T) => any) => {
          // Prevent build error "window is undefined" but keeps working
          if (IS_SERVER) {

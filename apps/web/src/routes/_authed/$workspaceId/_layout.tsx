@@ -1,21 +1,20 @@
-import { CACHE_FOREVER } from "@/api"
-import { BottomNavigation } from "@/layout/components/bottom-navigation"
-import { Main } from "@/layout/components/main"
-import { PendingComponent } from "@/layout/components/pending-component"
-import { Sidebar } from "@/layout/components/sidebar"
-import { SidebarContent } from "@/layout/components/sidebar"
-import { useUnreadCount } from "@/order/message/read/queries"
-import { SocketProvider } from "@/socket/provider"
-import { trpc } from "@/trpc"
-import { validator } from "@/validator"
 import {
-   Outlet,
    createFileRoute,
    notFound,
+   Outlet,
    useMatches,
 } from "@tanstack/react-router"
 import { useEffect } from "react"
 import { z } from "zod"
+import { CACHE_FOREVER } from "@/api"
+import { BottomNavigation } from "@/layout/components/bottom-navigation"
+import { Main } from "@/layout/components/main"
+import { PendingComponent } from "@/layout/components/pending-component"
+import { Sidebar, SidebarContent } from "@/layout/components/sidebar"
+import { useUnreadCount } from "@/order/message/read/queries"
+import { SocketProvider } from "@/socket/provider"
+import { trpc } from "@/trpc"
+import { validator } from "@/validator"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout")({
    component: RouteComponent,

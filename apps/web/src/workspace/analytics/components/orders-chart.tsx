@@ -1,9 +1,5 @@
-import { trpc } from "@/trpc"
-import { ErrorComponent } from "@/ui/components/error"
-import { isChartDataEmpty } from "@/workspace/analytics/utils"
 import { useSuspenseQuery } from "@tanstack/react-query"
-import { CatchBoundary } from "@tanstack/react-router"
-import { useParams, useSearch } from "@tanstack/react-router"
+import { CatchBoundary, useParams, useSearch } from "@tanstack/react-router"
 import { formatDate, getUserTimezoneOffset } from "@unfiddle/core/date"
 import { formatNumber } from "@unfiddle/core/number"
 import { formatOrderDate } from "@unfiddle/core/order/utils"
@@ -15,6 +11,9 @@ import {
 import { Loading } from "@unfiddle/ui/components/loading"
 import * as React from "react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
+import { trpc } from "@/trpc"
+import { ErrorComponent } from "@/ui/components/error"
+import { isChartDataEmpty } from "@/workspace/analytics/utils"
 
 export function OrdersChart() {
    return (
@@ -109,7 +108,7 @@ function ChartContent() {
                },
             }}
             style={{ minWidth: data.length * 16 }}
-            className="mt-5 h-0 grow [--color-chart-1:var(--color-primary-6)] "
+            className="mt-5 h-0 grow [--color-chart-1:var(--color-primary-6)]"
          >
             <BarChart
                data={orders.data}

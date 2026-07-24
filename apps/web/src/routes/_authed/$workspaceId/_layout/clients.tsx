@@ -1,22 +1,3 @@
-import { CACHE_SHORT } from "@/api"
-import { useAuth } from "@/auth/hooks"
-import { ClientForm } from "@/client/components/client-form"
-import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
-import { DeleteClientAlert } from "@/client/components/delete-client-alert"
-import { UpdateClient } from "@/client/components/update-client"
-import { useCreateClient } from "@/client/mutations/use-create-client"
-import { useDeleteClient } from "@/client/mutations/use-delete-client"
-import { useForceUpdate } from "@/interactions/use-force-update"
-import {
-   Header,
-   HeaderTitle,
-   HeaderUserMenu,
-   HeaderWorkspaceMenu,
-} from "@/layout/components/header"
-import { MainScrollArea } from "@/layout/components/main"
-import { VList, VListContent } from "@/layout/components/vlist"
-import { trpc } from "@/trpc"
-import { SuspenseBoundary } from "@/ui/components/suspense-boundary"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import { useVirtualizer } from "@tanstack/react-virtual"
@@ -38,6 +19,25 @@ import {
    ContextMenuTrigger,
 } from "@unfiddle/ui/components/menu/context"
 import * as React from "react"
+import { CACHE_SHORT } from "@/api"
+import { useAuth } from "@/auth/hooks"
+import { ClientForm } from "@/client/components/client-form"
+import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
+import { DeleteClientAlert } from "@/client/components/delete-client-alert"
+import { UpdateClient } from "@/client/components/update-client"
+import { useCreateClient } from "@/client/mutations/use-create-client"
+import { useDeleteClient } from "@/client/mutations/use-delete-client"
+import { useForceUpdate } from "@/interactions/use-force-update"
+import {
+   Header,
+   HeaderTitle,
+   HeaderUserMenu,
+   HeaderWorkspaceMenu,
+} from "@/layout/components/header"
+import { MainScrollArea } from "@/layout/components/main"
+import { VList, VListContent } from "@/layout/components/vlist"
+import { trpc } from "@/trpc"
+import { SuspenseBoundary } from "@/ui/components/suspense-boundary"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/clients")({
    component: RouteComponent,
@@ -109,7 +109,9 @@ function RouteComponent() {
 
 function Content({
    scrollAreaRef,
-}: { scrollAreaRef: React.RefObject<HTMLDivElement | null> }) {
+}: {
+   scrollAreaRef: React.RefObject<HTMLDivElement | null>
+}) {
    "use no memo"
    const params = Route.useParams()
 
@@ -247,7 +249,7 @@ export function ClientsEmpty() {
    const auth = useAuth()
 
    return (
-      <div className="-translate-y-8 absolute inset-0 m-auto size-fit text-center">
+      <div className="absolute inset-0 m-auto size-fit -translate-y-8 text-center">
          <div className="mx-auto mb-5 flex max-w-30 flex-col items-center">
             {auth.workspace.image ? (
                <img

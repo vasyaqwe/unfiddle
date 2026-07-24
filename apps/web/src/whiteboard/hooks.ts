@@ -1,13 +1,5 @@
-import { env } from "@/env"
 import PartySocket from "partysocket"
 import { useEffect, useState } from "react"
-import {
-   createTLStore,
-   defaultShapeUtils,
-   loadSnapshot,
-   throttle,
-   uniqueId,
-} from "tldraw"
 import type {
    HistoryEntry,
    StoreListener,
@@ -15,6 +7,14 @@ import type {
    TLRecord,
    TLStoreWithStatus,
 } from "tldraw"
+import {
+   createTLStore,
+   defaultShapeUtils,
+   loadSnapshot,
+   throttle,
+   uniqueId,
+} from "tldraw"
+import { env } from "@/env"
 
 const clientId = uniqueId()
 
@@ -172,7 +172,7 @@ export function useSyncStore({
       unsubs.push(() => socket.removeEventListener("close", handleClose))
 
       return () => {
-         // biome-ignore lint/complexity/noForEach: <explanation>
+         // biome-ignore lint/suspicious/useIterableCallbackReturn: ...
          unsubs.forEach((fn) => fn())
          unsubs.length = 0
          socket.close()

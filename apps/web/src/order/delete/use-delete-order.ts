@@ -1,16 +1,19 @@
-import { useAuth } from "@/auth/hooks"
-import { useOrderQueryOptions } from "@/order/queries"
-import { useSocket } from "@/socket"
-import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useNavigate, useParams } from "@tanstack/react-router"
 import type { RouterInput } from "@unfiddle/core/trpc/types"
 import { toast } from "sonner"
+import { useAuth } from "@/auth/hooks"
+import { useOrderQueryOptions } from "@/order/queries"
+import { useSocket } from "@/socket"
+import { trpc } from "@/trpc"
 
 export function useDeleteOrder({
    onMutate,
    onError,
-}: { onMutate?: () => void; onError?: () => void } = {}) {
+}: {
+   onMutate?: () => void
+   onError?: () => void
+} = {}) {
    const _maybeParams = useParams({ strict: false })
    const queryClient = useQueryClient()
    const auth = useAuth()

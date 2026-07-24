@@ -1,6 +1,6 @@
-import { env } from "@/env"
 import usePartySocket from "partysocket/react"
 import { toast } from "sonner"
+import { env } from "@/env"
 
 export function useAppSocket() {
    return usePartySocket({

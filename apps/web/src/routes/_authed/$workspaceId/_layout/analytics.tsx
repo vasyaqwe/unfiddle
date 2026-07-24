@@ -1,19 +1,3 @@
-import { useAuth } from "@/auth/hooks"
-import {
-   Header,
-   HeaderBackButton,
-   HeaderTitle,
-   HeaderUserMenu,
-} from "@/layout/components/header"
-import { MainScrollArea } from "@/layout/components/main"
-import { trpc } from "@/trpc"
-import { validator } from "@/validator"
-import { CurrencySelect } from "@/workspace/analytics/components/currency-select"
-import { OrdersChart } from "@/workspace/analytics/components/orders-chart"
-import { PeriodSelect } from "@/workspace/analytics/components/period-select"
-import { ProfitChart } from "@/workspace/analytics/components/profit-chart"
-import { QuickStats } from "@/workspace/analytics/components/quick-stats"
-import { WhoCombobox } from "@/workspace/analytics/components/who-combobox"
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
 import { CURRENCIES } from "@unfiddle/core/currency/constants"
@@ -48,6 +32,22 @@ import {
 } from "@unfiddle/ui/components/segmented-progress"
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts"
 import { z } from "zod"
+import { useAuth } from "@/auth/hooks"
+import {
+   Header,
+   HeaderBackButton,
+   HeaderTitle,
+   HeaderUserMenu,
+} from "@/layout/components/header"
+import { MainScrollArea } from "@/layout/components/main"
+import { trpc } from "@/trpc"
+import { validator } from "@/validator"
+import { CurrencySelect } from "@/workspace/analytics/components/currency-select"
+import { OrdersChart } from "@/workspace/analytics/components/orders-chart"
+import { PeriodSelect } from "@/workspace/analytics/components/period-select"
+import { ProfitChart } from "@/workspace/analytics/components/profit-chart"
+import { QuickStats } from "@/workspace/analytics/components/quick-stats"
+import { WhoCombobox } from "@/workspace/analytics/components/who-combobox"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/analytics")(
    {

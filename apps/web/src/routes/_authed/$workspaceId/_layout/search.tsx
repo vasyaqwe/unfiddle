@@ -1,16 +1,16 @@
-import { useLocalStorage } from "@/interactions/use-local-storage"
-import { Header, HeaderBackButton } from "@/layout/components/header"
-import { MainScrollArea } from "@/layout/components/main"
-import { trpc } from "@/trpc"
-import { validator } from "@/validator"
 import { useQuery } from "@tanstack/react-query"
-import { Link, createFileRoute, useNavigate } from "@tanstack/react-router"
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router"
 import { formatDateRelative } from "@unfiddle/core/date"
 import { Button } from "@unfiddle/ui/components/button"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { Input } from "@unfiddle/ui/components/input"
 import * as React from "react"
 import { z } from "zod"
+import { useLocalStorage } from "@/interactions/use-local-storage"
+import { Header, HeaderBackButton } from "@/layout/components/header"
+import { MainScrollArea } from "@/layout/components/main"
+import { trpc } from "@/trpc"
+import { validator } from "@/validator"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/search")({
    component: RouteComponent,
@@ -67,7 +67,7 @@ function RouteComponent() {
                }}
                className="relative col-span-4 flex w-full items-center"
             >
-               <div className="max-md:-translate-y-1/2 top-1/2 left-1 grid size-5 shrink-0 place-items-center opacity-50 max-md:absolute md:left-4">
+               <div className="top-1/2 left-1 grid size-5 shrink-0 place-items-center opacity-50 max-md:absolute max-md:-translate-y-1/2 md:left-4">
                   <Icons.search className="size-4.5" />
                </div>
                <Input
@@ -165,44 +165,35 @@ function RouteComponent() {
                      ))}
                   </>
                )
+            ) : searchResults.isPending ? null : searchResults.isError ||
+              searchResults.data.length === 0 ? (
+               <div className="absolute inset-0 m-auto size-fit -translate-y-8 text-center text-muted">
+                  <Icons.search className="mx-auto size-8" />
+                  <p className="mt-3 font-semibold text-lg">
+                     Нічого не знайдено
+                  </p>
+               </div>
             ) : (
-               <>
-                  {searchResults.isPending ? null : searchResults.isError ||
-                    searchResults.data.length === 0 ? (
-                     <div className="-translate-y-8 absolute inset-0 m-auto size-fit text-center text-muted">
-                        <Icons.search className="mx-auto size-8" />
-                        <p className="mt-3 font-semibold text-lg">
-                           Нічого не знайдено
-                        </p>
+               <div className="space-y-1.5 p-1.5">
+                  {searchResults.data.map((item) => (
+                     <div
+                        key={item.id}
+                        className={"w-full rounded-xl p-2 hover:bg-border/50"}
+                     >
+                        <div className="-mt-px flex w-full items-center">
+                           <p
+                              dangerouslySetInnerHTML={{
+                                 __html: item.highlightedTitle,
+                              }}
+                              className="ml-1.5 line-clamp-1 break-all font-semibold leading-snug"
+                           />
+                           <span className="ml-auto whitespace-nowrap text-muted text-xs">
+                              {formatDateRelative(item.createdAt, "narrow")}
+                           </span>
+                        </div>
                      </div>
-                  ) : (
-                     <div className="space-y-1.5 p-1.5">
-                        {searchResults.data.map((item) => (
-                           <div
-                              key={item.id}
-                              className={
-                                 "w-full rounded-xl p-2 hover:bg-border/50"
-                              }
-                           >
-                              <div className="-mt-px flex w-full items-center">
-                                 <p
-                                    dangerouslySetInnerHTML={{
-                                       __html: item.highlightedTitle,
-                                    }}
-                                    className="ml-1.5 line-clamp-1 break-all font-semibold leading-snug"
-                                 />
-                                 <span className="ml-auto whitespace-nowrap text-muted text-xs">
-                                    {formatDateRelative(
-                                       item.createdAt,
-                                       "narrow",
-                                    )}
-                                 </span>
-                              </div>
-                           </div>
-                        ))}
-                     </div>
-                  )}
-               </>
+                  ))}
+               </div>
             )}
          </MainScrollArea>
       </>

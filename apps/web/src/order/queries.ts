@@ -1,10 +1,10 @@
-import { useAuth } from "@/auth/hooks"
-import { orderSortAtom } from "@/order/store"
-import { trpc } from "@/trpc"
 import { keepPreviousData } from "@tanstack/react-query"
 import { useSearch } from "@tanstack/react-router"
 import { useAtomValue } from "jotai"
 import { useDeferredValue } from "react"
+import { useAuth } from "@/auth/hooks"
+import { orderSortAtom } from "@/order/store"
+import { trpc } from "@/trpc"
 
 export function useOrderQueryOptions() {
    const auth = useAuth()

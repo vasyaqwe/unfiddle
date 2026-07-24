@@ -99,7 +99,7 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
    )
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/suspicious/noExplicitAny: ...
 function ChartTooltipCursor({ points, height }: any) {
    return (
       <>
@@ -440,11 +440,11 @@ function getPayloadConfigFromPayload(
 
 export {
    ChartContainer,
-   ChartTooltip,
-   ChartTooltipCursor,
-   ChartTooltipContent,
+   ChartCursor,
    ChartLegend,
    ChartLegendContent,
    ChartStyle,
-   ChartCursor,
+   ChartTooltip,
+   ChartTooltipContent,
+   ChartTooltipCursor,
 }

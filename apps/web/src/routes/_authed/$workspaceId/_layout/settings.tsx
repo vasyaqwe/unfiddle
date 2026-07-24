@@ -1,20 +1,3 @@
-import { api } from "@/api"
-import { authClient } from "@/auth"
-import { useAuth } from "@/auth/hooks"
-import { env } from "@/env"
-import { fileToBase64, imageDimensions } from "@/file/components/uploader/utils"
-import {
-   Header,
-   HeaderBackButton,
-   HeaderTitle,
-} from "@/layout/components/header"
-import { MainScrollArea } from "@/layout/components/main"
-import { notificationPermissionStatusAtom } from "@/notification/store"
-import { useOrderQueryOptions } from "@/order/queries"
-import { trpc } from "@/trpc"
-import { UserAvatar } from "@/user/components/user-avatar"
-import { validator } from "@/validator"
-import { WorkspaceLogo } from "@/workspace/components/workspace-logo"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
@@ -33,6 +16,23 @@ import { useTheme } from "next-themes"
 import React from "react"
 import { toast } from "sonner"
 import { z } from "zod"
+import { api } from "@/api"
+import { authClient } from "@/auth"
+import { useAuth } from "@/auth/hooks"
+import { env } from "@/env"
+import { fileToBase64, imageDimensions } from "@/file/components/uploader/utils"
+import {
+   Header,
+   HeaderBackButton,
+   HeaderTitle,
+} from "@/layout/components/header"
+import { MainScrollArea } from "@/layout/components/main"
+import { notificationPermissionStatusAtom } from "@/notification/store"
+import { useOrderQueryOptions } from "@/order/queries"
+import { trpc } from "@/trpc"
+import { UserAvatar } from "@/user/components/user-avatar"
+import { validator } from "@/validator"
+import { WorkspaceLogo } from "@/workspace/components/workspace-logo"
 
 const TABS = ["general", "workspace", "me"] as const
 

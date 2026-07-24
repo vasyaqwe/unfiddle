@@ -1,15 +1,18 @@
-import { useAuth } from "@/auth/hooks"
-import { useSocket } from "@/socket"
-import { trpc } from "@/trpc"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useNavigate, useParams, useSearch } from "@tanstack/react-router"
 import type { RouterInput } from "@unfiddle/core/trpc/types"
 import { toast } from "sonner"
+import { useAuth } from "@/auth/hooks"
+import { useSocket } from "@/socket"
+import { trpc } from "@/trpc"
 
 export function useDeleteEstimate({
    onMutate,
    onError,
-}: { onMutate?: () => void; onError?: () => void } = {}) {
+}: {
+   onMutate?: () => void
+   onError?: () => void
+} = {}) {
    const _maybeParams = useParams({ strict: false })
    const search = useSearch({ strict: false })
    const queryClient = useQueryClient()

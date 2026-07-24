@@ -1,13 +1,3 @@
-import { api, query } from "@/api"
-import { uploadedIdsAtom } from "@/attachment/store"
-import type { UploadedAttachment } from "@/attachment/types"
-import { MAX_FILE_SIZE } from "@/file/components/uploader/constants"
-import {
-   handleFiles,
-   handleRejectedFiles,
-   imageDimensions,
-} from "@/file/components/uploader/utils"
-import { fileToBase64 } from "@/file/components/uploader/utils"
 import {
    queryOptions,
    useMutation,
@@ -19,6 +9,16 @@ import { useAtom, useSetAtom } from "jotai"
 import type React from "react"
 import type { FileRejection } from "react-dropzone"
 import { toast } from "sonner"
+import { api, query } from "@/api"
+import { uploadedIdsAtom } from "@/attachment/store"
+import type { UploadedAttachment } from "@/attachment/types"
+import { MAX_FILE_SIZE } from "@/file/components/uploader/constants"
+import {
+   fileToBase64,
+   handleFiles,
+   handleRejectedFiles,
+   imageDimensions,
+} from "@/file/components/uploader/utils"
 
 const attachmentListQueryOptions = (input: {
    subjectId: string

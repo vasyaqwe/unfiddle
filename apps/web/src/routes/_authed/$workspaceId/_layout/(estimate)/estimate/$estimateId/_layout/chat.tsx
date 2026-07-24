@@ -1,3 +1,11 @@
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { useVirtualizer } from "@tanstack/react-virtual"
+import { makeShortId } from "@unfiddle/core/id"
+import { Badge } from "@unfiddle/ui/components/badge"
+import { Separator } from "@unfiddle/ui/components/separator"
+import { useTabFocused } from "@unfiddle/ui/hooks/use-tab-focused"
+import { useAtomValue } from "jotai"
+import * as React from "react"
 import { useAuth } from "@/auth/hooks"
 import { UnreadCountButton } from "@/chat/components/unread-count-button"
 import { editingMessageIdAtom } from "@/chat/store"
@@ -20,14 +28,6 @@ import {
 } from "@/layout/components/header"
 import { MainScrollArea } from "@/layout/components/main"
 import { VList, VListItem } from "@/layout/components/vlist"
-import { createFileRoute, useNavigate } from "@tanstack/react-router"
-import { useVirtualizer } from "@tanstack/react-virtual"
-import { makeShortId } from "@unfiddle/core/id"
-import { Badge } from "@unfiddle/ui/components/badge"
-import { Separator } from "@unfiddle/ui/components/separator"
-import { useTabFocused } from "@unfiddle/ui/hooks/use-tab-focused"
-import { useAtomValue } from "jotai"
-import * as React from "react"
 
 export const Route = createFileRoute(
    "/_authed/$workspaceId/_layout/(estimate)/estimate/$estimateId/_layout/chat",

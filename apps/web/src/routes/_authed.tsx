@@ -1,9 +1,9 @@
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
 import { CACHE_FOREVER } from "@/api"
 import { Main } from "@/layout/components/main"
 import { PendingComponent } from "@/layout/components/pending-component"
 import { Sidebar } from "@/layout/components/sidebar"
 import { trpc } from "@/trpc"
-import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/_authed")({
    component: RouteComponent,

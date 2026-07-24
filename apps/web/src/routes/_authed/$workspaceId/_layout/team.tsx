@@ -1,17 +1,3 @@
-import { useAuth } from "@/auth/hooks"
-import { env } from "@/env"
-import { useDelayedValue } from "@/interactions/use-delayed-value"
-import {
-   Header,
-   HeaderBackButton,
-   HeaderTitle,
-} from "@/layout/components/header"
-import { MainScrollArea } from "@/layout/components/main"
-import { useOrderQueryOptions } from "@/order/queries"
-import { trpc } from "@/trpc"
-import { ErrorComponent } from "@/ui/components/error"
-import { UserAvatar } from "@/user/components/user-avatar"
-import { WORKSPACE_ROLES_TRANSLATION } from "@/workspace/constants"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import { formatDate } from "@unfiddle/core/date"
@@ -64,6 +50,20 @@ import {
 import { formData } from "@unfiddle/ui/utils"
 import * as React from "react"
 import { toast } from "sonner"
+import { useAuth } from "@/auth/hooks"
+import { env } from "@/env"
+import { useDelayedValue } from "@/interactions/use-delayed-value"
+import {
+   Header,
+   HeaderBackButton,
+   HeaderTitle,
+} from "@/layout/components/header"
+import { MainScrollArea } from "@/layout/components/main"
+import { useOrderQueryOptions } from "@/order/queries"
+import { trpc } from "@/trpc"
+import { ErrorComponent } from "@/ui/components/error"
+import { UserAvatar } from "@/user/components/user-avatar"
+import { WORKSPACE_ROLES_TRANSLATION } from "@/workspace/constants"
 
 export const Route = createFileRoute("/_authed/$workspaceId/_layout/team")({
    component: RouteComponent,
@@ -198,7 +198,9 @@ function RouteComponent() {
 
 function MemberRow({
    member,
-}: { member: RouterOutput["workspace"]["member"]["list"][number] }) {
+}: {
+   member: RouterOutput["workspace"]["member"]["list"][number]
+}) {
    const params = Route.useParams()
    const queryClient = useQueryClient()
    const auth = useAuth()

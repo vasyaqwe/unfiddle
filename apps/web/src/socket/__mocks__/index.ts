@@ -1,5 +1,5 @@
-import type { useSocket } from "@/socket"
 import { vi } from "vitest"
+import type { useSocket } from "@/socket"
 
 vi.mock("@/socket", () => ({
    useSocket: vi.fn(

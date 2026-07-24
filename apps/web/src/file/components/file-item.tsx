@@ -1,7 +1,3 @@
-import { useDownloadAttachment } from "@/attachment/hooks"
-import type { UploadedAttachment } from "@/attachment/types"
-import { useAuth } from "@/auth/hooks"
-import { trpc } from "@/trpc"
 import { useMutation } from "@tanstack/react-query"
 import { Button } from "@unfiddle/ui/components/button"
 import { Icons } from "@unfiddle/ui/components/icons"
@@ -13,6 +9,10 @@ import {
 } from "@unfiddle/ui/components/menu/context"
 import { SVGPreview } from "@unfiddle/ui/components/svg-preview"
 import * as React from "react"
+import { useDownloadAttachment } from "@/attachment/hooks"
+import type { UploadedAttachment } from "@/attachment/types"
+import { useAuth } from "@/auth/hooks"
+import { trpc } from "@/trpc"
 
 export function FileItem({
    attachment,

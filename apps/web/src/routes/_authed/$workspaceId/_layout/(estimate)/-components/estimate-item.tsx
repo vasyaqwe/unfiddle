@@ -1,6 +1,3 @@
-import { useEstimate } from "@/estimate/hooks"
-import { UpdateEstimateItem } from "@/estimate/item/components/update-estimate-item"
-import { useDeleteEstimateItem } from "@/estimate/item/mutations/use-delete-estimate-item"
 import { useParams } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
 import type { EstimateItem as EstimateItemType } from "@unfiddle/core/estimate/item/types"
@@ -15,12 +12,11 @@ import {
 } from "@unfiddle/ui/components/menu"
 import { Separator } from "@unfiddle/ui/components/separator"
 import * as React from "react"
+import { useEstimate } from "@/estimate/hooks"
+import { UpdateEstimateItem } from "@/estimate/item/components/update-estimate-item"
+import { useDeleteEstimateItem } from "@/estimate/item/mutations/use-delete-estimate-item"
 
-export function EstimateItem({
-   item,
-}: {
-   item: EstimateItemType
-}) {
+export function EstimateItem({ item }: { item: EstimateItemType }) {
    const params = useParams({
       from: "/_authed/$workspaceId/_layout/(estimate)/estimate/$estimateId/_layout",
    })

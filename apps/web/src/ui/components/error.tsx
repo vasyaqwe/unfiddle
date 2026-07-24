@@ -1,5 +1,3 @@
-import { env } from "@/env"
-import type { TRPCError } from "@/trpc"
 import * as Sentry from "@sentry/react"
 import { useQueryErrorResetBoundary } from "@tanstack/react-query"
 import {
@@ -12,6 +10,8 @@ import {
 import { Button } from "@unfiddle/ui/components/button"
 import { cn } from "@unfiddle/ui/utils"
 import React from "react"
+import { env } from "@/env"
+import type { TRPCError } from "@/trpc"
 
 interface Props
    extends Omit<ErrorComponentProps, "reset" | "error">,

@@ -40,8 +40,9 @@
    --color-highlight-foreground: hsl(28, 60%, 28%);
    --color-highlight-background: hsl(44, 90%, 88%);
 
-   --font-primary: "inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
-      Roboto, Helvetica, Arial, sans-serif;
+   --font-primary:
+      "inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+      Arial, sans-serif;
    --font-mono: "inter", monospace;
 
    --text-xs: 0.825rem;
@@ -110,13 +111,13 @@
    }
 }
 
-@variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 .dark {
    --color-foreground: #f7f7f7;
    --color-background: hsl(240, 6%, 6%);
    --color-surface-1: var(--color-slate-1);
-   --color-surface-2: var(--color-slate-2);
+   --color-surface-2: #17181a;
    --color-surface-3: var(--color-slate-3);
    --color-surface-4: var(--color-slate-4);
    --color-surface-5: var(--color-slate-5);
@@ -129,7 +130,6 @@
    --color-surface-12: var(--color-slate-12);
    --color-muted: var(--color-surface-11);
    --color-destructive: var(--color-red-9);
-   --color-surface-2: #17181a;
    --color-highlight-foreground: hsl(30, 100%, 85%);
    --color-highlight-background: hsl(30, 100%, 85%, 0.2);
 }
@@ -215,7 +215,8 @@ strong {
 [data-masked]:not(:first-of-type) {
    --circle: calc(((var(--neutral) * 2) + var(--size)) * 0.5);
    --y: calc(100% - (var(--size) * 0.5));
-   mask: radial-gradient(
+   mask:
+      radial-gradient(
          var(--circle) var(--circle) at
             calc(var(--circle) - var(--column) - var(--neutral)) 50%,
          #0000 var(--circle),
