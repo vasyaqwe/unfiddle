@@ -103,7 +103,7 @@ export function Textarea({
       <textarea
          className={cn(
             input(),
-            "min-h-12 resize-none pt-3.5! pb-2 md:min-h-10 md:pt-2.5!",
+            "scrollbar-hidden min-h-12 resize-none pt-3.5! pb-2 md:min-h-10 md:pt-2.5!",
             className,
          )}
          {...props}
