@@ -99,7 +99,8 @@ export const useFormResetListener = (
 
 // biome-ignore lint/suspicious/noExplicitAny: ...
 export const useWindowResizeListener = (listener: (event: UIEvent) => any) => {
-   // @ts-expect-error
+   // biome-ignore lint/suspicious/noTsIgnore: <>
+   // @ts-ignore
    useListener(window, "resize", listener)
 }
 
