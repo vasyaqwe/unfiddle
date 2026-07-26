@@ -84,10 +84,7 @@ export function FilterMenu() {
                      variant={"ghost"}
                      size={"sm"}
                   >
-                     <HugeiconsIcon
-                        icon={FilterIcon}
-                        className="size-5"
-                     />
+                     <HugeiconsIcon icon={FilterIcon} />
                      Фільтр
                   </Button>
                }

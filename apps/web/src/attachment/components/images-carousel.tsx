@@ -131,10 +131,7 @@ function Image({
                   )
                }
             >
-               <HugeiconsIcon
-                  icon={Icons.trash}
-                  className="size-5 md:size-4"
-               />
+               <HugeiconsIcon icon={Icons.trash} />
                Видалити
             </ContextMenuItem>
          </ContextMenuPopup>

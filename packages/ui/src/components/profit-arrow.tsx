@@ -24,7 +24,7 @@ export function ProfitArrow({ className, profit, ...props }: Props) {
                profit === "positive" ? ArrowUpRight01Icon : ArrowDownRight01Icon
             }
             className={cn(
-               "-mt-px -ml-px size-5",
+               "-mt-px -ml-px size-4.5",
                profit === "positive" ? "text-green-10" : "text-red-10",
             )}
          />{" "}

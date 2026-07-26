@@ -37,10 +37,7 @@ export function CopyButton({
          aria-label="Copy"
          {...props}
       >
-         <HugeiconsIcon
-            icon={hasCopied ? Icons.check : Copy01Icon}
-            className="size-5"
-         />
+         <HugeiconsIcon icon={hasCopied ? Icons.check : Copy01Icon} />
       </Button>
    )
 }

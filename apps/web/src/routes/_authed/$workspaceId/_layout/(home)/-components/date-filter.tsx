@@ -36,10 +36,7 @@ export function DateFilter() {
                   size={"sm"}
                   className="relative"
                >
-                  <HugeiconsIcon
-                     icon={Calendar03Icon}
-                     className="size-4.5"
-                  />
+                  <HugeiconsIcon icon={Calendar03Icon} />
                   {search.startDate || search.endDate ? (
                      <span className="absolute top-0.75 right-0.75 size-1.25 rounded-full bg-primary-7" />
                   ) : null}

@@ -63,10 +63,7 @@ function RouteComponent() {
                >
                   {forgot.isSuccess ? (
                      <>
-                        <HugeiconsIcon
-                           icon={Icons.check}
-                           className="size-5"
-                        />
+                        <HugeiconsIcon icon={Icons.check} />
                         Надіслано!
                      </>
                   ) : (

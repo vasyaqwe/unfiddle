@@ -1,4 +1,5 @@
 import {
+   Alert02Icon,
    Briefcase01Icon,
    CheckmarkCircle02Icon,
    FilterIcon,
@@ -26,8 +27,6 @@ import {
    Submenu,
 } from "@unfiddle/ui/components/menu"
 import { CACHE_SHORT } from "@/api"
-import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
-import { OrderSeverityIcon } from "@/order/components/order-severity-icon"
 import { useOrderQueryOptions } from "@/order/queries"
 import { trpc } from "@/trpc"
 
@@ -111,9 +110,9 @@ export function FilterMenu() {
                   <Button
                      variant={"ghost"}
                      size={"sm"}
+                     kind={"icon"}
                   >
                      <HugeiconsIcon icon={FilterIcon} />
-                     Фільтр
                   </Button>
                }
             />
@@ -140,7 +139,7 @@ export function FilterMenu() {
                </Submenu>
                <Submenu>
                   <MenuSubmenuTrigger>
-                     <OrderSeverityIcon severity="high" />
+                     <HugeiconsIcon icon={Alert02Icon} />
                      Пріоритет
                   </MenuSubmenuTrigger>
                   <MenuPopup>
@@ -201,7 +200,6 @@ export function FilterMenu() {
                               }
                               key={client.id}
                            >
-                              <ClientSeverityIcon severity={client.severity} />
                               {client.name}
                               <MenuCheckboxItemIndicator />
                            </MenuCheckboxItem>

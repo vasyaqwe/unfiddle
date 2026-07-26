@@ -47,10 +47,7 @@ export function DisplayPopover() {
                   size={"sm"}
                   className="relative"
                >
-                  <HugeiconsIcon
-                     icon={PreferenceHorizontalIcon}
-                     className="size-4.5"
-                  />
+                  <HugeiconsIcon icon={PreferenceHorizontalIcon} />
                   {isDefault ? null : (
                      <span className="absolute top-0.75 right-0.75 size-1.25 rounded-full bg-primary-7" />
                   )}

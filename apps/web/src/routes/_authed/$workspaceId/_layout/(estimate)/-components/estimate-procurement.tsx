@@ -116,7 +116,7 @@ export function EstimateProcurement({
                         >
                            <HugeiconsIcon
                               icon={Icons.ellipsisHorizontal}
-                              className="size-6"
+                              className="size-5.5"
                            />
                         </Button>
                      }
@@ -139,10 +139,7 @@ export function EstimateProcurement({
                         destructive
                         onClick={() => setDeleteAlertOpen(true)}
                      >
-                        <HugeiconsIcon
-                           icon={Icons.trash}
-                           className="size-5 md:size-4"
-                        />
+                        <HugeiconsIcon icon={Icons.trash} />
                         Видалити
                      </MenuItem>
                   </MenuPopup>

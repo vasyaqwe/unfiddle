@@ -208,7 +208,7 @@ export function Procurement({ procurement }: { procurement: ProcurementType }) {
                         >
                            <HugeiconsIcon
                               icon={Icons.ellipsisHorizontal}
-                              className="size-6"
+                              className="size-5.5"
                            />
                         </Button>
                      }
@@ -234,7 +234,6 @@ export function Procurement({ procurement }: { procurement: ProcurementType }) {
                      >
                         <HugeiconsIcon
                            icon={Icons.trash}
-                           className="size-5 md:size-4"
                         />
                         Видалити
                      </MenuItem>

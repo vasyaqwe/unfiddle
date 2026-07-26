@@ -134,7 +134,7 @@ export function MessageActions({ children }: { children?: React.ReactNode }) {
                   >
                      <HugeiconsIcon
                         icon={Icons.ellipsisHorizontal}
-                        className="size-6"
+                        className="size-5.5"
                      />
                   </Button>
                }
@@ -215,10 +215,7 @@ export function MessageDeleteAction(
          destructive
          {...props}
       >
-         <HugeiconsIcon
-            icon={Icons.trash}
-            className="size-5 md:size-4"
-         />
+         <HugeiconsIcon icon={Icons.trash} />
          Видалити
       </MenuItem>
    )
@@ -275,7 +272,7 @@ export function MessageBubble({ position }: { position: ChatMessagePosition }) {
                <div className="flex items-center gap-1 font-medium">
                   <HugeiconsIcon
                      icon={ArrowTurnBackwardIcon}
-                     className="mt-0.5 size-3 shrink-0"
+                     className="mt-0.5 size-3.5 shrink-0"
                   />
                   {ctx.message.reply.creator.name}
                </div>

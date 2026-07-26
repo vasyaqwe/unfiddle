@@ -43,10 +43,7 @@ export function UploadedAttachment({
                   aria-label={`Remove ${file.name}`}
                   className="absolute -top-2 -right-2 rounded-full! bg-white p-1 text-foreground shadow-none hover:border-red-9 hover:bg-red-9 hover:text-white active:bg-red-9 group-hover:visible max-md:size-8 md:invisible dark:border-transparent dark:bg-primary-6 dark:shadow-xs dark:hover:border-red-9 dark:hover:bg-red-9"
                >
-                  <HugeiconsIcon
-                     icon={Icons.xMark}
-                     className="size-5 md:size-4"
-                  />
+                  <HugeiconsIcon icon={Icons.xMark} />
                </Button>
             ) : null}
             <FilePreview file={file} />

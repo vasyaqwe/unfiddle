@@ -193,7 +193,7 @@ export function FilePreview({ file }: { file: UploadedAttachment }) {
    return (
       <HugeiconsIcon
          icon={Attachment02Icon}
-         className="size-6 shrink-0"
+         className="size-5.5 shrink-0"
       />
    )
 }

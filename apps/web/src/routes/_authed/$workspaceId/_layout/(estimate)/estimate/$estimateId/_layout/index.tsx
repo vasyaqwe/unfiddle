@@ -141,11 +141,11 @@ function RouteComponent() {
                   <CreateEstimateItem>
                      <DrawerTrigger
                         render={
-                           <Button variant={"secondary"}>
-                              <HugeiconsIcon
-                                 icon={Icons.plus}
-                                 className="size-6"
-                              />
+                           <Button
+                              variant={"secondary"}
+                              size="sm"
+                           >
+                              <HugeiconsIcon icon={Icons.plus} />
                               Додати
                            </Button>
                         }
@@ -227,7 +227,7 @@ function Actions() {
                   >
                      <HugeiconsIcon
                         icon={Icons.ellipsisHorizontal}
-                        className="size-6"
+                        className="size-5.5"
                      />
                   </Button>
                }
@@ -247,10 +247,7 @@ function Actions() {
                      destructive
                      onClick={() => setDeleteAlertOpen(true)}
                   >
-                     <HugeiconsIcon
-                        icon={Icons.trash}
-                        className="size-5 md:size-4"
-                     />
+                     <HugeiconsIcon icon={Icons.trash} />
                      Видалити
                   </MenuItem>
                ) : null}

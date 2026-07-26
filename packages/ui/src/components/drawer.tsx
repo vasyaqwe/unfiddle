@@ -41,7 +41,7 @@ function DrawerPopup({
             {...props}
          >
             <div className="flex w-full grow flex-col overflow-y-auto p-4 max-md:pt-0 md:pt-5">
-               <div className="mx-auto mt-0.5 mb-5 h-[5px] w-8 shrink-0 rounded-full bg-surface-8 md:hidden" />
+               <div className="mx-auto mt-0.5 mb-5 h-1.25 w-8 shrink-0 rounded-full bg-surface-8 md:hidden" />
                {children}
             </div>
          </DrawerPrimitive.Content>

@@ -257,10 +257,7 @@ function Form({
                         className="self-end disabled:cursor-not-allowed"
                         data-testid="trash-button"
                      >
-                        <HugeiconsIcon
-                           icon={Icons.trash}
-                           className="size-5 md:size-4"
-                        />
+                        <HugeiconsIcon icon={Icons.trash} />
                      </Button>
                   </FieldGroup>
                ))}
@@ -292,10 +289,7 @@ function Form({
                   className="mt-2 w-full disabled:cursor-not-allowed"
                   variant={"secondary"}
                >
-                  <HugeiconsIcon
-                     icon={Icons.plus}
-                     className="size-6 md:size-5"
-                  />
+                  <HugeiconsIcon icon={Icons.plus} />
                   Додати товар
                </Button>
             </Fieldset>
@@ -436,10 +430,7 @@ function Form({
                            variant={"ghost"}
                            className="absolute top-1 right-1"
                         >
-                           <HugeiconsIcon
-                              icon={Attachment01Icon}
-                              className="size-5.5 md:size-5"
-                           />
+                           <HugeiconsIcon icon={Attachment01Icon} />
                         </Button>
                      )}
                   </div>

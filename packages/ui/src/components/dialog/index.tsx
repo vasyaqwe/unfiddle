@@ -54,10 +54,7 @@ export function DialogXClose({
                variant={"ghost"}
                kind={"icon"}
             >
-               <HugeiconsIcon
-                  icon={Icons.xMark}
-                  className="size-5 md:size-4"
-               />
+               <HugeiconsIcon icon={Icons.xMark} />
             </Button>
          }
          {...props}

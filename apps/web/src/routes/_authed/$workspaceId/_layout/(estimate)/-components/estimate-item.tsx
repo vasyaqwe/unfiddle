@@ -69,7 +69,7 @@ export function EstimateItem({ item }: { item: EstimateItemType }) {
                   >
                      <HugeiconsIcon
                         icon={Icons.ellipsisHorizontal}
-                        className="size-6"
+                        className="size-5.5"
                      />
                   </Button>
                }
@@ -99,10 +99,7 @@ export function EstimateItem({ item }: { item: EstimateItemType }) {
                         })
                      }
                   >
-                     <HugeiconsIcon
-                        icon={Icons.trash}
-                        className="size-5 md:size-4"
-                     />
+                     <HugeiconsIcon icon={Icons.trash} />
                      Видалити
                   </MenuItem>
                )}

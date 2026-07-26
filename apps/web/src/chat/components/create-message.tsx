@@ -73,7 +73,7 @@ export function CreateMessage({
                   <div className="flex w-full items-center gap-2">
                      <HugeiconsIcon
                         icon={ArrowTurnBackwardIcon}
-                        className="size-4 shrink-0"
+                        className="size-4.5 shrink-0"
                      />
                      <span className="line-clamp-1">
                         Відповідь до{" "}
@@ -92,10 +92,7 @@ export function CreateMessage({
                      size="sm"
                      onClick={() => setReplyingToMessageId(null)}
                   >
-                     <HugeiconsIcon
-                        icon={Icons.xMark}
-                        className="size-5 md:size-4"
-                     />
+                     <HugeiconsIcon icon={Icons.xMark} />
                   </Button>
                </div>
             )}
@@ -118,10 +115,7 @@ export function CreateMessage({
                   kind={"icon"}
                   variant={"ghost"}
                >
-                  <HugeiconsIcon
-                     icon={Attachment01Icon}
-                     className="size-5.5 md:size-5"
-                  />
+                  <HugeiconsIcon icon={Attachment01Icon} />
                </Button>
                <Textarea
                   data-chat-content

@@ -40,10 +40,7 @@ export function CreateAnalog() {
                            kind={"icon"}
                            variant={"secondary"}
                         >
-                           <HugeiconsIcon
-                              icon={BulbIcon}
-                              className="size-5 md:size-4"
-                           />
+                           <HugeiconsIcon icon={BulbIcon} />
                         </Button>
                      }
                   />

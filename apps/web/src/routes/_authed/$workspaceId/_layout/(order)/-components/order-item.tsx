@@ -109,7 +109,7 @@ export function OrderItem({ item }: { item: OrderItemType }) {
                   >
                      <HugeiconsIcon
                         icon={Icons.ellipsisHorizontal}
-                        className="size-6"
+                        className="size-5.5"
                      />
                   </Button>
                }
@@ -140,18 +140,12 @@ export function OrderItem({ item }: { item: OrderItemType }) {
                >
                   {assigned ? (
                      <>
-                        <HugeiconsIcon
-                           icon={UndoIcon}
-                           className="size-4.5 md:size-4"
-                        />
+                        <HugeiconsIcon icon={UndoIcon} />
                         Залишити
                      </>
                   ) : (
                      <>
-                        <HugeiconsIcon
-                           icon={PinIcon}
-                           className="size-5"
-                        />
+                        <HugeiconsIcon icon={PinIcon} />
                         Зайняти
                      </>
                   )}
@@ -175,10 +169,7 @@ export function OrderItem({ item }: { item: OrderItemType }) {
                         })
                      }
                   >
-                     <HugeiconsIcon
-                        icon={Icons.trash}
-                        className="size-5 md:size-4"
-                     />
+                     <HugeiconsIcon icon={Icons.trash} />
                      Видалити
                   </MenuItem>
                )}

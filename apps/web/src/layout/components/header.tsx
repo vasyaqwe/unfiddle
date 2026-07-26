@@ -49,7 +49,7 @@ export function HeaderBackButton({
       >
          <HugeiconsIcon
             icon={ArrowLeft02Icon}
-            className="size-6"
+            className="size-5.5"
          />
       </BackButton>
    )

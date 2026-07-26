@@ -41,11 +41,11 @@ export function SeverityCombobox({
             render={
                <Button
                   variant={"ghost"}
-                  className={cn("w-fit justify-start gap-1.75!", className)}
+                  className={cn("w-fit justify-start gap-2!", className)}
                >
                   <OrderSeverityIcon
                      severity={order.severity}
-                     className="-ml-0.75!"
+                     className="-ml-0.5!"
                   />
                   {ORDER_SEVERITIES_TRANSLATION[order.severity]}
                </Button>

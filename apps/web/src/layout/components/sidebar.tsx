@@ -1,7 +1,8 @@
 import {
    Briefcase01Icon,
-   ChartLineData01Icon,
-   Home01Icon,
+   ChartIcon,
+   Edit01Icon,
+   Home04Icon,
    Logout03Icon,
    Notebook01Icon,
    PencilEdit01Icon,
@@ -14,7 +15,6 @@ import { Link, useParams, useSearch } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
 import { Card } from "@unfiddle/ui/components/card"
 import { DrawerTrigger } from "@unfiddle/ui/components/drawer"
-import { Icons } from "@unfiddle/ui/components/icons"
 import {
    Menu,
    MenuItem,
@@ -107,20 +107,9 @@ export function SidebarContent() {
                >
                   <HugeiconsIcon
                      icon={Settings02Icon}
-                     className="size-5"
+                     className="size-4.5"
                   />
                </Button>
-               {/* <Link
-                  to="/$workspaceId/search"
-                  params={params}
-                  search={search}
-                  className={cn(
-                     button({ kind: "icon", variant: "tertiary" }),
-                     "!rounded-[0.6125rem] ml-auto shrink-0",
-                  )}
-               >
-                  <HugeiconsIcon icon={Search01Icon} className="size-4" />
-               </Link> */}
             </div>
             <CreateOrder>
                <DrawerTrigger
@@ -150,8 +139,8 @@ export function SidebarContent() {
                      }
                   >
                      <HugeiconsIcon
-                        icon={Home01Icon}
-                        className="size-5"
+                        icon={Home04Icon}
+                        className="size-4.5"
                      />
                      <span className="pt-px"> Головна</span>
                   </Link>
@@ -167,7 +156,7 @@ export function SidebarContent() {
                   >
                      <HugeiconsIcon
                         icon={Notebook01Icon}
-                        className="size-5 md:size-5.2"
+                        className="size-4.5"
                      />
                      <span className="pt-px"> Прорахунок</span>
                   </Link>
@@ -183,7 +172,7 @@ export function SidebarContent() {
                   >
                      <HugeiconsIcon
                         icon={Briefcase01Icon}
-                        className="size-5 md:size-5.2"
+                        className="size-4.5"
                      />
                      <span className="pt-px"> Клієнти</span>
                   </Link>
@@ -198,8 +187,8 @@ export function SidebarContent() {
                      }
                   >
                      <HugeiconsIcon
-                        icon={Icons.pencil}
-                        className="size-5"
+                        icon={Edit01Icon}
+                        className="size-4.5"
                      />
                      <span className="pt-px"> Поставки</span>
                   </Link>
@@ -214,8 +203,8 @@ export function SidebarContent() {
                      }
                   >
                      <HugeiconsIcon
-                        icon={ChartLineData01Icon}
-                        className="size-5"
+                        icon={ChartIcon}
+                        className="size-4.5"
                      />
                      <span className="pt-px"> Аналітика</span>
                   </Link>
@@ -231,7 +220,7 @@ export function SidebarContent() {
                   >
                      <HugeiconsIcon
                         icon={UserMultipleIcon}
-                        className="size-5"
+                        className="size-4.5"
                      />
                      <span className="pt-px"> Команда</span>
                   </Link>

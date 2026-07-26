@@ -118,10 +118,7 @@ function RouteComponent() {
                            kind={"icon"}
                            aria-label="Запросити"
                         >
-                           <HugeiconsIcon
-                              icon={Icons.plus}
-                              className="size-6 md:size-5"
-                           />
+                           <HugeiconsIcon icon={Icons.plus} />
                         </Button>
                      }
                   />
@@ -154,10 +151,7 @@ function RouteComponent() {
                         kind={"icon"}
                         variant={"ghost"}
                      >
-                        <HugeiconsIcon
-                           icon={ReloadIcon}
-                           className="size-5"
-                        />
+                        <HugeiconsIcon icon={ReloadIcon} />
                      </Button>
                   </div>
                </DialogPopup>
@@ -355,7 +349,7 @@ function MemberRow({
                            >
                               <HugeiconsIcon
                                  icon={Icons.ellipsisHorizontal}
-                                 className="size-6"
+                                 className="size-5.5"
                               />
                            </Button>
                         }
@@ -376,10 +370,7 @@ function MemberRow({
                            destructive
                            onClick={() => setDeleteOpen(true)}
                         >
-                           <HugeiconsIcon
-                              icon={Icons.trash}
-                              className="size-5 md:size-4"
-                           />
+                           <HugeiconsIcon icon={Icons.trash} />
                            Видалити
                         </MenuItem>
                      </MenuPopup>

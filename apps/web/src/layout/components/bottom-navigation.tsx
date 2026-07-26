@@ -1,6 +1,6 @@
 import {
-   ChartColumnIcon,
-   Home01Icon,
+   ChartIcon,
+   Home04Icon,
    Settings02Icon,
    UserMultipleIcon,
 } from "@hugeicons/core-free-icons"
@@ -20,11 +20,11 @@ export function BottomNavigation() {
                   params={params}
                   search={search}
                   activeOptions={{ exact: true, includeSearch: false }}
-                  className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-tight aria-[current=page]:text-foreground"
+                  className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-snug aria-[current=page]:text-foreground"
                >
                   <HugeiconsIcon
-                     icon={Home01Icon}
-                     className="size-6 shrink-0"
+                     icon={Home04Icon}
+                     className="size-5 shrink-0"
                   />
                   Головна
                </Link>
@@ -34,11 +34,11 @@ export function BottomNavigation() {
                   to={"/$workspaceId/analytics"}
                   params={params}
                   search={search}
-                  className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-tight aria-[current=page]:text-foreground"
+                  className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-snug aria-[current=page]:text-foreground"
                >
                   <HugeiconsIcon
-                     icon={ChartColumnIcon}
-                     className="mb-0.5 size-5.5 shrink-0"
+                     icon={ChartIcon}
+                     className="mb-0.5 size-5 shrink-0"
                   />
                   Аналітика
                </Link>
@@ -48,11 +48,11 @@ export function BottomNavigation() {
                   to={"/$workspaceId/team"}
                   params={params}
                   search={search}
-                  className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-tight aria-[current=page]:text-foreground"
+                  className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-snug aria-[current=page]:text-foreground"
                >
                   <HugeiconsIcon
                      icon={UserMultipleIcon}
-                     className="size-6 shrink-0"
+                     className="size-5 shrink-0"
                   />
                   Команда
                </Link>
@@ -62,11 +62,11 @@ export function BottomNavigation() {
                   to={"/$workspaceId/settings"}
                   params={params}
                   search={search}
-                  className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-tight aria-[current=page]:text-foreground"
+                  className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-snug aria-[current=page]:text-foreground"
                >
                   <HugeiconsIcon
                      icon={Settings02Icon}
-                     className="size-6 shrink-0"
+                     className="size-5 shrink-0"
                   />
                   Налаштув.
                </Link>

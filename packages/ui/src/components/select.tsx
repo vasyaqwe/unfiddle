@@ -65,7 +65,7 @@ export function SelectTriggerIcon() {
    return (
       <SelectIcon
          data-icon
-         className="-mr-1.25 ml-auto flex shrink-0"
+         className="-mr-1 ml-auto flex shrink-0"
       >
          <HugeiconsIcon
             icon={UnfoldMoreIcon}
@@ -90,7 +90,7 @@ export function SelectItem({
          className={cn(
             MENU_ITEM_STYLES.base,
             destructive ? MENU_ITEM_STYLES.destructive : "",
-            "grid min-w-(--anchor-width) grid-cols-[1.25rem_1fr] items-center gap-2 group-data-[side=none]:min-w-[calc(var(--anchor-width)+1.4rem)]",
+            "grid min-w-(--anchor-width) grid-cols-[1rem_1fr] items-center gap-2 group-data-[side=none]:min-w-[calc(var(--anchor-width)+1.4rem)]",
             className,
          )}
          {...props}
@@ -98,7 +98,8 @@ export function SelectItem({
          <SelectItemIndicator className="col-start-1">
             <HugeiconsIcon
                icon={Icons.check}
-               className={"-ml-0.5 size-6 text-white/90 md:size-5.5"}
+               strokeWidth={2}
+               className={"-ml-0.5 size-5.5 text-white/90 md:size-5"}
             />
          </SelectItemIndicator>
          <SelectItemText className={"col-start-2"}>{children}</SelectItemText>

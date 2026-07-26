@@ -80,10 +80,7 @@ function RouteComponent() {
                <DrawerTrigger
                   render={
                      <Button className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-10 overflow-visible shadow-xl md:right-8 md:bottom-8 md:h-9 md:px-3">
-                        <HugeiconsIcon
-                           icon={Icons.plus}
-                           className="size-6"
-                        />
+                        <HugeiconsIcon icon={Icons.plus} />
                         Клієнт
                      </Button>
                   }
@@ -242,10 +239,7 @@ function ClientRow({
                destructive
                onClick={() => setDeleteAlertOpen(true)}
             >
-               <HugeiconsIcon
-                  icon={Icons.trash}
-                  className="size-5 md:size-4"
-               />
+               <HugeiconsIcon icon={Icons.trash} />
                Видалити
             </ContextMenuItem>
          </ContextMenuPopup>

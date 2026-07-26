@@ -31,11 +31,11 @@ export function CreateEstimateProcurement() {
       >
          <DrawerTrigger
             render={
-               <Button variant={"secondary"}>
-                  <HugeiconsIcon
-                     icon={Icons.plus}
-                     className="size-6 md:size-5"
-                  />
+               <Button
+                  variant={"secondary"}
+                  size="sm"
+               >
+                  <HugeiconsIcon icon={Icons.plus} />
                   Додати
                </Button>
             }

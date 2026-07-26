@@ -1,6 +1,6 @@
 import {
    ArrowUpRight01Icon,
-   Attachment02Icon,
+   FileAttachmentIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -230,10 +230,7 @@ function Files({
                size={"xs"}
                onClick={() => fileUploaderRef.current?.click()}
             >
-               <HugeiconsIcon
-                  icon={Icons.plus}
-                  className="size-4 md:size-5"
-               />
+               <HugeiconsIcon icon={Icons.plus} />
             </Button>
          </div>
          <div className={"mt-3 flex flex-col gap-1"}>
@@ -284,13 +281,11 @@ function FileItem({
                />
             ) : (
                <HugeiconsIcon
-                  icon={Attachment02Icon}
-                  className="ml-0! size-5 shrink-0"
+                  icon={FileAttachmentIcon}
+                  className="ml-0! size-4.5 shrink-0"
                />
             )}
-            <span className="line-clamp-1 text-muted text-sm">
-               {attachment.name}
-            </span>
+            <span className="line-clamp-1 text-sm">{attachment.name}</span>
          </Button>
          {attachment.creatorId === auth.user.id ? (
             <Button
@@ -324,10 +319,7 @@ function FileItem({
                }}
                disabled={deleteItem.isPending}
             >
-               <HugeiconsIcon
-                  icon={Icons.trash}
-                  className="size-5 md:size-4"
-               />
+               <HugeiconsIcon icon={Icons.trash} />
             </Button>
          ) : (
             <Tooltip>

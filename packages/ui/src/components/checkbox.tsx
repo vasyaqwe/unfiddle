@@ -12,7 +12,7 @@ export function Checkbox({
       <CheckboxPrimitive.Root
          className={cn(
             FOCUS_STYLES,
-            "grid size-5 shrink-0 cursor-pointer place-items-center rounded-sm border-surface-5 bg-background text-white shadow-xs data-[unchecked]:border data-[checked]:bg-primary-6 dark:bg-surface-3",
+            "grid size-5 shrink-0 cursor-pointer place-items-center rounded-sm border-surface-5 bg-background text-white shadow-xs data-unchecked:border data-checked:bg-primary-6 dark:bg-surface-3",
             className,
          )}
          {...props}

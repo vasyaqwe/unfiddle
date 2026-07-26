@@ -65,15 +65,9 @@ export function Search() {
             }}
          >
             {active ? (
-               <HugeiconsIcon
-                  icon={Icons.xMark}
-                  className="size-4.5 md:size-4"
-               />
+               <HugeiconsIcon icon={Icons.xMark} />
             ) : (
-               <HugeiconsIcon
-                  icon={Search01Icon}
-                  className="size-4.5"
-               />
+               <HugeiconsIcon icon={Search01Icon} />
             )}
          </Button>
       </div>

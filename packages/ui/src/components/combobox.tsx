@@ -174,7 +174,7 @@ export function ComboboxInput({
 }: React.ComponentProps<typeof CommandInput>) {
    return (
       <div className="relative h-10 md:h-9">
-         {/* <HugeiconsIcon icon={Search01Icon} className="-translate-y-1/2 absolute top-[calc(50%-3px)] left-2 size-5 text-white/55 md:top-[calc(50%-3px)] md:size-[18px]" /> */}
+         {/* <HugeiconsIcon icon={Search01Icon} className="-translate-y-1/2 absolute top-[calc(50%-3px)] left-2 size-4.5 text-white/55 md:top-[calc(50%-3px)] md:size-[18px]" /> */}
          <CommandInput
             placeholder="Шукати.."
             className={cn(
@@ -239,7 +239,7 @@ export function ComboboxItem({
             icon={Icons.check}
             strokeWidth={2.5}
             className={cn(
-               "-mr-1 ml-auto size-6.25 text-white/90! md:-mr-0.5 md:size-5.5",
+               "-mr-1 ml-auto size-5.75 text-white/90! md:-mr-0.5 md:size-5",
                isSelected ? "" : "invisible",
             )}
          />

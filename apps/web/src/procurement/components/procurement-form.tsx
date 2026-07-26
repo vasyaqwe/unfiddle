@@ -179,10 +179,7 @@ export function ProcurementForm({
                      variant={"ghost"}
                      className="absolute top-1 right-1"
                   >
-                     <HugeiconsIcon
-                        icon={Attachment01Icon}
-                        className="size-5.5 md:size-5"
-                     />
+                     <HugeiconsIcon icon={Attachment01Icon} />
                   </Button>
                </div>
             </Field>

@@ -37,10 +37,7 @@ function RouteComponent() {
             className={"absolute right-1 bottom-1 z-999 min-w-25"}
             style={{ color: "white" }}
          >
-            <HugeiconsIcon
-               icon={Home01Icon}
-               className="size-5"
-            />
+            <HugeiconsIcon icon={Home01Icon} />
             Додому
          </Button>
       </div>

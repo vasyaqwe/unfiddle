@@ -43,10 +43,7 @@ function RouteComponent() {
             aria-label="Back"
             className="absolute top-3 left-3 md:top-5 md:left-5"
          >
-            <HugeiconsIcon
-               icon={ArrowLeft02Icon}
-               className="size-6"
-            />
+            <HugeiconsIcon icon={ArrowLeft02Icon} />
          </BackButton>
          <form
             onSubmit={async (e) => {

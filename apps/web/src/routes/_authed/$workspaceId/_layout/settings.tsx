@@ -452,10 +452,7 @@ function RouteComponent() {
                                        size={"sm"}
                                        kind={"icon"}
                                     >
-                                       <HugeiconsIcon
-                                          icon={Icons.check}
-                                          className="size-5"
-                                       />
+                                       <HugeiconsIcon icon={Icons.check} />
                                     </Button>
                                     <Button
                                        size={"sm"}
@@ -467,10 +464,7 @@ function RouteComponent() {
                                           setName(auth.user.name)
                                        }}
                                     >
-                                       <HugeiconsIcon
-                                          icon={Icons.xMark}
-                                          className="size-5 md:size-4"
-                                       />
+                                       <HugeiconsIcon icon={Icons.xMark} />
                                     </Button>
                                  </div>
                               )}
@@ -507,10 +501,7 @@ function RouteComponent() {
                                        size={"sm"}
                                        kind={"icon"}
                                     >
-                                       <HugeiconsIcon
-                                          icon={Icons.check}
-                                          className="size-5"
-                                       />
+                                       <HugeiconsIcon icon={Icons.check} />
                                     </Button>
                                     <Button
                                        size={"sm"}
@@ -522,10 +513,7 @@ function RouteComponent() {
                                           setEmail(auth.user.email)
                                        }}
                                     >
-                                       <HugeiconsIcon
-                                          icon={Icons.xMark}
-                                          className="size-5 md:size-4"
-                                       />
+                                       <HugeiconsIcon icon={Icons.xMark} />
                                     </Button>
                                  </div>
                               )}

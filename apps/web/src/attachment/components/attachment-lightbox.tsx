@@ -104,10 +104,7 @@ export default function AttachmentLightbox({
                      variant={"ghost"}
                      className="[--hover:var(--color-primary-4)] dark:[--hover:var(--color-primary-5)]"
                   >
-                     <HugeiconsIcon
-                        icon={Icons.download}
-                        className="size-5 md:size-4.5"
-                     />
+                     <HugeiconsIcon icon={Icons.download} />
                   </Button>
                   <Separator className={"h-6 w-px"} />
                   <DialogXClose className={"mt-0 mr-0"} />
@@ -121,7 +118,7 @@ export default function AttachmentLightbox({
                   >
                      <HugeiconsIcon
                         icon={ArrowLeft01Icon}
-                        className="size-6"
+                        className="size-5.5"
                      />
                   </button>
                   <button
@@ -130,7 +127,7 @@ export default function AttachmentLightbox({
                   >
                      <HugeiconsIcon
                         icon={ArrowRight01Icon}
-                        className="size-6"
+                        className="size-5.5"
                      />
                   </button>
                </>
