@@ -1,3 +1,11 @@
+import {
+   Alert02Icon,
+   Briefcase01Icon,
+   CheckmarkCircle02Icon,
+   FilterIcon,
+   UserIcon,
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNavigate, useParams, useSearch } from "@tanstack/react-router"
 import {
@@ -19,8 +27,6 @@ import {
    Submenu,
 } from "@unfiddle/ui/components/menu"
 import { CACHE_SHORT } from "@/api"
-import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
-import { OrderSeverityIcon } from "@/order/components/order-severity-icon"
 import { useOrderQueryOptions } from "@/order/queries"
 import { trpc } from "@/trpc"
 
@@ -104,16 +110,16 @@ export function FilterMenu() {
                   <Button
                      variant={"ghost"}
                      size={"sm"}
+                     kind={"icon"}
                   >
-                     <Icons.filter />
-                     Фільтр
+                     <HugeiconsIcon icon={FilterIcon} />
                   </Button>
                }
             />
             <MenuPopup align="start">
                <Submenu>
                   <MenuSubmenuTrigger>
-                     <Icons.circleCheckDotted />
+                     <HugeiconsIcon icon={CheckmarkCircle02Icon} />
                      Статус
                   </MenuSubmenuTrigger>
                   <MenuPopup className={"max-h-56 overflow-y-auto"}>
@@ -133,7 +139,7 @@ export function FilterMenu() {
                </Submenu>
                <Submenu>
                   <MenuSubmenuTrigger>
-                     <OrderSeverityIcon severity="high" />
+                     <HugeiconsIcon icon={Alert02Icon} />
                      Пріоритет
                   </MenuSubmenuTrigger>
                   <MenuPopup>
@@ -156,7 +162,7 @@ export function FilterMenu() {
                {managers.length === 0 ? null : (
                   <Submenu>
                      <MenuSubmenuTrigger>
-                        <Icons.user />
+                        <HugeiconsIcon icon={UserIcon} />
                         Менеджер
                      </MenuSubmenuTrigger>
                      <MenuPopup>
@@ -180,7 +186,7 @@ export function FilterMenu() {
                {clients.length === 0 ? null : (
                   <Submenu>
                      <MenuSubmenuTrigger>
-                        <Icons.briefcase />
+                        <HugeiconsIcon icon={Briefcase01Icon} />
                         Клієнт
                      </MenuSubmenuTrigger>
                      <MenuPopup>
@@ -194,7 +200,6 @@ export function FilterMenu() {
                               }
                               key={client.id}
                            >
-                              <ClientSeverityIcon severity={client.severity} />
                               {client.name}
                               <MenuCheckboxItemIndicator />
                            </MenuCheckboxItem>
@@ -214,7 +219,10 @@ export function FilterMenu() {
                   onClick={removeFilter}
                   className="rounded-none"
                >
-                  <Icons.xMark className="size-4" />
+                  <HugeiconsIcon
+                     icon={Icons.xMark}
+                     className="size-4"
+                  />
                </Button>
             </Badge>
          )}

@@ -1,3 +1,5 @@
+import { FileAttachmentIcon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useMutation } from "@tanstack/react-query"
 import { Button } from "@unfiddle/ui/components/button"
 import { Icons } from "@unfiddle/ui/components/icons"
@@ -49,7 +51,10 @@ export function FileItem({
                         url={attachment.url}
                      />
                   ) : (
-                     <Icons.attachment />
+                     <HugeiconsIcon
+                        icon={FileAttachmentIcon}
+                        className="size-4.5 shrink-0"
+                     />
                   )}
                   <span className="line-clamp-1 font-medium text-muted text-sm">
                      {attachment.name}
@@ -74,8 +79,8 @@ export function FileItem({
                      )
                   }}
                >
-                  <Icons.trash />
-                  840;8B8
+                  <HugeiconsIcon icon={Icons.trash} />
+                  Видалити
                </ContextMenuItem>
             </ContextMenuPopup>
          )}

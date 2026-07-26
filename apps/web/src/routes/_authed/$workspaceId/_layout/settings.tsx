@@ -1,3 +1,5 @@
+import { InformationCircleIcon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
@@ -296,7 +298,10 @@ function RouteComponent() {
                               />
                            </div>
                            <p className="mt-7 text-muted text-xs">
-                              <Icons.info className="mr-1 mb-1 inline-block size-4" />
+                              <HugeiconsIcon
+                                 icon={InformationCircleIcon}
+                                 className="mr-1 mb-1 inline-block size-4"
+                              />
                               Коли імпортуєте, колонки Номер, Товари та Створене
                               будуть ігноровані.
                            </p>
@@ -447,7 +452,7 @@ function RouteComponent() {
                                        size={"sm"}
                                        kind={"icon"}
                                     >
-                                       <Icons.check className="size-5" />
+                                       <HugeiconsIcon icon={Icons.check} />
                                     </Button>
                                     <Button
                                        size={"sm"}
@@ -459,7 +464,7 @@ function RouteComponent() {
                                           setName(auth.user.name)
                                        }}
                                     >
-                                       <Icons.xMark className="size-5" />
+                                       <HugeiconsIcon icon={Icons.xMark} />
                                     </Button>
                                  </div>
                               )}
@@ -496,7 +501,7 @@ function RouteComponent() {
                                        size={"sm"}
                                        kind={"icon"}
                                     >
-                                       <Icons.check className="size-5" />
+                                       <HugeiconsIcon icon={Icons.check} />
                                     </Button>
                                     <Button
                                        size={"sm"}
@@ -508,7 +513,7 @@ function RouteComponent() {
                                           setEmail(auth.user.email)
                                        }}
                                     >
-                                       <Icons.xMark className="size-5" />
+                                       <HugeiconsIcon icon={Icons.xMark} />
                                     </Button>
                                  </div>
                               )}

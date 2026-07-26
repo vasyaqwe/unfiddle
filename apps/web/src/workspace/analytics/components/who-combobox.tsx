@@ -1,3 +1,5 @@
+import { UserMultipleIcon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate, useParams, useSearch } from "@tanstack/react-router"
 import {
@@ -14,7 +16,6 @@ import {
    ComboboxTrigger,
    ComboboxTriggerIcon,
 } from "@unfiddle/ui/components/combobox"
-import { Icons } from "@unfiddle/ui/components/icons"
 import { trpc } from "@/trpc"
 import { UserAvatar } from "@/user/components/user-avatar"
 
@@ -89,7 +90,7 @@ export function WhoCombobox() {
             <ComboboxInput placeholder="Шукати.." />
             <ComboboxEmpty>Нікого не знайдено</ComboboxEmpty>
             <ComboboxItem value="all">
-               <Icons.users />
+               <HugeiconsIcon icon={UserMultipleIcon} />
                Загальна
             </ComboboxItem>
             {members.data?.map((member) => (

@@ -1,3 +1,4 @@
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useMutation } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { MIN_PASSWORD_LENGTH } from "@unfiddle/core/auth/constants"
@@ -88,7 +89,10 @@ function RouteComponent() {
          <div className="w-full max-w-84 px-5">
             {signup.isSuccess ? (
                <div>
-                  <Icons.check className="size-8 text-emerald-600" />
+                  <HugeiconsIcon
+                     icon={Icons.check}
+                     className="size-8 text-emerald-600"
+                  />
                   <h1 className="mt-3 font-semibold text-lg text-muted">
                      Зареєстровано!
                   </h1>

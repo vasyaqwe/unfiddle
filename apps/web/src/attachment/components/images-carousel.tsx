@@ -1,3 +1,4 @@
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useMutation } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { Icons } from "@unfiddle/ui/components/icons"
@@ -130,7 +131,7 @@ function Image({
                   )
                }
             >
-               <Icons.trash />
+               <HugeiconsIcon icon={Icons.trash} />
                Видалити
             </ContextMenuItem>
          </ContextMenuPopup>

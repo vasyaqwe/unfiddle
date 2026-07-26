@@ -1,3 +1,4 @@
+import { HugeiconsIcon } from "@hugeicons/react"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { isMobileAtom } from "@unfiddle/ui/store"
 import { useAtomValue } from "jotai"
@@ -90,7 +91,8 @@ export function Toaster(props: React.ComponentProps<typeof Sonner>) {
                </svg>
             ),
             close: (
-               <Icons.xMark
+               <HugeiconsIcon
+                  icon={Icons.xMark}
                   className="size-4! text-muted"
                   strokeWidth={3}
                />

@@ -1,7 +1,8 @@
+import { Calendar03Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useNavigate, useSearch } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
 import { DateInput } from "@unfiddle/ui/components/date-input"
-import { Icons } from "@unfiddle/ui/components/icons"
 import {
    Popover,
    PopoverPopup,
@@ -35,7 +36,7 @@ export function DateFilter() {
                   size={"sm"}
                   className="relative"
                >
-                  <Icons.calendar className="size-4.5" />
+                  <HugeiconsIcon icon={Calendar03Icon} />
                   {search.startDate || search.endDate ? (
                      <span className="absolute top-0.75 right-0.75 size-1.25 rounded-full bg-primary-7" />
                   ) : null}

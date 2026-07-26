@@ -1,3 +1,4 @@
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { CURRENCIES, CURRENCY_SYMBOLS } from "@unfiddle/core/currency/constants"
 import type { Currency } from "@unfiddle/core/currency/types"
@@ -226,7 +227,7 @@ function Form({
                         disabled={items.length === 1}
                         className="self-end disabled:cursor-not-allowed"
                      >
-                        <Icons.trash />
+                        <HugeiconsIcon icon={Icons.trash} />
                      </Button>
                   </FieldGroup>
                ))}
@@ -257,7 +258,7 @@ function Form({
                   className="mt-2 w-full disabled:cursor-not-allowed"
                   variant={"secondary"}
                >
-                  <Icons.plus />
+                  <HugeiconsIcon icon={Icons.plus} />
                   Додати товар
                </Button>
             </Fieldset>

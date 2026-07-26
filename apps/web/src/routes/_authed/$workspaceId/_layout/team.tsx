@@ -1,3 +1,5 @@
+import { ReloadIcon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import { formatDate } from "@unfiddle/core/date"
@@ -116,7 +118,7 @@ function RouteComponent() {
                            kind={"icon"}
                            aria-label="Запросити"
                         >
-                           <Icons.plus />
+                           <HugeiconsIcon icon={Icons.plus} />
                         </Button>
                      }
                   />
@@ -149,7 +151,7 @@ function RouteComponent() {
                         kind={"icon"}
                         variant={"ghost"}
                      >
-                        <Icons.reload className="size-5" />
+                        <HugeiconsIcon icon={ReloadIcon} />
                      </Button>
                   </div>
                </DialogPopup>
@@ -345,7 +347,10 @@ function MemberRow({
                               variant={"ghost"}
                               kind={"icon"}
                            >
-                              <Icons.ellipsisHorizontal />
+                              <HugeiconsIcon
+                                 icon={Icons.ellipsisHorizontal}
+                                 className="size-5.5"
+                              />
                            </Button>
                         }
                      />
@@ -358,14 +363,14 @@ function MemberRow({
                               }, 1)
                            }}
                         >
-                           <Icons.pencil />
+                           <HugeiconsIcon icon={Icons.pencil} />
                            Редагувати
                         </MenuItem>
                         <MenuItem
                            destructive
                            onClick={() => setDeleteOpen(true)}
                         >
-                           <Icons.trash />
+                           <HugeiconsIcon icon={Icons.trash} />
                            Видалити
                         </MenuItem>
                      </MenuPopup>

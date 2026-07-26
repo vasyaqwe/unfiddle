@@ -1,5 +1,11 @@
+import {
+   ChartIcon,
+   Home04Icon,
+   Settings02Icon,
+   UserMultipleIcon,
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { Link, useParams, useSearch } from "@tanstack/react-router"
-import { Icons } from "@unfiddle/ui/components/icons"
 
 export function BottomNavigation() {
    const params = useParams({ from: "/_authed/$workspaceId/_layout" })
@@ -14,10 +20,12 @@ export function BottomNavigation() {
                   params={params}
                   search={search}
                   activeOptions={{ exact: true, includeSearch: false }}
-                  className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-tight aria-[current=page]:text-foreground"
+                  className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-snug aria-[current=page]:text-foreground"
                >
-                  <Icons.home className="size-6 shrink-0 group-aria-[current=page]:hidden" />
-                  <Icons.homeSolid className="hidden size-6 shrink-0 group-aria-[current=page]:block" />
+                  <HugeiconsIcon
+                     icon={Home04Icon}
+                     className="size-5 shrink-0"
+                  />
                   Головна
                </Link>
             </li>
@@ -26,10 +34,12 @@ export function BottomNavigation() {
                   to={"/$workspaceId/analytics"}
                   params={params}
                   search={search}
-                  className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-tight aria-[current=page]:text-foreground"
+                  className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-snug aria-[current=page]:text-foreground"
                >
-                  <Icons.barChart className="mb-0.5 size-5.5 shrink-0 group-aria-[current=page]:hidden" />
-                  <Icons.barChartSolid className="mb-0.5 hidden size-5.5 shrink-0 group-aria-[current=page]:block" />
+                  <HugeiconsIcon
+                     icon={ChartIcon}
+                     className="mb-0.5 size-5 shrink-0"
+                  />
                   Аналітика
                </Link>
             </li>
@@ -38,10 +48,12 @@ export function BottomNavigation() {
                   to={"/$workspaceId/team"}
                   params={params}
                   search={search}
-                  className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-tight aria-[current=page]:text-foreground"
+                  className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-snug aria-[current=page]:text-foreground"
                >
-                  <Icons.users className="size-6 shrink-0 group-aria-[current=page]:hidden" />
-                  <Icons.usersSolid className="hidden size-6 shrink-0 group-aria-[current=page]:block" />
+                  <HugeiconsIcon
+                     icon={UserMultipleIcon}
+                     className="size-5 shrink-0"
+                  />
                   Команда
                </Link>
             </li>
@@ -50,10 +62,12 @@ export function BottomNavigation() {
                   to={"/$workspaceId/settings"}
                   params={params}
                   search={search}
-                  className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-tight aria-[current=page]:text-foreground"
+                  className="group relative inline-flex h-10 flex-col items-center justify-center rounded-md font-semibold text-[0.7825rem] text-foreground/60 leading-snug aria-[current=page]:text-foreground"
                >
-                  <Icons.gear className="size-6 shrink-0 group-aria-[current=page]:hidden" />
-                  <Icons.gearSolid className="hidden size-6 shrink-0 group-aria-[current=page]:block" />
+                  <HugeiconsIcon
+                     icon={Settings02Icon}
+                     className="size-5 shrink-0"
+                  />
                   Налаштув.
                </Link>
             </li>

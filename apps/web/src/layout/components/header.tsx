@@ -1,5 +1,6 @@
+import { ArrowLeft02Icon, Logout03Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { Button } from "@unfiddle/ui/components/button"
-import { Icons } from "@unfiddle/ui/components/icons"
 import {
    Menu,
    MenuGroup,
@@ -46,7 +47,10 @@ export function HeaderBackButton({
          aria-label="Go back"
          {...props}
       >
-         <Icons.arrowLeft className="size-6" />
+         <HugeiconsIcon
+            icon={ArrowLeft02Icon}
+            className="size-5.5"
+         />
       </BackButton>
    )
 }
@@ -109,7 +113,7 @@ export function HeaderUserMenu() {
                   destructive
                   onClick={() => auth.signout.mutate()}
                >
-                  <Icons.exit />
+                  <HugeiconsIcon icon={Logout03Icon} />
                   Вийти з аккаунту
                </MenuItem>
             </MenuGroup>

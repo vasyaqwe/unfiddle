@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",
+    "@hugeicons/core-free-icons": "^4.2.3",
+    "@hugeicons/react": "^1.1.9",
     "@sentry/react": "^9.25.1",
     "@sentry/vite-plugin": "^3.5.0",
     "@tailwindcss/vite": "^4.1.7",

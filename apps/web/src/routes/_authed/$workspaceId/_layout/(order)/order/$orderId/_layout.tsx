@@ -1,3 +1,8 @@
+import {
+   ArrowUpRight01Icon,
+   FileAttachmentIcon,
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, notFound, Outlet } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
@@ -17,13 +22,21 @@ import {
    TooltipPopup,
    TooltipTrigger,
 } from "@unfiddle/ui/components/tooltip"
+import { useAtomValue } from "jotai"
 import * as React from "react"
-import { useDownloadAttachment } from "@/attachment/hooks"
+import { useAttachments, useDownloadAttachment } from "@/attachment/hooks"
+import type { UploadedAttachment } from "@/attachment/types"
 import { useAuth } from "@/auth/hooks"
 import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
+import { FileUploader } from "@/file/components/uploader"
 import { Header, HeaderBackButton } from "@/layout/components/header"
 import { MainScrollArea } from "@/layout/components/main"
 import { useOrder } from "@/order/hooks"
+import { createOrderOpenAtom } from "@/order/store"
+import {
+   createProcurementOpenAtom,
+   updateProcurementOpenAtom,
+} from "@/procurement/store"
 import { SeverityCombobox } from "@/routes/_authed/$workspaceId/_layout/(order)/-components/severity-combobox"
 import { StatusCombobox } from "@/routes/_authed/$workspaceId/_layout/(order)/-components/status-combobox"
 import { useSocket } from "@/socket"
@@ -68,11 +81,68 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
    const order = useOrder()
+   const auth = useAuth()
+   const socket = useSocket()
+   const queryClient = useQueryClient()
    const fileUploaderRef = React.useRef<HTMLDivElement>(null)
+
+   const createAttachment = useMutation(
+      trpc.attachment.create.mutationOptions(),
+   )
+
+   const attachments = useAttachments({
+      subjectId: order.id,
+      onSuccess: async (data) => {
+         const succeeded = data.filter(
+            (r): r is UploadedAttachment => !("error" in r),
+         )
+
+         createAttachment.mutate(
+            {
+               attachments: succeeded.map((a) => ({
+                  ...a,
+                  subjectId: order.id,
+                  workspaceId: auth.workspace.id,
+                  subjectType: "order",
+               })),
+               workspaceId: auth.workspace.id,
+            },
+            {
+               onSuccess: (attachment) => {
+                  socket.order.send({
+                     action: "create_attachement",
+                     senderId: auth.user.id,
+                     orderId: attachment.subjectId,
+                     workspaceId: auth.workspace.id,
+                  })
+                  queryClient.invalidateQueries(
+                     trpc.order.one.queryOptions({
+                        orderId: attachment.subjectId,
+                        workspaceId: auth.workspace.id,
+                     }),
+                  )
+               },
+            },
+         )
+      },
+   })
+
+   const createOrderOpen = useAtomValue(createOrderOpenAtom)
+   const createProcurementOpen = useAtomValue(createProcurementOpenAtom)
+   const updateProcurementOpen = useAtomValue(updateProcurementOpenAtom)
 
    return (
       <div className="flex grow">
          <div className="relative flex grow flex-col">
+            {createOrderOpen ||
+            createProcurementOpen ||
+            updateProcurementOpen ? null : (
+               <FileUploader
+                  ref={fileUploaderRef}
+                  className="absolute inset-0 z-9 h-full"
+                  onUpload={attachments.upload.mutateAsync}
+               />
+            )}
             <Outlet />
          </div>
          <div
@@ -188,7 +258,10 @@ function RouteComponent() {
                         className="flex items-center gap-1.5 py-2 font-medium text-sm underline hover:no-underline"
                      >
                         Переглянути замовлення в CRM
-                        <Icons.arrowUpRight className="size-4 shrink-0" />
+                        <HugeiconsIcon
+                           icon={ArrowUpRight01Icon}
+                           className="size-4 shrink-0"
+                        />
                      </a>
                   </section>
                ) : null}
@@ -222,7 +295,7 @@ function Files({
                size={"xs"}
                onClick={() => fileUploaderRef.current?.click()}
             >
-               <Icons.plus className="size-4" />
+               <HugeiconsIcon icon={Icons.plus} />
             </Button>
          </div>
          <div className={"mt-3 flex flex-col gap-1"}>
@@ -272,11 +345,12 @@ function FileItem({
                   url={attachment.url}
                />
             ) : (
-               <Icons.attachment className="ml-0!" />
+               <HugeiconsIcon
+                  icon={FileAttachmentIcon}
+                  className="ml-0! size-4.5 shrink-0"
+               />
             )}
-            <span className="line-clamp-1 text-muted text-sm">
-               {attachment.name}
-            </span>
+            <span className="line-clamp-1 text-sm">{attachment.name}</span>
          </Button>
          {attachment.creatorId === auth.user.id ? (
             <Button
@@ -310,7 +384,7 @@ function FileItem({
                }}
                disabled={deleteItem.isPending}
             >
-               <Icons.trash />
+               <HugeiconsIcon icon={Icons.trash} />
             </Button>
          ) : (
             <Tooltip>

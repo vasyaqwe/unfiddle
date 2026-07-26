@@ -1,4 +1,5 @@
-import { Icons } from "@unfiddle/ui/components/icons"
+import { FileAttachmentIcon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { SVGPreview } from "@unfiddle/ui/components/svg-preview"
 import { cn } from "@unfiddle/ui/utils"
 import * as React from "react"
@@ -189,5 +190,10 @@ export function FilePreview({ file }: { file: UploadedAttachment }) {
       )
    }
 
-   return <Icons.attachment className="size-6" />
+   return (
+      <HugeiconsIcon
+         icon={FileAttachmentIcon}
+         className="size-5.5 shrink-0"
+      />
+   )
 }

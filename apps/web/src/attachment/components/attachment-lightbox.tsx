@@ -1,3 +1,5 @@
+import { ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useNavigate, useSearch } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
 import {
@@ -102,7 +104,7 @@ export default function AttachmentLightbox({
                      variant={"ghost"}
                      className="[--hover:var(--color-primary-4)] dark:[--hover:var(--color-primary-5)]"
                   >
-                     <Icons.download />
+                     <HugeiconsIcon icon={Icons.download} />
                   </Button>
                   <Separator className={"h-6 w-px"} />
                   <DialogXClose className={"mt-0 mr-0"} />
@@ -114,13 +116,19 @@ export default function AttachmentLightbox({
                      onClick={prevAttachment}
                      className="absolute top-1/2 left-3 z-1 flex h-full w-16 -translate-y-1/2 cursor-pointer items-center text-muted transition-colors duration-100 hover:text-foreground md:h-full"
                   >
-                     <Icons.chevronLeft className="size-6" />
+                     <HugeiconsIcon
+                        icon={ArrowLeft01Icon}
+                        className="size-5.5"
+                     />
                   </button>
                   <button
                      onClick={nextAttachment}
                      className="absolute top-1/2 right-3.5 z-1 flex h-full w-16 -translate-y-1/2 cursor-pointer items-center justify-end text-muted transition-colors duration-100 hover:text-foreground md:h-full"
                   >
-                     <Icons.chevronRight className="size-6" />
+                     <HugeiconsIcon
+                        icon={ArrowRight01Icon}
+                        className="size-5.5"
+                     />
                   </button>
                </>
             )}

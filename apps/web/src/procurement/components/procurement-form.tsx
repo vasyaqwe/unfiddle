@@ -1,9 +1,10 @@
+import { Attachment01Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { CURRENCY_SYMBOLS } from "@unfiddle/core/currency/constants"
 import type { Procurement } from "@unfiddle/core/procurement/types"
 import { Button } from "@unfiddle/ui/components/button"
 import { DateInput } from "@unfiddle/ui/components/date-input"
 import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
-import { Icons } from "@unfiddle/ui/components/icons"
 import { NumberField } from "@unfiddle/ui/components/number-field"
 import {
    Select,
@@ -178,7 +179,7 @@ export function ProcurementForm({
                      variant={"ghost"}
                      className="absolute top-1 right-1"
                   >
-                     <Icons.paperClip />
+                     <HugeiconsIcon icon={Attachment01Icon} />
                   </Button>
                </div>
             </Field>

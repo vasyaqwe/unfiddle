@@ -1,3 +1,5 @@
+import { PinIcon, UndoIcon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useParams } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
 import type { OrderItem as OrderItemType } from "@unfiddle/core/order/item/types"
@@ -105,7 +107,10 @@ export function OrderItem({ item }: { item: OrderItemType }) {
                      kind={"icon"}
                      className="shrink-0 justify-self-end max-lg:absolute max-lg:top-1 max-lg:right-1 lg:ml-auto"
                   >
-                     <Icons.ellipsisHorizontal />
+                     <HugeiconsIcon
+                        icon={Icons.ellipsisHorizontal}
+                        className="size-5.5"
+                     />
                   </Button>
                }
             />
@@ -135,12 +140,12 @@ export function OrderItem({ item }: { item: OrderItemType }) {
                >
                   {assigned ? (
                      <>
-                        <Icons.undo className="size-4.5" />
+                        <HugeiconsIcon icon={UndoIcon} />
                         Залишити
                      </>
                   ) : (
                      <>
-                        <Icons.pin className="size-5" />
+                        <HugeiconsIcon icon={PinIcon} />
                         Зайняти
                      </>
                   )}
@@ -150,7 +155,7 @@ export function OrderItem({ item }: { item: OrderItemType }) {
                      setUpdateOpen(true)
                   }}
                >
-                  <Icons.pencil />
+                  <HugeiconsIcon icon={Icons.pencil} />
                   Редагувати
                </MenuItem>
                {order.items.length === 1 ? null : (
@@ -164,7 +169,7 @@ export function OrderItem({ item }: { item: OrderItemType }) {
                         })
                      }
                   >
-                     <Icons.trash />
+                     <HugeiconsIcon icon={Icons.trash} />
                      Видалити
                   </MenuItem>
                )}

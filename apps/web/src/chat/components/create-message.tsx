@@ -1,3 +1,9 @@
+import {
+   ArrowTurnBackwardIcon,
+   ArrowUp02Icon,
+   Attachment01Icon,
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { Button } from "@unfiddle/ui/components/button"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { Textarea } from "@unfiddle/ui/components/textarea"
@@ -65,7 +71,10 @@ export function CreateMessage({
             {replyingToMessage && (
                <div className="flex w-full items-center justify-between gap-2 border-neutral border-b bg-surface-2 px-3 py-2 text-muted text-sm">
                   <div className="flex w-full items-center gap-2">
-                     <Icons.arrowDownLeft className="size-4 shrink-0" />
+                     <HugeiconsIcon
+                        icon={ArrowTurnBackwardIcon}
+                        className="size-4.5 shrink-0"
+                     />
                      <span className="line-clamp-1">
                         Відповідь до{" "}
                         {replyingToMessage.creator.id === auth.user.id
@@ -83,7 +92,7 @@ export function CreateMessage({
                      size="sm"
                      onClick={() => setReplyingToMessageId(null)}
                   >
-                     <Icons.xMark />
+                     <HugeiconsIcon icon={Icons.xMark} />
                   </Button>
                </div>
             )}
@@ -106,7 +115,7 @@ export function CreateMessage({
                   kind={"icon"}
                   variant={"ghost"}
                >
-                  <Icons.paperClip />
+                  <HugeiconsIcon icon={Attachment01Icon} />
                </Button>
                <Textarea
                   data-chat-content
@@ -146,7 +155,11 @@ export function CreateMessage({
                   className={"sticky bottom-1.5 rounded-full md:bottom-2.25"}
                   kind={"icon"}
                >
-                  {editingMessageId ? <Icons.check /> : <Icons.arrowUp />}
+                  {editingMessageId ? (
+                     <HugeiconsIcon icon={Icons.check} />
+                  ) : (
+                     <HugeiconsIcon icon={ArrowUp02Icon} />
+                  )}
                </Button>
             </div>
          </form>

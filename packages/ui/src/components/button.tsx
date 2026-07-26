@@ -25,7 +25,7 @@ const button = cva(
          size: {
             xs: "h-9 rounded-sm px-1 md:h-6 [&_svg:not([class*='size-'])]:size-4",
             sm: "h-9 rounded-sm px-1.5 md:h-7 [&_svg:not([class*='size-'])]:size-4.5",
-            md: "h-9 rounded-md px-3 md:h-[1.925rem] md:px-[0.53rem] [&_svg:not([class*='size-'])]:size-5",
+            md: "h-9 rounded-md px-3 md:h-[1.925rem] md:px-[0.53rem] [&_svg:not([class*='size-'])]:size-4.5",
             lg: "h-10 rounded-lg px-3 md:h-[2.1rem] [&_svg:not([class*='size-'])]:size-5",
             xl: "h-10 rounded-lg px-3 md:h-10 [&_svg:not([class*='size-'])]:size-5.5",
          },
@@ -38,13 +38,13 @@ const button = cva(
          {
             kind: "default",
             size: "sm",
-            className: "[&>svg]:-ml-[0.05rem] md:[&>svg]:-ml-[0.15rem]",
+            className: "has-[svg]:gap-1 [&>svg]:-ml-[0.05rem]",
          },
          {
             kind: "default",
             size: "md",
             className:
-               "has-[svg]:gap-1 [&>svg]:-ml-[0.2rem] md:[&>svg]:-ml-[0.25rem]",
+               "has-[svg]:gap-1.5 [&>svg]:-ml-[0.2rem] md:[&>svg]:-ml-[0.15rem]",
          },
       ],
       defaultVariants: {

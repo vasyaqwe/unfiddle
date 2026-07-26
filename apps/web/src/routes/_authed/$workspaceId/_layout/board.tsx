@@ -1,7 +1,8 @@
+import { Home01Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import "tldraw/tldraw.css"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
-import { Icons } from "@unfiddle/ui/components/icons"
 import { Tldraw, track } from "tldraw"
 import { useAuth } from "@/auth/hooks"
 import { SuspenseFallback } from "@/ui/components/suspense-boundary"
@@ -36,7 +37,7 @@ function RouteComponent() {
             className={"absolute right-1 bottom-1 z-999 min-w-25"}
             style={{ color: "white" }}
          >
-            <Icons.home className="size-5" />
+            <HugeiconsIcon icon={Home01Icon} />
             Додому
          </Button>
       </div>

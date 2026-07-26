@@ -1,10 +1,11 @@
+import { PreferenceHorizontalIcon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import {
    ORDER_SORTS,
    ORDER_SORTS_TRANSLATION,
    type OrderSort,
 } from "@unfiddle/core/order/constants"
 import { Button } from "@unfiddle/ui/components/button"
-import { Icons } from "@unfiddle/ui/components/icons"
 import {
    Popover,
    PopoverPopup,
@@ -46,7 +47,7 @@ export function DisplayPopover() {
                   size={"sm"}
                   className="relative"
                >
-                  <Icons.adjustments className="size-4.5" />
+                  <HugeiconsIcon icon={PreferenceHorizontalIcon} />
                   {isDefault ? null : (
                      <span className="absolute top-0.75 right-0.75 size-1.25 rounded-full bg-primary-7" />
                   )}

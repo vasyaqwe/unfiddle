@@ -1,4 +1,6 @@
 import { ContextMenu as ContextMenuPrimitive } from "@base-ui/react/context-menu"
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { MenuCheckboxItemIndicator } from "@unfiddle/ui/components/menu"
 import { MENU_ITEM_STYLES } from "@unfiddle/ui/components/menu/constants"
 import { POPUP_STYLES } from "@unfiddle/ui/constants"
@@ -111,17 +113,11 @@ export function ContextMenuSubmenuTrigger({
          {...props}
       >
          {children}
-         <svg
-            className="ml-auto size-2!"
-            viewBox="0 0 79 91"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-         >
-            <path
-               d="M71.1338 32.4487C79.5945 36.784 79.8946 48.7674 71.6616 53.5207L18 84.5022C10 89.121 0 83.3475 0 74.1099V15.6324C0 6.65996 9.48705 0.861131 17.4722 4.95271L71.1338 32.4487Z"
-               fill="currentColor"
-            />
-         </svg>
+         <HugeiconsIcon
+            icon={ArrowRight01Icon}
+            strokeWidth={2}
+            className="ml-auto size-3.5!"
+         />
       </ContextMenuPrimitive.Trigger>
    )
 }

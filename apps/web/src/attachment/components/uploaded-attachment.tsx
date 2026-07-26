@@ -1,3 +1,4 @@
+import { HugeiconsIcon } from "@hugeicons/react"
 import { Button } from "@unfiddle/ui/components/button"
 import { Icons } from "@unfiddle/ui/components/icons"
 import {
@@ -40,9 +41,9 @@ export function UploadedAttachment({
                   size={"xs"}
                   variant={"secondary"}
                   aria-label={`Remove ${file.name}`}
-                  className="!rounded-full absolute -top-2 -right-2 bg-white p-1 text-foreground shadow-none hover:border-red-9 hover:bg-red-9 hover:text-white active:bg-red-9 group-hover:visible max-md:size-8 md:invisible dark:border-transparent dark:bg-primary-6 dark:shadow-xs dark:hover:border-red-9 dark:hover:bg-red-9"
+                  className="absolute -top-2 -right-2 rounded-full! bg-white p-1 text-foreground shadow-none hover:border-red-9 hover:bg-red-9 hover:text-white active:bg-red-9 group-hover:visible max-md:size-8 md:invisible dark:border-transparent dark:bg-primary-6 dark:shadow-xs dark:hover:border-red-9 dark:hover:bg-red-9"
                >
-                  <Icons.xMark />
+                  <HugeiconsIcon icon={Icons.xMark} />
                </Button>
             ) : null}
             <FilePreview file={file} />

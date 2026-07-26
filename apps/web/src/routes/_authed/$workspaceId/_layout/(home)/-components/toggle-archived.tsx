@@ -1,6 +1,7 @@
+import { Archive03Icon, ArrowLeft02Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useNavigate, useParams, useSearch } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
-import { Icons } from "@unfiddle/ui/components/icons"
 import { Toggle } from "@unfiddle/ui/components/toggle"
 import {
    Tooltip,
@@ -39,9 +40,9 @@ export function ToggleArchived() {
                         size={"sm"}
                      >
                         {state.pressed ? (
-                           <Icons.arrowLeft className="size-5" />
+                           <HugeiconsIcon icon={ArrowLeft02Icon} />
                         ) : (
-                           <Icons.archive className="size-5" />
+                           <HugeiconsIcon icon={Archive03Icon} />
                         )}
                      </Button>
                   )}

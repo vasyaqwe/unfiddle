@@ -1,3 +1,5 @@
+import { InboxIcon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import { useVirtualizer } from "@tanstack/react-virtual"
@@ -78,7 +80,7 @@ function RouteComponent() {
                <DrawerTrigger
                   render={
                      <Button className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-10 overflow-visible shadow-xl md:right-8 md:bottom-8 md:h-9 md:px-3">
-                        <Icons.plus className="md:size-6" />
+                        <HugeiconsIcon icon={Icons.plus} />
                         Клієнт
                      </Button>
                   }
@@ -229,7 +231,7 @@ function ClientRow({
                   setUpdateOpen(true)
                }}
             >
-               <Icons.pencil />
+               <HugeiconsIcon icon={Icons.pencil} />
                Редагувати
             </ContextMenuItem>
             <MenuSeparator />
@@ -237,7 +239,7 @@ function ClientRow({
                destructive
                onClick={() => setDeleteAlertOpen(true)}
             >
-               <Icons.trash />
+               <HugeiconsIcon icon={Icons.trash} />
                Видалити
             </ContextMenuItem>
          </ContextMenuPopup>
@@ -257,7 +259,10 @@ function ClientsEmpty() {
                   alt=""
                />
             ) : (
-               <Icons.empty />
+               <HugeiconsIcon
+                  icon={InboxIcon}
+                  className="size-12"
+               />
             )}
          </div>
          <p className="mb-2 font-medium text-foreground/90 text-lg">

@@ -1,4 +1,6 @@
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { MENU_ITEM_STYLES } from "@unfiddle/ui/components/menu/constants"
 import { POPUP_STYLES } from "@unfiddle/ui/constants"
@@ -74,9 +76,10 @@ export function MenuCheckboxItemIndicator() {
       <MenuPrimitive.CheckboxItemIndicator
          className={"-mr-1 ml-auto md:-mr-0.5"}
       >
-         <Icons.check
+         <HugeiconsIcon
+            icon={Icons.check}
             strokeWidth={2.5}
-            className={"size-6.25 text-white/90 md:size-5.5"}
+            className={"size-5.75 text-white/90 md:size-5"}
          />
       </MenuPrimitive.CheckboxItemIndicator>
    )
@@ -121,17 +124,11 @@ export function MenuSubmenuTrigger({
          {...props}
       >
          {children}
-         <svg
-            className="ml-auto size-2!"
-            viewBox="0 0 79 91"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-         >
-            <path
-               d="M71.1338 32.4487C79.5945 36.784 79.8946 48.7674 71.6616 53.5207L18 84.5022C10 89.121 0 83.3475 0 74.1099V15.6324C0 6.65996 9.48705 0.861131 17.4722 4.95271L71.1338 32.4487Z"
-               fill="currentColor"
-            />
-         </svg>
+         <HugeiconsIcon
+            icon={ArrowRight01Icon}
+            strokeWidth={2}
+            className="ml-auto size-3.5!"
+         />
       </MenuPrimitive.SubmenuTrigger>
    )
 }

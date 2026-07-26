@@ -1,4 +1,5 @@
-import { Icons } from "@unfiddle/ui/components/icons"
+import { InboxIcon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useAuth } from "@/auth/hooks"
 
 export function EstimatesEmpty() {
@@ -13,7 +14,10 @@ export function EstimatesEmpty() {
                   alt=""
                />
             ) : (
-               <Icons.empty />
+               <HugeiconsIcon
+                  icon={InboxIcon}
+                  className="size-12"
+               />
             )}
          </div>
          <p className="mb-2 font-medium text-foreground/90 text-lg">

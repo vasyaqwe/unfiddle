@@ -1,3 +1,4 @@
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useParams } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
 import type { EstimateItem as EstimateItemType } from "@unfiddle/core/estimate/item/types"
@@ -66,7 +67,10 @@ export function EstimateItem({ item }: { item: EstimateItemType }) {
                      kind={"icon"}
                      className="shrink-0 justify-self-end max-lg:absolute max-lg:top-1 max-lg:right-1 lg:ml-auto"
                   >
-                     <Icons.ellipsisHorizontal />
+                     <HugeiconsIcon
+                        icon={Icons.ellipsisHorizontal}
+                        className="size-5.5"
+                     />
                   </Button>
                }
             />
@@ -81,7 +85,7 @@ export function EstimateItem({ item }: { item: EstimateItemType }) {
                      setUpdateOpen(true)
                   }}
                >
-                  <Icons.pencil />
+                  <HugeiconsIcon icon={Icons.pencil} />
                   Редагувати
                </MenuItem>
                {estimate.items.length === 1 ? null : (
@@ -95,7 +99,7 @@ export function EstimateItem({ item }: { item: EstimateItemType }) {
                         })
                      }
                   >
-                     <Icons.trash />
+                     <HugeiconsIcon icon={Icons.trash} />
                      Видалити
                   </MenuItem>
                )}

@@ -1,8 +1,11 @@
 import {
-   useMutation,
-   useQueryClient,
-   useSuspenseQuery,
-} from "@tanstack/react-query"
+   Archive03Icon,
+   PinIcon,
+   TickDouble02Icon,
+   UndoIcon,
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
 import { formatDate } from "@unfiddle/core/date"
@@ -26,15 +29,11 @@ import {
    TooltipPopup,
    TooltipTrigger,
 } from "@unfiddle/ui/components/tooltip"
-import { useAtomValue } from "jotai"
 import * as React from "react"
 import { ImagesCarousel } from "@/attachment/components/images-carousel"
-import { useAttachments } from "@/attachment/hooks"
-import type { UploadedAttachment } from "@/attachment/types"
 import { useAuth } from "@/auth/hooks"
 import { ChatLink } from "@/chat/components/chat-link"
 import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
-import { FileUploader } from "@/file/components/uploader"
 import {
    Header,
    HeaderBackButton,
@@ -49,14 +48,9 @@ import { useDeleteOrder } from "@/order/delete/use-delete-order"
 import { useOrder } from "@/order/hooks"
 import { CreateOrderItem } from "@/order/item/components/create-order-item"
 import { useOrderUnreadCount } from "@/order/message/read/queries"
-import { createOrderOpenAtom } from "@/order/store"
 import { UpdateOrder } from "@/order/update/update-order"
 import { useUpdateOrder } from "@/order/update/use-update-order"
 import { CreateProcurement } from "@/procurement/create/create-procurement"
-import {
-   createProcurementOpenAtom,
-   updateProcurementOpenAtom,
-} from "@/procurement/store"
 import { CreateAnalog } from "@/routes/_authed/$workspaceId/_layout/(order)/-components/create-analog"
 import { OrderItem } from "@/routes/_authed/$workspaceId/_layout/(order)/-components/order-item"
 import { Procurement } from "@/routes/_authed/$workspaceId/_layout/(order)/-components/procurement"
@@ -85,51 +79,6 @@ function RouteComponent() {
    const queryClient = useQueryClient()
 
    const pressed = order.assignees.some((a) => a.user.id === auth.user.id)
-
-   const createAttachment = useMutation(
-      trpc.attachment.create.mutationOptions(),
-   )
-
-   const fileUploaderRef = React.useRef<HTMLDivElement>(null)
-   const attachments = useAttachments({
-      subjectId: order.id,
-      onSuccess: async (data) => {
-         const succeeded = data.filter(
-            (r): r is UploadedAttachment => !("error" in r),
-         )
-
-         createAttachment.mutate(
-            {
-               attachments: succeeded.map((a) => ({
-                  ...a,
-                  subjectId: order.id,
-                  workspaceId: auth.workspace.id,
-                  subjectType: "order",
-               })),
-               workspaceId: auth.workspace.id,
-            },
-            {
-               onSuccess: (attachment) => {
-                  socket.order.send({
-                     action: "create_attachement",
-                     senderId: auth.user.id,
-                     orderId: attachment.subjectId,
-                     workspaceId: auth.workspace.id,
-                  })
-                  queryClient.invalidateQueries(
-                     trpc.order.one.queryOptions({
-                        orderId: attachment.subjectId,
-                        workspaceId: auth.workspace.id,
-                     }),
-                  )
-               },
-            },
-         )
-      },
-   })
-   const createOrderOpen = useAtomValue(createOrderOpenAtom)
-   const createProcurementOpen = useAtomValue(createProcurementOpenAtom)
-   const updateProcurementOpen = useAtomValue(updateProcurementOpenAtom)
 
    const imageAttachments = order.attachments.filter(
       (attachment) =>
@@ -183,9 +132,9 @@ function RouteComponent() {
                                  }}
                               >
                                  {state.pressed ? (
-                                    <Icons.undo className="size-4.5" />
+                                    <HugeiconsIcon icon={UndoIcon} />
                                  ) : (
-                                    <Icons.pin className="size-5" />
+                                    <HugeiconsIcon icon={PinIcon} />
                                  )}
                               </Button>
                            )}
@@ -200,21 +149,15 @@ function RouteComponent() {
             </div>
          </Header>
          <MainScrollArea>
-            {createOrderOpen ||
-            createProcurementOpen ||
-            updateProcurementOpen ? null : (
-               <FileUploader
-                  ref={fileUploaderRef}
-                  className="absolute inset-0 z-9 h-full"
-                  onUpload={attachments.upload.mutateAsync}
-               />
-            )}
             <Expandable expanded={order.deletedAt !== null}>
                <Badge
                   variant={"destructive"}
                   className="mb-1.5 text-base"
                >
-                  <Icons.archive className="mb-0.5 inline-block size-5.5" />
+                  <HugeiconsIcon
+                     icon={Archive03Icon}
+                     className="mb-0.5 inline-block size-5"
+                  />
                   Замовлення у архіві
                </Badge>
             </Expandable>
@@ -312,8 +255,11 @@ function RouteComponent() {
                   <CreateOrderItem>
                      <DrawerTrigger
                         render={
-                           <Button variant={"secondary"}>
-                              <Icons.plus />
+                           <Button
+                              variant={"secondary"}
+                              size="sm"
+                           >
+                              <HugeiconsIcon icon={Icons.plus} />
                               Додати
                            </Button>
                         }
@@ -366,7 +312,10 @@ function RouteComponent() {
                                  })
                               }}
                            >
-                              <Icons.trash className="size-4" />
+                              <HugeiconsIcon
+                                 icon={Icons.trash}
+                                 className="size-4"
+                              />
                            </Button>
                         </Card>
                      ))}
@@ -396,7 +345,10 @@ function TotalProfit() {
             variant={"success"}
             className="mb-1.5 text-base"
          >
-            <Icons.checkAll className="size-5" />
+            <HugeiconsIcon
+               icon={TickDouble02Icon}
+               className="size-4.5 md:size-5"
+            />
             Замовлення успішне. Профіт:{" "}
             {`${formatCurrency(totalProfit as number, {
                currency: order.currency,
@@ -428,7 +380,10 @@ function Actions() {
                      kind={"icon"}
                      className="md:ml-2"
                   >
-                     <Icons.ellipsisHorizontal />
+                     <HugeiconsIcon
+                        icon={Icons.ellipsisHorizontal}
+                        className="size-5.5"
+                     />
                   </Button>
                }
             />
@@ -438,7 +393,7 @@ function Actions() {
                      setEditOpen(true)
                   }}
                >
-                  <Icons.pencil />
+                  <HugeiconsIcon icon={Icons.pencil} />
                   Редагувати
                </MenuItem>
                {order.deletedAt === null ? (
@@ -446,7 +401,7 @@ function Actions() {
                      destructive
                      onClick={() => setArchiveAlertOpen(true)}
                   >
-                     <Icons.archive />
+                     <HugeiconsIcon icon={Archive03Icon} />
                      Архівувати
                   </MenuItem>
                ) : (
@@ -459,7 +414,7 @@ function Actions() {
                         })
                      }
                   >
-                     <Icons.undo />
+                     <HugeiconsIcon icon={UndoIcon} />
                      Відновити
                   </MenuItem>
                )}
@@ -470,7 +425,7 @@ function Actions() {
                      destructive
                      onClick={() => setDeleteAlertOpen(true)}
                   >
-                     <Icons.trash />
+                     <HugeiconsIcon icon={Icons.trash} />
                      Видалити
                   </MenuItem>
                ) : null}

@@ -1,3 +1,11 @@
+import {
+   Alert02Icon,
+   Archive03Icon,
+   Briefcase01Icon,
+   PinIcon,
+   UndoIcon,
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useVirtualizer } from "@tanstack/react-virtual"
@@ -126,7 +134,7 @@ function RouteComponent() {
                onClick={() => setCreateOrderOpen(true)}
                className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-10 overflow-visible shadow-xl md:right-8 md:bottom-8 md:h-9 md:px-3"
             >
-               <Icons.plus className="md:size-6" />
+               <HugeiconsIcon icon={Icons.plus} />
                Замовлення
             </Button>
             <div className="sticky top-0 z-5 flex min-h-12 items-center gap-1 border-surface-12/13 border-b bg-background px-1.5 shadow-xs/4 lg:min-h-10">
@@ -222,6 +230,8 @@ function _OrderRow({
 
    const unread = useUnreadOrders()
 
+   const showStatus = order.status && order.status !== "pending"
+
    return (
       <ContextMenu>
          <ContextMenuTrigger
@@ -246,7 +256,6 @@ function _OrderRow({
                   <p className="whitespace-nowrap font-medium font-mono text-muted text-sm">
                      {makeShortId(order.shortId)}
                   </p>
-
                   <p className="flex items-center gap-1.5 font-medium text-sm lg:w-27.5">
                      <UserAvatar
                         size={25}
@@ -259,8 +268,9 @@ function _OrderRow({
                   </p>
                </div>
                <p
+                  data-show-status={showStatus ? "" : undefined}
                   data-vat={order.paymentType === "llc_vat" ? "" : undefined}
-                  className="col-span-2 col-start-1 row-start-2 mt-px line-clamp-1 break-normal font-semibold data-vat:text-orange-10"
+                  className="col-span-2 col-start-1 row-start-2 mt-px line-clamp-1 break-normal font-semibold data-vat:text-orange-10 data-show-status:max-lg:mt-1.5 data-show-status:max-lg:max-w-[calc(100%-11rem)]"
                >
                   {order.name}
                   {unread.includes(order.id) ? (
@@ -272,14 +282,17 @@ function _OrderRow({
                      delay={0}
                      render={
                         hasCrmUrl ? (
-                           <span className="ml-auto grid size-5 place-items-center rounded-full bg-green-9">
-                              <Icons.check
-                                 className={"size-4 shrink-0 text-white"}
+                           <span className="ml-auto grid size-4.5 shrink-0 place-items-center rounded-full bg-green-9">
+                              <HugeiconsIcon
+                                 icon={Icons.check}
+                                 strokeWidth={2.5}
+                                 className="size-3.5 shrink-0 text-white"
                               />
                            </span>
                         ) : (
-                           <Icons.alert
-                              className={"ml-auto size-5 shrink-0 text-red-9"}
+                           <HugeiconsIcon
+                              icon={Alert02Icon}
+                              className="ml-auto size-4.5 shrink-0 fill-current text-red-9 [&>path+path]:stroke-[2.5] [&>path+path]:stroke-background"
                            />
                         )
                      }
@@ -295,8 +308,11 @@ function _OrderRow({
                      <TooltipTrigger
                         delay={0}
                         render={
-                           <Badge className="gap-1 max-lg:hidden">
-                              <Icons.briefcase className="size-4.5" />
+                           <Badge className="gap-1.5 max-lg:hidden">
+                              <HugeiconsIcon
+                                 icon={Briefcase01Icon}
+                                 className="size-4.5"
+                              />
                               <ClientSeverityIcon
                                  severity={order.client.severity}
                               />
@@ -313,7 +329,7 @@ function _OrderRow({
                   {order.assignees.length === 0 ? null : (
                      <AvatarStack
                         size={25}
-                        className="max-md:hidden"
+                        className="max-lg:hidden"
                      >
                         {order.assignees.map((assignee) => (
                            <AvatarStackItem key={assignee.user.id}>
@@ -335,9 +351,7 @@ function _OrderRow({
                         ))}
                      </AvatarStack>
                   )}
-                  {order.status &&
-                  order.status !== "pending" &&
-                  ORDER_STATUSES_TRANSLATION[order.status] ? (
+                  {showStatus && ORDER_STATUSES_TRANSLATION[order.status] ? (
                      <Combobox
                         canBeEmpty
                         value={order.status}
@@ -361,7 +375,9 @@ function _OrderRow({
                               e.preventDefault()
                               e.stopPropagation()
                            }}
-                           className={"cursor-pointer"}
+                           className={
+                              "right-2 bottom-2 cursor-pointer max-lg:absolute"
+                           }
                         >
                            <Badge
                               style={{
@@ -465,12 +481,12 @@ function _OrderRow({
             >
                {assigned ? (
                   <>
-                     <Icons.undo className="size-4.5" />
+                     <HugeiconsIcon icon={UndoIcon} />
                      Залишити
                   </>
                ) : (
                   <>
-                     <Icons.pin className="size-5" />
+                     <HugeiconsIcon icon={PinIcon} />
                      Зайняти
                   </>
                )}
@@ -480,7 +496,7 @@ function _OrderRow({
                   setUpdateOpen(true)
                }}
             >
-               <Icons.pencil />
+               <HugeiconsIcon icon={Icons.pencil} />
                Редагувати
             </ContextMenuItem>
             <MenuSeparator />
@@ -489,7 +505,7 @@ function _OrderRow({
                   destructive
                   onClick={() => setArchiveAlertOpen(true)}
                >
-                  <Icons.archive />
+                  <HugeiconsIcon icon={Archive03Icon} />
                   Архівувати
                </ContextMenuItem>
             ) : (
@@ -502,7 +518,7 @@ function _OrderRow({
                      })
                   }
                >
-                  <Icons.undo />
+                  <HugeiconsIcon icon={UndoIcon} />
                   Відновити
                </ContextMenuItem>
             )}
@@ -513,7 +529,7 @@ function _OrderRow({
                   destructive
                   onClick={() => setDeleteAlertOpen(true)}
                >
-                  <Icons.trash />
+                  <HugeiconsIcon icon={Icons.trash} />
                   Видалити
                </ContextMenuItem>
             ) : null}
