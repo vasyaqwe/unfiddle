@@ -1,5 +1,6 @@
+import { ArrowDown02Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { Button } from "@unfiddle/ui/components/button"
-import { Icons } from "@unfiddle/ui/components/icons"
 
 export function UnreadCountButton({
    children,
@@ -13,7 +14,10 @@ export function UnreadCountButton({
          }
          {...props}
       >
-         <Icons.arrowDown className="size-4" />
+         <HugeiconsIcon
+            icon={ArrowDown02Icon}
+            className="size-4"
+         />
          {children}
       </Button>
    )

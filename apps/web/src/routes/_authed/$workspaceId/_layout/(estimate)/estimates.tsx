@@ -1,3 +1,5 @@
+import { Briefcase01Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useVirtualizer } from "@tanstack/react-virtual"
@@ -99,7 +101,10 @@ function RouteComponent() {
                <DrawerTrigger
                   render={
                      <Button className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-10 overflow-visible shadow-xl md:right-8 md:bottom-8 md:h-9 md:px-3">
-                        <Icons.plus className="md:size-6" />
+                        <HugeiconsIcon
+                           icon={Icons.plus}
+                           className="size-6"
+                        />
                         Прорахунок
                      </Button>
                   }
@@ -249,7 +254,10 @@ function EstimateRow({
                         delay={0}
                         render={
                            <Badge className="ml-auto gap-1 max-lg:hidden">
-                              <Icons.briefcase className="size-4.5" />
+                              <HugeiconsIcon
+                                 icon={Briefcase01Icon}
+                                 className="size-4.5"
+                              />
                               <ClientSeverityIcon
                                  severity={estimate.client.severity}
                               />
@@ -299,7 +307,7 @@ function EstimateRow({
                   setUpdateOpen(true)
                }}
             >
-               <Icons.pencil />
+               <HugeiconsIcon icon={Icons.pencil} />
                Редагувати
             </ContextMenuItem>
             {auth.workspace.role === "owner" ||
@@ -310,7 +318,10 @@ function EstimateRow({
                      destructive
                      onClick={() => setDeleteAlertOpen(true)}
                   >
-                     <Icons.trash />
+                     <HugeiconsIcon
+                        icon={Icons.trash}
+                        className="size-5 md:size-4"
+                     />
                      Видалити
                   </ContextMenuItem>
                </>

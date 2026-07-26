@@ -1,3 +1,5 @@
+import { FilterIcon, UserIcon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNavigate, useParams, useSearch } from "@tanstack/react-router"
 import { Badge } from "@unfiddle/ui/components/badge"
@@ -82,7 +84,10 @@ export function FilterMenu() {
                      variant={"ghost"}
                      size={"sm"}
                   >
-                     <Icons.filter className="size-5" />
+                     <HugeiconsIcon
+                        icon={FilterIcon}
+                        className="size-5"
+                     />
                      Фільтр
                   </Button>
                }
@@ -91,7 +96,7 @@ export function FilterMenu() {
                {managers.length === 0 ? null : (
                   <Submenu>
                      <MenuSubmenuTrigger>
-                        <Icons.user />
+                        <HugeiconsIcon icon={UserIcon} />
                         Менеджер
                      </MenuSubmenuTrigger>
                      <MenuPopup>
@@ -124,7 +129,10 @@ export function FilterMenu() {
                   onClick={removeFilter}
                   className="rounded-none"
                >
-                  <Icons.xMark className="size-4" />
+                  <HugeiconsIcon
+                     icon={Icons.xMark}
+                     className="size-4"
+                  />
                </Button>
             </Badge>
          )}

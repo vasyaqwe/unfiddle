@@ -1,5 +1,6 @@
+import { InboxIcon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useSearch } from "@tanstack/react-router"
-import { Icons } from "@unfiddle/ui/components/icons"
 import { useAuth } from "@/auth/hooks"
 
 export function HomeEmpty() {
@@ -17,7 +18,10 @@ export function HomeEmpty() {
                   alt=""
                />
             ) : (
-               <Icons.empty />
+               <HugeiconsIcon
+                  icon={InboxIcon}
+                  className="size-12"
+               />
             )}
          </div>
          <p className="mb-2 font-medium text-foreground/90 text-lg">

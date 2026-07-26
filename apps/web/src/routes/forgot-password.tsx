@@ -1,3 +1,4 @@
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useMutation } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
@@ -62,7 +63,10 @@ function RouteComponent() {
                >
                   {forgot.isSuccess ? (
                      <>
-                        <Icons.check className="size-5" />
+                        <HugeiconsIcon
+                           icon={Icons.check}
+                           className="size-5"
+                        />
                         Надіслано!
                      </>
                   ) : (

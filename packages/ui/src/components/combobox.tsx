@@ -1,3 +1,5 @@
+import { UnfoldMoreIcon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { MENU_ITEM_STYLES } from "@unfiddle/ui/components/menu/constants"
 import {
    Command,
@@ -124,7 +126,8 @@ export function ComboboxTrigger({ className, children, ...props }: Props) {
             </span>
          ) : null}
          {children}
-         {/* <Icons.chevronUpDown
+         {/* <HugeiconsIcon
+            icon={UnfoldMoreIcon}
             className={
                "-mr-[5px] ml-auto size-[18px] shrink-0 text-foreground/60 md:size-[16px]"
             }
@@ -135,7 +138,8 @@ export function ComboboxTrigger({ className, children, ...props }: Props) {
 
 export function ComboboxTriggerIcon() {
    return (
-      <Icons.chevronUpDown
+      <HugeiconsIcon
+         icon={UnfoldMoreIcon}
          data-combobox-icon
          className="-mr-1 ml-auto! size-4 text-muted"
       />
@@ -170,7 +174,7 @@ export function ComboboxInput({
 }: React.ComponentProps<typeof CommandInput>) {
    return (
       <div className="relative h-10 md:h-9">
-         {/* <Icons.search className="-translate-y-1/2 absolute top-[calc(50%-3px)] left-2 size-5 text-white/55 md:top-[calc(50%-3px)] md:size-[18px]" /> */}
+         {/* <HugeiconsIcon icon={Search01Icon} className="-translate-y-1/2 absolute top-[calc(50%-3px)] left-2 size-5 text-white/55 md:top-[calc(50%-3px)] md:size-[18px]" /> */}
          <CommandInput
             placeholder="Шукати.."
             className={cn(
@@ -231,7 +235,8 @@ export function ComboboxItem({
          {...props}
       >
          {children}
-         <Icons.check
+         <HugeiconsIcon
+            icon={Icons.check}
             strokeWidth={2.5}
             className={cn(
                "-mr-1 ml-auto size-6.25 text-white/90! md:-mr-0.5 md:size-5.5",

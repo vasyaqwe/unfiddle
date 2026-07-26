@@ -1,3 +1,4 @@
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useParams } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
@@ -205,7 +206,10 @@ export function Procurement({ procurement }: { procurement: ProcurementType }) {
                            kind={"icon"}
                            className="shrink-0"
                         >
-                           <Icons.ellipsisHorizontal />
+                           <HugeiconsIcon
+                              icon={Icons.ellipsisHorizontal}
+                              className="size-6"
+                           />
                         </Button>
                      }
                   />
@@ -221,14 +225,17 @@ export function Procurement({ procurement }: { procurement: ProcurementType }) {
                            setStoreUpdateOpen(true)
                         }}
                      >
-                        <Icons.pencil />
+                        <HugeiconsIcon icon={Icons.pencil} />
                         Редагувати
                      </MenuItem>
                      <MenuItem
                         destructive
                         onClick={() => setDeleteAlertOpen(true)}
                      >
-                        <Icons.trash />
+                        <HugeiconsIcon
+                           icon={Icons.trash}
+                           className="size-5 md:size-4"
+                        />
                         Видалити
                      </MenuItem>
                   </MenuPopup>

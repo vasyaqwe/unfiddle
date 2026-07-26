@@ -1,5 +1,6 @@
 import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible"
-import { Icons } from "@unfiddle/ui/components/icons"
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { cn } from "../utils"
 
 export function Collapsible({
@@ -35,9 +36,10 @@ export function CollapsibleTrigger({
 export function CollapsibleTriggerIcon({
    className,
    ...props
-}: React.ComponentProps<"svg">) {
+}: Omit<React.ComponentProps<typeof HugeiconsIcon>, "icon">) {
    return (
-      <Icons.chevronRight
+      <HugeiconsIcon
+         icon={ArrowRight01Icon}
          strokeWidth={3}
          className={cn(
             "mt-px size-3.5 shrink-0 text-foreground/60 transition-all duration-150 group-data-[panel-closed]:rotate-0 group-data-[panel-open]:rotate-90 group-data-[panel-open]:text-foreground",

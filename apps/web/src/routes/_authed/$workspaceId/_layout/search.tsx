@@ -1,3 +1,5 @@
+import { Search01Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useQuery } from "@tanstack/react-query"
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router"
 import { formatDateRelative } from "@unfiddle/core/date"
@@ -68,7 +70,10 @@ function RouteComponent() {
                className="relative col-span-4 flex w-full items-center"
             >
                <div className="top-1/2 left-1 grid size-5 shrink-0 place-items-center opacity-50 max-md:absolute max-md:-translate-y-1/2 md:left-4">
-                  <Icons.search className="size-4.5" />
+                  <HugeiconsIcon
+                     icon={Search01Icon}
+                     className="size-4.5"
+                  />
                </div>
                <Input
                   ref={inputRef}
@@ -110,7 +115,10 @@ function RouteComponent() {
                         }, 0)
                      }}
                   >
-                     <Icons.xMark className="size-4" />
+                     <HugeiconsIcon
+                        icon={Icons.xMark}
+                        className="size-4"
+                     />
                   </Button>
                )}
             </form>
@@ -159,7 +167,10 @@ function RouteComponent() {
                               size={"sm"}
                               className="hidden group-hover:flex"
                            >
-                              <Icons.xMark className="size-4" />
+                              <HugeiconsIcon
+                                 icon={Icons.xMark}
+                                 className="size-4"
+                              />
                            </Button>
                         </Link>
                      ))}
@@ -168,7 +179,10 @@ function RouteComponent() {
             ) : searchResults.isPending ? null : searchResults.isError ||
               searchResults.data.length === 0 ? (
                <div className="absolute inset-0 m-auto size-fit -translate-y-8 text-center text-muted">
-                  <Icons.search className="mx-auto size-8" />
+                  <HugeiconsIcon
+                     icon={Search01Icon}
+                     className="mx-auto size-8"
+                  />
                   <p className="mt-3 font-semibold text-lg">
                      Нічого не знайдено
                   </p>

@@ -1,3 +1,10 @@
+import {
+   Briefcase01Icon,
+   CheckmarkCircle02Icon,
+   FilterIcon,
+   UserIcon,
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNavigate, useParams, useSearch } from "@tanstack/react-router"
 import {
@@ -105,7 +112,7 @@ export function FilterMenu() {
                      variant={"ghost"}
                      size={"sm"}
                   >
-                     <Icons.filter />
+                     <HugeiconsIcon icon={FilterIcon} />
                      Фільтр
                   </Button>
                }
@@ -113,7 +120,7 @@ export function FilterMenu() {
             <MenuPopup align="start">
                <Submenu>
                   <MenuSubmenuTrigger>
-                     <Icons.circleCheckDotted />
+                     <HugeiconsIcon icon={CheckmarkCircle02Icon} />
                      Статус
                   </MenuSubmenuTrigger>
                   <MenuPopup className={"max-h-56 overflow-y-auto"}>
@@ -156,7 +163,7 @@ export function FilterMenu() {
                {managers.length === 0 ? null : (
                   <Submenu>
                      <MenuSubmenuTrigger>
-                        <Icons.user />
+                        <HugeiconsIcon icon={UserIcon} />
                         Менеджер
                      </MenuSubmenuTrigger>
                      <MenuPopup>
@@ -180,7 +187,7 @@ export function FilterMenu() {
                {clients.length === 0 ? null : (
                   <Submenu>
                      <MenuSubmenuTrigger>
-                        <Icons.briefcase />
+                        <HugeiconsIcon icon={Briefcase01Icon} />
                         Клієнт
                      </MenuSubmenuTrigger>
                      <MenuPopup>
@@ -214,7 +221,10 @@ export function FilterMenu() {
                   onClick={removeFilter}
                   className="rounded-none"
                >
-                  <Icons.xMark className="size-4" />
+                  <HugeiconsIcon
+                     icon={Icons.xMark}
+                     className="size-4"
+                  />
                </Button>
             </Badge>
          )}

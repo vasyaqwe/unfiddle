@@ -1,6 +1,7 @@
+import { ArrowDataTransferHorizontalIcon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate, useParams } from "@tanstack/react-router"
-import { Icons } from "@unfiddle/ui/components/icons"
 import {
    MenuCheckboxItem,
    MenuCheckboxItemIndicator,
@@ -32,12 +33,12 @@ export function WorkspaceMenuPopup() {
                })
             }
          >
-            <Icons.gear />
+            <HugeiconsIcon icon={Settings02Icon} />
             Налаштування
          </MenuItem> */}
          <Submenu>
             <MenuSubmenuTrigger>
-               <Icons.arrowsLeftRight />
+               <HugeiconsIcon icon={ArrowDataTransferHorizontalIcon} />
                Проєкти
             </MenuSubmenuTrigger>
             <MenuPopup>

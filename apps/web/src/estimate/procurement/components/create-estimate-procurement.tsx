@@ -1,3 +1,4 @@
+import { HugeiconsIcon } from "@hugeicons/react"
 import { Button } from "@unfiddle/ui/components/button"
 import {
    Drawer,
@@ -31,7 +32,10 @@ export function CreateEstimateProcurement() {
          <DrawerTrigger
             render={
                <Button variant={"secondary"}>
-                  <Icons.plus />
+                  <HugeiconsIcon
+                     icon={Icons.plus}
+                     className="size-6 md:size-5"
+                  />
                   Додати
                </Button>
             }

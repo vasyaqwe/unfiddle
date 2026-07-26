@@ -1,4 +1,11 @@
 import {
+   Archive02Icon,
+   PinIcon,
+   TickDouble02Icon,
+   UndoIcon,
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
+import {
    useMutation,
    useQueryClient,
    useSuspenseQuery,
@@ -183,9 +190,15 @@ function RouteComponent() {
                                  }}
                               >
                                  {state.pressed ? (
-                                    <Icons.undo className="size-4.5" />
+                                    <HugeiconsIcon
+                                       icon={UndoIcon}
+                                       className="size-4.5 md:size-4"
+                                    />
                                  ) : (
-                                    <Icons.pin className="size-5" />
+                                    <HugeiconsIcon
+                                       icon={PinIcon}
+                                       className="size-5"
+                                    />
                                  )}
                               </Button>
                            )}
@@ -214,7 +227,10 @@ function RouteComponent() {
                   variant={"destructive"}
                   className="mb-1.5 text-base"
                >
-                  <Icons.archive className="mb-0.5 inline-block size-5.5" />
+                  <HugeiconsIcon
+                     icon={Archive02Icon}
+                     className="mb-0.5 inline-block size-5.5"
+                  />
                   Замовлення у архіві
                </Badge>
             </Expandable>
@@ -313,7 +329,10 @@ function RouteComponent() {
                      <DrawerTrigger
                         render={
                            <Button variant={"secondary"}>
-                              <Icons.plus />
+                              <HugeiconsIcon
+                                 icon={Icons.plus}
+                                 className="size-6 md:size-5"
+                              />
                               Додати
                            </Button>
                         }
@@ -366,7 +385,10 @@ function RouteComponent() {
                                  })
                               }}
                            >
-                              <Icons.trash className="size-4" />
+                              <HugeiconsIcon
+                                 icon={Icons.trash}
+                                 className="size-4"
+                              />
                            </Button>
                         </Card>
                      ))}
@@ -396,7 +418,10 @@ function TotalProfit() {
             variant={"success"}
             className="mb-1.5 text-base"
          >
-            <Icons.checkAll className="size-5" />
+            <HugeiconsIcon
+               icon={TickDouble02Icon}
+               className="size-5 md:size-5.5"
+            />
             Замовлення успішне. Профіт:{" "}
             {`${formatCurrency(totalProfit as number, {
                currency: order.currency,
@@ -428,7 +453,10 @@ function Actions() {
                      kind={"icon"}
                      className="md:ml-2"
                   >
-                     <Icons.ellipsisHorizontal />
+                     <HugeiconsIcon
+                        icon={Icons.ellipsisHorizontal}
+                        className="size-6"
+                     />
                   </Button>
                }
             />
@@ -438,7 +466,7 @@ function Actions() {
                      setEditOpen(true)
                   }}
                >
-                  <Icons.pencil />
+                  <HugeiconsIcon icon={Icons.pencil} />
                   Редагувати
                </MenuItem>
                {order.deletedAt === null ? (
@@ -446,7 +474,7 @@ function Actions() {
                      destructive
                      onClick={() => setArchiveAlertOpen(true)}
                   >
-                     <Icons.archive />
+                     <HugeiconsIcon icon={Archive02Icon} />
                      Архівувати
                   </MenuItem>
                ) : (
@@ -459,7 +487,10 @@ function Actions() {
                         })
                      }
                   >
-                     <Icons.undo />
+                     <HugeiconsIcon
+                        icon={UndoIcon}
+                        className="size-5 md:size-4"
+                     />
                      Відновити
                   </MenuItem>
                )}
@@ -470,7 +501,10 @@ function Actions() {
                      destructive
                      onClick={() => setDeleteAlertOpen(true)}
                   >
-                     <Icons.trash />
+                     <HugeiconsIcon
+                        icon={Icons.trash}
+                        className="size-5 md:size-4"
+                     />
                      Видалити
                   </MenuItem>
                ) : null}

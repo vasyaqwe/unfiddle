@@ -1,4 +1,5 @@
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { Button } from "@unfiddle/ui/components/button"
 import { Icons } from "@unfiddle/ui/components/icons"
 import type { VariantProps } from "class-variance-authority"
@@ -53,7 +54,10 @@ export function DialogXClose({
                variant={"ghost"}
                kind={"icon"}
             >
-               <Icons.xMark />
+               <HugeiconsIcon
+                  icon={Icons.xMark}
+                  className="size-5 md:size-4"
+               />
             </Button>
          }
          {...props}

@@ -1,3 +1,5 @@
+import { ArrowTurnBackwardIcon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useNavigate } from "@tanstack/react-router"
 import { formatDate } from "@unfiddle/core/date"
 import { Button } from "@unfiddle/ui/components/button"
@@ -130,7 +132,10 @@ export function MessageActions({ children }: { children?: React.ReactNode }) {
                      variant={"ghost"}
                      kind={"icon"}
                   >
-                     <Icons.ellipsisHorizontal />
+                     <HugeiconsIcon
+                        icon={Icons.ellipsisHorizontal}
+                        className="size-6"
+                     />
                   </Button>
                }
             />
@@ -163,7 +168,7 @@ export function MessageReplyAction({
          }}
          {...props}
       >
-         <Icons.arrowDownLeft />
+         <HugeiconsIcon icon={ArrowTurnBackwardIcon} />
          Відповісти
       </MenuItem>
    )
@@ -196,7 +201,7 @@ export function MessageEditAction({
          }}
          {...props}
       >
-         <Icons.pencil />
+         <HugeiconsIcon icon={Icons.pencil} />
          Редагувати
       </MenuItem>
    )
@@ -210,7 +215,10 @@ export function MessageDeleteAction(
          destructive
          {...props}
       >
-         <Icons.trash />
+         <HugeiconsIcon
+            icon={Icons.trash}
+            className="size-5 md:size-4"
+         />
          Видалити
       </MenuItem>
    )
@@ -265,7 +273,10 @@ export function MessageBubble({ position }: { position: ChatMessagePosition }) {
                )}
             >
                <div className="flex items-center gap-1 font-medium">
-                  <Icons.arrowDownLeft className="mt-0.5 size-3 shrink-0" />
+                  <HugeiconsIcon
+                     icon={ArrowTurnBackwardIcon}
+                     className="mt-0.5 size-3 shrink-0"
+                  />
                   {ctx.message.reply.creator.name}
                </div>
                <div className="line-clamp-1">

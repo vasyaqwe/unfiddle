@@ -1,3 +1,8 @@
+import {
+   ArrowUpRight01Icon,
+   Attachment02Icon,
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, notFound, Outlet } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
@@ -188,7 +193,10 @@ function RouteComponent() {
                         className="flex items-center gap-1.5 py-2 font-medium text-sm underline hover:no-underline"
                      >
                         Переглянути замовлення в CRM
-                        <Icons.arrowUpRight className="size-4 shrink-0" />
+                        <HugeiconsIcon
+                           icon={ArrowUpRight01Icon}
+                           className="size-4 shrink-0"
+                        />
                      </a>
                   </section>
                ) : null}
@@ -222,7 +230,10 @@ function Files({
                size={"xs"}
                onClick={() => fileUploaderRef.current?.click()}
             >
-               <Icons.plus className="size-4" />
+               <HugeiconsIcon
+                  icon={Icons.plus}
+                  className="size-4 md:size-5"
+               />
             </Button>
          </div>
          <div className={"mt-3 flex flex-col gap-1"}>
@@ -272,7 +283,10 @@ function FileItem({
                   url={attachment.url}
                />
             ) : (
-               <Icons.attachment className="ml-0!" />
+               <HugeiconsIcon
+                  icon={Attachment02Icon}
+                  className="ml-0! size-5 shrink-0"
+               />
             )}
             <span className="line-clamp-1 text-muted text-sm">
                {attachment.name}
@@ -310,7 +324,10 @@ function FileItem({
                }}
                disabled={deleteItem.isPending}
             >
-               <Icons.trash />
+               <HugeiconsIcon
+                  icon={Icons.trash}
+                  className="size-5 md:size-4"
+               />
             </Button>
          ) : (
             <Tooltip>

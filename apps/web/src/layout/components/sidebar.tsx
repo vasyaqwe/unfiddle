@@ -1,3 +1,15 @@
+import {
+   Briefcase01Icon,
+   ChartLineData01Icon,
+   Home01Icon,
+   Logout03Icon,
+   Notebook01Icon,
+   PencilEdit01Icon,
+   Settings02Icon,
+   UnfoldMoreIcon,
+   UserMultipleIcon,
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { Link, useParams, useSearch } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
 import { Card } from "@unfiddle/ui/components/card"
@@ -69,7 +81,10 @@ export function SidebarContent() {
                            <span className="line-clamp-1 py-px">
                               {auth.workspace.name}
                            </span>
-                           <Icons.chevronUpDown className="-mr-2 ml-auto size-4 shrink-0 text-muted" />
+                           <HugeiconsIcon
+                              icon={UnfoldMoreIcon}
+                              className="-mr-2 ml-auto size-4 shrink-0 text-muted"
+                           />
                         </Button>
                      }
                   />
@@ -90,7 +105,10 @@ export function SidebarContent() {
                      />
                   }
                >
-                  <Icons.gear className="size-5" />
+                  <HugeiconsIcon
+                     icon={Settings02Icon}
+                     className="size-5"
+                  />
                </Button>
                {/* <Link
                   to="/$workspaceId/search"
@@ -101,7 +119,7 @@ export function SidebarContent() {
                      "!rounded-[0.6125rem] ml-auto shrink-0",
                   )}
                >
-                  <Icons.search className="size-4" />
+                  <HugeiconsIcon icon={Search01Icon} className="size-4" />
                </Link> */}
             </div>
             <CreateOrder>
@@ -112,7 +130,7 @@ export function SidebarContent() {
                         className="mt-3 w-full"
                         size={"lg"}
                      >
-                        <Icons.pencilLine />
+                        <HugeiconsIcon icon={PencilEdit01Icon} />
                         Нове замовлення
                      </Button>
                   }
@@ -131,7 +149,10 @@ export function SidebarContent() {
                         "group flex h-8 items-center justify-start gap-2 rounded-md px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:bg-surface-3 hover:text-foreground aria-[current=page]:bg-surface-4/75 aria-[current=page]:text-foreground"
                      }
                   >
-                     <Icons.home className="size-5" />
+                     <HugeiconsIcon
+                        icon={Home01Icon}
+                        className="size-5"
+                     />
                      <span className="pt-px"> Головна</span>
                   </Link>
                </li>
@@ -144,7 +165,10 @@ export function SidebarContent() {
                         "group flex h-8 items-center justify-start gap-2 rounded-md px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:bg-surface-3 hover:text-foreground aria-[current=page]:bg-surface-4/75 aria-[current=page]:text-foreground"
                      }
                   >
-                     <Icons.notebook className="md:size-5.2" />
+                     <HugeiconsIcon
+                        icon={Notebook01Icon}
+                        className="size-5 md:size-5.2"
+                     />
                      <span className="pt-px"> Прорахунок</span>
                   </Link>
                </li>
@@ -157,7 +181,10 @@ export function SidebarContent() {
                         "group flex h-8 items-center justify-start gap-2 rounded-md px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:bg-surface-3 hover:text-foreground aria-[current=page]:bg-surface-4/75 aria-[current=page]:text-foreground"
                      }
                   >
-                     <Icons.briefcase className="md:size-5.2" />
+                     <HugeiconsIcon
+                        icon={Briefcase01Icon}
+                        className="size-5 md:size-5.2"
+                     />
                      <span className="pt-px"> Клієнти</span>
                   </Link>
                </li>
@@ -170,7 +197,10 @@ export function SidebarContent() {
                         "group flex h-8 items-center justify-start gap-2 rounded-md px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:bg-surface-3 hover:text-foreground aria-[current=page]:bg-surface-4/75 aria-[current=page]:text-foreground"
                      }
                   >
-                     <Icons.pencil className="size-5" />
+                     <HugeiconsIcon
+                        icon={Icons.pencil}
+                        className="size-5"
+                     />
                      <span className="pt-px"> Поставки</span>
                   </Link>
                </li>
@@ -183,7 +213,10 @@ export function SidebarContent() {
                         "group flex h-8 items-center justify-start gap-2 rounded-md px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:bg-surface-3 hover:text-foreground aria-[current=page]:bg-surface-4/75 aria-[current=page]:text-foreground"
                      }
                   >
-                     <Icons.lineChart className="size-5" />
+                     <HugeiconsIcon
+                        icon={ChartLineData01Icon}
+                        className="size-5"
+                     />
                      <span className="pt-px"> Аналітика</span>
                   </Link>
                </li>
@@ -196,7 +229,10 @@ export function SidebarContent() {
                         "group flex h-8 items-center justify-start gap-2 rounded-md px-2 text-base text-foreground/80 leading-none transition-all duration-75 hover:bg-surface-3 hover:text-foreground aria-[current=page]:bg-surface-4/75 aria-[current=page]:text-foreground"
                      }
                   >
-                     <Icons.users className="size-5" />
+                     <HugeiconsIcon
+                        icon={UserMultipleIcon}
+                        className="size-5"
+                     />
                      <span className="pt-px"> Команда</span>
                   </Link>
                </li>
@@ -223,7 +259,7 @@ export function SidebarContent() {
                      destructive
                      onClick={() => auth.signout.mutate()}
                   >
-                     <Icons.exit /> Вийти з аккаунту
+                     <HugeiconsIcon icon={Logout03Icon} /> Вийти з аккаунту
                   </MenuItem>
                </MenuPopup>
             </Menu>

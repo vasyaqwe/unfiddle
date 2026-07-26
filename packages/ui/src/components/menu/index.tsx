@@ -1,4 +1,5 @@
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { MENU_ITEM_STYLES } from "@unfiddle/ui/components/menu/constants"
 import { POPUP_STYLES } from "@unfiddle/ui/constants"
@@ -74,7 +75,8 @@ export function MenuCheckboxItemIndicator() {
       <MenuPrimitive.CheckboxItemIndicator
          className={"-mr-1 ml-auto md:-mr-0.5"}
       >
-         <Icons.check
+         <HugeiconsIcon
+            icon={Icons.check}
             strokeWidth={2.5}
             className={"size-6.25 text-white/90 md:size-5.5"}
          />

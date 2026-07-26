@@ -1,3 +1,4 @@
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
@@ -141,7 +142,10 @@ function RouteComponent() {
                      <DrawerTrigger
                         render={
                            <Button variant={"secondary"}>
-                              <Icons.plus className="md:size-6" />
+                              <HugeiconsIcon
+                                 icon={Icons.plus}
+                                 className="size-6"
+                              />
                               Додати
                            </Button>
                         }
@@ -221,7 +225,10 @@ function Actions() {
                      kind={"icon"}
                      className="md:ml-2"
                   >
-                     <Icons.ellipsisHorizontal />
+                     <HugeiconsIcon
+                        icon={Icons.ellipsisHorizontal}
+                        className="size-6"
+                     />
                   </Button>
                }
             />
@@ -231,7 +238,7 @@ function Actions() {
                      setEditOpen(true)
                   }}
                >
-                  <Icons.pencil />
+                  <HugeiconsIcon icon={Icons.pencil} />
                   Редагувати
                </MenuItem>
                {auth.workspace.role === "owner" ||
@@ -240,7 +247,10 @@ function Actions() {
                      destructive
                      onClick={() => setDeleteAlertOpen(true)}
                   >
-                     <Icons.trash />
+                     <HugeiconsIcon
+                        icon={Icons.trash}
+                        className="size-5 md:size-4"
+                     />
                      Видалити
                   </MenuItem>
                ) : null}

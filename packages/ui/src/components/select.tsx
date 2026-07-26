@@ -1,4 +1,6 @@
 import { Select as SelectPrimitive } from "@base-ui/react/select"
+import { UnfoldMoreIcon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { Button } from "@unfiddle/ui/components/button"
 import { Icons } from "@unfiddle/ui/components/icons"
 import { MENU_ITEM_STYLES } from "@unfiddle/ui/components/menu/constants"
@@ -65,7 +67,10 @@ export function SelectTriggerIcon() {
          data-icon
          className="-mr-1.25 ml-auto flex shrink-0"
       >
-         <Icons.chevronUpDown className="size-4.5 text-muted md:size-4" />
+         <HugeiconsIcon
+            icon={UnfoldMoreIcon}
+            className="size-4.5 text-muted md:size-4"
+         />
       </SelectIcon>
    )
 }
@@ -91,7 +96,8 @@ export function SelectItem({
          {...props}
       >
          <SelectItemIndicator className="col-start-1">
-            <Icons.check
+            <HugeiconsIcon
+               icon={Icons.check}
                className={"-ml-0.5 size-6 text-white/90 md:size-5.5"}
             />
          </SelectItemIndicator>

@@ -1,3 +1,5 @@
+import { Search01Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useNavigate, useSearch } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
@@ -63,9 +65,15 @@ export function Search() {
             }}
          >
             {active ? (
-               <Icons.xMark className="size-4.5" />
+               <HugeiconsIcon
+                  icon={Icons.xMark}
+                  className="size-4.5 md:size-4"
+               />
             ) : (
-               <Icons.search className="size-4.5" />
+               <HugeiconsIcon
+                  icon={Search01Icon}
+                  className="size-4.5"
+               />
             )}
          </Button>
       </div>

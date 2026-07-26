@@ -1,4 +1,5 @@
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { FOCUS_STYLES } from "@unfiddle/ui/constants"
 import { cn } from "../utils"
 import { Icons } from "./icons"
@@ -17,7 +18,10 @@ export function Checkbox({
          {...props}
       >
          <CheckboxIndicator>
-            <Icons.check className="size-4.5 drop-shadow-xs" />
+            <HugeiconsIcon
+               icon={Icons.check}
+               className="size-4.5 drop-shadow-xs"
+            />
          </CheckboxIndicator>
       </CheckboxPrimitive.Root>
    )

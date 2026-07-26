@@ -1,4 +1,8 @@
-import { Icons } from "@unfiddle/ui/components/icons"
+import {
+   ArrowDownRight01Icon,
+   ArrowUpRight01Icon,
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { cn } from "@unfiddle/ui/utils"
 
 interface Props extends React.ComponentProps<"span"> {
@@ -15,11 +19,15 @@ export function ProfitArrow({ className, profit, ...props }: Props) {
          )}
          {...props}
       >
-         {profit === "positive" ? (
-            <Icons.arrowUpRight className="-mt-px -ml-px size-5 text-green-10" />
-         ) : (
-            <Icons.arrowDownRight className="-mt-px -ml-px size-5 text-red-10" />
-         )}{" "}
+         <HugeiconsIcon
+            icon={
+               profit === "positive" ? ArrowUpRight01Icon : ArrowDownRight01Icon
+            }
+            className={cn(
+               "-mt-px -ml-px size-5",
+               profit === "positive" ? "text-green-10" : "text-red-10",
+            )}
+         />{" "}
       </span>
    )
 }

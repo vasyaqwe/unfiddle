@@ -1,3 +1,5 @@
+import { Attachment01Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { CURRENCIES, CURRENCY_SYMBOLS } from "@unfiddle/core/currency/constants"
 import type { Currency } from "@unfiddle/core/currency/types"
@@ -255,7 +257,10 @@ function Form({
                         className="self-end disabled:cursor-not-allowed"
                         data-testid="trash-button"
                      >
-                        <Icons.trash />
+                        <HugeiconsIcon
+                           icon={Icons.trash}
+                           className="size-5 md:size-4"
+                        />
                      </Button>
                   </FieldGroup>
                ))}
@@ -287,7 +292,10 @@ function Form({
                   className="mt-2 w-full disabled:cursor-not-allowed"
                   variant={"secondary"}
                >
-                  <Icons.plus />
+                  <HugeiconsIcon
+                     icon={Icons.plus}
+                     className="size-6 md:size-5"
+                  />
                   Додати товар
                </Button>
             </Fieldset>
@@ -428,7 +436,10 @@ function Form({
                            variant={"ghost"}
                            className="absolute top-1 right-1"
                         >
-                           <Icons.paperClip />
+                           <HugeiconsIcon
+                              icon={Attachment01Icon}
+                              className="size-5.5 md:size-5"
+                           />
                         </Button>
                      )}
                   </div>

@@ -1,8 +1,9 @@
+import { ArrowLeft02Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
 import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
-import { Icons } from "@unfiddle/ui/components/icons"
 import { formData } from "@unfiddle/ui/utils"
 import { trpc } from "@/trpc"
 import { BackButton } from "@/ui/components/back-button"
@@ -42,7 +43,10 @@ function RouteComponent() {
             aria-label="Back"
             className="absolute top-3 left-3 md:top-5 md:left-5"
          >
-            <Icons.arrowLeft />
+            <HugeiconsIcon
+               icon={ArrowLeft02Icon}
+               className="size-6"
+            />
          </BackButton>
          <form
             onSubmit={async (e) => {

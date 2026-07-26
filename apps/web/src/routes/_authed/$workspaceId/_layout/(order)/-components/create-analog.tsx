@@ -1,7 +1,8 @@
+import { BulbIcon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useParams } from "@tanstack/react-router"
 import { Button } from "@unfiddle/ui/components/button"
 import { Field, FieldControl, FieldLabel } from "@unfiddle/ui/components/field"
-import { Icons } from "@unfiddle/ui/components/icons"
 import {
    Popover,
    PopoverPopup,
@@ -39,7 +40,10 @@ export function CreateAnalog() {
                            kind={"icon"}
                            variant={"secondary"}
                         >
-                           <Icons.lightBulb />
+                           <HugeiconsIcon
+                              icon={BulbIcon}
+                              className="size-5 md:size-4"
+                           />
                         </Button>
                      }
                   />

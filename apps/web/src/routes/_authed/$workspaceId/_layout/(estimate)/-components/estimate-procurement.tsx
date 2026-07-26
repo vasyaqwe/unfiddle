@@ -1,3 +1,4 @@
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useParams } from "@tanstack/react-router"
 import { formatCurrency } from "@unfiddle/core/currency"
 import type { EstimateProcurement as EstimateProcurementType } from "@unfiddle/core/estimate/procurement/types"
@@ -113,7 +114,10 @@ export function EstimateProcurement({
                            kind={"icon"}
                            className="shrink-0"
                         >
-                           <Icons.ellipsisHorizontal />
+                           <HugeiconsIcon
+                              icon={Icons.ellipsisHorizontal}
+                              className="size-6"
+                           />
                         </Button>
                      }
                   />
@@ -128,14 +132,17 @@ export function EstimateProcurement({
                            setUpdateOpen(true)
                         }}
                      >
-                        <Icons.pencil />
+                        <HugeiconsIcon icon={Icons.pencil} />
                         Редагувати
                      </MenuItem>
                      <MenuItem
                         destructive
                         onClick={() => setDeleteAlertOpen(true)}
                      >
-                        <Icons.trash />
+                        <HugeiconsIcon
+                           icon={Icons.trash}
+                           className="size-5 md:size-4"
+                        />
                         Видалити
                      </MenuItem>
                   </MenuPopup>

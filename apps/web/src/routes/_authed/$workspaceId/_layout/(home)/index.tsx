@@ -1,3 +1,11 @@
+import {
+   Alert02Icon,
+   Archive02Icon,
+   Briefcase01Icon,
+   PinIcon,
+   UndoIcon,
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useVirtualizer } from "@tanstack/react-virtual"
@@ -126,7 +134,10 @@ function RouteComponent() {
                onClick={() => setCreateOrderOpen(true)}
                className="fixed right-3 bottom-[calc(var(--bottom-navigation-height)+0.75rem)] z-10 overflow-visible shadow-xl md:right-8 md:bottom-8 md:h-9 md:px-3"
             >
-               <Icons.plus className="md:size-6" />
+               <HugeiconsIcon
+                  icon={Icons.plus}
+                  className="size-6"
+               />
                Замовлення
             </Button>
             <div className="sticky top-0 z-5 flex min-h-12 items-center gap-1 border-surface-12/13 border-b bg-background px-1.5 shadow-xs/4 lg:min-h-10">
@@ -273,13 +284,15 @@ function _OrderRow({
                      render={
                         hasCrmUrl ? (
                            <span className="ml-auto grid size-5 place-items-center rounded-full bg-green-9">
-                              <Icons.check
-                                 className={"size-4 shrink-0 text-white"}
+                              <HugeiconsIcon
+                                 icon={Icons.check}
+                                 className="size-4 shrink-0 text-white"
                               />
                            </span>
                         ) : (
-                           <Icons.alert
-                              className={"ml-auto size-5 shrink-0 text-red-9"}
+                           <HugeiconsIcon
+                              icon={Alert02Icon}
+                              className="ml-auto size-5 shrink-0 text-red-9"
                            />
                         )
                      }
@@ -296,7 +309,10 @@ function _OrderRow({
                         delay={0}
                         render={
                            <Badge className="gap-1 max-lg:hidden">
-                              <Icons.briefcase className="size-4.5" />
+                              <HugeiconsIcon
+                                 icon={Briefcase01Icon}
+                                 className="size-4.5"
+                              />
                               <ClientSeverityIcon
                                  severity={order.client.severity}
                               />
@@ -465,12 +481,18 @@ function _OrderRow({
             >
                {assigned ? (
                   <>
-                     <Icons.undo className="size-4.5" />
+                     <HugeiconsIcon
+                        icon={UndoIcon}
+                        className="size-4.5 md:size-4"
+                     />
                      Залишити
                   </>
                ) : (
                   <>
-                     <Icons.pin className="size-5" />
+                     <HugeiconsIcon
+                        icon={PinIcon}
+                        className="size-5"
+                     />
                      Зайняти
                   </>
                )}
@@ -480,7 +502,7 @@ function _OrderRow({
                   setUpdateOpen(true)
                }}
             >
-               <Icons.pencil />
+               <HugeiconsIcon icon={Icons.pencil} />
                Редагувати
             </ContextMenuItem>
             <MenuSeparator />
@@ -489,7 +511,7 @@ function _OrderRow({
                   destructive
                   onClick={() => setArchiveAlertOpen(true)}
                >
-                  <Icons.archive />
+                  <HugeiconsIcon icon={Archive02Icon} />
                   Архівувати
                </ContextMenuItem>
             ) : (
@@ -502,7 +524,10 @@ function _OrderRow({
                      })
                   }
                >
-                  <Icons.undo />
+                  <HugeiconsIcon
+                     icon={UndoIcon}
+                     className="size-5 md:size-4"
+                  />
                   Відновити
                </ContextMenuItem>
             )}
@@ -513,7 +538,10 @@ function _OrderRow({
                   destructive
                   onClick={() => setDeleteAlertOpen(true)}
                >
-                  <Icons.trash />
+                  <HugeiconsIcon
+                     icon={Icons.trash}
+                     className="size-5 md:size-4"
+                  />
                   Видалити
                </ContextMenuItem>
             ) : null}
