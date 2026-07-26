@@ -22,13 +22,21 @@ import {
    TooltipPopup,
    TooltipTrigger,
 } from "@unfiddle/ui/components/tooltip"
+import { useAtomValue } from "jotai"
 import * as React from "react"
-import { useDownloadAttachment } from "@/attachment/hooks"
+import { useAttachments, useDownloadAttachment } from "@/attachment/hooks"
+import type { UploadedAttachment } from "@/attachment/types"
 import { useAuth } from "@/auth/hooks"
 import { ClientSeverityIcon } from "@/client/components/client-severity-icon"
+import { FileUploader } from "@/file/components/uploader"
 import { Header, HeaderBackButton } from "@/layout/components/header"
 import { MainScrollArea } from "@/layout/components/main"
 import { useOrder } from "@/order/hooks"
+import { createOrderOpenAtom } from "@/order/store"
+import {
+   createProcurementOpenAtom,
+   updateProcurementOpenAtom,
+} from "@/procurement/store"
 import { SeverityCombobox } from "@/routes/_authed/$workspaceId/_layout/(order)/-components/severity-combobox"
 import { StatusCombobox } from "@/routes/_authed/$workspaceId/_layout/(order)/-components/status-combobox"
 import { useSocket } from "@/socket"
@@ -73,11 +81,68 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
    const order = useOrder()
+   const auth = useAuth()
+   const socket = useSocket()
+   const queryClient = useQueryClient()
    const fileUploaderRef = React.useRef<HTMLDivElement>(null)
+
+   const createAttachment = useMutation(
+      trpc.attachment.create.mutationOptions(),
+   )
+
+   const attachments = useAttachments({
+      subjectId: order.id,
+      onSuccess: async (data) => {
+         const succeeded = data.filter(
+            (r): r is UploadedAttachment => !("error" in r),
+         )
+
+         createAttachment.mutate(
+            {
+               attachments: succeeded.map((a) => ({
+                  ...a,
+                  subjectId: order.id,
+                  workspaceId: auth.workspace.id,
+                  subjectType: "order",
+               })),
+               workspaceId: auth.workspace.id,
+            },
+            {
+               onSuccess: (attachment) => {
+                  socket.order.send({
+                     action: "create_attachement",
+                     senderId: auth.user.id,
+                     orderId: attachment.subjectId,
+                     workspaceId: auth.workspace.id,
+                  })
+                  queryClient.invalidateQueries(
+                     trpc.order.one.queryOptions({
+                        orderId: attachment.subjectId,
+                        workspaceId: auth.workspace.id,
+                     }),
+                  )
+               },
+            },
+         )
+      },
+   })
+
+   const createOrderOpen = useAtomValue(createOrderOpenAtom)
+   const createProcurementOpen = useAtomValue(createProcurementOpenAtom)
+   const updateProcurementOpen = useAtomValue(updateProcurementOpenAtom)
 
    return (
       <div className="flex grow">
          <div className="relative flex grow flex-col">
+            {createOrderOpen ||
+            createProcurementOpen ||
+            updateProcurementOpen ? null : (
+               <FileUploader
+                  ref={fileUploaderRef}
+                  className="absolute inset-0 z-9 h-full"
+                  onUpload={attachments.upload.mutateAsync}
+               />
+            )}
             <Outlet />
          </div>
          <div

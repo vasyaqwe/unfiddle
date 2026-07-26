@@ -232,9 +232,7 @@ export function Procurement({ procurement }: { procurement: ProcurementType }) {
                         destructive
                         onClick={() => setDeleteAlertOpen(true)}
                      >
-                        <HugeiconsIcon
-                           icon={Icons.trash}
-                        />
+                        <HugeiconsIcon icon={Icons.trash} />
                         Видалити
                      </MenuItem>
                   </MenuPopup>
