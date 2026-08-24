@@ -1,0 +1,2 @@
+CREATE INDEX `order_item_assignee_order_item_id_created_at_idx` ON `order_item_assignee` (`order_item_id`,`created_at`);--> statement-breakpoint
+CREATE INDEX `order_assignee_order_id_created_at_idx` ON `order_assignee` (`order_id`,`created_at`);

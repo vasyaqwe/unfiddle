@@ -21,7 +21,12 @@ export const orderItemAssignee = d.table(
          .notNull(),
       ...d.timestamps,
    },
-   (table) => [d.primaryKey({ columns: [table.userId, table.orderItemId] })],
+   (table) => [
+      d.primaryKey({ columns: [table.userId, table.orderItemId] }),
+      d
+         .index("order_item_assignee_order_item_id_created_at_idx")
+         .on(table.orderItemId, table.createdAt),
+   ],
 )
 
 export const orderItemAssigneeRelations = relations(
