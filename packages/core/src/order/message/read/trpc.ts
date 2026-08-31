@@ -1,8 +1,9 @@
 import { orderMessageRead } from "@unfiddle/core/order/message/read/schema"
 import { orderMessage } from "@unfiddle/core/order/message/schema"
+import { order } from "@unfiddle/core/order/schema"
 import { t } from "@unfiddle/core/trpc/context"
 import { workspaceMemberMiddleware } from "@unfiddle/core/workspace/middleware"
-import { and, count, eq, gt, ne, sql } from "drizzle-orm"
+import { and, count, eq, gt, isNull, ne, sql } from "drizzle-orm"
 import { z } from "zod"
 
 export const orderMessageReadRouter = t.router({
@@ -75,17 +76,19 @@ export const orderMessageReadRouter = t.router({
       .query(async ({ ctx, input }) => {
          const result = await ctx.db
             .select({ count: count() })
-            .from(orderMessage)
+            .from(order)
+            .innerJoin(orderMessage, eq(orderMessage.orderId, order.id))
             .leftJoin(
                orderMessageRead,
                and(
-                  eq(orderMessageRead.orderId, orderMessage.orderId),
+                  eq(orderMessageRead.orderId, order.id),
                   eq(orderMessageRead.userId, ctx.user.id),
                ),
             )
             .where(
                and(
-                  eq(orderMessage.workspaceId, input.workspaceId),
+                  eq(order.workspaceId, input.workspaceId),
+                  isNull(order.deletedAt),
                   ne(orderMessage.creatorId, ctx.user.id),
                   sql`(${orderMessageRead.lastReadAt} IS NULL OR ${orderMessage.createdAt} > ${orderMessageRead.lastReadAt})`,
                ),
@@ -104,17 +107,19 @@ export const orderMessageReadRouter = t.router({
       .query(async ({ ctx, input }) => {
          const results = await ctx.db
             .selectDistinct({ orderId: orderMessage.orderId })
-            .from(orderMessage)
+            .from(order)
+            .innerJoin(orderMessage, eq(orderMessage.orderId, order.id))
             .leftJoin(
                orderMessageRead,
                and(
-                  eq(orderMessageRead.orderId, orderMessage.orderId),
+                  eq(orderMessageRead.orderId, order.id),
                   eq(orderMessageRead.userId, ctx.user.id),
                ),
             )
             .where(
                and(
-                  eq(orderMessage.workspaceId, input.workspaceId),
+                  eq(order.workspaceId, input.workspaceId),
+                  isNull(order.deletedAt),
                   ne(orderMessage.creatorId, ctx.user.id),
                   sql`(${orderMessageRead.lastReadAt} IS NULL OR ${orderMessage.createdAt} > ${orderMessageRead.lastReadAt})`,
                ),
